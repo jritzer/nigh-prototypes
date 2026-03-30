@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh Pro — Sign Up</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;background:#0B0B1A;color:#fff}
+#shell{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px}
+#phone-frame{width:375px;min-height:812px;border-radius:40px;border:10px solid #1a1a2e;box-shadow:0 0 0 1px #2a2a4a, 0 32px 80px rgba(0,0,0,0.7);overflow:hidden;position:relative;background:#0D0D20;display:flex;flex-direction:column}
+/* Steps */
+.step{display:none;flex-direction:column;flex:1;animation:fadeUp 0.3s ease-out}
+.step.active{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* Progress bar */
+.prog-wrap{padding:16px 20px 0;display:flex;gap:5px}
+.prog-seg{height:3px;border-radius:2px;flex:1;background:rgba(255,255,255,0.12);transition:background 0.4s}
+.prog-seg.done{background:#6226E9}
+.prog-seg.active{background:linear-gradient(90deg,#6226E9,#41EFF9)}
+/* Content area */
+.scr-body{flex:1;overflow-y:auto;padding:28px 24px 24px;display:flex;flex-direction:column}
+.scr-body::-webkit-scrollbar{width:0}
+/* Logo */
+.nigh-logo{width:52px;height:52px;background:linear-gradient(135deg,#6226E9 0%,#0E4EF5 100%);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:28px;box-shadow:0 8px 24px rgba(98,38,233,0.35)}
+.nigh-logo-sm{width:36px;height:36px;border-radius:10px;font-size:18px;margin-bottom:0}
+/* Top bar for mid-flow screens */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 0}
+.back-btn{background:none;border:none;color:rgba(255,255,255,0.5);display:flex;align-items:center;gap:4px;font-size:13px;padding:0;cursor:pointer}
+.back-btn:hover{color:#fff}
+.skip-btn{background:none;border:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer}
+.skip-btn:hover{color:rgba(255,255,255,0.6)}
+/* Typography */
+.h1{font-size:26px;font-weight:700;line-height:1.2;color:#fff;margin-bottom:8px}
+.h1 span{background:linear-gradient(135deg,#6226E9,#41EFF9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:28px}
+.label{font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;margin-top:16px;display:block}
+.label:first-of-type{margin-top:0}
+/* Inputs */
+.inp{width:100%;padding:14px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;font-size:16px;color:#fff;font-family:inherit;transition:border-color 0.2s,background 0.2s}
+.inp::placeholder{color:rgba(255,255,255,0.28)}
+.inp:focus{outline:none;border-color:rgba(98,38,233,0.6);background:rgba(98,38,233,0.08)}
+.inp-wrap{position:relative}
+.inp-prefix{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.5);font-size:16px;pointer-events:none}
+.inp.with-prefix{padding-left:38px}
+/* Buttons */
+.btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,#6226E9,#0E4EF5);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:24px;transition:opacity 0.2s,transform 0.15s;letter-spacing:0.01em}
+.btn-primary:hover{opacity:0.92}
+.btn-primary:active{transform:scale(0.98)}
+.btn-ghost{width:100%;padding:14px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.1);border-radius:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;transition:background 0.2s}
+.btn-ghost:hover{background:rgba(255,255,255,0.1)}
+/* Code input */
+.code-row{display:flex;gap:8px;justify-content:center;margin:28px 0}
+.code-box{width:44px;height:56px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;font-size:24px;font-weight:700;text-align:center;color:#fff;font-family:inherit;transition:border-color 0.2s,background 0.2s}
+.code-box:focus{outline:none;border-color:#6226E9;background:rgba(98,38,233,0.1)}
+.code-box.filled{border-color:rgba(65,239,249,0.4)}
+/* Phase header pill */
+.phase-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(98,38,233,0.15);border:1px solid rgba(98,38,233,0.3);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:600;color:#a78bfa;margin-bottom:20px}
+.phase-dot{width:5px;height:5px;border-radius:50%;background:#6226E9}
+/* Branch cards */
+.branch-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:18px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.2s,border-color 0.2s;margin-bottom:10px}
+.branch-card:hover{background:rgba(98,38,233,0.1);border-color:rgba(98,38,233,0.4)}
+.branch-card-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-right:14px;flex-shrink:0}
+.branch-card-text .t{font-size:15px;font-weight:600;color:#fff;margin-bottom:2px}
+.branch-card-text .s{font-size:12px;color:rgba(255,255,255,0.45)}
+.branch-card .chev{color:rgba(255,255,255,0.3);font-size:18px}
+/* Business search */
+.search-wrap{position:relative;margin-bottom:16px}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.35);pointer-events:none}
+.search-inp{width:100%;padding:13px 16px 13px 42px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;font-size:15px;color:#fff;font-family:inherit}
+.search-inp::placeholder{color:rgba(255,255,255,0.28)}
+.search-inp:focus{outline:none;border-color:rgba(98,38,233,0.6);background:rgba(98,38,233,0.08)}
+/* AI thinking */
+.ai-thinking{display:none;align-items:center;gap:10px;padding:14px 16px;background:rgba(65,239,249,0.05);border:1px solid rgba(65,239,249,0.15);border-radius:12px;margin-bottom:14px}
+.ai-thinking.show{display:flex}
+.ai-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#41EFF9;margin:0 2px;animation:dot-pulse 1.2s ease-in-out infinite}
+.ai-dots span:nth-child(2){animation-delay:0.2s}
+.ai-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes dot-pulse{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+.ai-text{font-size:12px;color:#41EFF9;font-weight:500}
+/* Biz result card */
+.biz-result{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background 0.2s,border-color 0.2s;margin-bottom:8px;animation:fadeUp 0.25s ease-out}
+.biz-result:hover{background:rgba(98,38,233,0.12);border-color:rgba(98,38,233,0.4)}
+.biz-result.selected{background:rgba(98,38,233,0.15);border-color:#6226E9}
+.biz-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1a1a3a,#2a2a4a);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.biz-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:2px}
+.biz-meta{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4}
+.biz-check{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);margin-left:auto;flex-shrink:0;transition:background 0.2s,border-color 0.2s;display:flex;align-items:center;justify-content:center}
+.biz-result.selected .biz-check{background:#6226E9;border-color:#6226E9}
+.no-biz{text-align:center;font-size:13px;color:rgba(255,255,255,0.35);cursor:pointer;margin-top:16px;text-decoration:underline;text-underline-offset:3px}
+/* Confirm profile card */
+.confirm-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:18px;overflow:hidden;margin-bottom:20px}
+.confirm-card-header{background:linear-gradient(135deg,rgba(98,38,233,0.3),rgba(14,78,245,0.2));padding:20px 18px;display:flex;align-items:center;gap:14px}
+.confirm-biz-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.confirm-biz-name{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.confirm-biz-cat{font-size:12px;color:rgba(255,255,255,0.5)}
+.confirm-rows{padding:14px 18px}
+.conf-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.conf-row:last-child{border-bottom:none}
+.conf-row-icon{color:rgba(255,255,255,0.3);margin-top:1px;flex-shrink:0;font-size:13px}
+.conf-row-val{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.4}
+.ai-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(65,239,249,0.1);border:1px solid rgba(65,239,249,0.2);border-radius:6px;padding:2px 8px;font-size:10px;color:#41EFF9;font-weight:600;margin-bottom:14px}
+/* Role chips */
+.role-grid{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.role-chip{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:14px}
+.role-chip:hover{background:rgba(98,38,233,0.1);border-color:rgba(98,38,233,0.35)}
+.role-chip.selected{background:rgba(98,38,233,0.15);border-color:#6226E9}
+.role-chip-icon{font-size:22px}
+.role-chip-label{font-size:15px;font-weight:600;color:#fff}
+.role-chip-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:1px}
+.role-radio{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);margin-left:auto;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.role-chip.selected .role-radio{border-color:#6226E9;background:#6226E9}
+/* Time chips */
+.day-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.day-chip{padding:8px 12px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);cursor:pointer;transition:all 0.2s}
+.day-chip:hover{background:rgba(98,38,233,0.1);border-color:rgba(98,38,233,0.35);color:#fff}
+.day-chip.selected{background:rgba(98,38,233,0.2);border-color:#6226E9;color:#fff}
+.time-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.time-chip{padding:12px 10px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.55);cursor:pointer;transition:all 0.2s;text-align:center}
+.time-chip:hover{background:rgba(98,38,233,0.1);border-color:rgba(98,38,233,0.35);color:#fff}
+.time-chip.selected{background:rgba(98,38,233,0.2);border-color:#6226E9;color:#fff}
+.time-chip .sub{font-size:10px;font-weight:400;color:rgba(255,255,255,0.35);margin-top:2px;display:block}
+/* Trial card */
+.trial-card{background:linear-gradient(135deg,rgba(98,38,233,0.25),rgba(14,78,245,0.2));border:1px solid rgba(98,38,233,0.4);border-radius:18px;padding:22px 20px;margin-bottom:20px;text-align:center}
+.trial-check{width:64px;height:64px;background:linear-gradient(135deg,#6226E9,#0E4EF5);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;box-shadow:0 8px 24px rgba(98,38,233,0.4)}
+.trial-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.trial-sub{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:20px}
+.trial-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.trial-pill{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,0.65);font-weight:500}
+/* AI Drop creation */
+.ai-chat-bubble{background:rgba(65,239,249,0.08);border:1px solid rgba(65,239,249,0.15);border-radius:16px 16px 16px 4px;padding:14px 16px;margin-bottom:16px}
+.ai-chat-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ai-avatar{width:24px;height:24px;background:linear-gradient(135deg,#41EFF9,#6226E9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0B0B1A;flex-shrink:0}
+.ai-name{font-size:11px;font-weight:600;color:#41EFF9}
+.ai-msg{font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5}
+/* Drop preview card */
+.drop-preview{background:linear-gradient(135deg,#1a1a35,#0f1428);border:1px solid rgba(255,255,255,0.1);border-radius:18px;overflow:hidden;margin-bottom:16px}
+.drop-preview-img{height:120px;background:linear-gradient(135deg,#1a0a30,#0a1840);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
+.drop-live-badge{position:absolute;top:10px;left:10px;background:#22C55E;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;display:flex;align-items:center;gap:4px}
+.drop-live-dot{width:5px;height:5px;border-radius:50%;background:#fff;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.drop-preview-body{padding:14px 16px}
+.drop-preview-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.drop-preview-meta{display:flex;gap:12px;flex-wrap:wrap}
+.drop-meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:rgba(255,255,255,0.45)}
+/* Edit fields */
+.edit-field{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.2s}
+.edit-field:hover{background:rgba(98,38,233,0.08)}
+.edit-field-label{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px}
+.edit-field-val{font-size:13px;color:rgba(255,255,255,0.8)}
+.edit-icon{color:rgba(255,255,255,0.25);font-size:14px}
+/* Live success */
+.live-hero{text-align:center;padding:24px 0 20px}
+.live-icon{font-size:64px;margin-bottom:16px;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+.live-title{font-size:26px;font-weight:700;margin-bottom:8px}
+.live-title span{background:linear-gradient(135deg,#41EFF9,#6226E9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.share-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:16px;margin-bottom:10px}
+.share-label{font-size:11px;font-weight:600;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px}
+.share-link-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px}
+.share-link-text{font-size:12px;color:#41EFF9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:rgba(65,239,249,0.15);border:1px solid rgba(65,239,249,0.25);border-radius:7px;color:#41EFF9;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;flex-shrink:0}
+.share-btns{display:flex;gap:8px;margin-top:10px}
+.share-btn{flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:opacity 0.2s}
+.share-btn:hover{opacity:0.85}
+.share-btn.ig{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.share-btn.sms{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7)}
+/* Misc */
+.divider{text-align:center;font-size:12px;color:rgba(255,255,255,0.25);margin:16px 0;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,0.08)}
+.divider::before{left:0}
+.divider::after{right:0}
+.footnote{text-align:center;font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;line-height:1.5}
+.footnote a{color:rgba(98,38,233,0.8);text-decoration:none}
+.spacer{flex:1}
+/* Sent hint */
+.sent-hint{font-size:12px;color:rgba(255,255,255,0.35);text-align:center;margin-top:14px}
+.sent-hint a{color:rgba(65,239,249,0.7);text-decoration:none;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="shell">
+<div id="phone-frame">
+
+<!-- PROGRESS BAR -->
+<div class="prog-wrap" id="prog">
+  <div class="prog-seg" id="p1"></div>
+  <div class="prog-seg" id="p2"></div>
+  <div class="prog-seg" id="p3"></div>
+  <div class="prog-seg" id="p4"></div>
+  <div class="prog-seg" id="p5"></div>
+  <div class="prog-seg" id="p6"></div>
+  <div class="prog-seg" id="p7"></div>
+  <div class="prog-seg" id="p8"></div>
+  <div class="prog-seg" id="p9"></div>
+</div>
+
+<!-- ─── STEP 1: WELCOME ─────────────────────────── -->
+<div class="step active" id="s1">
+  <div class="scr-body" style="justify-content:center;padding-top:40px">
+    <div class="nigh-logo">N</div>
+    <div class="h1">Welcome to<br><span>Nigh Pro</span></div>
+    <div class="sub">The smart way to fill your quiet hours and drive real foot traffic — on your schedule.</div>
+    <span class="label">Your mobile number</span>
+    <div class="inp-wrap">
+      <span class="inp-prefix">+1</span>
+      <input type="tel" class="inp with-prefix" id="phoneInput" placeholder="(303) 555-0145" maxlength="14">
+    </div>
+    <button class="btn-primary" onclick="goStep(2)">Send Verification Code</button>
+    <div class="footnote" style="margin-top:16px">Already on Nigh Pro? <a onclick="goStep(2)">Sign in</a></div>
+    <div class="spacer"></div>
+    <div class="footnote">By continuing you agree to Nigh's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br>Standard message rates apply.</div>
+  </div>
+</div>
+
+<!-- ─── STEP 2: VERIFY ──────────────────────────── -->
+<div class="step" id="s2">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(1)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body" style="justify-content:center">
+    <div class="phase-pill"><span class="phase-dot"></span>Step 1 of 3 — Your Account</div>
+    <div class="h1">Check your<br>messages</div>
+    <div class="sub">We sent a 6-digit code to<br><strong style="color:rgba(255,255,255,0.75)" id="phoneDisplay">(303) 555-0145</strong></div>
+    <div class="code-row">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+      <input type="text" maxlength="1" class="code-box" onkeyup="handleCode(this)" oninput="styleCode(this)">
+    </div>
+    <button class="btn-primary" onclick="goStep(3)">Verify Code</button>
+    <div class="sent-hint">Didn't get it? <a onclick="alert('Code resent!')">Resend code</a></div>
+  </div>
+</div>
+
+<!-- ─── STEP 3: NEW OR RETURNING ───────────────── -->
+<div class="step" id="s3">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(2)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill"><span class="phase-dot"></span>Step 1 of 3 — Your Account</div>
+    <div class="h1">Do you have a<br>Nigh account?</div>
+    <div class="sub">If you use Nigh Drops as a customer, you already have one.</div>
+    <div class="branch-card" onclick="goStep(5)">
+      <div class="branch-card-icon" style="background:rgba(65,239,249,0.1);color:#41EFF9">📲</div>
+      <div class="branch-card-text">
+        <div class="t">Yes, I'm already on Nigh</div>
+        <div class="s">I use the Nigh Drops app</div>
+      </div>
+      <span class="chev">›</span>
+    </div>
+    <div class="branch-card" onclick="goStep(4)">
+      <div class="branch-card-icon" style="background:rgba(98,38,233,0.15);color:#a78bfa">✨</div>
+      <div class="branch-card-text">
+        <div class="t">I'm new to Nigh</div>
+        <div class="s">Create my account</div>
+      </div>
+      <span class="chev">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── STEP 4: USER ACCOUNT ────────────────────── -->
+<div class="step" id="s4">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(3)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill"><span class="phase-dot"></span>Step 1 of 3 — Your Account</div>
+    <div class="h1">Create your<br>Nigh account</div>
+    <div class="sub">This is your personal Nigh identity — used across Nigh Drops and Nigh Pro.</div>
+    <span class="label">Full name</span>
+    <input type="text" class="inp" id="nameInput" placeholder="Josh Ritzer">
+    <span class="label" style="margin-top:14px">Username</span>
+    <div class="inp-wrap">
+      <span class="inp-prefix" style="font-size:14px;top:52%">@</span>
+      <input type="text" class="inp with-prefix" id="usernameInput" placeholder="joshr">
+    </div>
+    <button class="btn-primary" onclick="goStep(5)">Continue →</button>
+    <div class="footnote" style="margin-top:14px">Email is optional — we'll use your phone for everything.</div>
+  </div>
+</div>
+
+<!-- ─── STEP 5: FIND BUSINESS ───────────────────── -->
+<div class="step" id="s5">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(3)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill" style="background:rgba(14,78,245,0.12);border-color:rgba(14,78,245,0.25);color:#60a5fa"><span class="phase-dot" style="background:#0E4EF5"></span>Step 2 of 3 — Your Business</div>
+    <div class="h1">Find your<br><span>business</span></div>
+    <div class="sub">We'll pull your public profile so you don't have to fill out a form.</div>
+    <div class="search-wrap">
+      <span class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" class="search-inp" id="bizSearch" placeholder="Business name + city…" oninput="handleBizSearch(this)">
+    </div>
+    <div class="ai-thinking" id="aiThinking">
+      <span class="ai-dots"><span></span><span></span><span></span></span>
+      <span class="ai-text">Searching public listings…</span>
+    </div>
+    <div id="bizResults"></div>
+    <div class="no-biz" id="noBiz" style="display:none" onclick="goStep(6)">I don't see my business — enter manually</div>
+    <button class="btn-primary" id="bizContinueBtn" style="display:none" onclick="goStep(6)">Confirm Business →</button>
+  </div>
+</div>
+
+<!-- ─── STEP 6: CONFIRM PROFILE ─────────────────── -->
+<div class="step" id="s6">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(5)">← Back</button>
+    <button class="skip-btn" onclick="goStep(7)">Edit</button>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill" style="background:rgba(14,78,245,0.12);border-color:rgba(14,78,245,0.25);color:#60a5fa"><span class="phase-dot" style="background:#0E4EF5"></span>Step 2 of 3 — Your Business</div>
+    <div class="ai-badge">✦ AI-populated from public listings</div>
+    <div class="h1" style="margin-bottom:16px">Is this your<br>business?</div>
+    <div class="confirm-card">
+      <div class="confirm-card-header">
+        <div class="confirm-biz-icon">🌮</div>
+        <div>
+          <div class="confirm-biz-name">Centro Mexican Kitchen</div>
+          <div class="confirm-biz-cat">Restaurant / Bar · Boulder, CO</div>
+        </div>
+      </div>
+      <div class="confirm-rows">
+        <div class="conf-row">
+          <span class="conf-row-icon">📍</span>
+          <span class="conf-row-val">950 Pearl St, Boulder, CO 80302</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-row-icon">🕐</span>
+          <span class="conf-row-val">Mon–Thu 11am–10pm · Fri–Sat 11am–11pm · Sun 10am–9pm</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-row-icon">🌐</span>
+          <span class="conf-row-val">centroboulder.com</span>
+        </div>
+        <div class="conf-row">
+          <span class="conf-row-icon">⭐</span>
+          <span class="conf-row-val">4.4 · 380 reviews (Google)</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goStep(7)">Yes, that's my business →</button>
+    <button class="btn-ghost" onclick="goStep(5)">Search again</button>
+  </div>
+</div>
+
+<!-- ─── STEP 7: ROLE ─────────────────────────────── -->
+<div class="step" id="s7">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(6)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill" style="background:rgba(14,78,245,0.12);border-color:rgba(14,78,245,0.25);color:#60a5fa"><span class="phase-dot" style="background:#0E4EF5"></span>Step 2 of 3 — Your Business</div>
+    <div class="h1">What's your<br>role?</div>
+    <div class="sub" style="margin-bottom:8px">This sets your permissions in Nigh Pro.</div>
+    <div class="role-grid">
+      <div class="role-chip selected" id="role-owner" onclick="selectRole('owner')">
+        <span class="role-chip-icon">👑</span>
+        <div>
+          <div class="role-chip-label">Owner</div>
+          <div class="role-chip-sub">Full access — billing, team, settings</div>
+        </div>
+        <div class="role-radio">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="white"><circle cx="5" cy="5" r="3"/></svg>
+        </div>
+      </div>
+      <div class="role-chip" id="role-manager" onclick="selectRole('manager')">
+        <span class="role-chip-icon">🗂</span>
+        <div>
+          <div class="role-chip-label">Manager</div>
+          <div class="role-chip-sub">Create Drops, view guests, check-in</div>
+        </div>
+        <div class="role-radio"></div>
+      </div>
+      <div class="role-chip" id="role-staff" onclick="selectRole('staff')">
+        <span class="role-chip-icon">👤</span>
+        <div>
+          <div class="role-chip-label">Team Member</div>
+          <div class="role-chip-sub">Check-in and guest view only</div>
+        </div>
+        <div class="role-radio"></div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:24px" onclick="goStep(8)">Continue →</button>
+  </div>
+</div>
+
+<!-- ─── STEP 8: SLOWEST TIME ────────────────────── -->
+<div class="step" id="s8">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(7)">← Back</button>
+    <button class="skip-btn" onclick="goStep(9)">Skip</button>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill" style="background:rgba(14,78,245,0.12);border-color:rgba(14,78,245,0.25);color:#60a5fa"><span class="phase-dot" style="background:#0E4EF5"></span>Step 2 of 3 — Your Business</div>
+    <div class="h1">When do you<br>need the most<br>help?</div>
+    <div class="sub">We'll use this to suggest the best times for your Drops.</div>
+    <span class="label">Slowest day of week</span>
+    <div class="day-wrap" id="dayWrap">
+      <div class="day-chip" onclick="toggleDay(this)">Mon</div>
+      <div class="day-chip selected" onclick="toggleDay(this)">Tue</div>
+      <div class="day-chip" onclick="toggleDay(this)">Wed</div>
+      <div class="day-chip selected" onclick="toggleDay(this)">Thu</div>
+      <div class="day-chip" onclick="toggleDay(this)">Fri</div>
+      <div class="day-chip" onclick="toggleDay(this)">Sat</div>
+      <div class="day-chip" onclick="toggleDay(this)">Sun</div>
+    </div>
+    <span class="label">Slowest time of day</span>
+    <div class="time-wrap">
+      <div class="time-chip" onclick="selectTime(this)">☀️ Morning<span class="sub">Before noon</span></div>
+      <div class="time-chip selected" onclick="selectTime(this)">🌤 Afternoon<span class="sub">12pm – 5pm</span></div>
+      <div class="time-chip" onclick="selectTime(this)">🌙 Evening<span class="sub">5pm – 9pm</span></div>
+      <div class="time-chip" onclick="selectTime(this)">🌑 Late Night<span class="sub">After 9pm</span></div>
+    </div>
+    <button class="btn-primary" style="margin-top:20px" onclick="goStep(9)">Continue →</button>
+  </div>
+</div>
+
+<!-- ─── STEP 9: TRIAL ACTIVATED ──────────────────── -->
+<div class="step" id="s9">
+  <div class="scr-body" style="justify-content:center;padding-top:32px">
+    <div class="phase-pill" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.25);color:#4ade80"><span class="phase-dot" style="background:#22C55E"></span>Step 3 of 3 — Your First Drop</div>
+    <div class="trial-card">
+      <div class="trial-check">✓</div>
+      <div class="trial-title">You're all set,<br>Josh! 🎉</div>
+      <div class="trial-sub">Your free month of Starter begins today.<br>No credit card needed.</div>
+      <div class="trial-pills">
+        <div class="trial-pill">10 Drops / month</div>
+        <div class="trial-pill">Unlimited customers</div>
+        <div class="trial-pill">In-app notifications</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.5;margin-bottom:8px">
+      Ready to create your first Drop?<br>It takes about 2 minutes — we'll help.
+    </div>
+    <button class="btn-primary" style="margin-top:8px" onclick="goStep(10)">Create My First Drop →</button>
+    <button class="btn-ghost" onclick="window.location.href='NighPro_App_v5.html'">Explore the dashboard first</button>
+  </div>
+</div>
+
+<!-- ─── STEP 10: AI DROP CREATION ─────────────────── -->
+<div class="step" id="s10">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goStep(9)">← Back</button>
+    <div></div>
+  </div>
+  <div class="scr-body">
+    <div class="phase-pill" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.25);color:#4ade80"><span class="phase-dot" style="background:#22C55E"></span>Step 3 of 3 — Your First Drop</div>
+    <div class="ai-chat-bubble">
+      <div class="ai-chat-header">
+        <div class="ai-avatar">N</div>
+        <span class="ai-name">Nigh AI</span>
+      </div>
+      <div class="ai-msg">Based on your restaurant in Boulder, I put together a Drop idea for this Tuesday afternoon — your typically slow window. Looks good or want to change it up?</div>
+    </div>
+    <div class="drop-preview">
+      <div class="drop-preview-img">
+        🌮
+        <div class="drop-live-badge"><span class="drop-live-dot"></span>PREVIEW</div>
+      </div>
+      <div class="drop-preview-body">
+        <div class="drop-preview-title">Slow Tuesday Happy Hour</div>
+        <div class="drop-preview-meta">
+          <div class="drop-meta-item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Tue, Mar 17 · 3:00–5:00 PM
+          </div>
+          <div class="drop-meta-item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            20 spots
+          </div>
+          <div class="drop-meta-item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Free admission
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="edit-field" onclick="alert('Edit offer…')">
+      <div><div class="edit-field-label">Offer</div><div class="edit-field-val">Happy hour pricing — 50% off drinks</div></div>
+      <span class="edit-icon">✎</span>
+    </div>
+    <div class="edit-field" onclick="alert('Edit date/time…')">
+      <div><div class="edit-field-label">Date & time</div><div class="edit-field-val">Tue, Mar 17 · 3:00 PM – 5:00 PM</div></div>
+      <span class="edit-icon">✎</span>
+    </div>
+    <div class="edit-field" onclick="alert('Edit spots…')">
+      <div><div class="edit-field-label">Spots available</div><div class="edit-field-val">20 spots · 1 per person</div></div>
+      <span class="edit-icon">✎</span>
+    </div>
+    <button class="btn-primary" onclick="goStep(11)">Publish Drop 🚀</button>
+    <button class="btn-ghost" onclick="alert('Start from scratch…')">Start from scratch</button>
+  </div>
+</div>
+
+<!-- ─── STEP 11: DROP LIVE ────────────────────────── -->
+<div class="step" id="s11">
+  <div class="scr-body" style="padding-top:32px">
+    <div class="live-hero">
+      <div class="live-icon">🎉</div>
+      <div class="live-title">Your Drop is<br><span>live!</span></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;margin-top:4px">Slow Tuesday Happy Hour is published.<br>Share it to start filling your seats.</div>
+    </div>
+    <div class="share-card">
+      <div class="share-label">Your Drop link</div>
+      <div class="share-link-row">
+        <span class="share-link-text">nigh.com/d/centroboulder/XHD3RT</span>
+        <button class="copy-btn" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+      </div>
+      <div class="share-btns">
+        <button class="share-btn ig" onclick="alert('Opening Instagram…')">📸 Share to Instagram</button>
+        <button class="share-btn sms" onclick="alert('Opening Messages…')">💬 Text a friend</button>
+      </div>
+    </div>
+    <div class="share-card" style="margin-bottom:0">
+      <div class="share-label">QR code</div>
+      <div style="text-align:center;padding:12px 0">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=nigh.com/d/centroboulder/XHD3RT&bgcolor=1a1a35&color=41EFF9&qzone=1" width="130" height="130" style="border-radius:10px" alt="QR">
+      </div>
+      <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.3)">Print or display at your business</div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px" onclick="window.location.href='NighPro_App_v5.html'">Go to Dashboard →</button>
+    <div class="footnote" style="margin-top:12px">You have <strong style="color:#a78bfa">9 Drops</strong> remaining this month.<br>Your free trial expires <strong style="color:#a78bfa">April 11, 2026</strong>.</div>
+  </div>
+</div>
+
+</div><!-- /phone-frame -->
+</div><!-- /shell -->
+
+<script>
+let currentStep = 1;
+const TOTAL = 11;
+
+function updateProgress(step) {
+  for (let i = 1; i <= 9; i++) {
+    const seg = document.getElementById('p' + i);
+    if (!seg) continue;
+    // Map 11 steps to 9 segments
+    const threshold = Math.ceil(i * TOTAL / 9);
+    if (step > threshold) seg.className = 'prog-seg done';
+    else if (step >= Math.ceil((i-1) * TOTAL / 9) && step <= threshold) seg.className = 'prog-seg active';
+    else seg.className = 'prog-seg';
+  }
+}
+
+function goStep(n) {
+  document.getElementById('s' + currentStep).classList.remove('active');
+  currentStep = n;
+  const next = document.getElementById('s' + n);
+  next.classList.add('active');
+  updateProgress(n);
+  // Scroll frame to top
+  next.scrollIntoView ? next.scrollIntoView({behavior:'smooth',block:'nearest'}) : null;
+  const body = next.querySelector('.scr-body');
+  if (body) body.scrollTop = 0;
+  // Step-specific side effects
+  if (n === 2) {
+    const ph = document.getElementById('phoneInput');
+    const val = ph && ph.value ? ph.value : '(303) 555-0145';
+    const disp = document.getElementById('phoneDisplay');
+    if (disp) disp.textContent = '+1 ' + val;
+    // Auto-focus first code box
+    setTimeout(() => {
+      const first = document.querySelector('.code-box');
+      if (first) first.focus();
+    }, 300);
+  }
+}
+
+// Code boxes
+function handleCode(input) {
+  const val = input.value;
+  if (val && val.length === 1) {
+    input.classList.add('filled');
+    const next = input.nextElementSibling;
+    if (next && next.classList.contains('code-box')) next.focus();
+    // Check if all filled
+    const allBoxes = document.querySelectorAll('.code-box');
+    const allFilled = Array.from(allBoxes).every(b => b.value.length === 1);
+    if (allFilled) setTimeout(() => goStep(3), 300);
+  } else if (val === '') {
+    input.classList.remove('filled');
+    const prev = input.previousElementSibling;
+    if (prev && prev.classList.contains('code-box')) prev.focus();
+  }
+}
+function styleCode(input) {
+  if (input.value) input.classList.add('filled');
+  else input.classList.remove('filled');
+}
+
+// Role selection
+function selectRole(role) {
+  ['owner','manager','staff'].forEach(r => {
+    const el = document.getElementById('role-' + r);
+    el.classList.remove('selected');
+    el.querySelector('.role-radio').innerHTML = '';
+  });
+  const sel = document.getElementById('role-' + role);
+  sel.classList.add('selected');
+  sel.querySelector('.role-radio').innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="white"><circle cx="5" cy="5" r="3"/></svg>';
+}
+
+// Day toggles
+function toggleDay(el) { el.classList.toggle('selected'); }
+
+// Time selection
+function selectTime(el) {
+  document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// Business search simulation
+let searchTimer = null;
+const BIZ_RESULTS = [
+  { emoji:'🌮', name:'Centro Mexican Kitchen', meta:'Restaurant / Bar · 950 Pearl St, Boulder, CO', selected: true },
+  { emoji:'🌯', name:'Centro Cantina Denver', meta:'Restaurant / Bar · 2400 Market St, Denver, CO', selected: false },
+  { emoji:'🍹', name:'Centro Catering Co.', meta:'Catering · Boulder, CO', selected: false },
+];
+
+function handleBizSearch(inp) {
+  const val = inp.value.trim();
+  const thinking = document.getElementById('aiThinking');
+  const results = document.getElementById('bizResults');
+  const noBiz = document.getElementById('noBiz');
+  const continueBtn = document.getElementById('bizContinueBtn');
+  clearTimeout(searchTimer);
+  results.innerHTML = '';
+  noBiz.style.display = 'none';
+  continueBtn.style.display = 'none';
+  if (val.length < 2) { thinking.classList.remove('show'); return; }
+  thinking.classList.add('show');
+  searchTimer = setTimeout(() => {
+    thinking.classList.remove('show');
+    const filtered = BIZ_RESULTS.filter(b => b.name.toLowerCase().includes(val.toLowerCase()));
+    if (filtered.length === 0) {
+      results.innerHTML = '<div style="font-size:13px;color:rgba(255,255,255,0.35);text-align:center;padding:16px 0">No matches found for "' + val + '"</div>';
+    } else {
+      filtered.forEach((b,i) => {
+        const div = document.createElement('div');
+        div.className = 'biz-result' + (b.selected ? ' selected' : '');
+        div.innerHTML = `<div class="biz-icon">${b.emoji}</div><div style="flex:1"><div class="biz-name">${b.name}</div><div class="biz-meta">${b.meta}</div></div><div class="biz-check">${b.selected ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' : ''}</div>`;
+        div.onclick = () => {
+          document.querySelectorAll('.biz-result').forEach(r => { r.classList.remove('selected'); r.querySelector('.biz-check').innerHTML = ''; });
+          div.classList.add('selected');
+          div.querySelector('.biz-check').innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+          continueBtn.style.display = 'block';
+        };
+        results.appendChild(div);
+      });
+      continueBtn.style.display = filtered.length > 0 ? 'block' : 'none';
+    }
+    noBiz.style.display = 'block';
+  }, 1400);
+}
+
+// Init
+updateProgress(1);
+</script>
+</body>
+</html>

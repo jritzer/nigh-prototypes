@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh — Pricing (Mockup)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --purple: #6226E9; --blue: #0E4EF5; --teal: #41EFF9; --pink: #EC1977;
+            --bg: #0B0B1A; --surface: #12122A; --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.14);
+            --text: #F5F5F7; --text-secondary: #A8A8C0;
+            --radius: 20px; --radius-sm: 12px;
+        }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 80px 24px; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ===== HEADER ===== */
+        .section-label { font-size: 0.75rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; text-align: center; }
+        .section-header { text-align: center; max-width: 640px; margin: 0 auto 16px; }
+        .section-header h2 { font-size: clamp(2rem, 4.5vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 14px; }
+        .section-header p { font-size: 1rem; color: var(--text-secondary); line-height: 1.7; }
+        .referral-banner { text-align: center; margin-bottom: 56px; }
+        .referral-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(65,239,249,0.06); border: 1px solid rgba(65,239,249,0.15); border-radius: 100px; padding: 10px 20px; font-size: 0.82rem; color: var(--teal); font-weight: 600; margin-top: 20px; }
+        .referral-pill span { opacity: 0.6; color: var(--text-secondary); }
+
+        /* ===== PRICING GRID ===== */
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 16px; row-gap: 0; grid-template-rows: repeat(22, auto); align-items: start; }
+
+        /* ===== ENTERPRISE SECTION ===== */
+        .enterprise-section { margin-top: 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; padding-top: 40px; border-top: 1px solid var(--border); }
+        .enterprise-section-left .enterprise-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--blue); display: block; margin-bottom: 8px; }
+        .enterprise-section-left h3 { font-size: 1.1rem; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 6px; }
+        .enterprise-section-left p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+        .enterprise-section-right { flex-shrink: 0; }
+        .enterprise-cta { display: inline-block; padding: 13px 28px; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; border: 1px solid var(--border-light); color: var(--text); background: transparent; transition: all 0.2s; font-family: inherit; white-space: nowrap; }
+        .enterprise-cta:hover { border-color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+
+        /* ===== PRICING CARD ===== */
+        .price-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 22px; position: relative; overflow: hidden; display: grid; grid-template-rows: subgrid; grid-row: span 22; }
+        .price-card.featured { background: var(--surface-2); border-color: var(--pink); box-shadow: 0 0 60px rgba(236,25,119,0.08); }
+        .price-card.enterprise { border-style: dashed; border-color: var(--border-light); }
+
+        /* top accent bar */
+        .price-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .price-card.starter::before { background: rgba(255,255,255,0.1); }
+        .price-card.growth::before { background: linear-gradient(90deg, var(--pink), var(--purple)); }
+        .price-card.pro::before { background: linear-gradient(90deg, var(--purple), var(--blue), var(--teal)); }
+        .price-card.enterprise::before { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+
+        /* popular badge */
+        .popular-badge { position: absolute; top: 16px; right: 16px; background: var(--pink); color: #fff; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 100px; }
+
+        /* tier name */
+        .tier-name { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; }
+        .starter .tier-name { color: var(--text-secondary); }
+        .growth .tier-name { color: var(--pink); }
+        .pro .tier-name { color: var(--teal); }
+        .enterprise .tier-name { color: var(--blue); }
+
+        /* price */
+        .price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+        .price-amount { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+        .price-period { font-size: 0.88rem; color: var(--text-secondary); font-weight: 500; }
+        .price-trial { font-size: 0.78rem; color: var(--teal); font-weight: 700; margin-bottom: 24px; min-height: 40px; }
+        .price-trial.referred { color: var(--pink); }
+
+        /* cta */
+        .price-cta { display: block; width: 100%; padding: 13px; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; margin-bottom: 28px; }
+        .starter .price-cta { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--border-light); }
+        .starter .price-cta:hover { background: rgba(255,255,255,0.11); }
+        .growth .price-cta { background: var(--pink); color: #fff; }
+        .growth .price-cta:hover { filter: brightness(1.12); }
+        .pro .price-cta { background: linear-gradient(135deg, var(--purple), var(--blue)); color: #fff; }
+        .pro .price-cta:hover { filter: brightness(1.1); }
+        .enterprise .price-cta { background: transparent; color: var(--text); border: 1px solid var(--border-light); }
+        .enterprise .price-cta:hover { border-color: var(--text-secondary); }
+
+        /* divider */
+        .card-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+
+        /* features */
+        .card-body { display: contents; }
+        .features-label { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); opacity: 0.5; margin-bottom: 14px; }
+        .feature-list { display: contents; }
+        .feature { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; font-weight: 400; }
+        .feature:last-child { border-bottom: none; }
+        .feature .check { flex-shrink: 0; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 900; margin-top: 1px; }
+        .starter .check { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
+        .growth .check { background: rgba(236,25,119,0.15); color: var(--pink); }
+        .pro .check { background: rgba(65,239,249,0.12); color: var(--teal); }
+        .enterprise .check { background: rgba(14,78,245,0.15); color: var(--blue); }
+        .feature strong { color: var(--text); font-weight: 700; }
+        .feature-section-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); opacity: 0.35; padding: 14px 0 6px; }
+
+        /* transaction note */
+        .transaction-note { font-size: 0.72rem; color: var(--text-secondary); opacity: 0.4; margin-top: 20px; line-height: 1.55; text-align: center; }
+
+        /* free tier */
+        .price-card.free::before { background: rgba(255,255,255,0.07); }
+        .free .tier-name { color: var(--text-secondary); }
+        .free .check { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+        .free .price-cta { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--border-light); }
+        .free .price-cta:hover { background: rgba(255,255,255,0.11); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 860px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } .enterprise-section { flex-direction: column; align-items: flex-start; gap: 20px; } }
+        @media (max-width: 520px)  { .pricing-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="section-label">Pricing</div>
+    <div class="section-header">
+        <h2>Simple pricing. Real results.</h2>
+        <p>Start free — no credit card needed. Grow at your own pace.</p>
+    </div>
+
+
+    <div class="pricing-grid">
+
+        <!-- STARTER -->
+        <div class="price-card starter">
+            <div class="tier-name">Starter</div>
+            <div class="price-row">
+                <span class="price-amount">$25</span>
+                <span class="price-period">/ month</span>
+            </div>
+            <div class="price-trial">First month free — no credit card needed</div>
+            <a href="#" class="price-cta">Start Free Trial</a>
+            <div class="card-body">
+            <div class="card-divider"></div>
+            <div class="features-label">What's included</div>
+            <div class="feature-list">
+                <div class="feature-section-label">Drops</div>
+                <div class="feature"><span class="check">✓</span><span><strong>10 Drops</strong> per month</span></div>
+                <div class="feature"><span class="check">✓</span><span><strong>1 slot</strong> per Drop</span></div>
+                <div class="feature"><span class="check">✓</span><span>Drops go live <strong>up to 48hrs</strong> before start</span></div>
+                <div class="feature-section-label">Reach</div>
+                <div class="feature"><span class="check">✓</span><span>In-app &amp; push notifications</span></div>
+                <div class="feature"><span class="check">✓</span><span>Link sharing + QR code</span></div>
+                <div class="feature-section-label">Tools</div>
+                <div class="feature"><span class="check">✓</span><span>AI-assisted Drop creation</span></div>
+                <div class="feature"><span class="check">✓</span><span>Ticket management + check-in</span></div>
+                <div class="feature"><span class="check">✓</span><span>Basic analytics</span></div>
+                <div class="feature"><span class="check">✓</span><span>Team management</span></div>
+            </div>
+            </div>
+        </div>
+
+        <!-- GROWTH -->
+        <div class="price-card growth featured">
+            <div class="popular-badge">Most Popular</div>
+            <div class="tier-name">Growth</div>
+            <div class="price-row">
+                <span class="price-amount">$50</span>
+                <span class="price-period">/ month</span>
+            </div>
+            <div class="price-trial">&nbsp;</div>
+            <a href="#" class="price-cta">Get Started</a>
+            <div class="card-body">
+            <div class="card-divider"></div>
+            <div class="features-label">Everything in Starter, plus</div>
+            <div class="feature-list">
+                <div class="feature-section-label">Drops</div>
+                <div class="feature"><span class="check">✓</span><span><strong>1 Drop per day</strong></span></div>
+                <div class="feature"><span class="check">✓</span><span><strong>1 slot</strong> per Drop</span></div>
+                <div class="feature"><span class="check">✓</span><span>Drops go live <strong>up to 72hrs</strong> before start</span></div>
+                <div class="feature-section-label">Reach</div>
+                <div class="feature"><span class="check">✓</span><span>SMS — <strong>500 messages/month</strong> <span style="opacity:0.5">· $0.01/msg after</span></span></div>
+                <div class="feature"><span class="check">✓</span><span>Direct Offers to customers by phone</span></div>
+                <div class="feature-section-label">Tools</div>
+                <div class="feature"><span class="check">✓</span><span>AI Drop creation + suggestions</span></div>
+                <div class="feature"><span class="check">✓</span><span>New vs existing customer pricing</span></div>
+                <div class="feature"><span class="check">✓</span><span>Invite Drop Partners to collaborate</span></div>
+                <div class="feature"><span class="check">✓</span><span>Standard analytics</span></div>
+            </div>
+            </div>
+        </div>
+
+        <!-- PRO -->
+        <div class="price-card pro">
+            <div class="tier-name">Pro</div>
+            <div class="price-row">
+                <span class="price-amount">$100</span>
+                <span class="price-period">/ month</span>
+            </div>
+            <div class="price-trial">&nbsp;</div>
+            <a href="#" class="price-cta">Get Started</a>
+            <div class="card-body">
+            <div class="card-divider"></div>
+            <div class="features-label">Everything in Growth, plus</div>
+            <div class="feature-list">
+                <div class="feature-section-label">Drops</div>
+                <div class="feature"><span class="check">✓</span><span><strong>3 Drops per day</strong></span></div>
+                <div class="feature"><span class="check">✓</span><span><strong>3 slots</strong> per Drop</span></div>
+                <div class="feature"><span class="check">✓</span><span>Drops go live <strong>up to 72hrs</strong> before start</span></div>
+                <div class="feature-section-label">Reach</div>
+                <div class="feature"><span class="check">✓</span><span>SMS — <strong>1,000 messages/month</strong> <span style="opacity:0.5">· $0.01/msg after</span></span></div>
+                <div class="feature"><span class="check">✓</span><span>Social sharing tools</span></div>
+                <div class="feature-section-label">Tools</div>
+                <div class="feature"><span class="check">✓</span><span>Full AI suite — creation and coaching</span></div>
+                <div class="feature"><span class="check">✓</span><span>Advanced analytics + revenue tracking</span></div>
+                <div class="feature"><span class="check">✓</span><span>API access — show Drops on website & apps</span></div>
+                <div class="feature"><span class="check">✓</span><span>Advanced AI support + <strong>human escalation</strong></span></div>
+            </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ENTERPRISE SECTION -->
+    <div class="enterprise-section">
+        <div class="enterprise-section-left">
+            <span class="enterprise-label">Enterprise</span>
+            <h3>Several locations or unique needs? Let's talk.</h3>
+        </div>
+        <div class="enterprise-section-right">
+            <a href="#" class="enterprise-cta">Contact Us →</a>
+        </div>
+    </div>
+
+    <div style="text-align:center; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border);">
+        <p style="font-size: 0.82rem; color: var(--text-secondary); opacity: 0.55; margin-bottom: 6px;">Partners collaborate on your Drops and bring their own audience — free for them, powerful for you.</p>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.7;">Brand or influencer? <a href="partner.html" style="color: var(--text); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;">Learn about the Nigh Partner Program →</a></p>
+    </div>
+
+
+</div>
+</body>
+</html>

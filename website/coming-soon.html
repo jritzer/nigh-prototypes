@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh — Coming Soon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius-sm: 12px;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 30% 20%, rgba(98,38,233,0.12), transparent 60%),
+                radial-gradient(ellipse 50% 40% at 70% 80%, rgba(236,25,119,0.08), transparent 60%);
+            pointer-events: none;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 560px;
+            width: 100%;
+        }
+
+        /* Logo */
+        .logo {
+            margin-bottom: 48px;
+        }
+        .logo img {
+            height: 160px;
+            width: auto;
+        }
+
+        /* Label */
+        .label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            margin-bottom: 20px;
+        }
+
+        /* Headline */
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--teal), var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Subtext */
+        p.sub {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        /* Email form */
+        .form-wrap {
+            display: flex;
+            gap: 10px;
+            max-width: 440px;
+            margin: 0 auto 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .form-wrap input[type="email"] {
+            flex: 1;
+            min-width: 220px;
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border-light);
+            background: var(--surface);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 400;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-wrap input[type="email"]::placeholder { color: var(--text-secondary); opacity: 0.6; }
+        .form-wrap input[type="email"]:focus { border-color: var(--teal); }
+        .form-wrap button {
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            background: var(--pink);
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+        .form-wrap button:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .form-note {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            opacity: 0.55;
+            margin-bottom: 56px;
+        }
+
+        /* Divider */
+        .divider {
+            width: 48px;
+            height: 2px;
+            background: var(--border-light);
+            margin: 0 auto 40px;
+            border-radius: 2px;
+        }
+
+        /* Foundation link */
+        .foundation-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 100px;
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        .foundation-link:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+        .foundation-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal);
+            flex-shrink: 0;
+        }
+        .foundation-note {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.45;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.35;
+        }
+
+        /* Success message */
+        .success-msg {
+            display: none;
+            font-size: 0.9rem;
+            color: var(--teal);
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(65,239,249,0.2);
+            background: rgba(65,239,249,0.05);
+            margin-bottom: 56px;
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s ease forwards;
+        }
+        .fade-up:nth-child(1) { animation-delay: 0.1s; }
+        .fade-up:nth-child(2) { animation-delay: 0.2s; }
+        .fade-up:nth-child(3) { animation-delay: 0.3s; }
+        .fade-up:nth-child(4) { animation-delay: 0.4s; }
+        .fade-up:nth-child(5) { animation-delay: 0.5s; }
+        .fade-up:nth-child(6) { animation-delay: 0.6s; }
+        .fade-up:nth-child(7) { animation-delay: 0.7s; }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .form-wrap { flex-direction: column; }
+            .form-wrap input[type="email"],
+            .form-wrap button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="logo fade-up">
+        <img src="Nigh_Logo.svg" alt="Nigh">
+    </div>
+
+    <div class="label fade-up">Coming Soon</div>
+
+    <h1 class="fade-up">
+        In Real Life.<br>
+        <span class="gradient-text">On Purpose.</span>
+    </h1>
+
+    <p class="sub fade-up">
+        Nigh is a new way for local businesses to bring customers in — and for people to discover moments worth showing up for.<br>We're launching soon.
+    </p>
+
+    <div class="form-wrap fade-up">
+        <input type="email" id="emailInput" placeholder="Enter your email address" autocomplete="email">
+        <button onclick="handleSignup()">Notify Me</button>
+    </div>
+    <div class="success-msg" id="successMsg">
+        ✓ You're on the list — we'll be in touch soon.
+    </div>
+    <p class="form-note fade-up">No spam. Just a heads-up when we launch.</p>
+
+</div>
+
+<div class="footer" style="position: relative; margin-top: 48px; padding-bottom: 24px;">&copy; 2026 Nigh. All rights reserved.</div>
+
+<script>
+// Paste your Google Apps Script Web App URL here after deploying
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxxfIRR3YSAqVBNEIM-c0P6u4k7vohyY2qURTeHa4sVZwoDBeZq-G35oZOar40RS_J0/exec';
+
+function handleSignup() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) {
+        document.getElementById('emailInput').focus();
+        document.getElementById('emailInput').style.borderColor = 'var(--pink)';
+        return;
+    }
+
+    // Show success immediately for good UX, POST runs in background
+    document.querySelector('.form-wrap').style.display = 'none';
+    document.querySelector('.form-note').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+
+    // POST to Google Apps Script → Google Sheet
+    fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, timestamp: new Date().toISOString() })
+    }).catch(function(err) {
+        console.error('Signup error:', err);
+    });
+}
+document.getElementById('emailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleSignup();
+    this.style.borderColor = '';
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get the Nigh App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* =====================================================
+           NIGH SMART APP REDIRECT
+           -------------------------------------------------------
+           UPDATE THESE TWO URLS when your app links are ready:
+             IOS_URL  → your TestFlight or App Store link
+             ANDROID_URL → your Google Play or APK link
+           ===================================================== */
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --purple: #6226E9; --blue: #0E4EF5; --teal: #41EFF9; --pink: #EC1977;
+            --bg: #0B0B1A; --surface: #12122A; --border: rgba(255,255,255,0.08);
+            --text: #F5F5F7; --text-secondary: #A8A8C0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 24px;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 56px 48px;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+        }
+        .logo { height: 32px; margin-bottom: 32px; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 24px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        h1 { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 10px; }
+        p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 36px; }
+        .btn-row { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 14px 28px; border-radius: 12px; font-size: 0.95rem;
+            font-weight: 700; font-family: inherit; text-decoration: none; transition: all 0.2s;
+        }
+        .btn-ios { background: var(--teal); color: var(--bg); }
+        .btn-ios:hover { filter: brightness(1.1); }
+        .btn-android { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); }
+        .btn-android:hover { background: rgba(255,255,255,0.1); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="Nigh_Logo.svg" alt="Nigh" class="logo">
+
+        <!-- Redirecting state (shown briefly on mobile) -->
+        <div id="redirecting">
+            <div class="spinner"></div>
+            <h1>Taking you there…</h1>
+            <p>Sending you to the right app store for your device.</p>
+        </div>
+
+        <!-- Fallback state (shown on desktop or if redirect fails) -->
+        <div id="fallback" class="hidden">
+            <h1>Get the Nigh App</h1>
+            <p>Choose your platform to download the app and start discovering moments worth showing up for.</p>
+            <div class="btn-row">
+                <a id="ios-btn" href="#" class="btn btn-ios">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.99 2.97 12.5 4.7 9.56C5.55 8.1 7.04 7.18 8.67 7.16C9.95 7.14 11.17 8.02 11.95 8.02C12.73 8.02 14.23 6.96 15.79 7.13C16.44 7.16 18.12 7.4 19.17 8.98C19.08 9.04 16.95 10.29 16.97 12.87C17 15.96 19.64 16.96 19.67 16.97C19.64 17.05 19.23 18.39 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+                    Download for iPhone
+                </a>
+                <a id="android-btn" href="#" class="btn btn-android">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M3.18 23.04L13.22 12.99L3.17 2.95C2.87 3.39 2.71 3.91 2.71 4.48V21.52C2.71 22.09 2.87 22.61 3.18 23.04ZM14.63 11.59L17.35 8.87L5.27 2.04L14.63 11.59ZM14.63 14.4L5.27 23.96L17.35 17.13L14.63 14.4ZM21.29 11.59C21.29 11.12 21.06 10.65 20.6 10.41L18.57 9.28L15.63 12.22L18.57 15.16L20.6 14.03C21.06 13.79 21.29 13.32 21.29 12.85V11.59Z"/></svg>
+                    Download for Android
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // UPDATE THESE TWO URLS with your actual app links
+        // =====================================================
+        var IOS_URL     = 'YOUR_TESTFLIGHT_OR_APPSTORE_URL';   // e.g. https://testflight.apple.com/join/XXXXXXXX
+        var ANDROID_URL = 'YOUR_GOOGLE_PLAY_OR_APK_URL';       // e.g. https://play.google.com/store/apps/details?id=com.nigh
+
+        // Set fallback button links
+        document.getElementById('ios-btn').href     = IOS_URL;
+        document.getElementById('android-btn').href = ANDROID_URL;
+
+        var ua      = navigator.userAgent || '';
+        var isIOS   = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+        var isAndroid = /Android/.test(ua);
+
+        if (isIOS) {
+            setTimeout(function() { window.location.href = IOS_URL; }, 400);
+        } else if (isAndroid) {
+            setTimeout(function() { window.location.href = ANDROID_URL; }, 400);
+        } else {
+            // Desktop — show both options
+            document.getElementById('redirecting').classList.add('hidden');
+            document.getElementById('fallback').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
