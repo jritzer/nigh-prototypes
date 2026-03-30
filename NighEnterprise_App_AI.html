@@ -190,12 +190,13 @@ function layout() {
 // ─────────────────────────────────────────────────────────────
 function sidebar() {
   const nav = [
-    { id:'dashboard', label:'Dashboard',    icon:'◫'  },
-    { id:'locations', label:'Locations',    icon:'📍' },
-    { id:'drops',     label:'Drops',        icon:'⚡' },
-    { id:'analytics', label:'Analytics',    icon:'📊' },
-    { id:'users',     label:'Users & Access',icon:'👥'},
-    { id:'settings',  label:'Settings',     icon:'⚙️' },
+    { id:'dashboard',  label:'Dashboard',    icon:'◫'  },
+    { id:'locations',  label:'Locations',    icon:'📍' },
+    { id:'drops',      label:'Drops',        icon:'⚡' },
+    { id:'customers',  label:'Customers',    icon:'🙋' },
+    { id:'analytics',  label:'Analytics',    icon:'📊' },
+    { id:'users',      label:'Users & Access',icon:'👥'},
+    { id:'settings',   label:'Settings',     icon:'⚙️' },
   ];
   return `
     <nav style="width:230px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;">
@@ -253,7 +254,7 @@ function sidebar() {
 // TOPBAR
 // ─────────────────────────────────────────────────────────────
 function topbar() {
-  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', analytics:'Analytics', users:'Users & Access', settings:'Settings' };
+  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', customers:'Customers', analytics:'Analytics', users:'Users & Access', settings:'Settings' };
   return `
     <header style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:58px;display:flex;align-items:center;gap:14px;flex-shrink:0;">
       <div style="flex:1;">
@@ -284,6 +285,7 @@ function renderPage() {
     case 'dashboard': return rDashboard();
     case 'locations': return rLocations();
     case 'drops':     return rDrops();
+    case 'customers': return rCustomers();
     case 'analytics': return rAnalytics();
     case 'users':     return rUsers();
     case 'settings':  return rSettings();
@@ -677,6 +679,186 @@ function rDrops() {
       ${kpi('Total Pushed', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to locations', '📡', '#0ea5e9')}
       ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', '🎯', '#f59e0b')}
       ${kpi('Corp Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', '✅', '#10b981')}
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// CUSTOMERS
+// ─────────────────────────────────────────────────────────────
+const CUSTOMERS = [
+  { id:'C01',  name:'Maya Okafor',      city:'Denver',       state:'CO', region:'RG2', homeLocation:'L08', drops:14, checkins:13, noShows:1,  lastDrop:'Mar 28, 2026', totalSpend:120, status:'active'   },
+  { id:'C02',  name:'James Whitfield',  city:'Los Angeles',  state:'CA', region:'RG1', homeLocation:'L01', drops:11, checkins:10, noShows:1,  lastDrop:'Mar 30, 2026', totalSpend:80,  status:'active'   },
+  { id:'C03',  name:'Priya Desai',      city:'San Francisco',state:'CA', region:'RG1', homeLocation:'L04', drops:10, checkins:10, noShows:0,  lastDrop:'Mar 29, 2026', totalSpend:0,   status:'active'   },
+  { id:'C04',  name:'Carlos Mejia',     city:'Boulder',      state:'CO', region:'RG2', homeLocation:'L09', drops:9,  checkins:8,  noShows:1,  lastDrop:'Mar 25, 2026', totalSpend:60,  status:'active'   },
+  { id:'C05',  name:'Tessa Harrington', city:'New York',     state:'NY', region:'RG3', homeLocation:'L14', drops:9,  checkins:9,  noShows:0,  lastDrop:'Mar 30, 2026', totalSpend:40,  status:'active'   },
+  { id:'C06',  name:'Darius Bell',      city:'Seattle',      state:'WA', region:'RG1', homeLocation:'L06', drops:8,  checkins:7,  noShows:1,  lastDrop:'Mar 22, 2026', totalSpend:0,   status:'active'   },
+  { id:'C07',  name:'Leila Nakamura',   city:'Austin',       state:'TX', region:'RG5', homeLocation:'L18', drops:8,  checkins:8,  noShows:0,  lastDrop:'Mar 27, 2026', totalSpend:100, status:'active'   },
+  { id:'C08',  name:'Sam Thornton',     city:'Portland',     state:'OR', region:'RG1', homeLocation:'L07', drops:7,  checkins:6,  noShows:1,  lastDrop:'Mar 18, 2026', totalSpend:30,  status:'active'   },
+  { id:'C09',  name:'Amara Osei',       city:'Atlanta',      state:'GA', region:'RG4', homeLocation:'L17', drops:7,  checkins:7,  noShows:0,  lastDrop:'Mar 26, 2026', totalSpend:0,   status:'active'   },
+  { id:'C10',  name:'Finn McCarthy',    city:'Boston',       state:'MA', region:'RG3', homeLocation:'L12', drops:6,  checkins:5,  noShows:1,  lastDrop:'Mar 20, 2026', totalSpend:45,  status:'active'   },
+  { id:'C11',  name:'Zoe Castillo',     city:'Miami',        state:'FL', region:'RG4', homeLocation:'L16', drops:6,  checkins:6,  noShows:0,  lastDrop:'Mar 29, 2026', totalSpend:20,  status:'active'   },
+  { id:'C12',  name:'Noah Eriksson',    city:'Denver',       state:'CO', region:'RG2', homeLocation:'L08', drops:5,  checkins:5,  noShows:0,  lastDrop:'Mar 15, 2026', totalSpend:0,   status:'active'   },
+  { id:'C13',  name:'Isla Grant',       city:'Chicago',      state:'IL', region:'RG5', homeLocation:'L20', drops:5,  checkins:4,  noShows:1,  lastDrop:'Mar 10, 2026', totalSpend:60,  status:'active'   },
+  { id:'C14',  name:'Marcus Wade',      city:'Dallas',       state:'TX', region:'RG5', homeLocation:'L19', drops:4,  checkins:4,  noShows:0,  lastDrop:'Mar 8, 2026',  totalSpend:0,   status:'active'   },
+  { id:'C15',  name:'Bri Fontaine',     city:'Park City',    state:'UT', region:'RG2', homeLocation:'L11', drops:4,  checkins:3,  noShows:1,  lastDrop:'Feb 28, 2026', totalSpend:80,  status:'active'   },
+  { id:'C16',  name:'Kenji Mori',       city:'Palo Alto',    state:'CA', region:'RG1', homeLocation:'L05', drops:3,  checkins:3,  noShows:0,  lastDrop:'Mar 5, 2026',  totalSpend:0,   status:'active'   },
+  { id:'C17',  name:'Ola Adeyemi',      city:'Washington',   state:'DC', region:'RG3', homeLocation:'L15', drops:3,  checkins:2,  noShows:1,  lastDrop:'Feb 22, 2026', totalSpend:40,  status:'active'   },
+  { id:'C18',  name:'Skylar Reeve',     city:'Breckenridge', state:'CO', region:'RG2', homeLocation:'L10', drops:2,  checkins:2,  noShows:0,  lastDrop:'Feb 15, 2026', totalSpend:60,  status:'at-risk'  },
+  { id:'C19',  name:'Jade Holloway',    city:'San Diego',    state:'CA', region:'RG1', homeLocation:'L03', drops:2,  checkins:1,  noShows:1,  lastDrop:'Feb 10, 2026', totalSpend:0,   status:'at-risk'  },
+  { id:'C20',  name:'Tyler Benson',     city:'Burlington',   state:'VT', region:'RG3', homeLocation:'L13', drops:1,  checkins:0,  noShows:1,  lastDrop:'Jan 30, 2026', totalSpend:0,   status:'churned'  },
+];
+
+const CUST_SORT_OPTIONS = ['drops','checkins','spend','showRate'];
+
+function rCustomers() {
+  const custSort = S.custSort || 'checkins';
+  const custFilter = S.custFilter || 'all';
+  const custRegion = S.custRegion || 'all';
+
+  let list = [...CUSTOMERS];
+  if (custFilter !== 'all') list = list.filter(c=>c.status===custFilter);
+  if (custRegion !== 'all') list = list.filter(c=>c.region===custRegion);
+  list.sort((a,b)=>{
+    if (custSort==='drops')    return b.drops-a.drops;
+    if (custSort==='checkins') return b.checkins-a.checkins;
+    if (custSort==='spend')    return b.totalSpend-a.totalSpend;
+    if (custSort==='showRate') return (b.checkins/b.drops)-(a.checkins/a.drops);
+    return 0;
+  });
+
+  const totalUnique   = CUSTOMERS.length;
+  const totalCI       = CUSTOMERS.reduce((a,c)=>a+c.checkins,0);
+  const avgDrops      = (CUSTOMERS.reduce((a,c)=>a+c.drops,0)/CUSTOMERS.length).toFixed(1);
+  const avgShow       = Math.round(CUSTOMERS.reduce((a,c)=>a+(c.checkins/c.drops),0)/CUSTOMERS.length*100);
+  const multiLocCount = CUSTOMERS.filter(c=>{
+    const loc = LOCATIONS.find(l=>l.id===c.homeLocation);
+    return loc && LOCATIONS.filter(l=>l.region===loc.region).length > 1;
+  }).length;
+
+  const statusColors  = { active:'#10b981', 'at-risk':'#f59e0b', churned:'#ef4444' };
+  const statusLabels  = { active:'Active', 'at-risk':'At Risk', churned:'Churned' };
+
+  // Regional customer breakdown
+  const regBreakdown = REGIONS.map(r=>{
+    const cs = CUSTOMERS.filter(c=>c.region===r.id);
+    return { ...r, count:cs.length, ci:cs.reduce((a,c)=>a+c.checkins,0), show:cs.length?Math.round(cs.reduce((a,c)=>a+(c.checkins/c.drops),0)/cs.length*100):0 };
+  });
+
+  return `
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
+      ${kpi('Unique Customers', String(totalUnique),   'across all locations','🙋','#6366f1')}
+      ${kpi('Total Check-ins',  fmtNum(totalCI),       'all-time customer CI', '✅','#10b981')}
+      ${kpi('Avg Drops / Customer', avgDrops,          'per active customer',  '⚡','#0ea5e9')}
+      ${kpi('Avg Show Rate',    avgShow+'%',            'across all customers', '📈','#f59e0b')}
+      ${kpi('Multi-Location',   multiLocCount,          'visited 2+ locations', '📍','#8b5cf6')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:18px;margin-bottom:18px;">
+      <!-- Filters + table -->
+      <div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
+          <!-- Status filter -->
+          <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:8px;padding:3px;">
+            ${['all','active','at-risk','churned'].map(f=>`
+              <button onclick="ss({custFilter:'${f}'})" style="background:${custFilter===f?'#fff':'transparent'};border:none;padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:${custFilter===f?'700':'500'};color:${custFilter===f?'#0f172a':'#64748b'};cursor:pointer;white-space:nowrap;box-shadow:${custFilter===f?'0 1px 4px rgba(0,0,0,0.08)':'none'};">${f==='all'?'All':statusLabels[f]||f}</button>
+            `).join('')}
+          </div>
+          <!-- Region filter -->
+          <select onchange="ss({custRegion:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 28px 7px 10px;font-size:0.8rem;font-weight:600;background:#fff;cursor:pointer;">
+            <option value="all">All Regions</option>
+            ${REGIONS.map(r=>`<option value="${r.id}" ${custRegion===r.id?'selected':''}>${r.name}</option>`).join('')}
+          </select>
+          <!-- Sort -->
+          <select onchange="ss({custSort:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 28px 7px 10px;font-size:0.8rem;font-weight:600;background:#fff;cursor:pointer;">
+            <option value="checkins">Sort: Check-ins</option>
+            <option value="drops">Sort: Drops</option>
+            <option value="spend">Sort: Total Spend</option>
+            <option value="showRate">Sort: Show Rate</option>
+          </select>
+          <div style="margin-left:auto;font-size:0.78rem;color:#64748b;">${list.length} customer${list.length!==1?'s':''}</div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+          <table>
+            <thead>
+              <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+                ${['#','Customer','Home Location','Region','Drops','Check-ins','Show Rate','Spend','Status','Last Drop'].map((h,i)=>`
+                  <th style="padding:10px 12px;text-align:${i>2?'right':i===9?'left':'left'};font-size:0.63rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;white-space:nowrap;">${h}</th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map((c,i)=>{
+                const loc = LOCATIONS.find(l=>l.id===c.homeLocation);
+                const reg = regionById(c.region);
+                const sr  = Math.round(c.checkins/c.drops*100);
+                return `
+                  <tr style="border-bottom:1px solid #f8f9fb;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:10px 12px;font-size:0.78rem;font-weight:700;color:#cbd5e1;">${i+1}</td>
+                    <td style="padding:10px 12px;">
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:28px;height:28px;background:${statusColors[c.status]}20;color:${statusColors[c.status]};border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;">${c.name.split(' ').map(n=>n[0]).join('')}</div>
+                        <div>
+                          <div style="font-weight:700;font-size:0.82rem;white-space:nowrap;">${c.name}</div>
+                          <div style="font-size:0.65rem;color:#94a3b8;">${c.city}, ${c.state}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:#475569;white-space:nowrap;">${loc?.name||'—'}</td>
+                    <td style="padding:10px 12px;"><span style="background:${reg?.color}15;color:${reg?.color};font-size:0.63rem;font-weight:800;padding:2px 7px;border-radius:20px;">${reg?.abbr}</span></td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:700;">${c.drops}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:800;">${c.checkins}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:800;color:${showColor(sr)};">${sr}%</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:600;">${c.totalSpend>0?'$'+c.totalSpend:'—'}</td>
+                    <td style="padding:10px 12px;text-align:right;">
+                      <span style="background:${statusColors[c.status]}18;color:${statusColors[c.status]};font-size:0.63rem;font-weight:800;padding:3px 8px;border-radius:20px;">${statusLabels[c.status]}</span>
+                    </td>
+                    <td style="padding:10px 12px;font-size:0.75rem;color:#64748b;white-space:nowrap;">${c.lastDrop}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right column: breakdown + segments -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <!-- Status breakdown -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;">
+          <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">Customer Health</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Across all regions</div>
+          ${[['active','Active','#10b981'],['at-risk','At Risk','#f59e0b'],['churned','Churned','#ef4444']].map(([s,label,color])=>{
+            const count = CUSTOMERS.filter(c=>c.status===s).length;
+            return statusBar(label, count, CUSTOMERS.length, color);
+          }).join('')}
+          <div style="font-size:0.7rem;color:#94a3b8;margin-top:10px;line-height:1.6;">At Risk = no drop in 30+ days. Churned = no drop in 60+ days or 0 check-ins.</div>
+        </div>
+
+        <!-- Regional breakdown -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;">
+          <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">By Region</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Customers per region</div>
+          ${regBreakdown.map(r=>`
+            <div onclick="ss({custRegion:custRegion===r.id?'all':r.id})" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f8f9fb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+              <div style="width:8px;height:8px;border-radius:50%;background:${r.color};flex-shrink:0;"></div>
+              <span style="font-size:0.8rem;font-weight:700;flex:1;">${r.name}</span>
+              <span style="font-size:0.8rem;font-weight:800;">${r.count}</span>
+              <span style="font-size:0.68rem;color:${showColor(r.show)};font-weight:700;">${r.show}% show</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Multi-location insight -->
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:14px;padding:18px;">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#0369a1;margin-bottom:6px;">💡 Cross-Location Insight</div>
+          <div style="font-size:0.8rem;color:#0c4a6e;line-height:1.65;"><strong>${multiLocCount} customers</strong> have visited drops across multiple locations in their region. These are your highest-loyalty customers — ideal targets for enterprise-wide drop invitations.</div>
+        </div>
+
+      </div>
     </div>
   `;
 }
