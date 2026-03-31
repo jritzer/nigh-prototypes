@@ -444,7 +444,7 @@ function sidebar() {
             font-size:0.85rem;
             border-left:3px solid ${S.page===n.id?'#6366f1':'transparent'};
             transition:all 0.12s;">
-            <span style="width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${n.icon==='nighBug' ? nighBug(18) : ic(n.icon,18)}</span>
+            <span style="width:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${n.icon==='nighBug' ? nighBug(24) : ic(n.icon,20)}</span>
             ${n.label}
           </div>
         `).join('')}
@@ -531,11 +531,11 @@ function rDashboard() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Check-ins MTD',   fmtNum(totalCI),   'across all locations',ic('check',15),'#10b981')}
-      ${kpi('Drops MTD',       String(totalDrops), 'across all locations',nighBug(15),'#6366f1')}
-      ${kpi('Avg Show Rate',   avgShow+'%',        'reserv → check-in',  ic('trending',15),'#f59e0b')}
-      ${kpi('Revenue MTD',     fmtMoney(totalRev), 'paid drops only',    ic('dollar',15),'#0ea5e9')}
-      ${kpi('Live Right Now',  liveNow+' drops',   activeCount+' active locations',ic('radio',15),'#ef4444')}
+      ${kpi('Check-ins MTD',   fmtNum(totalCI),   'across all locations',ic('check',16),'#10b981')}
+      ${kpi('Drops MTD',       String(totalDrops), 'across all locations',nighBug(19),'#6366f1')}
+      ${kpi('Avg Show Rate',   avgShow+'%',        'reserv → check-in',  ic('trending',16),'#f59e0b')}
+      ${kpi('Revenue MTD',     fmtMoney(totalRev), 'paid drops only',    ic('dollar',16),'#0ea5e9')}
+      ${kpi('Live Right Now',  liveNow+' drops',   activeCount+' active locations',ic('radio',16),'#ef4444')}
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:18px;">
@@ -891,10 +891,10 @@ function rDrops() {
 
     <!-- Drop stats summary -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;">
-      ${kpi('Total Corp Drops', String(CORP_DROPS.length), 'all time', nighBug(15), '#6366f1')}
-      ${kpi('Total Pushed', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to locations', ic('send',15), '#0ea5e9')}
-      ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', ic('target',15), '#f59e0b')}
-      ${kpi('Corp Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', ic('check',15), '#10b981')}
+      ${kpi('Total Corp Drops', String(CORP_DROPS.length), 'all time', nighBug(19), '#6366f1')}
+      ${kpi('Total Pushed', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to locations', ic('send',16), '#0ea5e9')}
+      ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', ic('target',16), '#f59e0b')}
+      ${kpi('Corp Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', ic('check',16), '#10b981')}
     </div>
   `;
 }
@@ -946,10 +946,10 @@ function rCollections() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Collections',    String(totalCollections), 'total campaigns',             ic('layers',15),'#6366f1')}
-      ${kpi('Live Now',       String(liveCount),        'actively running',             ic('radio',15),'#10b981')}
-      ${kpi('Upcoming',       String(upcomingCount),    'in planning or confirmed',     ic('cal',15),'#3b82f6')}
-      ${kpi('Total Participants', String(totalParticipants), 'location drops confirmed', ic('map',15),'#f59e0b')}
+      ${kpi('Collections',    String(totalCollections), 'total campaigns',             ic('layers',16),'#6366f1')}
+      ${kpi('Live Now',       String(liveCount),        'actively running',             ic('radio',16),'#10b981')}
+      ${kpi('Upcoming',       String(upcomingCount),    'in planning or confirmed',     ic('cal',16),'#3b82f6')}
+      ${kpi('Total Participants', String(totalParticipants), 'location drops confirmed', ic('map',16),'#f59e0b')}
     </div>
 
     <!-- Filter tabs -->
@@ -1275,11 +1275,11 @@ function rCustomers() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Unique Customers', String(totalUnique),   'across all locations',ic('user',15),'#6366f1')}
-      ${kpi('Total Check-ins',  fmtNum(totalCI),       'all-time customer CI', ic('check',15),'#10b981')}
-      ${kpi('Avg Drops / Customer', avgDrops,          'per active customer',  nighBug(15),'#0ea5e9')}
-      ${kpi('Avg Show Rate',    avgShow+'%',            'across all customers', ic('trending',15),'#f59e0b')}
-      ${kpi('Multi-Location',   multiLocCount,          'visited 2+ locations', ic('map',15),'#8b5cf6')}
+      ${kpi('Unique Customers', String(totalUnique),   'across all locations',ic('user',16),'#6366f1')}
+      ${kpi('Total Check-ins',  fmtNum(totalCI),       'all-time customer CI', ic('check',16),'#10b981')}
+      ${kpi('Avg Drops / Customer', avgDrops,          'per active customer',  nighBug(19),'#0ea5e9')}
+      ${kpi('Avg Show Rate',    avgShow+'%',            'across all customers', ic('trending',16),'#f59e0b')}
+      ${kpi('Multi-Location',   multiLocCount,          'visited 2+ locations', ic('map',16),'#8b5cf6')}
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 280px;gap:18px;margin-bottom:18px;">
@@ -1706,11 +1706,11 @@ function rBilling() {
   return `
     <!-- Hero KPI bar -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;">
-      ${kpi('Plan',           plan.name,                         'Nigh Enterprise',                  ic('creditCard',15),'#6366f1')}
-      ${kpi('Monthly Cost',   '$'+fmtNum(monthlyTotal),          plan.locations+' locations × $'+plan.pricePerLoc, ic('dollar',15),'#0f172a')}
-      ${kpi('Annual Value',   '$'+fmtNum(annualTotal),           'contracted ARR',                   ic('trending',15),'#7c3aed')}
-      ${kpi('Next Renewal',   plan.renewal,                      'auto-renews monthly',              ic('clock',15),'#0ea5e9')}
-      ${kpi('Your CSM',       plan.csmName,                      plan.csmEmail,                      ic('user',15),'#10b981')}
+      ${kpi('Plan',           plan.name,                         'Nigh Enterprise',                  ic('creditCard',16),'#6366f1')}
+      ${kpi('Monthly Cost',   '$'+fmtNum(monthlyTotal),          plan.locations+' locations × $'+plan.pricePerLoc, ic('dollar',16),'#0f172a')}
+      ${kpi('Annual Value',   '$'+fmtNum(annualTotal),           'contracted ARR',                   ic('trending',16),'#7c3aed')}
+      ${kpi('Next Renewal',   plan.renewal,                      'auto-renews monthly',              ic('clock',16),'#0ea5e9')}
+      ${kpi('Your CSM',       plan.csmName,                      plan.csmEmail,                      ic('user',16),'#10b981')}
     </div>
 
     <!-- ROI / Value Delivered -->
