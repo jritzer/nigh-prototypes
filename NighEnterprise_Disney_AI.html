@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh Enterprise — Disney Parks</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #0f172a; }
+  input, select, textarea, button { font-family: inherit; }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { padding: 0; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+
+// ─────────────────────────────────────────────────────────────
+// ICONS
+// ─────────────────────────────────────────────────────────────
+const I = {
+  home:       '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  store:      '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/><path d="M9 8a3 3 0 01-6 0"/><path d="M15 8a3 3 0 01-6 0"/><path d="M21 8a3 3 0 01-6 0"/>',
+  zap:        '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>',
+  layers:     '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  user:       '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users:      '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+  chart:      '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  creditCard: '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  settings:   '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  check:      '<polyline points="20 6 9 17 4 12"/>',
+  x:          '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  map:        '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  bell:       '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  send:       '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
+  shield:     '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  search:     '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  cal:        '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  clock:      '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  radio:      '<path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14.14"/><circle cx="12" cy="12" r="2"/><path d="M7.76 16.24a6 6 0 010-8.49"/><path d="M4.93 19.07a10 10 0 010-14.14"/>',
+  dollar:     '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  target:     '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+};
+function ic(n, s) {
+  return `<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;">${I[n]||''}</svg>`;
+}
+function nighBug(s) {
+  s = s || 18;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 360 360" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;">
+    <path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/>
+    <polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/>
+    <ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/>
+    <path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/>
+  </svg>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+const S = {
+  page: 'dashboard',
+  hierarchyView: 'resort',   // 'resort' | 'park' | 'location'
+  resortFilter: 'all',
+  parkFilter: 'all',
+  locationDetail: null,
+  dropsTab: 'all',
+  analyticsSort: 'checkins',
+  pushModal: false,
+  pushStep: 1,
+  pushTarget: 'all',
+  userRoleFilter: 'all',
+  collectionDetail: null,
+  collectionFilter: 'all',
+  newCollModal: false,
+  newCollStep: 1,
+  newCollType: 'internal',
+};
+
+// ─────────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────────
+const RESORTS = [
+  { id:'R01', name:'Walt Disney World',  color:'#0057B8', abbr:'WDW' },
+  { id:'R02', name:'Disneyland Resort',  color:'#e31837', abbr:'DLR' },
+];
+
+const PARKS = [
+  { id:'P01', name:'Magic Kingdom',         resort:'R01', color:'#9333ea', abbr:'MK'  },
+  { id:'P02', name:'EPCOT',                 resort:'R01', color:'#0ea5e9', abbr:'EP'  },
+  { id:'P03', name:'Hollywood Studios',     resort:'R01', color:'#f59e0b', abbr:'HS'  },
+  { id:'P04', name:'Animal Kingdom',        resort:'R01', color:'#10b981', abbr:'AK'  },
+  { id:'P05', name:'Typhoon Lagoon',        resort:'R01', color:'#06b6d4', abbr:'TL'  },
+  { id:'P06', name:'Blizzard Beach',        resort:'R01', color:'#3b82f6', abbr:'BB'  },
+  { id:'P07', name:'Disney Springs',        resort:'R01', color:'#f97316', abbr:'DS'  },
+  { id:'P08', name:'Disneyland Park',       resort:'R02', color:'#dc2626', abbr:'DLP' },
+  { id:'P09', name:'California Adventure',  resort:'R02', color:'#16a34a', abbr:'DCA' },
+];
+
+const LOCATIONS = [
+  // Magic Kingdom
+  { id:'L01', name:"Cinderella's Royal Table", land:'Fantasyland',    park:'P01', resort:'R01', manager:'Marisol Vega',  status:'active',   activeDrop:true,  mtdDrops:9,  mtdCheckins:621, mtdRevenue:3840, showRate:87, vendorType:'disney-owned', category:'dining'     },
+  { id:'L02', name:'Crystal Palace',           land:'Main Street',    park:'P01', resort:'R01', manager:'Derek Owens',   status:'active',   activeDrop:false, mtdDrops:6,  mtdCheckins:412, mtdRevenue:2180, showRate:81, vendorType:'disney-owned', category:'dining'     },
+  { id:'L03', name:'Space Mountain Merch',     land:'Tomorrowland',   park:'P01', resort:'R01', manager:'Kim Fairfield', status:'active',   activeDrop:false, mtdDrops:5,  mtdCheckins:348, mtdRevenue:1920, showRate:79, vendorType:'disney-owned', category:'merch'      },
+  { id:'L04', name:'Bibbidi Bobbidi Boutique', land:'Fantasyland',    park:'P01', resort:'R01', manager:'Sasha Monroe',  status:'active',   activeDrop:true,  mtdDrops:8,  mtdCheckins:524, mtdRevenue:4210, showRate:90, vendorType:'disney-owned', category:'experience' },
+  // EPCOT
+  { id:'L05', name:'Chefs de France',          land:'World Showcase', park:'P02', resort:'R01', manager:'Renée Moreau',  status:'active',   activeDrop:false, mtdDrops:5,  mtdCheckins:318, mtdRevenue:1640, showRate:76, vendorType:'disney-owned', category:'dining'     },
+  { id:'L06', name:'Spice Road Table',         land:'World Showcase', park:'P02', resort:'R01', manager:'Amir Hassan',   status:'active',   activeDrop:false, mtdDrops:3,  mtdCheckins:192, mtdRevenue:880,  showRate:71, vendorType:'3rd-party',   category:'dining'     },
+  { id:'L07', name:'Starbucks World Discovery',land:'World Discovery', park:'P02', resort:'R01', manager:'Casey Wells',  status:'active',   activeDrop:false, mtdDrops:2,  mtdCheckins:108, mtdRevenue:480,  showRate:68, vendorType:'3rd-party',   category:'f&b'        },
+  { id:'L08', name:'Garden Grill',             land:'World Nature',   park:'P02', resort:'R01', manager:'Tara Bloom',    status:'active',   activeDrop:true,  mtdDrops:7,  mtdCheckins:489, mtdRevenue:3120, showRate:84, vendorType:'disney-owned', category:'dining'     },
+  // Hollywood Studios
+  { id:'L09', name:"Oga's Cantina",            land:"Galaxy's Edge",  park:'P03', resort:'R01', manager:'Rex Starr',     status:'active',   activeDrop:true,  mtdDrops:10, mtdCheckins:712, mtdRevenue:5480, showRate:91, vendorType:'disney-owned', category:'dining'     },
+  { id:'L10', name:"Savi's Workshop",          land:"Galaxy's Edge",  park:'P03', resort:'R01', manager:'Nova Patel',    status:'active',   activeDrop:false, mtdDrops:7,  mtdCheckins:498, mtdRevenue:8200, showRate:88, vendorType:'disney-owned', category:'experience' },
+  { id:'L11', name:'Docking Bay 7',            land:"Galaxy's Edge",  park:'P03', resort:'R01', manager:'Finn Solo',     status:'active',   activeDrop:false, mtdDrops:4,  mtdCheckins:276, mtdRevenue:1440, showRate:80, vendorType:'disney-owned', category:'dining'     },
+  // Animal Kingdom
+  { id:'L12', name:"Satu'li Canteen",          land:'Pandora',        park:'P04', resort:'R01', manager:'Maya Rivers',   status:'active',   activeDrop:false, mtdDrops:5,  mtdCheckins:342, mtdRevenue:1820, showRate:78, vendorType:'disney-owned', category:'dining'     },
+  { id:'L13', name:'Windtraders',              land:'Pandora',        park:'P04', resort:'R01', manager:'Lena Cho',      status:'active',   activeDrop:false, mtdDrops:4,  mtdCheckins:241, mtdRevenue:1640, showRate:75, vendorType:'disney-owned', category:'merch'      },
+  // Typhoon Lagoon
+  { id:'L14', name:"Typhoon Tilly's",          land:'Main Lagoon',    park:'P05', resort:'R01', manager:'Caden Surf',    status:'active',   activeDrop:false, mtdDrops:2,  mtdCheckins:148, mtdRevenue:640,  showRate:72, vendorType:'disney-owned', category:'dining'     },
+  { id:'L15', name:'Surf Pool Gear Shop',      land:'Main Lagoon',    park:'P05', resort:'R01', manager:'Jade Tide',     status:'active',   activeDrop:false, mtdDrops:1,  mtdCheckins:84,  mtdRevenue:520,  showRate:69, vendorType:'disney-owned', category:'merch'      },
+  // Disney Springs
+  { id:'L16', name:'The BOATHOUSE',            land:'The Landing',    park:'P07', resort:'R01', manager:'Grant Harbor',  status:'active',   activeDrop:true,  mtdDrops:6,  mtdCheckins:418, mtdRevenue:2640, showRate:82, vendorType:'3rd-party',   category:'dining'     },
+  { id:'L17', name:'Earl of Sandwich',         land:'Marketplace',    park:'P07', resort:'R01', manager:'Sam Turner',    status:'active',   activeDrop:false, mtdDrops:2,  mtdCheckins:142, mtdRevenue:490,  showRate:70, vendorType:'3rd-party',   category:'f&b'        },
+  { id:'L18', name:'World of Disney',          land:'Marketplace',    park:'P07', resort:'R01', manager:'Dana Cruz',     status:'active',   activeDrop:false, mtdDrops:5,  mtdCheckins:381, mtdRevenue:3200, showRate:83, vendorType:'disney-owned', category:'merch'      },
+  { id:'L19', name:'Rainforest Cafe',          land:'Marketplace',    park:'P07', resort:'R01', manager:'Oliver Green',  status:'active',   activeDrop:false, mtdDrops:3,  mtdCheckins:198, mtdRevenue:1020, showRate:74, vendorType:'3rd-party',   category:'dining'     },
+  { id:'L20', name:'The Edison',               land:'The Landing',    park:'P07', resort:'R01', manager:'Violet Lake',   status:'inactive', activeDrop:false, mtdDrops:1,  mtdCheckins:62,  mtdRevenue:280,  showRate:62, vendorType:'3rd-party',   category:'dining'     },
+  // Disneyland
+  { id:'L21', name:'Blue Bayou Restaurant',    land:'New Orleans Sq', park:'P08', resort:'R02', manager:'Pierre Beau',   status:'active',   activeDrop:true,  mtdDrops:7,  mtdCheckins:521, mtdRevenue:4180, showRate:86, vendorType:'disney-owned', category:'dining'     },
+  { id:'L22', name:'Haunted Mansion Merch',    land:'Liberty Square', park:'P08', resort:'R02', manager:'Grim Hooper',   status:'active',   activeDrop:false, mtdDrops:4,  mtdCheckins:248, mtdRevenue:1680, showRate:77, vendorType:'disney-owned', category:'merch'      },
+];
+
+const CORP_DROPS = [
+  { id:'CD01', title:'50th Anniversary Limited Pin Drop',   type:'push',  scope:'Walt Disney World',   scopeDetail:'20 locations',  status:'scheduled', date:'Apr 12, 2026', totalCap:880,  totalRes:641,  totalCI:0,   revenue:0,    creator:'Jordan Magic'  },
+  { id:'CD02', title:'Imagineers Backstage Tour',           type:'local', scope:'Magic Kingdom',       scopeDetail:'1 location',    status:'live',      date:'Mar 30, 2026', totalCap:20,   totalRes:20,   totalCI:14,  revenue:1400, creator:'Taylor Rides'  },
+  { id:'CD03', title:"Royal Breakfast with Cinderella",     type:'local', scope:"Cinderella's Royal Table", scopeDetail:'1 location', status:'live',   date:'Mar 30, 2026', totalCap:60,   totalRes:58,   totalCI:41,  revenue:3280, creator:'Marisol Vega'  },
+  { id:'CD04', title:"Galaxy's Edge Opening Night Replay",  type:'push',  scope:'Hollywood Studios',   scopeDetail:'3 locations',   status:'ended',     date:'Mar 15, 2026', totalCap:120,  totalRes:118,  totalCI:104, revenue:0,    creator:'Rex Starr'     },
+  { id:'CD05', title:'EPCOT Food & Wine Preview Drop',      type:'push',  scope:'EPCOT',               scopeDetail:'4 locations',   status:'upcoming',  date:'Apr 5, 2026',  totalCap:160,  totalRes:112,  totalCI:0,   revenue:0,    creator:'Jordan Magic'  },
+  { id:'CD06', title:'Pandora After Hours Experience',      type:'local', scope:'Animal Kingdom',      scopeDetail:'2 locations',   status:'live',      date:'Mar 30, 2026', totalCap:80,   totalRes:78,   totalCI:52,  revenue:4160, creator:'Maya Rivers'   },
+  { id:'CD07', title:'Sunrise at the Castle — VIP Drop',   type:'local', scope:'Magic Kingdom',       scopeDetail:'1 location',    status:'scheduled', date:'Apr 8, 2026',  totalCap:30,   totalRes:24,   totalCI:0,   revenue:2400, creator:'Taylor Rides'  },
+  { id:'CD08', title:'EPCOT Sommelier Series',              type:'push',  scope:'EPCOT',               scopeDetail:'4 locations',   status:'scheduled', date:'Apr 19, 2026', totalCap:100,  totalRes:67,   totalCI:0,   revenue:0,    creator:'Renée Moreau'  },
+  { id:'CD09', title:'Disney Springs Shop Hop',             type:'push',  scope:'Disney Springs',      scopeDetail:'5 locations',   status:'ended',     date:'Mar 8, 2026',  totalCap:250,  totalRes:238,  totalCI:214, revenue:6420, creator:'Dana Cruz'     },
+  { id:'CD10', title:'Typhoon Lagoon Surf Clinic',          type:'local', scope:'Typhoon Lagoon',      scopeDetail:'2 locations',   status:'scheduled', date:'Apr 20, 2026', totalCap:40,   totalRes:28,   totalCI:0,   revenue:1120, creator:'Caden Surf'    },
+];
+
+// PLACEHOLDER — collections added next
+const COLLECTIONS = [];
+const USERS = [];
+const CUSTOMERS = [];
+
+// ─────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────
+function go(page, extra) { Object.assign(S, { page }, extra||{}); render(); }
+function ss(updates) { Object.assign(S, updates); render(); }
+function resortById(id) { return RESORTS.find(r=>r.id===id); }
+function parkById(id) { return PARKS.find(p=>p.id===id); }
+
+function filteredLocations() {
+  return LOCATIONS.filter(l => {
+    if (S.resortFilter !== 'all' && l.resort !== S.resortFilter) return false;
+    if (S.parkFilter !== 'all' && l.park !== S.parkFilter) return false;
+    return true;
+  });
+}
+
+function badge(status) {
+  const map = {
+    live:       ['#10b981','#d1fae5','Live'],
+    scheduled:  ['#3b82f6','#dbeafe','Scheduled'],
+    ended:      ['#6b7280','#f3f4f6','Ended'],
+    upcoming:   ['#8b5cf6','#ede9fe','Upcoming'],
+    active:     ['#10b981','#d1fae5','Active'],
+    inactive:   ['#ef4444','#fee2e2','Inactive'],
+    push:       ['#7c3aed','#ede9fe','Resort Push'],
+    local:      ['#6b7280','#f3f4f6','Local'],
+    dining:     ['#7c3aed','#ede9fe','Dining'],
+    merch:      ['#1d4ed8','#dbeafe','Merch'],
+    experience: ['#065f46','#d1fae5','Experience'],
+    character:  ['#be185d','#fce7f3','Character'],
+    vip:        ['#0f172a','#f1f5f9','VIP'],
+    'f&b':      ['#92400e','#fef3c7','F&B'],
+  };
+  const [color,bg,label] = map[status]||['#6b7280','#f3f4f6',status];
+  return `<span style="background:${bg};color:${color};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:0.02em;">${label}</span>`;
+}
+
+function vendorBadge(type) {
+  if (type === 'disney-owned') return `<span style="background:#dbeafe;color:#1d4ed8;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">Disney</span>`;
+  if (type === '3rd-party')   return `<span style="background:#ffedd5;color:#ea580c;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">3rd Party</span>`;
+  return '';
+}
+
+function pct(n,d) { return d ? Math.round(n/d*100) : 0; }
+function fmtMoney(n) { return n>=1000 ? '$'+(n/1000).toFixed(1)+'k' : '$'+n; }
+function fmtNum(n) { return n>=1000 ? (n/1000).toFixed(1)+'k' : String(n); }
+function showColor(r) { return r>=85?'#10b981':r>=75?'#f59e0b':'#ef4444'; }
+
+function infoRow(label, value) {
+  return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.82rem;"><span style="color:#64748b;">${label}</span><span style="font-weight:700;color:#0f172a;">${value}</span></div>`;
+}
+
+// Geo-fence tier labels for Disney's 4-level system
+const GEO_TIERS = {
+  location: { label:'Specific Location (~300 ft)', short:'~300 ft' },
+  land:     { label:'Land / Zone (~1,500 ft)',      short:'~1,500 ft' },
+  park:     { label:'Full Park (~1 mi)',             short:'~1 mi' },
+  resort:   { label:'Resort-Wide (~3 mi)',           short:'~3 mi' },
+};
+
+// ─────────────────────────────────────────────────────────────
+// LAYOUT
+// ─────────────────────────────────────────────────────────────
+function layout() {
+  return `
+    <div style="display:flex;height:100vh;overflow:hidden;">
+      ${sidebar()}
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        ${topbar()}
+        <main style="flex:1;overflow-y:auto;padding:28px 32px;background:#f0f2f5;">
+          ${renderPage()}
+        </main>
+      </div>
+    </div>
+    ${S.pushModal ? pushModal() : ''}
+    ${S.locationDetail ? locationDetail() : ''}
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SIDEBAR
+// ─────────────────────────────────────────────────────────────
+function sidebar() {
+  const nav = [
+    { id:'dashboard',   label:'Dashboard',     icon:'home'       },
+    { id:'locations',   label:'Locations',     icon:'store'      },
+    { id:'drops',       label:'Drops',         icon:'nighBug'    },
+    { id:'collections', label:'Collections',   icon:'layers'     },
+    { id:'customers',   label:'Guests',        icon:'user'       },
+    { id:'analytics',   label:'Analytics',     icon:'chart'      },
+    { id:'users',       label:'Users & Access',icon:'users'      },
+    { id:'billing',     label:'Billing',       icon:'creditCard' },
+    { id:'settings',    label:'Settings',      icon:'settings'   },
+  ];
+  return `
+    <nav style="width:230px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;">
+      <div style="padding:18px 18px 14px;border-bottom:1px solid #f1f5f9;">
+        <div style="font-size:0.58rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Powered by</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:26px;height:26px;background:#0f172a;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:#fff;flex-shrink:0;">N</div>
+          <span style="font-weight:900;font-size:0.95rem;letter-spacing:-0.02em;">Nigh</span>
+          <span style="background:#ede9fe;color:#7c3aed;font-size:0.58rem;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:0.06em;margin-left:2px;">ENTERPRISE</span>
+        </div>
+      </div>
+      <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;">
+        <div style="font-size:0.58rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Account</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;background:linear-gradient(135deg,#0057B8,#0ea5e9);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:900;color:#fff;flex-shrink:0;letter-spacing:0.03em;">DIS</div>
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;line-height:1.2;">Disney Parks</div>
+            <div style="font-size:0.7rem;color:#64748b;margin-top:1px;">22 Locations · 2 Resorts</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;padding:10px;overflow-y:auto;">
+        ${nav.map(n=>`
+          <div onclick="go('${n.id}')" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;cursor:pointer;margin-bottom:1px;
+            background:${S.page===n.id?'#f1f5f9':'transparent'};
+            color:${S.page===n.id?'#0f172a':'#64748b'};
+            font-weight:${S.page===n.id?'700':'500'};
+            font-size:0.85rem;
+            border-left:3px solid ${S.page===n.id?'#6366f1':'transparent'};
+            transition:all 0.12s;">
+            <span style="width:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${n.icon==='nighBug' ? nighBug(30) : ic(n.icon,20)}</span>
+            ${n.label}
+          </div>
+        `).join('')}
+      </div>
+      <div style="padding:14px 18px;border-top:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:32px;height:32px;background:#0f172a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:800;color:#fff;flex-shrink:0;">JM</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Jordan Magic</div>
+            <div style="font-size:0.7rem;color:#94a3b8;">Resort Admin</div>
+          </div>
+          <span style="color:#94a3b8;font-size:1rem;cursor:pointer;">⋯</span>
+        </div>
+      </div>
+    </nav>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// TOPBAR
+// ─────────────────────────────────────────────────────────────
+function topbar() {
+  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', customers:'Guests', analytics:'Analytics', users:'Users & Access', billing:'Billing & Subscription', settings:'Settings' };
+  return `
+    <header style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:58px;display:flex;align-items:center;gap:14px;flex-shrink:0;">
+      <div style="flex:1;">
+        <div style="font-size:0.65rem;font-weight:700;color:#94a3b8;margin-bottom:1px;text-transform:uppercase;letter-spacing:0.08em;">Disney Parks</div>
+        <div style="font-weight:800;font-size:1rem;">${titles[S.page]||''}</div>
+      </div>
+      ${['locations','analytics'].includes(S.page) ? `
+        <div style="display:flex;gap:2px;background:#f1f5f9;border-radius:8px;padding:3px;">
+          ${['resort','park','location'].map(v=>`
+            <button onclick="ss({hierarchyView:'${v}'})" style="background:${S.hierarchyView===v?'#fff':'transparent'};border:none;padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:${S.hierarchyView===v?'700':'500'};color:${S.hierarchyView===v?'#0f172a':'#64748b'};cursor:pointer;box-shadow:${S.hierarchyView===v?'0 1px 4px rgba(0,0,0,0.1)':'none'};transition:all 0.12s;text-transform:capitalize;">${v.charAt(0).toUpperCase()+v.slice(1)}</button>
+          `).join('')}
+        </div>
+      `:''}
+      <button onclick="ss({pushModal:true,pushStep:1})" style="background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:9px;font-weight:700;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+        ⚡ Push Drop
+      </button>
+      <div style="width:34px;height:34px;background:#e0e7ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:800;color:#3730a3;cursor:pointer;flex-shrink:0;">JM</div>
+    </header>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// PAGE ROUTER
+// ─────────────────────────────────────────────────────────────
+function renderPage() {
+  switch(S.page) {
+    case 'dashboard':   return rDashboard();
+    case 'locations':   return rLocations();
+    case 'drops':       return rDrops();
+    case 'collections': return rCollections();
+    case 'customers':   return rCustomers();
+    case 'analytics':   return rAnalytics();
+    case 'users':       return rUsers();
+    case 'billing':     return rBilling();
+    case 'settings':    return rSettings();
+    default: return rDashboard();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────────────────────
+function rDashboard() {
+  const totalCI   = LOCATIONS.reduce((a,l)=>a+l.mtdCheckins,0);
+  const totalDrops= LOCATIONS.reduce((a,l)=>a+l.mtdDrops,0);
+  const totalRev  = LOCATIONS.reduce((a,l)=>a+l.mtdRevenue,0);
+  const avgShow   = Math.round(LOCATIONS.reduce((a,l)=>a+l.showRate,0)/LOCATIONS.length);
+  const liveNow   = LOCATIONS.filter(l=>l.activeDrop).length;
+  const activeCount = LOCATIONS.filter(l=>l.status==='active').length;
+
+  const parkData = PARKS.map(p=>{
+    const ls = LOCATIONS.filter(l=>l.park===p.id);
+    return { ...p, count:ls.length, ci:ls.reduce((a,l)=>a+l.mtdCheckins,0), drops:ls.reduce((a,l)=>a+l.mtdDrops,0), show:ls.length?Math.round(ls.reduce((a,l)=>a+l.showRate,0)/ls.length):0, rev:ls.reduce((a,l)=>a+l.mtdRevenue,0) };
+  }).filter(p=>p.count>0);
+  const maxCI = Math.max(...parkData.map(p=>p.ci));
+  const topLocs = [...LOCATIONS].sort((a,b)=>b.mtdCheckins-a.mtdCheckins).slice(0,4);
+  const attnLocs = LOCATIONS.filter(l=>l.showRate<70||l.status==='inactive');
+
+  return `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
+      ${kpi('Check-ins MTD',   fmtNum(totalCI),    'across all locations', ic('check',16),'#10b981')}
+      ${kpi('Drops MTD',       String(totalDrops),  'across all locations', nighBug(19),'#6366f1')}
+      ${kpi('Avg Show Rate',   avgShow+'%',         'reserv → check-in',   ic('trending',16),'#f59e0b')}
+      ${kpi('Revenue MTD',     fmtMoney(totalRev),  'paid drops only',     ic('dollar',16),'#0ea5e9')}
+      ${kpi('Live Right Now',  liveNow+' drops',    activeCount+' active locations', ic('radio',16),'#ef4444')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:18px;">
+      <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:22px;">
+        <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Park Performance</div>
+        <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">Month-to-date check-ins by park</div>
+        ${parkData.map(p=>`
+          <div style="margin-bottom:13px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:9px;height:9px;border-radius:50%;background:${p.color};flex-shrink:0;"></div>
+                <span style="font-weight:700;font-size:0.82rem;">${p.name}</span>
+                <span style="font-size:0.7rem;color:#94a3b8;">${p.count} loc${p.count!==1?'s':''}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:14px;">
+                <span style="font-size:0.75rem;color:#64748b;">${p.show}% show</span>
+                <span style="font-weight:800;font-size:0.88rem;">${fmtNum(p.ci)} check-ins</span>
+              </div>
+            </div>
+            <div style="background:#f1f5f9;border-radius:4px;height:6px;overflow:hidden;">
+              <div style="background:${p.color};height:100%;border-radius:4px;width:${p.ci>0?Math.round(p.ci/maxCI*100):0}%;"></div>
+            </div>
+          </div>
+        `).join('')}
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #f1f5f9;">
+          ${parkData.map(p=>`
+            <div onclick="go('locations',{resortFilter:p.resort,parkFilter:'${p.id}',hierarchyView:'location'})" style="background:${p.color}10;border:1px solid ${p.color}30;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;">
+              <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:${p.color};margin-bottom:4px;">${p.abbr}</div>
+              <div style="font-weight:900;font-size:1rem;">${p.count}</div>
+              <div style="font-size:0.62rem;color:#94a3b8;">loc${p.count!==1?'s':''}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:20px;flex:1;">
+          <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">Top Locations</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">By check-ins this month</div>
+          ${topLocs.map((l,i)=>{
+            const park = parkById(l.park);
+            return `
+              <div onclick="ss({locationDetail:'${l.id}'})" style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:${i<3?'1px solid #f8f9fb':''};cursor:pointer;">
+                <div style="width:24px;height:24px;background:${i===0?'#fef3c7':i===1?'#f1f5f9':'#f8f9fb'};color:${i===0?'#92400e':'#64748b'};border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem;flex-shrink:0;">#${i+1}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:700;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;">${park?.abbr} · ${l.land}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                  <div style="font-weight:800;font-size:0.88rem;">${fmtNum(l.mtdCheckins)}</div>
+                  <div style="font-size:0.65rem;color:#10b981;">${l.showRate}% show</div>
+                </div>
+              </div>`;
+          }).join('')}
+          <div onclick="go('analytics')" style="text-align:center;margin-top:10px;font-size:0.75rem;color:#6366f1;cursor:pointer;font-weight:700;">Full leaderboard →</div>
+        </div>
+
+        ${attnLocs.length ? `
+          <div style="background:#fff;border-radius:16px;border:1px solid #fca5a5;padding:18px;">
+            <div style="font-weight:800;font-size:0.85rem;color:#dc2626;margin-bottom:10px;">⚠ Needs Attention</div>
+            ${attnLocs.map(l=>{
+              const park = parkById(l.park);
+              return `
+                <div onclick="ss({locationDetail:'${l.id}'})" style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;border-bottom:1px solid #fef2f2;">
+                  <div style="flex:1;">
+                    <div style="font-weight:700;font-size:0.8rem;">${l.name}</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;">${park?.abbr} · ${l.land}</div>
+                  </div>
+                  <div style="font-size:0.72rem;font-weight:700;color:#ef4444;">${l.status==='inactive'?'Inactive':l.showRate+'% show'}</div>
+                </div>`;
+            }).join('')}
+          </div>
+        `:''}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;">
+      <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div>
+            <div style="font-weight:800;font-size:0.92rem;">Recent Resort Drops</div>
+            <div style="font-size:0.75rem;color:#64748b;">Pushed from resort to locations</div>
+          </div>
+          <span onclick="go('drops')" style="font-size:0.75rem;color:#6366f1;cursor:pointer;font-weight:700;">View all →</span>
+        </div>
+        ${CORP_DROPS.slice(0,5).map(d=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f8f9fb;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:0.83rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
+              <div style="font-size:0.7rem;color:#94a3b8;">${d.scopeDetail} · ${d.date}</div>
+            </div>
+            <div style="flex-shrink:0;">${badge(d.status)}</div>
+            <div style="text-align:right;flex-shrink:0;min-width:48px;">
+              <div style="font-weight:800;font-size:0.88rem;">${d.status==='ended'?d.totalCI:d.totalRes}</div>
+              <div style="font-size:0.65rem;color:#94a3b8;">${d.status==='ended'?'checked in':'reserved'}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:22px;">
+        <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">Location Status</div>
+        <div style="font-size:0.72rem;color:#64748b;margin-bottom:16px;">Across all 22 locations</div>
+        ${statusBar('Active + Live Drop', LOCATIONS.filter(l=>l.status==='active'&&l.activeDrop).length, 22, '#10b981')}
+        ${statusBar('Active · No Drop',   LOCATIONS.filter(l=>l.status==='active'&&!l.activeDrop).length, 22, '#6366f1')}
+        ${statusBar('3rd Party Venues',   LOCATIONS.filter(l=>l.vendorType==='3rd-party').length, 22, '#f97316')}
+        ${statusBar('Inactive',           LOCATIONS.filter(l=>l.status==='inactive').length, 22, '#ef4444')}
+
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid #f1f5f9;">
+          <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">Live right now</div>
+          ${LOCATIONS.filter(l=>l.activeDrop).map(l=>{
+            const park = parkById(l.park);
+            return `
+              <div onclick="ss({locationDetail:'${l.id}'})" style="display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#10b981;flex-shrink:0;"></div>
+                <span style="font-size:0.78rem;font-weight:600;">${l.name}</span>
+                <span style="font-size:0.68rem;color:#94a3b8;margin-left:auto;">${park?.abbr}</span>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function kpi(label, value, sub, icon, color) {
+  return `
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:0.72rem;font-weight:700;color:#64748b;">${label}</div>
+        <div style="width:30px;height:30px;background:${color}18;border-radius:8px;display:flex;align-items:center;justify-content:center;color:${color};">${icon}</div>
+      </div>
+      <div style="font-size:1.6rem;font-weight:900;letter-spacing:-0.03em;color:#0f172a;margin-bottom:3px;">${value}</div>
+      <div style="font-size:0.68rem;color:#94a3b8;">${sub}</div>
+    </div>
+  `;
+}
+
+function statusBar(label, count, total, color) {
+  return `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:0.78rem;font-weight:600;">${label}</span>
+        <span style="font-size:0.78rem;font-weight:800;color:${color};">${count}</span>
+      </div>
+      <div style="background:#f1f5f9;border-radius:4px;height:6px;overflow:hidden;">
+        <div style="background:${color};height:100%;width:${pct(count,total)}%;border-radius:4px;"></div>
+      </div>
+    </div>
+  `;
+}
+
+function miniStat(label, value, color) {
+  return `<div style="background:#f8f9fb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:0.65rem;color:#94a3b8;margin-bottom:4px;">${label}</div><div style="font-weight:900;font-size:1.05rem;${color?'color:'+color+';':''}">${value}</div></div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// LOCATIONS
+// ─────────────────────────────────────────────────────────────
+function rLocations() {
+  if (S.hierarchyView === 'resort')   return rLocByResort();
+  if (S.hierarchyView === 'park')     return rLocByPark();
+  return rLocByLocation();
+}
+
+function filterBar() {
+  const resortParks = S.resortFilter !== 'all' ? PARKS.filter(p=>p.resort===S.resortFilter) : [];
+  return `
+    <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+      <select onchange="ss({resortFilter:this.value,parkFilter:'all'})" style="border:1px solid #e5e7eb;border-radius:8px;padding:8px 28px 8px 12px;font-size:0.82rem;font-weight:600;background:#fff;cursor:pointer;">
+        <option value="all">All Resorts</option>
+        ${RESORTS.map(r=>`<option value="${r.id}" ${S.resortFilter===r.id?'selected':''}>${r.name}</option>`).join('')}
+      </select>
+      ${S.resortFilter!=='all'?`
+        <select onchange="ss({parkFilter:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:8px 28px 8px 12px;font-size:0.82rem;font-weight:600;background:#fff;cursor:pointer;">
+          <option value="all">All Parks</option>
+          ${resortParks.map(p=>`<option value="${p.id}" ${S.parkFilter===p.id?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+      `:''}
+      <div style="margin-left:auto;font-size:0.8rem;color:#64748b;">${filteredLocations().length} location${filteredLocations().length!==1?'s':''}</div>
+      <button onclick="ss({pushModal:true,pushStep:1})" style="background:#0f172a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">⚡ Push Drop</button>
+    </div>
+  `;
+}
+
+function rLocByResort() {
+  const resorts = RESORTS.filter(r => S.resortFilter==='all' || r.id===S.resortFilter);
+  return filterBar() + resorts.map(r=>{
+    const parks = PARKS.filter(p=>p.resort===r.id && (S.parkFilter==='all'||p.id===S.parkFilter));
+    const locs  = LOCATIONS.filter(l=>l.resort===r.id && (S.parkFilter==='all'||l.park===S.parkFilter));
+    if (!locs.length) return '';
+    const ci   = locs.reduce((a,l)=>a+l.mtdCheckins,0);
+    const show = Math.round(locs.reduce((a,l)=>a+l.showRate,0)/locs.length);
+    return `
+      <div style="margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${r.color};flex-shrink:0;"></div>
+          <span style="font-weight:800;font-size:1rem;">${r.name}</span>
+          <span style="font-size:0.75rem;color:#94a3b8;">${locs.length} locations · ${fmtNum(ci)} check-ins · ${show}% avg show</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
+          ${locs.map(l=>locationCard(l)).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function rLocByPark() {
+  const parks = PARKS.filter(p=>(S.resortFilter==='all'||p.resort===S.resortFilter)&&(S.parkFilter==='all'||p.id===S.parkFilter));
+  return filterBar() + parks.map(p=>{
+    const locs = LOCATIONS.filter(l=>l.park===p.id);
+    if (!locs.length) return '';
+    const r  = resortById(p.resort);
+    const ci = locs.reduce((a,l)=>a+l.mtdCheckins,0);
+    return `
+      <div style="margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="background:${r?.color}18;color:${r?.color};font-size:0.7rem;font-weight:800;padding:3px 10px;border-radius:20px;">${r?.abbr}</span>
+          <span style="font-weight:800;font-size:0.95rem;">${p.name}</span>
+          <span style="font-size:0.72rem;color:#94a3b8;">${locs.length} locations · ${fmtNum(ci)} check-ins</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
+          ${locs.map(l=>locationCard(l)).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function rLocByLocation() {
+  const locs = filteredLocations().sort((a,b)=>a.name.localeCompare(b.name));
+  return filterBar() + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">${locs.map(l=>locationCard(l)).join('')}</div>`;
+}
+
+function locationCard(l) {
+  const park = parkById(l.park);
+  return `
+    <div onclick="ss({locationDetail:'${l.id}'})" style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;cursor:pointer;transition:box-shadow 0.15s,transform 0.1s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <div>
+          <div style="font-weight:800;font-size:0.88rem;">${l.name}</div>
+          <div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">${l.land} · ${park?.name}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          ${badge(l.status)}
+          ${l.activeDrop?`<span style="font-size:0.65rem;color:#10b981;font-weight:800;">● Live</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="background:${park?.color}15;color:${park?.color};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${park?.abbr}</span>
+        ${vendorBadge(l.vendorType)}
+        ${badge(l.category)}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:10px;border-top:1px solid #f1f5f9;">
+        <div><div style="font-size:0.65rem;color:#94a3b8;">Drops</div><div style="font-weight:900;font-size:1rem;">${l.mtdDrops}</div></div>
+        <div><div style="font-size:0.65rem;color:#94a3b8;">Check-ins</div><div style="font-weight:900;font-size:1rem;">${fmtNum(l.mtdCheckins)}</div></div>
+        <div><div style="font-size:0.65rem;color:#94a3b8;">Show Rate</div><div style="font-weight:900;font-size:1rem;color:${showColor(l.showRate)};">${l.showRate}%</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:0.68rem;color:#94a3b8;">Mgr: <span style="color:#475569;font-weight:600;">${l.manager}</span></div>
+    </div>
+  `;
+}
+
+function locationDetail() {
+  const l = LOCATIONS.find(x=>x.id===S.locationDetail);
+  if (!l) return '';
+  const park   = parkById(l.park);
+  const resort = resortById(l.resort);
+  return `
+    <div onclick="ss({locationDetail:null})" style="position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:100;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:540px;max-height:82vh;overflow-y:auto;padding:30px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+          <div>
+            <div style="font-weight:900;font-size:1.15rem;">${l.name}</div>
+            <div style="font-size:0.78rem;color:#64748b;margin-top:3px;">${l.land} · ${park?.name} · ${resort?.name}</div>
+          </div>
+          <button onclick="ss({locationDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+          ${miniStat('Drops MTD', l.mtdDrops)}
+          ${miniStat('Check-ins', fmtNum(l.mtdCheckins))}
+          ${miniStat('Show Rate', l.showRate+'%', showColor(l.showRate))}
+          ${miniStat('Revenue', fmtMoney(l.mtdRevenue))}
+        </div>
+        <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:18px;">
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Location Details</div>
+          ${infoRow('Manager', l.manager)}
+          ${infoRow('Resort', resort?.name||'—')}
+          ${infoRow('Park', park?.name||'—')}
+          ${infoRow('Land / Zone', l.land||'—')}
+          ${infoRow('Vendor Type', l.vendorType==='disney-owned' ? '🔵 Disney Owned' : '🟠 3rd Party')}
+          ${infoRow('Category', l.category.charAt(0).toUpperCase()+l.category.slice(1))}
+          ${infoRow('Status', l.status.charAt(0).toUpperCase()+l.status.slice(1))}
+          ${infoRow('Active Drop', l.activeDrop ? '● Live right now' : 'None')}
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="ss({pushModal:true,pushStep:1,locationDetail:null})" style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Schedule Drop Here</button>
+          <button onclick="ss({locationDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DROPS
+// ─────────────────────────────────────────────────────────────
+function rDrops() {
+  const tabs = ['all','live','scheduled','ended'];
+  const list = S.dropsTab==='all' ? CORP_DROPS : CORP_DROPS.filter(d=>d.status===S.dropsTab);
+  return `
+    <div style="display:flex;gap:6px;margin-bottom:20px;align-items:center;">
+      ${tabs.map(t=>`
+        <button onclick="ss({dropsTab:'${t}'})" style="background:${S.dropsTab===t?'#0f172a':'#fff'};color:${S.dropsTab===t?'#fff':'#475569'};border:1px solid ${S.dropsTab===t?'#0f172a':'#e5e7eb'};padding:7px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;text-transform:capitalize;">${t==='all'?'All Drops ('+CORP_DROPS.length+')':t.charAt(0).toUpperCase()+t.slice(1)+' ('+CORP_DROPS.filter(d=>d.status===t).length+')'}</button>
+      `).join('')}
+      <button onclick="ss({pushModal:true,pushStep:1})" style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">⚡ Push New Drop</button>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <table>
+        <thead>
+          <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+            ${['Drop Title','Scope','Type / Status','Cap','Reserved','Checked In','Show Rate'].map((h,i)=>`
+              <th style="padding:11px 14px;text-align:${i>2?'right':'left'};font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;white-space:nowrap;">${h}</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map((d,i)=>{
+            const showRate = d.totalRes>0&&d.totalCI>0 ? pct(d.totalCI,d.totalRes) : null;
+            return `
+              <tr style="border-bottom:1px solid #f8f9fb;${i%2?'background:#fafafa':''}">
+                <td style="padding:13px 14px;">
+                  <div style="font-weight:700;font-size:0.83rem;">${d.title}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">${d.date} · by ${d.creator}</div>
+                </td>
+                <td style="padding:13px 14px;">
+                  <div style="font-size:0.82rem;font-weight:600;">${d.scope}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;">${d.scopeDetail}</div>
+                </td>
+                <td style="padding:13px 14px;"><div style="display:flex;gap:4px;flex-wrap:wrap;">${badge(d.type)} ${badge(d.status)}</div></td>
+                <td style="padding:13px 14px;text-align:right;font-weight:700;font-size:0.85rem;">${d.totalCap}</td>
+                <td style="padding:13px 14px;text-align:right;font-weight:700;font-size:0.85rem;">${d.totalRes}</td>
+                <td style="padding:13px 14px;text-align:right;font-weight:700;font-size:0.85rem;">${d.totalCI||'—'}</td>
+                <td style="padding:13px 14px;text-align:right;font-weight:800;font-size:0.85rem;color:${showRate?showColor(showRate):'#94a3b8'};">${showRate ? showRate+'%' : '—'}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;">
+      ${kpi('Total Drops', String(CORP_DROPS.length), 'all time', nighBug(19), '#6366f1')}
+      ${kpi('Resort Pushes', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to parks', ic('send',16), '#0ea5e9')}
+      ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', ic('target',16), '#f59e0b')}
+      ${kpi('Avg Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', ic('check',16), '#10b981')}
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// CUSTOMERS (Guests)
+// ─────────────────────────────────────────────────────────────
+const CUSTOMER_DATA = [
+  { id:'C01', name:'Emma Whitfield',   homeLocation:'L09', resort:'R01', drops:18, checkins:17, noShows:1, lastDrop:'Mar 30, 2026', totalSpend:240, status:'active'  },
+  { id:'C02', name:'Jackson Reed',     homeLocation:'L01', resort:'R01', drops:15, checkins:15, noShows:0, lastDrop:'Mar 28, 2026', totalSpend:0,   status:'active'  },
+  { id:'C03', name:'Sofia Navarro',    homeLocation:'L10', resort:'R01', drops:14, checkins:14, noShows:0, lastDrop:'Mar 30, 2026', totalSpend:420, status:'active'  },
+  { id:'C04', name:'Malik Thompson',   homeLocation:'L08', resort:'R01', drops:12, checkins:11, noShows:1, lastDrop:'Mar 27, 2026', totalSpend:180, status:'active'  },
+  { id:'C05', name:'Lily Chen',        homeLocation:'L04', resort:'R01', drops:11, checkins:11, noShows:0, lastDrop:'Mar 29, 2026', totalSpend:320, status:'active'  },
+  { id:'C06', name:'Darius Knight',    homeLocation:'L21', resort:'R02', drops:10, checkins:9,  noShows:1, lastDrop:'Mar 25, 2026', totalSpend:140, status:'active'  },
+  { id:'C07', name:'Priya Sharma',     homeLocation:'L18', resort:'R01', drops:9,  checkins:9,  noShows:0, lastDrop:'Mar 28, 2026', totalSpend:290, status:'active'  },
+  { id:'C08', name:'Tyler Brooks',     homeLocation:'L16', resort:'R01', drops:8,  checkins:7,  noShows:1, lastDrop:'Mar 22, 2026', totalSpend:120, status:'active'  },
+  { id:'C09', name:'Aaliyah Foster',   homeLocation:'L12', resort:'R01', drops:8,  checkins:8,  noShows:0, lastDrop:'Mar 26, 2026', totalSpend:0,   status:'active'  },
+  { id:'C10', name:'Sam Eriksson',     homeLocation:'L02', resort:'R01', drops:7,  checkins:6,  noShows:1, lastDrop:'Mar 19, 2026', totalSpend:80,  status:'active'  },
+  { id:'C11', name:'Zoe Martinez',     homeLocation:'L05', resort:'R01', drops:6,  checkins:6,  noShows:0, lastDrop:'Mar 28, 2026', totalSpend:160, status:'active'  },
+  { id:'C12', name:'Noah Osei',        homeLocation:'L22', resort:'R02', drops:5,  checkins:5,  noShows:0, lastDrop:'Mar 15, 2026', totalSpend:0,   status:'active'  },
+  { id:'C13', name:'Isla Tremblay',    homeLocation:'L11', resort:'R01', drops:5,  checkins:4,  noShows:1, lastDrop:'Mar 12, 2026', totalSpend:60,  status:'active'  },
+  { id:'C14', name:'Finn Walsh',       homeLocation:'L03', resort:'R01', drops:4,  checkins:4,  noShows:0, lastDrop:'Mar 8, 2026',  totalSpend:280, status:'active'  },
+  { id:'C15', name:'Camila Reyes',     homeLocation:'L13', resort:'R01', drops:3,  checkins:3,  noShows:0, lastDrop:'Feb 28, 2026', totalSpend:0,   status:'active'  },
+  { id:'C16', name:'Hassan Karimi',    homeLocation:'L07', resort:'R01', drops:3,  checkins:2,  noShows:1, lastDrop:'Feb 22, 2026', totalSpend:40,  status:'active'  },
+  { id:'C17', name:'Jade Beaumont',    homeLocation:'L19', resort:'R01', drops:2,  checkins:2,  noShows:0, lastDrop:'Feb 15, 2026', totalSpend:90,  status:'at-risk' },
+  { id:'C18', name:'Miles Cooper',     homeLocation:'L14', resort:'R01', drops:2,  checkins:1,  noShows:1, lastDrop:'Feb 10, 2026', totalSpend:0,   status:'at-risk' },
+  { id:'C19', name:'Grace Yamamoto',   homeLocation:'L15', resort:'R01', drops:1,  checkins:0,  noShows:1, lastDrop:'Jan 30, 2026', totalSpend:0,   status:'churned' },
+];
+
+function rCustomers() {
+  const custSort   = S.custSort   || 'checkins';
+  const custFilter = S.custFilter || 'all';
+  const custResort = S.custResort || 'all';
+
+  let list = [...CUSTOMER_DATA];
+  if (custFilter !== 'all') list = list.filter(c=>c.status===custFilter);
+  if (custResort !== 'all') list = list.filter(c=>c.resort===custResort);
+  list.sort((a,b)=>{
+    if (custSort==='drops')    return b.drops-a.drops;
+    if (custSort==='checkins') return b.checkins-a.checkins;
+    if (custSort==='spend')    return b.totalSpend-a.totalSpend;
+    if (custSort==='showRate') return (b.checkins/b.drops)-(a.checkins/a.drops);
+    return 0;
+  });
+
+  const totalUnique = CUSTOMER_DATA.length;
+  const totalCI     = CUSTOMER_DATA.reduce((a,c)=>a+c.checkins,0);
+  const avgDrops    = (CUSTOMER_DATA.reduce((a,c)=>a+c.drops,0)/CUSTOMER_DATA.length).toFixed(1);
+  const avgShow     = Math.round(CUSTOMER_DATA.reduce((a,c)=>a+(c.checkins/c.drops),0)/CUSTOMER_DATA.length*100);
+  const parkHoppers = CUSTOMER_DATA.filter(c=>c.drops>=7).length;
+
+  const statusColors = { active:'#10b981', 'at-risk':'#f59e0b', churned:'#ef4444' };
+  const statusLabels = { active:'Active', 'at-risk':'At Risk', churned:'Churned' };
+
+  const resortBreakdown = RESORTS.map(r=>{
+    const cs = CUSTOMER_DATA.filter(c=>c.resort===r.id);
+    return { ...r, count:cs.length, ci:cs.reduce((a,c)=>a+c.checkins,0), show:cs.length?Math.round(cs.reduce((a,c)=>a+(c.checkins/c.drops),0)/cs.length*100):0 };
+  });
+
+  return `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
+      ${kpi('Unique Guests',   String(totalUnique), 'across all locations', ic('user',16),'#6366f1')}
+      ${kpi('Total Check-ins', fmtNum(totalCI),     'all-time guest CI',    ic('check',16),'#10b981')}
+      ${kpi('Avg Drops / Guest', avgDrops,          'per active guest',     nighBug(19),'#0ea5e9')}
+      ${kpi('Avg Show Rate',   avgShow+'%',          'across all guests',   ic('trending',16),'#f59e0b')}
+      ${kpi('Park Hoppers',    String(parkHoppers),  '7+ drops — multi-park', ic('map',16),'#8b5cf6')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:18px;margin-bottom:18px;">
+      <div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
+          <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:8px;padding:3px;">
+            ${['all','active','at-risk','churned'].map(f=>`
+              <button onclick="ss({custFilter:'${f}'})" style="background:${custFilter===f?'#fff':'transparent'};border:none;padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:${custFilter===f?'700':'500'};color:${custFilter===f?'#0f172a':'#64748b'};cursor:pointer;white-space:nowrap;box-shadow:${custFilter===f?'0 1px 4px rgba(0,0,0,0.08)':'none'};">${f==='all'?'All':statusLabels[f]||f}</button>
+            `).join('')}
+          </div>
+          <select onchange="ss({custResort:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 28px 7px 10px;font-size:0.8rem;font-weight:600;background:#fff;cursor:pointer;">
+            <option value="all">All Resorts</option>
+            ${RESORTS.map(r=>`<option value="${r.id}" ${custResort===r.id?'selected':''}>${r.name}</option>`).join('')}
+          </select>
+          <select onchange="ss({custSort:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 28px 7px 10px;font-size:0.8rem;font-weight:600;background:#fff;cursor:pointer;">
+            <option value="checkins">Sort: Check-ins</option>
+            <option value="drops">Sort: Drops</option>
+            <option value="spend">Sort: Total Spend</option>
+            <option value="showRate">Sort: Show Rate</option>
+          </select>
+          <div style="margin-left:auto;font-size:0.78rem;color:#64748b;">${list.length} guest${list.length!==1?'s':''}</div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+          <table>
+            <thead>
+              <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+                ${['#','Guest','Home Location','Park','Drops','Check-ins','Show Rate','Spend','Status','Last Drop'].map((h,i)=>`
+                  <th style="padding:10px 12px;text-align:${i>3?'right':'left'};font-size:0.63rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;white-space:nowrap;">${h}</th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map((c,i)=>{
+                const loc  = LOCATIONS.find(l=>l.id===c.homeLocation);
+                const park = loc ? parkById(loc.park) : null;
+                const sr   = Math.round(c.checkins/c.drops*100);
+                return `
+                  <tr style="border-bottom:1px solid #f8f9fb;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:10px 12px;font-size:0.78rem;font-weight:700;color:#cbd5e1;">${i+1}</td>
+                    <td style="padding:10px 12px;">
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:28px;height:28px;background:${statusColors[c.status]}20;color:${statusColors[c.status]};border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;">${c.name.split(' ').map(n=>n[0]).join('')}</div>
+                        <span style="font-weight:700;font-size:0.82rem;white-space:nowrap;">${c.name}</span>
+                      </div>
+                    </td>
+                    <td style="padding:10px 12px;font-size:0.8rem;font-weight:600;color:#475569;white-space:nowrap;">${loc?.name||'—'}</td>
+                    <td style="padding:10px 12px;"><span style="background:${park?.color||'#e5e7eb'}15;color:${park?.color||'#64748b'};font-size:0.63rem;font-weight:800;padding:2px 7px;border-radius:20px;">${park?.abbr||'—'}</span></td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:700;">${c.drops}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:800;">${c.checkins}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:800;color:${showColor(sr)};">${sr}%</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.83rem;font-weight:600;">${c.totalSpend>0?'$'+c.totalSpend:'—'}</td>
+                    <td style="padding:10px 12px;text-align:right;"><span style="background:${statusColors[c.status]}18;color:${statusColors[c.status]};font-size:0.63rem;font-weight:800;padding:3px 8px;border-radius:20px;">${statusLabels[c.status]}</span></td>
+                    <td style="padding:10px 12px;font-size:0.75rem;color:#64748b;white-space:nowrap;">${c.lastDrop}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;">
+          <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">Guest Health</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Across all resorts</div>
+          ${[['active','Active','#10b981'],['at-risk','At Risk','#f59e0b'],['churned','Churned','#ef4444']].map(([s,label,color])=>{
+            const count = CUSTOMER_DATA.filter(c=>c.status===s).length;
+            return statusBar(label, count, CUSTOMER_DATA.length, color);
+          }).join('')}
+          <div style="font-size:0.7rem;color:#94a3b8;margin-top:10px;line-height:1.6;">At Risk = no drop in 30+ days. Churned = no drop in 60+ days or 0 check-ins.</div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;">
+          <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">By Resort</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Guests per resort</div>
+          ${resortBreakdown.map(r=>`
+            <div onclick="ss({custResort:custResort===r.id?'all':r.id})" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f8f9fb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
+              <div style="width:8px;height:8px;border-radius:50%;background:${r.color};flex-shrink:0;"></div>
+              <span style="font-size:0.8rem;font-weight:700;flex:1;">${r.name}</span>
+              <span style="font-size:0.8rem;font-weight:800;">${r.count}</span>
+              <span style="font-size:0.68rem;color:${showColor(r.show)};font-weight:700;">${r.show}% show</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:14px;padding:18px;">
+          <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#0369a1;margin-bottom:6px;">🎢 Park Hopper Insight</div>
+          <div style="font-size:0.8rem;color:#0c4a6e;line-height:1.65;"><strong>${parkHoppers} guests</strong> have attended 7+ drops — your most loyal Annual Passholders. These guests are ideal candidates for VIP backstage and exclusive character experience drops across multiple parks.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// COLLECTIONS DATA
+// ─────────────────────────────────────────────────────────────
+const COLLECTIONS_DATA = [
+  {
+    id:'COL01', type:'internal', name:'50th Anniversary Drop Series', theme:'The World's Most Magical Celebration',
+    status:'upcoming', windowStart:'Apr 12, 2026', windowEnd:'Apr 30, 2026',
+    scope:'Walt Disney World', creator:'Jordan Magic', createdDate:'Mar 10, 2026',
+    geoFence:{ enabled:true, boundaryType:'resort', address:'Walt Disney World Resort, Lake Buena Vista, FL 32830', customerMessage:"You're at Walt Disney World — exclusive 50th Anniversary drops are live. Find the magic!" },
+    guardrails:{ price:'Free–$25', capRange:'20–60 spots', broadcastWindow:'1–3 days before', themeReq:'50th Anniversary theme — gold, castle imagery, or historical Disney moment' },
+    description:'Each WDW location creates a drop celebrating the 50th Anniversary. Drops may include limited collectible pins, character meet & greets, specialty dining previews, or backstage moments that tie to the resort\'s milestone.',
+    participation:[
+      { locId:'L01', status:'confirmed', dropTitle:'Royal 50th Breakfast — Cinderella Surprise',    cap:50, res:46, ci:0 },
+      { locId:'L02', status:'confirmed', dropTitle:'Crystal Palace 50th Anniversary Tea',           cap:40, res:38, ci:0 },
+      { locId:'L03', status:'confirmed', dropTitle:'50th Tomorrowland Pin Drop',                    cap:60, res:54, ci:0 },
+      { locId:'L04', status:'confirmed', dropTitle:'Princess Makeover — 50th Gold Edition',         cap:30, res:28, ci:0 },
+      { locId:'L05', status:'confirmed', dropTitle:'Chefs de France 50th Tasting Menu',             cap:24, res:20, ci:0 },
+      { locId:'L06', status:'pending',   dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L07', status:'declined',  dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L08', status:'confirmed', dropTitle:'Garden Grill Golden Anniversary Brunch',        cap:36, res:32, ci:0 },
+      { locId:'L09', status:'confirmed', dropTitle:"Oga's 50th Cantina Cocktail Night",             cap:30, res:28, ci:0 },
+      { locId:'L10', status:'confirmed', dropTitle:'Build the Legacy Lightsaber — 50th Edition',    cap:20, res:19, ci:0 },
+      { locId:'L11', status:'confirmed', dropTitle:'Docking Bay 7 Galaxy Menu Launch',              cap:40, res:34, ci:0 },
+      { locId:'L12', status:'confirmed', dropTitle:"Satu'li Pandoran Feast — Anniversary Drop",     cap:40, res:36, ci:0 },
+      { locId:'L13', status:'confirmed', dropTitle:'50th Pandora Collector Pin Set',                cap:50, res:44, ci:0 },
+      { locId:'L14', status:'pending',   dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L15', status:'confirmed', dropTitle:'Typhoon Lagoon 50th Gear Bundle',               cap:40, res:32, ci:0 },
+      { locId:'L16', status:'pending',   dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L17', status:'confirmed', dropTitle:'Earl\'s 50th Sandwich Special Drop',            cap:80, res:72, ci:0 },
+      { locId:'L18', status:'confirmed', dropTitle:'World of Disney — 50th Exclusive Collection',   cap:60, res:58, ci:0 },
+      { locId:'L19', status:'declined',  dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L20', status:'pending',   dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+    ]
+  },
+  {
+    id:'COL02', type:'internal', name:'Holiday After Hours', theme:'Magic After Dark',
+    status:'live', windowStart:'Mar 28, 2026', windowEnd:'Apr 6, 2026',
+    scope:'WDW Theme Parks', creator:'Taylor Rides', createdDate:'Mar 5, 2026',
+    geoFence:{ enabled:true, boundaryType:'park', address:'Walt Disney World Theme Parks, Lake Buena Vista, FL', customerMessage:"You're inside the park — After Hours drops are live. Check in before midnight!" },
+    guardrails:{ price:'Free ($0)', capRange:'15–40 spots', broadcastWindow:'Same day or day before', themeReq:'After-hours experience — must occur after park close or during extended evening hours' },
+    description:'WDW theme park locations host exclusive after-hours drops for Annual Passholders and resort guests. Drops surface only when guests are inside the park boundaries — creating a true in-park discovery moment.',
+    participation:[
+      { locId:'L01', status:'live', dropTitle:'Midnight at the Castle — Royal Table Dessert Drop',  cap:30, res:30, ci:18 },
+      { locId:'L02', status:'live', dropTitle:'Crystal Palace After Dark Tea',                      cap:24, res:23, ci:15 },
+      { locId:'L03', status:'live', dropTitle:'Tomorrowland After Hours Pin Drop',                  cap:40, res:38, ci:24 },
+      { locId:'L04', status:'live', dropTitle:'Twilight Princess Makeover Session',                 cap:20, res:20, ci:14 },
+      { locId:'L05', status:'live', dropTitle:'Late Night Paris — Chefs de France Champagne Drop',  cap:20, res:19, ci:12 },
+      { locId:'L06', status:'confirmed', dropTitle:'Midnight Moroccan Tasting',                     cap:18, res:16, ci:0 },
+      { locId:'L07', status:'declined',  dropTitle:null,                                            cap:0,  res:0,  ci:0 },
+      { locId:'L08', status:'live', dropTitle:'After Hours Garden Party — Garden Grill',            cap:28, res:28, ci:17 },
+      { locId:'L09', status:'live', dropTitle:"Midnight at Oga's — Last Order Drop",                cap:25, res:25, ci:19 },
+      { locId:'L10', status:'live', dropTitle:'Moonlit Lightsaber Build',                           cap:15, res:15, ci:11 },
+      { locId:'L11', status:'live', dropTitle:'After Dark Galaxy Menu',                             cap:35, res:33, ci:22 },
+      { locId:'L12', status:'confirmed', dropTitle:'Pandora Night Feast',                           cap:30, res:27, ci:0 },
+      { locId:'L13', status:'live', dropTitle:'After Hours Pandora Pin Hunt',                       cap:40, res:39, ci:27 },
+    ]
+  },
+  {
+    id:'COL03', type:'internal', name:'Summer Park Hopping Perks', theme:'Hop More, Discover More',
+    status:'ended', windowStart:'Feb 1, 2026', windowEnd:'Feb 28, 2026',
+    scope:'All Disney Locations', creator:'Jordan Magic', createdDate:'Jan 15, 2026',
+    guardrails:{ price:'Free ($0)', capRange:'20–50 spots', broadcastWindow:'1–3 days before', themeReq:'Park Hopper experience — must be tied to a specific park, land, or character moment' },
+    description:'Every Disney location participated in the Summer Park Hopping Perks series — guests who checked in at 3+ locations received a bonus unlockable drop. This drove the highest cross-park engagement of any collection to date.',
+    participation:[
+      { locId:'L01', status:'ended', dropTitle:'Castle Courtyard Morning Meet',                     cap:40, res:39, ci:36 },
+      { locId:'L02', status:'ended', dropTitle:'Crystal Palace Brunch Perk',                        cap:35, res:34, ci:31 },
+      { locId:'L03', status:'ended', dropTitle:'Space Mountain Merch Bonus',                        cap:50, res:48, ci:43 },
+      { locId:'L04', status:'ended', dropTitle:'Boutique Bonus Makeover',                           cap:20, res:20, ci:19 },
+      { locId:'L05', status:'ended', dropTitle:'Chefs de France Park Hopper Lunch',                 cap:25, res:24, ci:21 },
+      { locId:'L06', status:'ended', dropTitle:'Spice Road Hopper Tasting',                         cap:20, res:18, ci:15 },
+      { locId:'L07', status:'ended', dropTitle:'Starbucks Passport Perk',                           cap:60, res:57, ci:52 },
+      { locId:'L08', status:'ended', dropTitle:'Garden Grill Hopper Breakfast',                     cap:28, res:27, ci:25 },
+      { locId:'L09', status:'ended', dropTitle:"Oga's Park Hopper Cocktail",                        cap:25, res:25, ci:24 },
+      { locId:'L10', status:'ended', dropTitle:'Lightsaber Hopper Bonus Build',                     cap:12, res:12, ci:12 },
+      { locId:'L11', status:'ended', dropTitle:'Galaxy Grub Bonus Drop',                            cap:40, res:38, ci:35 },
+      { locId:'L12', status:'ended', dropTitle:"Satu'li Hopper Bowl",                               cap:35, res:34, ci:31 },
+      { locId:'L13', status:'ended', dropTitle:'Pandora Pin Perk',                                  cap:45, res:44, ci:40 },
+      { locId:'L14', status:'ended', dropTitle:'Typhoon Tilly Hopper Snack',                        cap:50, res:47, ci:42 },
+      { locId:'L15', status:'ended', dropTitle:'Lagoon Gear Bonus Pack',                            cap:40, res:37, ci:33 },
+      { locId:'L16', status:'ended', dropTitle:'BOATHOUSE Hopper Happy Hour',                       cap:30, res:29, ci:27 },
+      { locId:'L17', status:'ended', dropTitle:'Earl\'s Hopper Combo',                              cap:80, res:76, ci:70 },
+      { locId:'L18', status:'ended', dropTitle:'World of Disney Perk Bag',                          cap:60, res:59, ci:54 },
+      { locId:'L19', status:'ended', dropTitle:'Rainforest Hopper Perk',                            cap:30, res:27, ci:23 },
+      { locId:'L20', status:'ended', dropTitle:'The Edison Late Perk',                              cap:25, res:20, ci:14 },
+      { locId:'L21', status:'ended', dropTitle:'Blue Bayou Hopper Dinner',                          cap:30, res:30, ci:28 },
+      { locId:'L22', status:'ended', dropTitle:'Haunted Mansion Perk Pack',                         cap:40, res:38, ci:36 },
+    ]
+  },
+  {
+    id:'COL04', type:'venue',
+    name:'Disney Springs Spring Shopping Weekend',
+    theme:'Shop, Discover, Drop',
+    status:'upcoming', windowStart:'Apr 25, 2026', windowEnd:'Apr 27, 2026',
+    scope:'Disney Springs, Lake Buena Vista FL',
+    creator:'Disney Springs Events', createdDate:'Mar 18, 2026',
+    venueName:'Disney Springs',
+    venueCity:'Lake Buena Vista, FL',
+    venueType:'Shopping & Entertainment District',
+    geoFence:{ enabled:true, boundaryType:'park', address:'Disney Springs, 1486 Buena Vista Dr, Lake Buena Vista, FL 32830', customerMessage:"You're at Disney Springs — exclusive weekend drops are live from shops and restaurants across the district" },
+    guardrails:{ price:'Free–$20', capRange:'20–80 spots', broadcastWindow:'1–2 days before', themeReq:'Spring theme — any category welcome. Drop must be claimable on-site only.' },
+    description:'Disney Springs is activating Nigh for a three-day spring shopping weekend. Independent retailers, Disney-owned stores, and F&B spots each create their own drop — guests discover them as they walk through the district.',
+    participation:[
+      { bizId:'DS01', bizName:'World of Disney',          bizCategory:'Official Merch',   bizType:'Disney',     status:'confirmed', dropTitle:'Exclusive 50th Collection Preview Drop',     cap:60, res:54, ci:0 },
+      { bizId:'DS02', bizName:'The BOATHOUSE',            bizCategory:'Fine Dining',       bizType:'3rd Party',  status:'confirmed', dropTitle:'Dock & Drop — Spring Tasting Preview',       cap:25, res:22, ci:0 },
+      { bizId:'DS03', bizName:'Earl of Sandwich',         bizCategory:'Fast Casual',       bizType:'3rd Party',  status:'confirmed', dropTitle:'Free Cookie with Any Order',                 cap:100,res:87, ci:0 },
+      { bizId:'DS04', bizName:'LEGO Store',               bizCategory:'Toys & Gifts',      bizType:'3rd Party',  status:'confirmed', dropTitle:'LEGO Spring Build Drop — Free Mini Set',     cap:40, res:36, ci:0 },
+      { bizId:'DS05', bizName:'Rainforest Cafe',          bizCategory:'Themed Dining',     bizType:'3rd Party',  status:'pending',   dropTitle:null,                                        cap:0,  res:0,  ci:0 },
+      { bizId:'DS06', bizName:'Splitsville Luxury Lanes', bizCategory:'Entertainment',     bizType:'3rd Party',  status:'confirmed', dropTitle:'Free Game Lane with $30+ Dining',           cap:30, res:18, ci:0 },
+      { bizId:'DS07', bizName:'Sephora Disney Springs',   bizCategory:'Beauty',            bizType:'3rd Party',  status:'declined',  dropTitle:null,                                        cap:0,  res:0,  ci:0 },
+      { bizId:'DS08', bizName:'The Edison',               bizCategory:'Bar & Restaurant',  bizType:'3rd Party',  status:'pending',   dropTitle:null,                                        cap:0,  res:0,  ci:0 },
+    ]
+  },
+  {
+    id:'COL05', type:'venue',
+    name:'EPCOT Food & Wine Festival Partners',
+    theme:'Taste the World',
+    status:'live', windowStart:'Mar 20, 2026', windowEnd:'Apr 18, 2026',
+    scope:'EPCOT World Showcase',
+    creator:'EPCOT Events Team', createdDate:'Mar 1, 2026',
+    venueName:'EPCOT World Showcase',
+    venueCity:'Lake Buena Vista, FL',
+    venueType:'Theme Park — World Showcase Pavilions',
+    geoFence:{ enabled:true, boundaryType:'land', address:'World Showcase, EPCOT, Walt Disney World, FL', customerMessage:"You're in EPCOT World Showcase — Food & Wine Festival drops from pavilion restaurants are live now" },
+    guardrails:{ price:'Free–$15', capRange:'15–30 spots', broadcastWindow:'Same day or day before', themeReq:'Culinary experience — tasting, pairing, masterclass, or chef-led event' },
+    description:'EPCOT World Showcase pavilion restaurants are activating Nigh drops for Food & Wine Festival. Each participating restaurant creates its own exclusive tasting or experience drop — visible only to guests physically inside the World Showcase promenade.',
+    participation:[
+      { bizId:'EF01', bizName:'Chefs de France',       bizCategory:'French Cuisine',    bizType:'Disney',    status:'live', dropTitle:'Chef Table Experience — 4-Course Preview',  cap:20, res:20, ci:14 },
+      { bizId:'EF02', bizName:'La Cava del Tequila',   bizCategory:'Mexican Spirits',   bizType:'3rd Party', status:'live', dropTitle:'Tequila Tasting Flight Drop',               cap:30, res:29, ci:19 },
+      { bizId:'EF03', bizName:'Spice Road Table',      bizCategory:'Moroccan Cuisine',  bizType:'3rd Party', status:'live', dropTitle:'Moroccan Wine & Mezze Pairing',             cap:24, res:22, ci:16 },
+      { bizId:'EF04', bizName:'Rose & Crown Dining',   bizCategory:'British Pub',       bizType:'Disney',    status:'live', dropTitle:'Afternoon Tea Reservation Drop',            cap:28, res:27, ci:18 },
+      { bizId:'EF05', bizName:'Tutto Italia Ristorante',bizCategory:'Italian Cuisine',  bizType:'3rd Party', status:'confirmed', dropTitle:'Italian Wine Masterclass',             cap:20, res:14, ci:0 },
+      { bizId:'EF06', bizName:'Tokyo Dining',          bizCategory:'Japanese Cuisine',  bizType:'Disney',    status:'confirmed', dropTitle:'Sake & Sashimi Chef Preview',          cap:16, res:10, ci:0 },
+      { bizId:'EF07', bizName:'Katsura Grill',         bizCategory:'Japanese F&B',      bizType:'Disney',    status:'pending',   dropTitle:null,                                   cap:0,  res:0,  ci:0 },
+    ]
+  },
+];
+
+// ─────────────────────────────────────────────────────────────
+// COLLECTIONS
+// ─────────────────────────────────────────────────────────────
+function rCollections() {
+  const filter = S.collectionFilter || 'all';
+  const list = filter === 'all' ? COLLECTIONS_DATA : COLLECTIONS_DATA.filter(c=>c.status===filter);
+
+  const statusColors = { live:'#10b981', upcoming:'#3b82f6', ended:'#6b7280' };
+  const statusBg     = { live:'#d1fae5', upcoming:'#dbeafe', ended:'#f3f4f6' };
+
+  const liveCount     = COLLECTIONS_DATA.filter(c=>c.status==='live').length;
+  const upcomingCount = COLLECTIONS_DATA.filter(c=>c.status==='upcoming').length;
+  const totalPartic   = COLLECTIONS_DATA.reduce((a,c)=>a+c.participation.filter(p=>['confirmed','live','ended'].includes(p.status)).length,0);
+
+  return `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;">
+      ${kpi('Collections',    String(COLLECTIONS_DATA.length), 'total campaigns',          ic('layers',16),'#6366f1')}
+      ${kpi('Live Now',       String(liveCount),               'actively running',          ic('radio',16),'#10b981')}
+      ${kpi('Upcoming',       String(upcomingCount),           'in planning or confirmed',  ic('cal',16),'#3b82f6')}
+      ${kpi('Participating',  String(totalPartic),             'locations / biz confirmed', ic('map',16),'#f59e0b')}
+    </div>
+
+    <div style="display:flex;gap:6px;margin-bottom:18px;align-items:center;">
+      ${['all','live','upcoming','ended'].map(f=>`
+        <button onclick="ss({collectionFilter:'${f}'})" style="background:${filter===f?'#0f172a':'#fff'};color:${filter===f?'#fff':'#475569'};border:1px solid ${filter===f?'#0f172a':'#e5e7eb'};padding:7px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;text-transform:capitalize;">${f==='all'?'All ('+COLLECTIONS_DATA.length+')':f.charAt(0).toUpperCase()+f.slice(1)+' ('+COLLECTIONS_DATA.filter(c=>c.status===f).length+')'}</button>
+      `).join('')}
+      <button onclick="ss({newCollModal:true,newCollStep:1,newCollType:'internal'})" style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">+ New Collection</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      ${list.map(col => {
+        const confirmed = col.participation.filter(p=>['confirmed','live','ended'].includes(p.status)).length;
+        const pending   = col.participation.filter(p=>p.status==='pending').length;
+        const declined  = col.participation.filter(p=>p.status==='declined').length;
+        const totalLocs = col.participation.length;
+        const totalCap  = col.participation.reduce((a,p)=>a+p.cap,0);
+        const totalRes  = col.participation.reduce((a,p)=>a+p.res,0);
+        const totalCI   = col.participation.reduce((a,p)=>a+p.ci,0);
+        const tierShort = col.geoFence ? (GEO_TIERS[col.geoFence.boundaryType]?.short || col.geoFence.boundaryType) : null;
+        return `
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+            <div style="padding:20px 22px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid #f1f5f9;">
+              <div style="width:44px;height:44px;background:${statusBg[col.status]};border-radius:12px;display:flex;align-items:center;justify-content:center;color:${statusColors[col.status]};flex-shrink:0;">${ic('layers',20)}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;">
+                  <span style="font-weight:900;font-size:1rem;">${col.name}</span>
+                  <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+                  ${col.type==='venue'
+                    ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏟️ Venue</span>`
+                    : `<span style="background:#f0fdf4;color:#15803d;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏰 Internal</span>`}
+                  <span style="background:#f1f5f9;color:#475569;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;">${col.scope}</span>
+                  ${col.geoFence?.enabled ? `<span style="background:#fef9c3;color:#854d0e;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${ic('map',12)} Geo-fenced · ${tierShort}</span>` : ''}
+                </div>
+                <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">${col.windowStart} → ${col.windowEnd} · Theme: <em>${col.theme}</em></div>
+                <div style="font-size:0.75rem;color:#94a3b8;">${col.description.substring(0,120)}…</div>
+              </div>
+              <button onclick="ss({collectionDetail:'${col.id}'})" style="background:#f1f5f9;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#0f172a;white-space:nowrap;flex-shrink:0;">View Details →</button>
+            </div>
+            <div style="padding:16px 22px;display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:#fafafa;">
+              ${collStat(col.type==='venue'?'Businesses':'Locations', totalLocs+' total', '#475569')}
+              ${collStat('Confirmed', confirmed, '#10b981')}
+              ${collStat('Pending',   pending,   '#f59e0b')}
+              ${collStat('Declined',  declined,  '#ef4444')}
+              ${collStat('Total Cap', totalCap||'—', '#6366f1')}
+              ${collStat('Reserved',  totalRes||'—', '#0ea5e9')}
+              ${collStat('Checked In',totalCI||'—',  '#10b981')}
+            </div>
+            <div style="padding:10px 22px 14px;display:flex;gap:4px;align-items:center;">
+              <div style="flex:1;height:6px;background:#f1f5f9;border-radius:4px;overflow:hidden;display:flex;">
+                <div style="background:#10b981;width:${pct(confirmed,totalLocs)}%;"></div>
+                <div style="background:#fbbf24;width:${pct(pending,totalLocs)}%;"></div>
+                <div style="background:#fca5a5;width:${pct(declined,totalLocs)}%;"></div>
+              </div>
+              <span style="font-size:0.68rem;color:#64748b;margin-left:8px;white-space:nowrap;">${confirmed}/${totalLocs} ${col.type==='venue'?'biz':'loc'}</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    ${S.collectionDetail ? collectionDetailPanel() : ''}
+    ${S.newCollModal ? newCollModal() : ''}
+  `;
+}
+
+function collStat(label, value, color) {
+  return `<div style="text-align:center;padding:0 8px;border-right:1px solid #e5e7eb;">
+    <div style="font-size:0.62rem;color:#94a3b8;font-weight:600;margin-bottom:3px;">${label}</div>
+    <div style="font-weight:800;font-size:0.95rem;color:${color};">${value}</div>
+  </div>`;
+}
+
+function collectionDetailPanel() {
+  const col = COLLECTIONS_DATA.find(c=>c.id===S.collectionDetail);
+  if (!col) return '';
+
+  const statusColors = { live:'#10b981', upcoming:'#3b82f6', ended:'#6b7280', confirmed:'#10b981', pending:'#f59e0b', declined:'#ef4444' };
+  const statusBg     = { live:'#d1fae5', upcoming:'#dbeafe', ended:'#f3f4f6', confirmed:'#d1fae5', pending:'#fef3c7', declined:'#fee2e2' };
+
+  const totalCap  = col.participation.reduce((a,p)=>a+p.cap,0);
+  const totalRes  = col.participation.reduce((a,p)=>a+p.res,0);
+  const totalCI   = col.participation.reduce((a,p)=>a+p.ci,0);
+  const confirmed = col.participation.filter(p=>['confirmed','live','ended'].includes(p.status));
+  const pending   = col.participation.filter(p=>p.status==='pending');
+  const declined  = col.participation.filter(p=>p.status==='declined');
+  const showRate  = totalRes>0&&totalCI>0 ? pct(totalCI,totalRes) : null;
+  const fillRate  = totalCap>0&&totalRes>0 ? pct(totalRes,totalCap) : null;
+
+  const today    = new Date('2026-03-31');
+  const winStart = new Date(col.windowStart);
+  const winEnd   = new Date(col.windowEnd);
+  const totalDays= Math.max(1, Math.round((winEnd-winStart)/(1000*60*60*24)));
+  const daysUntil= Math.round((winStart-today)/(1000*60*60*24));
+  const daysLeft = Math.round((winEnd-today)/(1000*60*60*24));
+  const tierLabel = col.geoFence ? (GEO_TIERS[col.geoFence.boundaryType]?.label || col.geoFence.boundaryType) : null;
+
+  return `
+    <div onclick="ss({collectionDetail:null})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;display:flex;align-items:flex-start;justify-content:flex-end;overflow:hidden;">
+      <div onclick="event.stopPropagation()" style="background:#fff;width:680px;height:100%;overflow-y:auto;padding:28px;box-shadow:-8px 0 32px rgba(0,0,0,0.12);">
+
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;">Collection</div>
+              ${col.type==='venue'
+                ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">🏟️ Venue</span>`
+                : `<span style="background:#f0fdf4;color:#15803d;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">🏰 Internal</span>`}
+            </div>
+            <div style="font-weight:900;font-size:1.3rem;margin-bottom:4px;">${col.name}</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+              <span style="font-size:0.75rem;color:#64748b;">${col.windowStart} → ${col.windowEnd}</span>
+              ${col.type==='venue'
+                ? `<span style="font-size:0.75rem;color:#94a3b8;">${col.venueName} · ${col.venueCity}</span>`
+                : `<span style="font-size:0.75rem;color:#94a3b8;">${col.scope} · Created by ${col.creator}</span>`}
+            </div>
+          </div>
+          <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;flex-shrink:0;">✕</button>
+        </div>
+
+        ${col.type==='venue' ? `
+          <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.1rem;flex-shrink:0;">🏟️</span>
+            <div>
+              <div style="font-weight:800;font-size:0.82rem;color:#6b21a8;margin-bottom:2px;">${col.venueName} — ${col.venueType}</div>
+              <div style="font-size:0.74rem;color:#7e22ce;line-height:1.5;">This is a Venue Collection. Participating businesses are independent Nigh accounts invited by the venue operator. Disney Parks sees aggregate participation metrics only — individual guest data remains private to each business.</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <p style="font-size:0.82rem;color:#64748b;line-height:1.65;margin:14px 0 20px;">${col.description}</p>
+
+        ${col.geoFence ? `
+          <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:#d97706;">${ic('map',18)}</span>
+                <span style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence ${col.geoFence.enabled ? '<span style="background:#d97706;color:#fff;font-size:0.6rem;padding:2px 7px;border-radius:20px;margin-left:4px;">Active</span>' : ''}</span>
+              </div>
+              <button style="font-size:0.72rem;font-weight:700;color:#92400e;background:transparent;border:1px solid #fcd34d;border-radius:7px;padding:4px 10px;cursor:pointer;">Edit Boundary</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+              ${infoRow('Coverage Tier', tierLabel)}
+              ${infoRow('Center Point', col.geoFence.address)}
+              ${infoRow('Trigger', 'On entry — auto-surfaces drops in-app')}
+            </div>
+            <div style="background:#fff8e1;border-radius:8px;padding:10px 12px;">
+              <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#92400e;margin-bottom:4px;">Guest-Facing Message</div>
+              <div style="font-size:0.78rem;color:#78350f;font-style:italic;">"${col.geoFence.customerMessage}"</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:22px;">
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">${col.type==='venue' ? 'Venue Guardrails' : 'Resort Guardrails'}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${infoRow('Price',            col.guardrails.price)}
+            ${infoRow('Cap per Location', col.guardrails.capRange)}
+            ${infoRow('Broadcast Window', col.guardrails.broadcastWindow)}
+            ${infoRow('Theme Required',   col.guardrails.themeReq)}
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Collection Performance</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;">
+          ${miniStat(col.type==='venue'?'Businesses In':'Participating', confirmed.length+'/'+col.participation.length, '#6366f1')}
+          ${miniStat('Total Cap', totalCap>0?fmtNum(totalCap):'—', null)}
+          ${miniStat('Reserved',  totalRes>0?fmtNum(totalRes):'—', '#0ea5e9')}
+          ${miniStat('Checked In',totalCI>0?fmtNum(totalCI):'—', '#10b981')}
+        </div>
+        ${(fillRate||showRate) ? `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;">
+            ${fillRate ? `<div style="background:#f8f9fb;border-radius:10px;padding:14px;"><div style="font-size:0.65rem;color:#94a3b8;margin-bottom:6px;">Fill Rate (res/cap)</div><div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="background:#6366f1;height:100%;width:${fillRate}%;border-radius:4px;"></div></div><div style="font-weight:800;font-size:1rem;color:#6366f1;">${fillRate}%</div></div>` : ''}
+            ${showRate ? `<div style="background:#f8f9fb;border-radius:10px;padding:14px;"><div style="font-size:0.65rem;color:#94a3b8;margin-bottom:6px;">Show Rate (ci/res)</div><div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="background:${showColor(showRate)};height:100%;width:${showRate}%;border-radius:4px;"></div></div><div style="font-weight:800;font-size:1rem;color:${showColor(showRate)};">${showRate}%</div></div>` : ''}
+          </div>
+        `:''}
+
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Collection Timeline</div>
+        <div style="background:#f8f9fb;border-radius:12px;padding:18px;margin-bottom:22px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#64748b;margin-bottom:8px;"><span>${col.windowStart}</span><span>${col.windowEnd}</span></div>
+          <div style="background:#e5e7eb;border-radius:6px;height:12px;position:relative;margin-bottom:10px;">
+            <div style="background:linear-gradient(90deg,#6366f1,#8b5cf6);height:100%;border-radius:6px;width:100%;"></div>
+            ${col.status==='live' ? `<div style="position:absolute;left:${Math.max(0,Math.min(100,pct(Math.round((today-winStart)/(1000*60*60*24)),totalDays)))}%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:#ef4444;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #ef4444;"></div>` : ''}
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#94a3b8;">
+            <span>Duration: ${totalDays} days</span>
+            <span>${col.status==='upcoming' ? (daysUntil>0?'Starts in '+daysUntil+' day'+(daysUntil!==1?'s':''):'Starts today') : col.status==='live' ? (daysLeft>0?daysLeft+' day'+(daysLeft!==1?'s':'')+' remaining':'Ending today') : 'Ended'}</span>
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">${col.type==='venue' ? 'Business Participation' : 'Location Participation'}</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          ${[['confirmed','Confirmed','#10b981'],['pending','Pending','#f59e0b'],['declined','Declined','#ef4444'],['live','Live Now','#10b981'],['ended','Ended','#6b7280']].map(([s,label,color])=>{
+            const n = col.participation.filter(p=>p.status===s).length;
+            return n>0 ? `<span style="background:${statusBg[s]||'#f3f4f6'};color:${color};font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:20px;">${label}: ${n}</span>` : '';
+          }).join('')}
+        </div>
+
+        <div style="background:#f8f9fb;border-radius:12px;overflow:hidden;margin-bottom:22px;">
+          <table>
+            <thead>
+              <tr style="background:#f1f5f9;border-bottom:1px solid #e5e7eb;">
+                ${col.type==='venue'
+                  ? ['Business','Category','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>3?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>`).join('')
+                  : ['Location','Park','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>3?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>`).join('')
+                }
+              </tr>
+            </thead>
+            <tbody>
+              ${col.participation.map((p,i)=>{
+                const sr = p.res>0&&p.ci>0 ? pct(p.ci,p.res) : null;
+                if (col.type === 'venue') {
+                  return `
+                    <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                      <td style="padding:10px 12px;"><div style="font-weight:700;font-size:0.8rem;">${p.bizName}</div><div style="font-size:0.65rem;color:#9333ea;">${p.bizType}</div></td>
+                      <td style="padding:10px 12px;font-size:0.72rem;color:#475569;">${p.bizCategory}</td>
+                      <td style="padding:10px 12px;"><span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span></td>
+                      <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                    </tr>`;
+                } else {
+                  const loc  = LOCATIONS.find(l=>l.id===p.locId);
+                  const park = loc ? parkById(loc.park) : null;
+                  return `
+                    <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                      <td style="padding:10px 12px;"><div style="font-weight:700;font-size:0.8rem;">${loc?.name||p.locId}</div><div style="font-size:0.65rem;color:#94a3b8;">${loc?.land}</div></td>
+                      <td style="padding:10px 12px;"><span style="background:${park?.color||'#e5e7eb'}15;color:${park?.color||'#64748b'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${park?.abbr||'—'}</span></td>
+                      <td style="padding:10px 12px;"><span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span></td>
+                      <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                    </tr>`;
+                }
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${col.type==='venue' ? `
+          <div style="background:#f8f9fb;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.73rem;color:#64748b;line-height:1.6;">
+            <span style="font-weight:800;color:#0f172a;">🔒 Data Privacy Note:</span> Each participating business owns its own guest data. Venue aggregate metrics are visible above, but individual guest identities and contact info are not shared with the venue or other participants.
+          </div>
+        ` : ''}
+        <div style="display:flex;gap:10px;">
+          ${col.status!=='ended' && col.type!=='venue' ? `<button style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Reminder to Pending</button>` : ''}
+          ${col.status!=='ended' && col.type==='venue' ? `<button style="flex:1;background:#9333ea;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Invite More Businesses</button>` : ''}
+          <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ANALYTICS
+// ─────────────────────────────────────────────────────────────
+function rAnalytics() {
+  const sorted = [...LOCATIONS].sort((a,b)=>{
+    if (S.analyticsSort==='checkins') return b.mtdCheckins-a.mtdCheckins;
+    if (S.analyticsSort==='showRate') return b.showRate-a.showRate;
+    if (S.analyticsSort==='revenue')  return b.mtdRevenue-a.mtdRevenue;
+    return b.mtdDrops-a.mtdDrops;
+  });
+  if (S.hierarchyView==='resort') return rAnalyticsByResort();
+  if (S.hierarchyView==='park')   return rAnalyticsByPark();
+  return `
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:18px;">
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <div>
+            <div style="font-weight:800;font-size:0.92rem;">Location Leaderboard</div>
+            <div style="font-size:0.75rem;color:#64748b;">Month-to-date — all 22 locations</div>
+          </div>
+          <select onchange="ss({analyticsSort:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:6px 28px 6px 10px;font-size:0.78rem;font-weight:600;background:#fff;cursor:pointer;">
+            <option value="checkins">Sort: Check-ins</option>
+            <option value="showRate">Sort: Show Rate</option>
+            <option value="revenue">Sort: Revenue</option>
+            <option value="drops">Sort: Drops</option>
+          </select>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="border-bottom:2px solid #e5e7eb;">
+              ${['#','Location','Park','Drops','Check-ins','Show Rate','Revenue'].map((h,i)=>`
+                <th style="padding:8px ${i>0?'10px':'0'};text-align:${i>2?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#94a3b8;white-space:nowrap;">${h}</th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${sorted.map((l,i)=>{
+              const park = parkById(l.park);
+              return `
+                <tr style="border-bottom:1px solid #f8f9fb;" onmouseover="this.style.background='#f8f9fb'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:9px 0;font-weight:900;font-size:0.8rem;color:${i===0?'#d97706':i===1?'#9ca3af':i===2?'#cd7c2f':'#cbd5e1'};">${i+1}</td>
+                  <td style="padding:9px 10px;">
+                    <div style="font-weight:700;font-size:0.83rem;">${l.name}</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;">${l.land}</div>
+                  </td>
+                  <td style="padding:9px 10px;"><span style="background:${park?.color}15;color:${park?.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${park?.abbr}</span></td>
+                  <td style="padding:9px 10px;text-align:right;font-size:0.83rem;font-weight:600;">${l.mtdDrops}</td>
+                  <td style="padding:9px 10px;text-align:right;font-size:0.83rem;font-weight:800;">${fmtNum(l.mtdCheckins)}</td>
+                  <td style="padding:9px 10px;text-align:right;font-size:0.83rem;font-weight:800;color:${showColor(l.showRate)};">${l.showRate}%</td>
+                  <td style="padding:9px 10px;text-align:right;font-size:0.83rem;font-weight:600;">${fmtMoney(l.mtdRevenue)}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${PARKS.map(p=>{
+          const ls = LOCATIONS.filter(l=>l.park===p.id);
+          if (!ls.length) return '';
+          const ci    = ls.reduce((a,l)=>a+l.mtdCheckins,0);
+          const drops = ls.reduce((a,l)=>a+l.mtdDrops,0);
+          const show  = Math.round(ls.reduce((a,l)=>a+l.showRate,0)/ls.length);
+          const rev   = ls.reduce((a,l)=>a+l.mtdRevenue,0);
+          return `
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <div style="width:10px;height:10px;border-radius:50%;background:${p.color};flex-shrink:0;"></div>
+                <span style="font-weight:800;font-size:0.82rem;">${p.name}</span>
+                <span style="font-size:0.68rem;color:#94a3b8;margin-left:auto;">${ls.length} locs</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                <div><div style="font-size:0.62rem;color:#94a3b8;">Check-ins</div><div style="font-weight:900;font-size:0.9rem;">${fmtNum(ci)}</div></div>
+                <div><div style="font-size:0.62rem;color:#94a3b8;">Show Rate</div><div style="font-weight:900;font-size:0.9rem;color:${showColor(show)};">${show}%</div></div>
+                <div><div style="font-size:0.62rem;color:#94a3b8;">Drops</div><div style="font-weight:900;font-size:0.9rem;">${drops}</div></div>
+                <div><div style="font-size:0.62rem;color:#94a3b8;">Revenue</div><div style="font-weight:900;font-size:0.9rem;">${fmtMoney(rev)}</div></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function rAnalyticsByResort() {
+  const resData = RESORTS.map(r=>{
+    const ls = LOCATIONS.filter(l=>l.resort===r.id);
+    return { ...r, ls, ci:ls.reduce((a,l)=>a+l.mtdCheckins,0), drops:ls.reduce((a,l)=>a+l.mtdDrops,0), show:ls.length?Math.round(ls.reduce((a,l)=>a+l.showRate,0)/ls.length):0, rev:ls.reduce((a,l)=>a+l.mtdRevenue,0) };
+  }).sort((a,b)=>b.ci-a.ci);
+  return `
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+      <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Resort Comparison</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">Month-to-date performance across 2 resorts</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:2px solid #e5e7eb;">
+            ${['Resort','Locations','Parks','Drops MTD','Check-ins MTD','Avg Show Rate','Revenue MTD','Top Location'].map((h,i)=>`
+              <th style="padding:8px 12px;text-align:${i>2?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#94a3b8;white-space:nowrap;">${h}</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${resData.map(r=>{
+            const top = r.ls.slice().sort((a,b)=>b.mtdCheckins-a.mtdCheckins)[0];
+            const parkCount = PARKS.filter(p=>p.resort===r.id).length;
+            return `
+              <tr style="border-bottom:1px solid #f8f9fb;">
+                <td style="padding:14px 12px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:9px;height:9px;border-radius:50%;background:${r.color};"></div><span style="font-weight:800;font-size:0.88rem;">${r.name}</span><span style="background:${r.color}15;color:${r.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:4px;">${r.abbr}</span></div></td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.85rem;font-weight:600;">${r.ls.length}</td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.85rem;font-weight:600;">${parkCount}</td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.85rem;font-weight:700;">${r.drops}</td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.88rem;font-weight:900;">${fmtNum(r.ci)}</td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.88rem;font-weight:900;color:${showColor(r.show)};">${r.show}%</td>
+                <td style="padding:14px 12px;text-align:right;font-size:0.85rem;font-weight:700;">${fmtMoney(r.rev)}</td>
+                <td style="padding:14px 12px;font-size:0.78rem;font-weight:700;color:#475569;">${top?.name||'—'}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function rAnalyticsByPark() {
+  const parkData = PARKS.map(p=>{
+    const ls  = LOCATIONS.filter(l=>l.park===p.id);
+    const res = RESORTS.find(r=>r.id===p.resort);
+    return { ...p, res, ls, ci:ls.reduce((a,l)=>a+l.mtdCheckins,0), drops:ls.reduce((a,l)=>a+l.mtdDrops,0), show:ls.length?Math.round(ls.reduce((a,l)=>a+l.showRate,0)/ls.length):0, rev:ls.reduce((a,l)=>a+l.mtdRevenue,0) };
+  }).sort((a,b)=>b.ci-a.ci);
+  return `
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+      <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Park Comparison</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">Month-to-date performance across ${PARKS.length} parks &amp; destinations</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:2px solid #e5e7eb;">
+            ${['Park','Resort','Locs','Drops','Check-ins','Avg Show','Revenue','Top Location'].map((h,i)=>`
+              <th style="padding:8px 12px;text-align:${i>2?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#94a3b8;white-space:nowrap;">${h}</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${parkData.map(p=>`
+            <tr style="border-bottom:1px solid #f8f9fb;">
+              <td style="padding:11px 12px;"><div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:50%;background:${p.color};"></div><span style="font-weight:800;font-size:0.83rem;">${p.name}</span></div></td>
+              <td style="padding:11px 12px;"><span style="background:${p.res?.color}15;color:${p.res?.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${p.res?.abbr}</span></td>
+              <td style="padding:11px 12px;text-align:right;font-size:0.83rem;font-weight:600;">${p.ls.length}</td>
+              <td style="padding:11px 12px;text-align:right;font-size:0.83rem;font-weight:700;">${p.drops}</td>
+              <td style="padding:11px 12px;text-align:right;font-size:0.88rem;font-weight:900;">${fmtNum(p.ci)}</td>
+              <td style="padding:11px 12px;text-align:right;font-size:0.88rem;font-weight:900;color:${showColor(p.show)};">${p.show}%</td>
+              <td style="padding:11px 12px;text-align:right;font-size:0.83rem;font-weight:700;">${fmtMoney(p.rev)}</td>
+              <td style="padding:11px 12px;font-size:0.78rem;font-weight:700;color:#475569;">${p.ls.slice().sort((a,b)=>b.mtdCheckins-a.mtdCheckins)[0]?.name||'—'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// USERS
+// ─────────────────────────────────────────────────────────────
+const USERS_DATA = [
+  { id:'U01', name:'Jordan Hayes',   email:'jordan.hayes@disney.com',    role:'Corporate Admin',  scope:'All Resorts',           status:'active',   lastActive:'Today',       avatar:'JH' },
+  { id:'U02', name:'Morgan Chen',    email:'morgan.chen@disney.com',     role:'Corporate Admin',  scope:'All Resorts',           status:'active',   lastActive:'Yesterday',   avatar:'MC' },
+  { id:'U03', name:'Alex Rivera',    email:'alex.rivera@disney.com',     role:'Resort Manager',   scope:'Walt Disney World',     status:'active',   lastActive:'Today',       avatar:'AR' },
+  { id:'U04', name:'Sam Park',       email:'sam.park@disney.com',        role:'Resort Manager',   scope:'Disneyland Resort',     status:'active',   lastActive:'2 days ago',  avatar:'SP' },
+  { id:'U05', name:'Taylor Brooks',  email:'taylor.brooks@disney.com',   role:'Park Manager',     scope:'Magic Kingdom',         status:'active',   lastActive:'Today',       avatar:'TB' },
+  { id:'U06', name:'Casey Nguyen',   email:'casey.nguyen@disney.com',    role:'Park Manager',     scope:'EPCOT',                 status:'active',   lastActive:'Today',       avatar:'CN' },
+  { id:'U07', name:'Drew Patel',     email:'drew.patel@disney.com',      role:'Park Manager',     scope:'Hollywood Studios',     status:'active',   lastActive:'3 days ago',  avatar:'DP' },
+  { id:'U08', name:'Riley Kim',      email:'riley.kim@disney.com',       role:'Park Manager',     scope:'Animal Kingdom',        status:'active',   lastActive:'Yesterday',   avatar:'RK' },
+  { id:'U09', name:'Quinn Torres',   email:'quinn.torres@disney.com',    role:'Park Manager',     scope:'Disneyland Park',       status:'active',   lastActive:'Today',       avatar:'QT' },
+  { id:'U10', name:'Avery Johnson',  email:'avery.johnson@disney.com',   role:'Park Manager',     scope:'California Adventure',  status:'active',   lastActive:'Today',       avatar:'AJ' },
+  { id:'U11', name:'Jamie Williams', email:'jamie.williams@disney.com',  role:'Location Manager', scope:'Bibbidi Bobbidi Boutique', status:'active', lastActive:'Today',     avatar:'JW' },
+  { id:'U12', name:'Reese Martinez', email:'reese.martinez@disney.com',  role:'Location Manager', scope:'Space Mountain',        status:'active',   lastActive:'Yesterday',   avatar:'RM' },
+  { id:'U13', name:'Blake Thompson', email:'blake.t@disney.com',         role:'Location Manager', scope:'Disney Character Dining', status:'active', lastActive:'2 days ago', avatar:'BT' },
+  { id:'U14', name:'Skyler Davis',   email:'skyler.davis@disney.com',    role:'Location Manager', scope:'WDW VIP Tours',         status:'inactive', lastActive:'1 week ago',  avatar:'SD' },
+  { id:'U15', name:'Frankie Lee',    email:'frankie.lee@worldofdisney.com', role:'Location Manager', scope:'World of Disney',   status:'active',   lastActive:'Today',       avatar:'FL' },
+];
+
+function rUsers() {
+  const roleColors = { 'Corporate Admin':'#7c3aed', 'Resort Manager':'#0057B8', 'Park Manager':'#f59e0b', 'Location Manager':'#10b981' };
+  const roles = ['all','Corporate Admin','Resort Manager','Park Manager','Location Manager'];
+  const users = S.userRoleFilter==='all' ? USERS_DATA : USERS_DATA.filter(u=>u.role===S.userRoleFilter);
+  return `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      ${roles.map(r=>`
+        <button onclick="ss({userRoleFilter:'${r}'})" style="background:${S.userRoleFilter===r?'#0f172a':'#fff'};color:${S.userRoleFilter===r?'#fff':'#475569'};border:1px solid ${S.userRoleFilter===r?'#0f172a':'#e5e7eb'};padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.76rem;cursor:pointer;white-space:nowrap;">${r==='all'?'All Users':r+'s'}</button>
+      `).join('')}
+      <button style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Invite User</button>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;margin-bottom:20px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+            ${['User','Role','Scope','Status','Last Active',''].map((h,i)=>`
+              <th style="padding:11px 14px;text-align:${i===5?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;">${h}</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map((u,i)=>`
+            <tr style="border-bottom:1px solid #f8f9fb;${i%2?'background:#fafafa':''}">
+              <td style="padding:13px 14px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:32px;height:32px;background:${roleColors[u.role]||'#e5e7eb'}20;color:${roleColors[u.role]};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:800;flex-shrink:0;">${u.avatar}</div>
+                  <div><div style="font-weight:700;font-size:0.83rem;">${u.name}</div><div style="font-size:0.68rem;color:#94a3b8;">${u.email}</div></div>
+                </div>
+              </td>
+              <td style="padding:13px 14px;"><span style="background:${roleColors[u.role]}18;color:${roleColors[u.role]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;">${u.role}</span></td>
+              <td style="padding:13px 14px;font-size:0.82rem;font-weight:700;color:#475569;">${u.scope}</td>
+              <td style="padding:13px 14px;">${badge(u.status)}</td>
+              <td style="padding:13px 14px;font-size:0.8rem;color:#64748b;">${u.lastActive}</td>
+              <td style="padding:13px 14px;text-align:right;">
+                <button style="background:#f1f5f9;border:none;padding:5px 11px;border-radius:6px;font-size:0.72rem;font-weight:700;color:#475569;cursor:pointer;margin-left:4px;">Edit</button>
+                <button style="background:#fee2e2;border:none;padding:5px 11px;border-radius:6px;font-size:0.72rem;font-weight:700;color:#dc2626;cursor:pointer;margin-left:4px;">Remove</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+      <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Access Hierarchy</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">What each role can see and do across the Disney Parks organization</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        ${[
+          { role:'Corporate Admin', color:'#7c3aed', can:['View all resorts, parks & locations','Create & push drops to any scope','Manage all users at any level','Full analytics across Disney enterprise','Configure brand drop policies & guardrails','Receive all system alerts'] },
+          { role:'Resort Manager',  color:'#0057B8', can:['View all parks & locations in resort','Push drops within their resort scope','Manage park & location managers','Resort-level analytics & leaderboard','Escalate issues to corporate admin'] },
+          { role:'Park Manager',    color:'#f59e0b', can:['View all locations in their park','Coordinate drops across park lands','Manage location managers in their park','Park-level analytics & show rate','Flag underperforming locations to resort'] },
+          { role:'Location Manager',color:'#10b981', can:['Manage their single location only','Create location-level drops','View check-in & reservation data','Confirm or customize corporate drops','Handle local waitlists & guest invites'] },
+        ].map(r=>`
+          <div style="background:${r.color}08;border:1px solid ${r.color}28;border-radius:12px;padding:16px;">
+            <div style="font-weight:800;font-size:0.8rem;color:${r.color};margin-bottom:10px;">${r.role}</div>
+            ${r.can.map(c=>`<div style="font-size:0.7rem;color:#475569;padding:3px 0;border-bottom:1px solid ${r.color}12;line-height:1.4;">✓ ${c}</div>`).join('')}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// BILLING
+// ─────────────────────────────────────────────────────────────
+function rBilling() {
+  const plan = { name:'Enterprise', pricePerLoc:449, locations:22, renewal:'Apr 1, 2026', billingCycle:'Monthly', csmName:'Rachel Torres', csmEmail:'rachel.torres@nigh.com' };
+  const monthlyTotal = plan.pricePerLoc * plan.locations;
+  const annualTotal  = monthlyTotal * 12;
+  const totalCI      = LOCATIONS.reduce((a,l)=>a+l.mtdCheckins,0);
+  const avgCheckVal  = 112;
+  const revenueAttr  = totalCI * avgCheckVal;
+  const costPerCI    = totalCI > 0 ? (monthlyTotal / totalCI).toFixed(2) : '—';
+  const roi          = totalCI > 0 ? (revenueAttr / monthlyTotal).toFixed(1) : '—';
+  const activeUsers  = USERS_DATA.filter(u=>u.status==='active').length;
+  const activeDrops  = CORP_DROPS.filter(d=>d.status==='live'||d.status==='upcoming').length;
+  const apiUsed=22640, apiLimit=50000;
+
+  const tiers = [
+    { name:'Starter',         price:149,  hl:false, tag:null,         f:{ locs:'Up to 5',   drops:'10/loc/mo', analytics:'Core',         colls:'Internal only',    geo:false, api:false, sso:false, hier:false, support:'Standard' } },
+    { name:'Growth',          price:249,  hl:false, tag:null,         f:{ locs:'Up to 25',  drops:'25/loc/mo', analytics:'Full',          colls:'Internal + Venue', geo:true,  api:false, sso:false, hier:true,  support:'Priority' } },
+    { name:'Enterprise',      price:449,  hl:true,  tag:'YOUR PLAN',  f:{ locs:'Unlimited', drops:'Unlimited', analytics:'Full + Export', colls:'All types',        geo:true,  api:true,  sso:true,  hier:true,  support:'Dedicated CSM' } },
+    { name:'Enterprise Plus', price:null, hl:false, tag:'Contact us', f:{ locs:'Unlimited', drops:'Unlimited', analytics:'Custom',        colls:'All + White-label',geo:true,  api:true,  sso:true,  hier:true,  support:'Named team + 99.9% SLA' } },
+  ];
+  const invoices = [
+    { period:'March 2026',    amount:monthlyTotal, date:'Mar 1, 2026', id:'INV-2026-03' },
+    { period:'February 2026', amount:monthlyTotal, date:'Feb 1, 2026', id:'INV-2026-02' },
+    { period:'January 2026',  amount:monthlyTotal, date:'Jan 1, 2026', id:'INV-2026-01' },
+    { period:'December 2025', amount:monthlyTotal, date:'Dec 1, 2025', id:'INV-2025-12' },
+    { period:'November 2025', amount:monthlyTotal, date:'Nov 1, 2025', id:'INV-2025-11' },
+  ];
+  function bRow(l,v){return`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.82rem;"><span style="color:#475569;">${l}</span><span style="font-weight:700;color:#0f172a;">${v}</span></div>`;}
+  function chk(v){return typeof v==='boolean'?`<span style="color:${v?'#10b981':'#cbd5e1'};font-weight:800;">${v?'✓':'–'}</span>`:`<span style="font-size:0.78rem;font-weight:600;color:#475569;">${v}</span>`;}
+  function meter(label,used,total,color){const p=total?Math.min(100,Math.round(used/total*100)):100;const c=p>=90?'#ef4444':p>=70?'#f59e0b':color;return`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:5px;"><span style="font-weight:700;color:#475569;">${label}</span><span style="font-weight:800;color:${c};">${fmtNum(used)}/${fmtNum(total)} <span style="color:#94a3b8;font-weight:500;">(${p}%)</span></span></div><div style="height:6px;border-radius:4px;background:#f1f5f9;overflow:hidden;"><div style="height:100%;width:${p}%;background:${c};border-radius:4px;transition:width 0.4s;"></div></div></div>`;}
+  return `
+    <div style="background:linear-gradient(135deg,#0057B8,#0ea5e9);border-radius:16px;padding:22px 28px;margin-bottom:20px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;opacity:0.8;margin-bottom:4px;">March 2026 Value Delivered</div>
+        <div style="font-size:1.6rem;font-weight:900;">${fmtMoney(revenueAttr)} attributed revenue</div>
+        <div style="font-size:0.8rem;opacity:0.85;margin-top:4px;">${fmtNum(totalCI)} check-ins · ${roi}× ROI · $${costPerCI}/check-in</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;opacity:0.8;margin-bottom:4px;">Monthly Spend</div>
+        <div style="font-size:1.3rem;font-weight:900;">${fmtMoney(monthlyTotal)}</div>
+        <div style="font-size:0.72rem;opacity:0.75;">${plan.locations} locations × $${plan.pricePerLoc}/mo</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="font-weight:800;font-size:0.92rem;margin-bottom:14px;">Current Plan</div>
+        ${bRow('Plan','Enterprise')}${bRow('Price per Location','$449/location/month')}${bRow('Active Locations',plan.locations+' (22 contracted)')}${bRow('Monthly Total',fmtMoney(monthlyTotal))}${bRow('Annual Value',fmtMoney(annualTotal))}${bRow('Renewal Date',plan.renewal)}${bRow('Billing Cycle',plan.billingCycle)}
+        <div style="margin-top:16px;padding:14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;">
+          <div style="font-size:0.72rem;font-weight:800;color:#0369a1;margin-bottom:4px;">Your Dedicated CSM</div>
+          <div style="font-weight:700;font-size:0.85rem;">${plan.csmName}</div>
+          <div style="font-size:0.72rem;color:#64748b;">${plan.csmEmail}</div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="font-weight:800;font-size:0.92rem;margin-bottom:14px;">Platform Usage (March 2026)</div>
+        ${meter('Locations',22,22,'#0057B8')}${meter('API Calls',apiUsed,apiLimit,'#0ea5e9')}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
+          <div style="background:#f8f9fb;border-radius:10px;padding:12px;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:3px;">Active Users</div><div style="font-weight:900;font-size:1.05rem;">${activeUsers}</div></div>
+          <div style="background:#f8f9fb;border-radius:10px;padding:12px;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:3px;">Active Drops</div><div style="font-weight:900;font-size:1.05rem;">${activeDrops}</div></div>
+          <div style="background:#f8f9fb;border-radius:10px;padding:12px;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:3px;">Collections Live</div><div style="font-weight:900;font-size:1.05rem;">2</div></div>
+          <div style="background:#f8f9fb;border-radius:10px;padding:12px;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:3px;">Resorts Active</div><div style="font-weight:900;font-size:1.05rem;">2</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;margin-bottom:20px;">
+      <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Plan Comparison</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">All plans include mobile SDK, guest check-in, and geo-fence triggers</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+        ${tiers.map(t=>`
+          <div style="border:2px solid ${t.hl?'#0057B8':'#e5e7eb'};border-radius:14px;padding:18px;position:relative;${t.hl?'background:#f0f9ff;':''}">
+            ${t.tag?`<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:${t.hl?'#0057B8':'#64748b'};color:#fff;font-size:0.6rem;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;">${t.tag}</div>`:''}
+            <div style="font-weight:900;font-size:0.92rem;margin-bottom:4px;">${t.name}</div>
+            <div style="font-size:1.3rem;font-weight:900;color:${t.hl?'#0057B8':'#0f172a'};margin-bottom:14px;">${t.price?'$'+t.price+'<span style="font-size:0.65rem;font-weight:500;color:#94a3b8;">/loc/mo</span>':'<span style="font-size:0.82rem;">Custom</span>'}</div>
+            <div style="font-size:0.72rem;display:flex;flex-direction:column;gap:7px;">
+              ${[['Locations',t.f.locs],['Drops',t.f.drops],['Analytics',t.f.analytics],['Collections',t.f.colls],['Geo-fence',t.f.geo],['API',t.f.api],['SSO',t.f.sso],['Hierarchy',t.f.hier],['Support',t.f.support]].map(([label,val])=>`
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#64748b;">${label}</span>${chk(val)}</div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div><div style="font-weight:800;font-size:0.92rem;">Invoice History</div><div style="font-size:0.75rem;color:#64748b;">Auto-generated on the 1st of each month</div></div>
+        <button style="background:#0f172a;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.76rem;cursor:pointer;">Export All</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">${['Period','Invoice ID','Date','Status','Amount',''].map((h,i)=>`<th style="padding:10px 12px;text-align:${i>3?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#64748b;">${h}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${invoices.map(inv=>`
+            <tr style="border-bottom:1px solid #f8f9fb;">
+              <td style="padding:12px;font-weight:700;font-size:0.83rem;">${inv.period}</td>
+              <td style="padding:12px;font-size:0.78rem;color:#64748b;font-family:monospace;">${inv.id}</td>
+              <td style="padding:12px;font-size:0.8rem;color:#64748b;">${inv.date}</td>
+              <td style="padding:12px;"><span style="background:#dcfce7;color:#16a34a;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">Paid</span></td>
+              <td style="padding:12px;text-align:right;font-weight:800;font-size:0.85rem;">${fmtMoney(inv.amount)}</td>
+              <td style="padding:12px;text-align:right;"><button style="background:#f1f5f9;border:none;padding:5px 10px;border-radius:6px;font-size:0.7rem;font-weight:700;cursor:pointer;">PDF</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────────────────────
+function rSettings() {
+  function sRow(l,v){return`<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;font-size:0.83rem;"><span style="color:#475569;">${l}</span><span style="font-weight:700;">${v}</span></div>`;}
+  function sCard(title,sub,rows){return`<div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:16px;"><div style="font-weight:800;font-size:0.92rem;margin-bottom:2px;">${title}</div><div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">${sub}</div>${rows}</div>`;}
+  return `<div style="max-width:640px;">
+    ${sCard('Brand Settings','Enterprise account configuration',
+      sRow('Brand Name','Disney Parks &amp; Resorts')+sRow('Account Tier','Enterprise')+sRow('Total Locations','22')+sRow('Active Resorts','2 (WDW, DLR)')+sRow('Active Parks','9 parks &amp; destinations')+sRow('Primary Contact','jordan.hayes@disney.com')+sRow('Nigh Enterprise ID','ENT-DIS-001')
+    )}
+    ${sCard('Drop Policies','Corporate rules applied to all parks and locations',
+      sRow('Corporate Approval Required','Yes — park managers approve before push')+sRow('Max Broadcast Window','24 hours before start time')+sRow('Same-Day Drops Allowed','Yes — for character meet &amp; greet')+sRow('Location Customization','Allowed within Disney brand guidelines')+sRow('Revenue Reporting','Required for all paid dining &amp; VIP drops')+sRow('Vendor Visibility','Disney Owned and 3rd Party badges always displayed')
+    )}
+    ${sCard('Hierarchy','How Disney Parks is structured in Nigh',
+      sRow('Structure','Brand → Resort → Park → Land → Location')+sRow('Resorts','2 (Walt Disney World, Disneyland Resort)')+sRow('Parks &amp; Destinations','9 across both resorts')+sRow('Total Locations','22 · 21 active, 1 inactive')+sRow('Vendor Types','Disney Owned + 3rd Party (licensed operators)')+sRow('Drop Categories','Character Meet &amp; Greet · Limited Merch · Dining · VIP/Backstage')
+    )}
+    ${sCard('Geo-fence Tiers','Disney\'s four geo-fence coverage levels for drops',
+      sRow('Specific Location (~300 ft)','Character meet &amp; greet, dining reservations')+sRow('Land / Zone (~1,500 ft)','Land-themed merch and experiences')+sRow('Full Park (~1 mi)','Park-wide events and day-of drops')+sRow('Resort-Wide (~3 mi)','Resort-level promotions and collections')
+    )}
+    ${sCard('Notifications &amp; Alerts','What triggers alerts to corporate admins',
+      sRow('Low show rate alert','Below 70% — notify park manager')+sRow('Drop capacity filled','Notify location manager immediately')+sRow('Inactive location alert','No drop in 7 days — escalate to resort manager')+sRow('Weekly rollup report','Every Monday, 8am EST — all corporate admins')+sRow('New 3rd Party partner onboarded','Notify corporate admin immediately')
+    )}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// NEW COLLECTION MODAL (3 steps)
+// ─────────────────────────────────────────────────────────────
+function newCollModal() {
+  const step = S.newCollStep;
+  const isVenue = S.newCollType === 'venue';
+  const stepLabel = ['Collection Type &amp; Basics', 'Scope &amp; Geo-fence Tier', 'Review &amp; Create'];
+  return `
+    <div onclick="ss({newCollModal:false})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:600px;max-height:90vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:2px;">New Collection — Step ${step} of 3</div>
+            <div style="font-weight:900;font-size:1.15rem;">${stepLabel[step-1]}</div>
+          </div>
+          <button onclick="ss({newCollModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="display:flex;gap:6px;margin:14px 0 24px;">
+          ${[1,2,3].map(n=>`<div style="flex:1;height:4px;border-radius:4px;background:${n<=step?'#0057B8':'#e5e7eb'};"></div>`).join('')}
+        </div>
+        ${step===1 ? `
+          <div style="margin-bottom:20px;">
+            <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:10px;">Collection Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div onclick="ss({newCollType:'internal'})" style="border:2px solid ${!isVenue?'#0057B8':'#e5e7eb'};border-radius:14px;padding:16px;cursor:pointer;background:${!isVenue?'#f0f9ff':'#fff'};">
+                <div style="font-size:1.4rem;margin-bottom:8px;">🏰</div>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:4px;">Internal</div>
+                <div style="font-size:0.73rem;color:#64748b;line-height:1.5;">Disney-owned and operated locations. Corporate sets guardrails; each location creates its own drop.</div>
+              </div>
+              <div onclick="ss({newCollType:'venue'})" style="border:2px solid ${isVenue?'#9333ea':'#e5e7eb'};border-radius:14px;padding:16px;cursor:pointer;background:${isVenue?'#fdf4ff':'#fff'};">
+                <div style="font-size:1.4rem;margin-bottom:8px;">🏟️</div>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:4px;">Venue (3rd Party)</div>
+                <div style="font-size:0.73rem;color:#64748b;line-height:1.5;">Licensed 3rd party operators within the parks. Each partner manages its own drop and guest data.</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Collection Name <span style="color:#ef4444;">*</span></label><input placeholder="e.g. Magic Kingdom 50th Series" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+            <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Theme / Tagline</label><input placeholder="e.g. The Magic is Here" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+          </div>
+          <div style="margin-bottom:16px;"><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Description</label><textarea rows="3" placeholder="Describe the purpose and theme of this collection…" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></textarea></div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollModal:false})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">Cancel</button>
+            <button onclick="ss({newCollStep:2})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Scope &amp; Geo-fence →</button>
+          </div>
+        ` : step===2 ? `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Window Start <span style="color:#ef4444;">*</span></label><input type="date" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+            <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Window End <span style="color:#ef4444;">*</span></label><input type="date" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+          </div>
+          ${!isVenue ? `
+            <div style="margin-bottom:16px;">
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:8px;">Scope — Which Parks?</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${['All Locations','Walt Disney World','Disneyland Resort','Magic Kingdom','EPCOT','Hollywood Studios','Animal Kingdom','Disneyland Park','California Adventure','Disney Springs'].map(s=>`
+                  <label style="display:flex;align-items:center;gap:6px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:0.78rem;font-weight:600;">
+                    <input type="radio" name="ncScope" value="${s}" ${s==='All Locations'?'checked':''} style="accent-color:#0057B8;">${s}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+          <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+              <span style="color:#d97706;">${ic('map',18)}</span>
+              <div><div style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence Tier</div><div style="font-size:0.7rem;color:#92400e;">Drops only surface in-app when the guest is within the selected boundary</div></div>
+            </div>
+            <select style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff8e1;margin-bottom:10px;">
+              <option value="location">Specific Location (~300 ft) — character meet &amp; greet, dining</option>
+              <option value="land" ${isVenue?'selected':''}>Land / Zone (~1,500 ft) — themed land experience</option>
+              <option value="park">Full Park (~1 mi) — park-wide event or day-of drop</option>
+              <option value="resort">Resort-Wide (~3 mi) — resort-level promotion</option>
+            </select>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div><label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Center Point</label><input placeholder="e.g. Magic Kingdom, Lake Buena Vista, FL" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fde68a'"></div>
+              <div><label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Guest Trigger Message</label><input placeholder='e.g. "You are inside Magic Kingdom!"' style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fde68a'"></div>
+            </div>
+          </div>
+          <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:16px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:12px;">Drop Guardrails</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div><label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Price Range</label><input placeholder="e.g. Free or $25–$150" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+              <div><label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Cap Range (spots)</label><input placeholder="e.g. 10–100 spots" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+              <div><label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Allowed Drop Types</label><select style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff;"><option>All types</option><option>Character Meet &amp; Greet only</option><option>Dining Experiences only</option><option>Limited Merch only</option><option>VIP / Backstage only</option></select></div>
+              <div><label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Broadcast Window</label><input placeholder="e.g. 1–24 hours before" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+            <button onclick="ss({newCollStep:3})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review &amp; Create →</button>
+          </div>
+        ` : `
+          <div style="background:#f8f9fb;border-radius:12px;padding:18px;margin-bottom:20px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:12px;">Collection Summary</div>
+            ${[['Type',isVenue?'Venue (3rd Party Partner)':'Internal (Disney Locations)'],['Scope','All Disney Locations'],['Geo-fence Tier','Land / Zone (~1,500 ft)'],['Drop Types','All types allowed'],['Guardrails','Price, cap, and broadcast window configured']].map(([l,v])=>`
+              <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:0.82rem;"><span style="color:#64748b;">${l}</span><span style="font-weight:700;">${v}</span></div>
+            `).join('')}
+          </div>
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.78rem;color:#1e40af;line-height:1.6;">
+            <span style="font-weight:800;">📋 Next steps:</span> After creating this collection, park managers will receive a notification to assign drops to their locations. Locations appear in the collection dashboard once their drops are confirmed.
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollStep:2})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+            <button onclick="ss({newCollModal:false,page:'collections'})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">✓ Create Collection</button>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// PUSH MODAL (3 steps)
+// ─────────────────────────────────────────────────────────────
+function pushModal() {
+  if (!S.pushModal) return '';
+  return `
+    <div onclick="ss({pushModal:false,pushStep:1})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:580px;max-height:90vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:2px;">Push Drop — Step ${S.pushStep} of 3</div>
+            <div style="font-weight:900;font-size:1.15rem;">${['Drop Details','Scope &amp; Geo-fence','Review &amp; Push'][S.pushStep-1]}</div>
+          </div>
+          <button onclick="ss({pushModal:false,pushStep:1})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="display:flex;gap:6px;margin:14px 0 24px;">
+          ${[1,2,3].map(n=>`<div style="flex:1;height:4px;border-radius:4px;background:${n<=S.pushStep?'#0057B8':'#e5e7eb'};"></div>`).join('')}
+        </div>
+        ${S.pushStep===1 ? pushStep1() : S.pushStep===2 ? pushStep2() : pushStep3()}
+      </div>
+    </div>
+  `;
+}
+
+function pushStep1() {
+  return `
+    <div style="margin-bottom:16px;"><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Drop Title <span style="color:#ef4444;">*</span></label><input placeholder="e.g. Mickey Platinum Anniversary Meet &amp; Greet" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+      <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Drop Type</label><select style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;"><option>Character Meet &amp; Greet</option><option>Limited Merch / Collectibles</option><option>Dining Experience</option><option>VIP / Backstage Access</option></select></div>
+      <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Vendor Type</label><select style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;"><option>Disney Owned</option><option>3rd Party Licensed</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
+      <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Price ($)</label><input type="number" placeholder="0 = free" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+      <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Capacity</label><input type="number" placeholder="e.g. 40" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+      <div><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Broadcast Hrs</label><input type="number" placeholder="e.g. 4" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Drop Description</label><textarea rows="3" placeholder="Describe the experience, what guests can expect, and any requirements…" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;" onfocus="this.style.borderColor='#0057B8'" onblur="this.style.borderColor='#e5e7eb'"></textarea></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="ss({pushModal:false,pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">Cancel</button>
+      <button onclick="ss({pushStep:2})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Scope &amp; Geo-fence →</button>
+    </div>
+  `;
+}
+
+function pushStep2() {
+  return `
+    <div style="margin-bottom:16px;">
+      <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:8px;">Push Scope — Where should this drop appear?</label>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${[
+          { val:'all',        label:'All Disney Parks (Both Resorts)',    sub:'Push to all 22 locations across WDW and DLR' },
+          { val:'resort-wdw', label:'Walt Disney World — All Parks',      sub:'Magic Kingdom, EPCOT, Hollywood Studios, Animal Kingdom, Typhoon Lagoon, Blizzard Beach, Disney Springs' },
+          { val:'resort-dlr', label:'Disneyland Resort — All Parks',      sub:'Disneyland Park, California Adventure' },
+          { val:'park',       label:'Specific Park',                      sub:'Target one park (dropdown below)' },
+          { val:'location',   label:'Specific Location',                  sub:'Target one individual location' },
+        ].map(o=>`
+          <label style="display:flex;align-items:flex-start;gap:10px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;cursor:pointer;">
+            <input type="radio" name="pushScope" value="${o.val}" style="accent-color:#0057B8;margin-top:2px;">
+            <div><div style="font-weight:700;font-size:0.83rem;">${o.label}</div><div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${o.sub}</div></div>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+    <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="color:#d97706;">${ic('map',16)}</span>
+        <div style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence Coverage Tier</div>
+      </div>
+      <select style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff8e1;margin-bottom:10px;">
+        <option value="location">Specific Location (~300 ft)</option>
+        <option value="land">Land / Zone (~1,500 ft)</option>
+        <option value="park">Full Park (~1 mi)</option>
+        <option value="resort">Resort-Wide (~3 mi)</option>
+      </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Start Date &amp; Time</label><input type="datetime-local" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;"></div>
+        <div><label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">End Date &amp; Time</label><input type="datetime-local" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="ss({pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+      <button onclick="ss({pushStep:3})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review →</button>
+    </div>
+  `;
+}
+
+function pushStep3() {
+  return `
+    <div style="background:#f8f9fb;border-radius:12px;padding:18px;margin-bottom:18px;">
+      <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:12px;">Drop Summary</div>
+      ${[['Drop Title','(from Step 1)'],['Type','Character Meet &amp; Greet'],['Scope','Walt Disney World — All Parks'],['Geo-fence','Land / Zone (~1,500 ft)'],['Price','$0 (free)'],['Capacity','—'],['Broadcast','— hours before start']].map(([l,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e5e7eb;font-size:0.82rem;"><span style="color:#64748b;">${l}</span><span style="font-weight:700;">${v}</span></div>
+      `).join('')}
+    </div>
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 16px;margin-bottom:18px;font-size:0.78rem;color:#1e40af;line-height:1.6;">
+      <span style="font-weight:800;">📋 What happens next:</span> This drop will be pushed to all selected park locations. Park managers receive a notification to confirm. Once confirmed, it goes live at the scheduled start time and surfaces to guests within the geo-fence boundary in the Nigh app.
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="ss({pushStep:2})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+      <button onclick="ss({pushModal:false,pushStep:1,page:'drops'})" style="flex:2;background:#0057B8;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">🚀 Push Drop to Parks</button>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────
+function render() {
+  document.getElementById('app').innerHTML = layout();
+}
+render();
+</script>
+</body>
+</html>
