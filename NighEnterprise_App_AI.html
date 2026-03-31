@@ -19,6 +19,38 @@
 <script>
 
 // ─────────────────────────────────────────────────────────────
+// ICONS  (Lucide-style SVG — matches NighPro_App_AI.html)
+// ─────────────────────────────────────────────────────────────
+const I = {
+  home:       '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  store:      '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/><path d="M9 8a3 3 0 01-6 0"/><path d="M15 8a3 3 0 01-6 0"/><path d="M21 8a3 3 0 01-6 0"/>',
+  zap:        '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>',
+  layers:     '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  user:       '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users:      '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+  chart:      '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  creditCard: '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  settings:   '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  // extras used elsewhere in the page
+  check:      '<polyline points="20 6 9 17 4 12"/>',
+  x:          '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  map:        '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  bell:       '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  send:       '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
+  shield:     '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  search:     '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  cal:        '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  clock:      '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  radio:      '<path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14.14"/><circle cx="12" cy="12" r="2"/><path d="M7.76 16.24a6 6 0 010-8.49"/><path d="M4.93 19.07a10 10 0 010-14.14"/>',
+  dollar:     '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  target:     '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+};
+function ic(n, s) {
+  return `<svg width="${s||18}" height="${s||18}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;">${I[n]||''}</svg>`;
+}
+
+// ─────────────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────────────
 const S = {
@@ -360,15 +392,15 @@ function layout() {
 // ─────────────────────────────────────────────────────────────
 function sidebar() {
   const nav = [
-    { id:'dashboard',  label:'Dashboard',    icon:'◫'  },
-    { id:'locations',   label:'Locations',    icon:'📍' },
-    { id:'drops',       label:'Drops',        icon:'⚡' },
-    { id:'collections', label:'Collections',  icon:'🗂️' },
-    { id:'customers',   label:'Customers',    icon:'🙋' },
-    { id:'analytics',  label:'Analytics',    icon:'📊' },
-    { id:'users',      label:'Users & Access',icon:'👥'},
-    { id:'billing',    label:'Billing',      icon:'💳' },
-    { id:'settings',   label:'Settings',     icon:'⚙️' },
+    { id:'dashboard',  label:'Dashboard',     icon:'home'       },
+    { id:'locations',  label:'Locations',     icon:'store'      },
+    { id:'drops',      label:'Drops',         icon:'zap'        },
+    { id:'collections',label:'Collections',   icon:'layers'     },
+    { id:'customers',  label:'Customers',     icon:'user'       },
+    { id:'analytics',  label:'Analytics',     icon:'chart'      },
+    { id:'users',      label:'Users & Access',icon:'users'      },
+    { id:'billing',    label:'Billing',       icon:'creditCard' },
+    { id:'settings',   label:'Settings',      icon:'settings'   },
   ];
   return `
     <nav style="width:230px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;">
@@ -402,7 +434,7 @@ function sidebar() {
             font-size:0.85rem;
             border-left:3px solid ${S.page===n.id?'#6366f1':'transparent'};
             transition:all 0.12s;">
-            <span style="font-size:0.95rem;width:20px;text-align:center;flex-shrink:0;">${n.icon}</span>
+            <span style="width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${ic(n.icon,18)}</span>
             ${n.label}
           </div>
         `).join('')}
@@ -489,11 +521,11 @@ function rDashboard() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Check-ins MTD',   fmtNum(totalCI),   'across all locations','✅','#10b981')}
-      ${kpi('Drops MTD',       String(totalDrops), 'across all locations','⚡','#6366f1')}
-      ${kpi('Avg Show Rate',   avgShow+'%',        'reserv → check-in',  '📈','#f59e0b')}
-      ${kpi('Revenue MTD',     fmtMoney(totalRev), 'paid drops only',    '💰','#0ea5e9')}
-      ${kpi('Live Right Now',  liveNow+' drops',   activeCount+' active locations','🔴','#ef4444')}
+      ${kpi('Check-ins MTD',   fmtNum(totalCI),   'across all locations',ic('check',15),'#10b981')}
+      ${kpi('Drops MTD',       String(totalDrops), 'across all locations',ic('zap',15),'#6366f1')}
+      ${kpi('Avg Show Rate',   avgShow+'%',        'reserv → check-in',  ic('trending',15),'#f59e0b')}
+      ${kpi('Revenue MTD',     fmtMoney(totalRev), 'paid drops only',    ic('dollar',15),'#0ea5e9')}
+      ${kpi('Live Right Now',  liveNow+' drops',   activeCount+' active locations',ic('radio',15),'#ef4444')}
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:18px;">
@@ -625,7 +657,7 @@ function kpi(label, value, sub, icon, color) {
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div style="font-size:0.72rem;font-weight:700;color:#64748b;">${label}</div>
-        <div style="font-size:1rem;">${icon}</div>
+        <div style="width:30px;height:30px;background:${color}18;border-radius:8px;display:flex;align-items:center;justify-content:center;color:${color};">${icon}</div>
       </div>
       <div style="font-size:1.6rem;font-weight:900;letter-spacing:-0.03em;color:#0f172a;margin-bottom:3px;">${value}</div>
       <div style="font-size:0.68rem;color:#94a3b8;">${sub}</div>
@@ -849,10 +881,10 @@ function rDrops() {
 
     <!-- Drop stats summary -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;">
-      ${kpi('Total Corp Drops', String(CORP_DROPS.length), 'all time', '⚡', '#6366f1')}
-      ${kpi('Total Pushed', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to locations', '📡', '#0ea5e9')}
-      ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', '🎯', '#f59e0b')}
-      ${kpi('Corp Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', '✅', '#10b981')}
+      ${kpi('Total Corp Drops', String(CORP_DROPS.length), 'all time', ic('zap',15), '#6366f1')}
+      ${kpi('Total Pushed', String(CORP_DROPS.filter(d=>d.type==='push').length), 'pushed to locations', ic('send',15), '#0ea5e9')}
+      ${kpi('Avg Res Rate', Math.round(CORP_DROPS.filter(d=>d.totalCap>0).reduce((a,d)=>a+pct(d.totalRes,d.totalCap),0)/CORP_DROPS.filter(d=>d.totalCap>0).length)+'%', 'cap filled on avg', ic('target',15), '#f59e0b')}
+      ${kpi('Corp Show Rate', Math.round(CORP_DROPS.filter(d=>d.totalCI>0).reduce((a,d)=>a+pct(d.totalCI,d.totalRes),0)/CORP_DROPS.filter(d=>d.totalCI>0).length)+'%', 'ended drops only', ic('check',15), '#10b981')}
     </div>
   `;
 }
@@ -904,10 +936,10 @@ function rCollections() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Collections',    String(totalCollections), 'total campaigns',             '🗂️','#6366f1')}
-      ${kpi('Live Now',       String(liveCount),        'actively running',             '🟢','#10b981')}
-      ${kpi('Upcoming',       String(upcomingCount),    'in planning or confirmed',     '📅','#3b82f6')}
-      ${kpi('Total Participants', String(totalParticipants), 'location drops confirmed', '📍','#f59e0b')}
+      ${kpi('Collections',    String(totalCollections), 'total campaigns',             ic('layers',15),'#6366f1')}
+      ${kpi('Live Now',       String(liveCount),        'actively running',             ic('radio',15),'#10b981')}
+      ${kpi('Upcoming',       String(upcomingCount),    'in planning or confirmed',     ic('cal',15),'#3b82f6')}
+      ${kpi('Total Participants', String(totalParticipants), 'location drops confirmed', ic('map',15),'#f59e0b')}
     </div>
 
     <!-- Filter tabs -->
@@ -934,7 +966,7 @@ function rCollections() {
           <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
             <!-- Header row -->
             <div style="padding:20px 22px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid #f1f5f9;">
-              <div style="width:44px;height:44px;background:${statusBg[col.status]};border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🗂️</div>
+              <div style="width:44px;height:44px;background:${statusBg[col.status]};border-radius:12px;display:flex;align-items:center;justify-content:center;color:${statusColors[col.status]};flex-shrink:0;">${ic('layers',20)}</div>
               <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;">
                   <span style="font-weight:900;font-size:1rem;">${col.name}</span>
@@ -943,7 +975,7 @@ function rCollections() {
                     ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏟️ Venue</span>`
                     : `<span style="background:#f0fdf4;color:#15803d;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏢 Internal</span>`}
                   <span style="background:#f1f5f9;color:#475569;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;">${col.scope}</span>
-                  ${col.geoFence?.enabled ? `<span style="background:#fef9c3;color:#854d0e;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">📍 Geo-fenced · ${col.geoFence.radius}</span>` : ''}
+                  ${col.geoFence?.enabled ? `<span style="background:#fef9c3;color:#854d0e;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${ic('map',12)} Geo-fenced · ${col.geoFence.radius}</span>` : ''}
                 </div>
                 <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">${col.windowStart} → ${col.windowEnd} · Theme: <em>${col.theme}</em></div>
                 <div style="font-size:0.75rem;color:#94a3b8;">${col.description}</div>
@@ -1053,7 +1085,7 @@ function collectionDetailPanel() {
           <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:20px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1rem;">📍</span>
+                <span style="color:#d97706;">${ic('map',18)}</span>
                 <span style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence ${col.geoFence.enabled ? '<span style="background:#d97706;color:#fff;font-size:0.6rem;padding:2px 7px;border-radius:20px;margin-left:4px;">Active</span>' : '<span style="background:#e5e7eb;color:#6b7280;font-size:0.6rem;padding:2px 7px;border-radius:20px;margin-left:4px;">Inactive</span>'}</span>
               </div>
               <button style="font-size:0.72rem;font-weight:700;color:#92400e;background:transparent;border:1px solid #fcd34d;border-radius:7px;padding:4px 10px;cursor:pointer;">Edit Boundary</button>
@@ -1233,11 +1265,11 @@ function rCustomers() {
   return `
     <!-- KPIs -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;">
-      ${kpi('Unique Customers', String(totalUnique),   'across all locations','🙋','#6366f1')}
-      ${kpi('Total Check-ins',  fmtNum(totalCI),       'all-time customer CI', '✅','#10b981')}
-      ${kpi('Avg Drops / Customer', avgDrops,          'per active customer',  '⚡','#0ea5e9')}
-      ${kpi('Avg Show Rate',    avgShow+'%',            'across all customers', '📈','#f59e0b')}
-      ${kpi('Multi-Location',   multiLocCount,          'visited 2+ locations', '📍','#8b5cf6')}
+      ${kpi('Unique Customers', String(totalUnique),   'across all locations',ic('user',15),'#6366f1')}
+      ${kpi('Total Check-ins',  fmtNum(totalCI),       'all-time customer CI', ic('check',15),'#10b981')}
+      ${kpi('Avg Drops / Customer', avgDrops,          'per active customer',  ic('zap',15),'#0ea5e9')}
+      ${kpi('Avg Show Rate',    avgShow+'%',            'across all customers', ic('trending',15),'#f59e0b')}
+      ${kpi('Multi-Location',   multiLocCount,          'visited 2+ locations', ic('map',15),'#8b5cf6')}
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 280px;gap:18px;margin-bottom:18px;">
@@ -1664,11 +1696,11 @@ function rBilling() {
   return `
     <!-- Hero KPI bar -->
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;">
-      ${kpi('Plan',           plan.name,                         'Nigh Enterprise',                  '💳','#6366f1')}
-      ${kpi('Monthly Cost',   '$'+fmtNum(monthlyTotal),          plan.locations+' locations × $'+plan.pricePerLoc, '💰','#0f172a')}
-      ${kpi('Annual Value',   '$'+fmtNum(annualTotal),           'contracted ARR',                   '📅','#7c3aed')}
-      ${kpi('Next Renewal',   plan.renewal,                      'auto-renews monthly',              '🔄','#0ea5e9')}
-      ${kpi('Your CSM',       plan.csmName,                      plan.csmEmail,                      '🙋','#10b981')}
+      ${kpi('Plan',           plan.name,                         'Nigh Enterprise',                  ic('creditCard',15),'#6366f1')}
+      ${kpi('Monthly Cost',   '$'+fmtNum(monthlyTotal),          plan.locations+' locations × $'+plan.pricePerLoc, ic('dollar',15),'#0f172a')}
+      ${kpi('Annual Value',   '$'+fmtNum(annualTotal),           'contracted ARR',                   ic('trending',15),'#7c3aed')}
+      ${kpi('Next Renewal',   plan.renewal,                      'auto-renews monthly',              ic('clock',15),'#0ea5e9')}
+      ${kpi('Your CSM',       plan.csmName,                      plan.csmEmail,                      ic('user',15),'#10b981')}
     </div>
 
     <!-- ROI / Value Delivered -->
@@ -2058,7 +2090,7 @@ function newCollModal() {
           <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
               <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:1rem;">📍</span>
+                <span style="color:#d97706;">${ic('map',18)}</span>
                 <div>
                   <div style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence</div>
                   <div style="font-size:0.7rem;color:#92400e;">Drops only surface in-app when the customer is physically within the boundary</div>
