@@ -35,6 +35,9 @@ const S = {
   userRoleFilter: 'all',
   collectionDetail: null,
   collectionFilter: 'all',
+  newCollModal: false,
+  newCollStep: 1,
+  newCollType: 'internal',
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -908,7 +911,7 @@ function rCollections() {
       ${['all','live','upcoming','ended'].map(f=>`
         <button onclick="ss({collectionFilter:'${f}'})" style="background:${filter===f?'#0f172a':'#fff'};color:${filter===f?'#fff':'#475569'};border:1px solid ${filter===f?'#0f172a':'#e5e7eb'};padding:7px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;text-transform:capitalize;">${f==='all'?'All ('+COLLECTIONS.length+')':f.charAt(0).toUpperCase()+f.slice(1)+' ('+COLLECTIONS.filter(c=>c.status===f).length+')'}</button>
       `).join('')}
-      <button style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">+ New Collection</button>
+      <button onclick="ss({newCollModal:true,newCollStep:1,newCollType:'internal'})" style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">+ New Collection</button>
     </div>
 
     <!-- Collection cards -->
@@ -969,6 +972,7 @@ function rCollections() {
     </div>
 
     ${S.collectionDetail ? collectionDetailPanel() : ''}
+    ${S.newCollModal ? newCollModal() : ''}
   `;
 }
 
@@ -1577,6 +1581,177 @@ function rSettings() {
       sRow('Low show rate alert','Below 70% — notify regional manager')+sRow('Drop capacity filled','Notify location manager immediately')+sRow('Inactive location alert','No drop in 14 days — escalate to regional')+sRow('Weekly rollup report','Every Monday, 8am — all corporate admins')+sRow('New location onboarded','Notify corporate admin immediately')
     )}
   </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// NEW COLLECTION MODAL (3 steps)
+// ─────────────────────────────────────────────────────────────
+function newCollModal() {
+  const step = S.newCollStep;
+  const isVenue = S.newCollType === 'venue';
+
+  const stepLabel = ['Collection Type & Basics', 'Scope & Guardrails', 'Review & Create'];
+
+  return `
+    <div onclick="ss({newCollModal:false})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:600px;max-height:90vh;overflow-y:auto;padding:32px;">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:2px;">New Collection — Step ${step} of 3</div>
+            <div style="font-weight:900;font-size:1.15rem;">${stepLabel[step-1]}</div>
+          </div>
+          <button onclick="ss({newCollModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+
+        <!-- Progress bar -->
+        <div style="display:flex;gap:6px;margin:14px 0 24px;">
+          ${[1,2,3].map(n=>`<div style="flex:1;height:4px;border-radius:4px;background:${n<=step?'#0f172a':'#e5e7eb'};"></div>`).join('')}
+        </div>
+
+        ${step===1 ? `
+          <!-- STEP 1: Type + basics -->
+          <div style="margin-bottom:20px;">
+            <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:10px;">Collection Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div onclick="ss({newCollType:'internal'})" style="border:2px solid ${!isVenue?'#0f172a':'#e5e7eb'};border-radius:14px;padding:16px;cursor:pointer;background:${!isVenue?'#f8fafc':'#fff'};">
+                <div style="font-size:1.4rem;margin-bottom:8px;">🏢</div>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:4px;">Internal</div>
+                <div style="font-size:0.73rem;color:#64748b;line-height:1.5;">Your own Patagonia locations participate. Corporate sets guardrails; each location creates its own drop.</div>
+              </div>
+              <div onclick="ss({newCollType:'venue'})" style="border:2px solid ${isVenue?'#9333ea':'#e5e7eb'};border-radius:14px;padding:16px;cursor:pointer;background:${isVenue?'#fdf4ff':'#fff'};">
+                <div style="font-size:1.4rem;margin-bottom:8px;">🏟️</div>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:4px;">Venue</div>
+                <div style="font-size:0.73rem;color:#64748b;line-height:1.5;">Invite external independent businesses via a venue or event. Each business manages its own drop and data.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Collection Name <span style="color:#ef4444;">*</span></label>
+              <input placeholder="e.g. Earth Day 2026" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+            <div>
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Theme / Tagline</label>
+              <input placeholder="e.g. Repair &amp; Reuse" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+          </div>
+
+          ${isVenue ? `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+              <div>
+                <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Venue Name <span style="color:#ef4444;">*</span></label>
+                <input placeholder="e.g. Flatirons Crossing" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#9333ea'" onblur="this.style.borderColor='#e5e7eb'">
+              </div>
+              <div>
+                <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Venue Type</label>
+                <select style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+                  <option>Shopping Mall</option>
+                  <option>Sports & Entertainment Venue</option>
+                  <option>Airport / Transit Hub</option>
+                  <option>Hotel / Resort</option>
+                  <option>Festival / Event</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+          ` : ''}
+
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Description</label>
+            <textarea rows="3" placeholder="Describe the purpose and vibe of this collection…" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollModal:false})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">Cancel</button>
+            <button onclick="ss({newCollStep:2})" style="flex:2;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Scope & Guardrails →</button>
+          </div>
+        ` : step===2 ? `
+          <!-- STEP 2: Scope, window, guardrails -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Window Start <span style="color:#ef4444;">*</span></label>
+              <input type="date" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+            <div>
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:6px;">Window End <span style="color:#ef4444;">*</span></label>
+              <input type="date" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:9px;padding:10px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+            </div>
+          </div>
+
+          ${!isVenue ? `
+            <div style="margin-bottom:16px;">
+              <label style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:8px;">Scope — Which Locations?</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${['All Locations','West Coast','Mountain West','Northeast','Southeast','Central'].map(s=>`
+                  <label style="display:flex;align-items:center;gap:6px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:0.78rem;font-weight:600;">
+                    <input type="radio" name="ncScope" value="${s}" ${s==='All Locations'?'checked':''} style="accent-color:#0f172a;">${s}
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div style="background:#f8f9fb;border-radius:12px;padding:18px;margin-bottom:16px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:14px;">${isVenue?'Venue':'Corporate'} Guardrails</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Price Range</label>
+                <input placeholder="e.g. Free ($0)" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+              </div>
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Cap Range (spots)</label>
+                <input placeholder="e.g. 20–50 spots" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+              </div>
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Broadcast Window</label>
+                <input placeholder="e.g. 1–3 days before" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+              </div>
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Theme Requirement</label>
+                <input placeholder="e.g. Outdoor activity only" style="width:100%;box-sizing:border-box;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='#0f172a'" onblur="this.style.borderColor='#e5e7eb'">
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+            <button onclick="ss({newCollStep:3})" style="flex:2;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review & Create →</button>
+          </div>
+        ` : `
+          <!-- STEP 3: Review & Create -->
+          <div style="background:#f8f9fb;border-radius:14px;padding:20px;margin-bottom:20px;">
+            <div style="font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:14px;">Collection Summary</div>
+            <div style="display:grid;gap:10px;">
+              ${infoRow('Type', isVenue ? '🏟️ Venue' : '🏢 Internal')}
+              ${infoRow('Name', '(from step 1)')}
+              ${infoRow('Theme', '(from step 1)')}
+              ${infoRow('Window', '(from step 2)')}
+              ${infoRow('Scope', isVenue ? '(venue name from step 1)' : '(from step 2)')}
+              ${infoRow('Price Guardrail', '(from step 2)')}
+              ${infoRow('Cap Guardrail', '(from step 2)')}
+            </div>
+          </div>
+
+          <div style="background:${isVenue?'#fdf4ff':'#f0fdf4'};border:1px solid ${isVenue?'#e9d5ff':'#bbf7d0'};border-radius:10px;padding:14px;margin-bottom:20px;">
+            <div style="font-size:0.78rem;font-weight:700;color:${isVenue?'#7e22ce':'#15803d'};margin-bottom:4px;">${isVenue ? '🏟️ Venue Collection' : '🏢 Internal Collection'}</div>
+            <div style="font-size:0.73rem;color:${isVenue?'#9333ea':'#166534'};line-height:1.6;">
+              ${isVenue
+                ? 'Invites will be sent to external businesses via Nigh. Each business opts in, creates their own drop, and owns their customer data independently.'
+                : 'Participation invites will be sent to all location managers in scope. Each location can opt in or decline and create their own drop within your guardrails.'}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <button onclick="ss({newCollStep:2})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
+            <button onclick="ss({newCollModal:false,page:'collections'})" style="flex:2;background:${isVenue?'#9333ea':'#10b981'};color:#fff;border:none;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">✓ Create Collection</button>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
 }
 
 // ─────────────────────────────────────────────────────────────
