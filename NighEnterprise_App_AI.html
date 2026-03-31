@@ -111,7 +111,7 @@ const CORP_DROPS = [
 
 const COLLECTIONS = [
   {
-    id:'COL01', name:'Earth Day 2026', theme:'Repair & Reuse',
+    id:'COL01', type:'internal', name:'Earth Day 2026', theme:'Repair & Reuse',
     status:'upcoming', windowStart:'Apr 18, 2026', windowEnd:'Apr 22, 2026',
     scope:'All Locations', creator:'Alex Torres', createdDate:'Mar 10, 2026',
     guardrails:{ price:'Free ($0)', capRange:'20–50 spots', broadcastWindow:'Within 48 hrs', themeReq:'Sustainability / Repair / Community' },
@@ -140,7 +140,7 @@ const COLLECTIONS = [
     ]
   },
   {
-    id:'COL02', name:'Spring Gear Preview', theme:'New Season Drop',
+    id:'COL02', type:'internal', name:'Spring Gear Preview', theme:'New Season Drop',
     status:'live', windowStart:'Mar 28, 2026', windowEnd:'Apr 3, 2026',
     scope:'West Coast', creator:'Dana Kim', createdDate:'Mar 5, 2026',
     guardrails:{ price:'Free ($0)', capRange:'30–60 spots', broadcastWindow:'Same day or day before', themeReq:'Spring gear reveal — exclusive in-store first look' },
@@ -156,7 +156,7 @@ const COLLECTIONS = [
     ]
   },
   {
-    id:'COL03', name:'Worn Wear Month', theme:'Repair is Radical',
+    id:'COL03', type:'internal', name:'Worn Wear Month', theme:'Repair is Radical',
     status:'ended', windowStart:'Feb 1, 2026', windowEnd:'Feb 28, 2026',
     scope:'All Locations', creator:'Alex Torres', createdDate:'Jan 12, 2026',
     guardrails:{ price:'Free ($0)', capRange:'15–40 spots per drop', broadcastWindow:'1–3 days before', themeReq:'Repair, reuse, trade-in — no new product sales events' },
@@ -185,7 +185,7 @@ const COLLECTIONS = [
     ]
   },
   {
-    id:'COL04', name:'Fleece Season Launch', theme:'Fall Into Fleece',
+    id:'COL04', type:'internal', name:'Fleece Season Launch', theme:'Fall Into Fleece',
     status:'upcoming', windowStart:'Apr 5, 2026', windowEnd:'Apr 12, 2026',
     scope:'Northeast', creator:'Fiona Walsh', createdDate:'Mar 20, 2026',
     guardrails:{ price:'Free or up to $15', capRange:'25–40 spots', broadcastWindow:'1–2 days before', themeReq:'Fleece styles, cozy in-store experience, seasonal transition' },
@@ -198,7 +198,7 @@ const COLLECTIONS = [
     ]
   },
   {
-    id:'COL05', name:'Summer Trail Series', theme:'Get Outside',
+    id:'COL05', type:'internal', name:'Summer Trail Series', theme:'Get Outside',
     status:'upcoming', windowStart:'Jun 1, 2026', windowEnd:'Jun 30, 2026',
     scope:'All Locations', creator:'Alex Torres', createdDate:'Mar 28, 2026',
     guardrails:{ price:'Free ($0)', capRange:'20–60 spots', broadcastWindow:'1–5 days before', themeReq:'Outdoor activity — trail, paddle, bike, climb, or guided walk' },
@@ -224,6 +224,50 @@ const COLLECTIONS = [
       { locId:'L18', status:'confirmed', dropTitle:'Austin Barton Creek Trail Run', cap:30, res:0, ci:0 },
       { locId:'L19', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
       { locId:'L20', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+    ]
+  },
+  // ─── Venue Collections ────────────────────────────────────────────────────
+  {
+    id:'COL06', type:'venue',
+    name:'Flatirons Mall — Shop + Drop Weekend',
+    theme:'Discover Local',
+    status:'upcoming', windowStart:'Apr 25, 2026', windowEnd:'Apr 27, 2026',
+    scope:'Flatirons Crossing Mall, Broomfield CO',
+    creator:'Flatirons Mall Events Team', createdDate:'Mar 15, 2026',
+    venueName:'Flatirons Crossing',
+    venueCity:'Broomfield, CO',
+    venueType:'Shopping Mall',
+    guardrails:{ price:'Free–$25', capRange:'15–50 spots', broadcastWindow:'1–3 days before', themeReq:'Shop, explore, or experience something local — any category welcome' },
+    description:'Flatirons Crossing is hosting a Shop + Drop Weekend where independent retailers and anchors across the mall create exclusive Nigh drops. Shoppers get a passport-style itinerary of experiences across the mall over three days.',
+    participation:[
+      { bizId:'B01', bizName:'Rebel Sport',       bizCategory:'Sporting Goods',    bizType:'Anchor',      status:'confirmed', dropTitle:'Gear Up for Spring — Free Fitting Session', cap:30, res:27, ci:0 },
+      { bizId:'B02', bizName:'Topo Designs',       bizCategory:'Outdoor Apparel',   bizType:'Retailer',    status:'confirmed', dropTitle:'New Spring Pack Launch Preview',           cap:20, res:18, ci:0 },
+      { bizId:'B03', bizName:'Stio',               bizCategory:'Outdoor Apparel',   bizType:'Retailer',    status:'confirmed', dropTitle:'Mountain Fleece First Look',                cap:25, res:14, ci:0 },
+      { bizId:'B04', bizName:'Summit Coffee',      bizCategory:'Café',              bizType:'F&B',         status:'confirmed', dropTitle:'Free Cortado + Gear Swap Chat',             cap:40, res:35, ci:0 },
+      { bizId:'B05', bizName:'Feathered Friends',  bizCategory:'Outdoor Equipment', bizType:'Retailer',    status:'pending',   dropTitle:null,                                        cap:0,  res:0,  ci:0 },
+      { bizId:'B06', bizName:'Title Nine',         bizCategory:'Women\'s Activewear',bizType:'Retailer',   status:'confirmed', dropTitle:'Try-On Morning — New Summer Line',          cap:30, res:22, ci:0 },
+      { bizId:'B07', bizName:'Evo',                bizCategory:'Outdoor / Snow',    bizType:'Anchor',      status:'declined',  dropTitle:null,                                        cap:0,  res:0,  ci:0 },
+      { bizId:'B08', bizName:'Whole Foods Market', bizCategory:'Grocery / Café',    bizType:'Anchor',      status:'confirmed', dropTitle:'Fuel Up: Trail Snack Tasting Drop',         cap:50, res:41, ci:0 },
+    ]
+  },
+  {
+    id:'COL07', type:'venue',
+    name:'Ball Arena — Vendor Drop Night',
+    theme:'Pre-Game Experience',
+    status:'live', windowStart:'Mar 28, 2026', windowEnd:'Apr 5, 2026',
+    scope:'Ball Arena, Denver CO',
+    creator:'Ball Arena Partnerships', createdDate:'Mar 12, 2026',
+    venueName:'Ball Arena',
+    venueCity:'Denver, CO',
+    venueType:'Sports & Entertainment Venue',
+    guardrails:{ price:'Free–$10', capRange:'20–75 spots', broadcastWindow:'Same day or day before', themeReq:'Pre-game or event experience — food, merch, or on-site activity' },
+    description:'Ball Arena is activating Nigh for vendor drops tied to home game nights. Each vendor creates a drop for that night\'s attendees — exclusive offers, tastings, and merch moments before the doors open.',
+    participation:[
+      { bizId:'V01', bizName:'Breckenridge Brewery Taproom', bizCategory:'Craft Beer / Bar', bizType:'Food & Bev', status:'live', dropTitle:'Pre-Game Pour — $6 Pint Drop',         cap:75, res:71, ci:58 },
+      { bizId:'V02', bizName:'Avalanche Team Store',         bizCategory:'Official Merch',   bizType:'Merch',      status:'live', dropTitle:'Exclusive Fan Pack — Tonight Only',    cap:40, res:40, ci:33 },
+      { bizId:'V03', bizName:'Garbanzo Mediterranean',       bizCategory:'Fast Casual',      bizType:'Food & Bev', status:'live', dropTitle:'Free Add-On with Any Entrée',          cap:60, res:54, ci:39 },
+      { bizId:'V04', bizName:'Upper Deck Photo Booth',       bizCategory:'Experience',       bizType:'Activity',   status:'confirmed', dropTitle:'Free Photo Print Drop',           cap:30, res:22, ci:0  },
+      { bizId:'V05', bizName:'Pepsi Club Lounge',            bizCategory:'Premium Bar',      bizType:'Food & Bev', status:'pending', dropTitle:null,                                cap:0,  res:0,  ci:0  },
     ]
   },
 ];
@@ -888,6 +932,9 @@ function rCollections() {
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;">
                   <span style="font-weight:900;font-size:1rem;">${col.name}</span>
                   <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+                  ${col.type==='venue'
+                    ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏟️ Venue</span>`
+                    : `<span style="background:#f0fdf4;color:#15803d;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏢 Internal</span>`}
                   <span style="background:#f1f5f9;color:#475569;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;">${col.scope}</span>
                 </div>
                 <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">${col.windowStart} → ${col.windowEnd} · Theme: <em>${col.theme}</em></div>
@@ -898,7 +945,7 @@ function rCollections() {
 
             <!-- Stats row -->
             <div style="padding:16px 22px;display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:#fafafa;">
-              ${collStat('Locations',  totalLocs+' total',  '#475569')}
+              ${collStat(col.type==='venue'?'Businesses':'Locations', totalLocs+' total', '#475569')}
               ${collStat('Confirmed',  confirmed,           '#10b981')}
               ${collStat('Pending',    pending,             '#f59e0b')}
               ${collStat('Declined',   declined,            '#ef4444')}
@@ -914,7 +961,7 @@ function rCollections() {
                 <div style="background:#fbbf24;width:${pct(pending,totalLocs)}%;"></div>
                 <div style="background:#fca5a5;width:${pct(declined,totalLocs)}%;"></div>
               </div>
-              <span style="font-size:0.68rem;color:#64748b;margin-left:8px;white-space:nowrap;">${confirmed}/${totalLocs} in</span>
+              <span style="font-size:0.68rem;color:#64748b;margin-left:8px;white-space:nowrap;">${confirmed}/${totalLocs} ${col.type==='venue'?'biz':'loc'}</span>
             </div>
           </div>
         `;
@@ -963,22 +1010,38 @@ function collectionDetailPanel() {
         <!-- Header -->
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
           <div>
-            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:4px;">Collection</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;">Collection</div>
+              ${col.type==='venue'
+                ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">🏟️ Venue</span>`
+                : `<span style="background:#f0fdf4;color:#15803d;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">🏢 Internal</span>`}
+            </div>
             <div style="font-weight:900;font-size:1.3rem;margin-bottom:4px;">${col.name}</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
               <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
               <span style="font-size:0.75rem;color:#64748b;">${col.windowStart} → ${col.windowEnd}</span>
-              <span style="font-size:0.75rem;color:#94a3b8;">${col.scope} · Created by ${col.creator}</span>
+              ${col.type==='venue'
+                ? `<span style="font-size:0.75rem;color:#94a3b8;">${col.venueName} · ${col.venueCity}</span>`
+                : `<span style="font-size:0.75rem;color:#94a3b8;">${col.scope} · Created by ${col.creator}</span>`}
             </div>
           </div>
           <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;flex-shrink:0;">✕</button>
         </div>
+        ${col.type==='venue' ? `
+          <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;">
+            <span style="font-size:1.1rem;flex-shrink:0;">🏟️</span>
+            <div>
+              <div style="font-weight:800;font-size:0.82rem;color:#6b21a8;margin-bottom:2px;">${col.venueName} — ${col.venueType}</div>
+              <div style="font-size:0.74rem;color:#7e22ce;line-height:1.5;">This is a Venue Collection. Participating businesses are independent Nigh Pro accounts invited by the venue. Patagonia sees aggregate participation metrics only — individual customer data remains private to each business.</div>
+            </div>
+          </div>
+        ` : ''}
 
         <p style="font-size:0.82rem;color:#64748b;line-height:1.65;margin:14px 0 20px;">${col.description}</p>
 
         <!-- Guardrails -->
         <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:22px;">
-          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Corporate Guardrails</div>
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">${col.type==='venue' ? 'Venue Guardrails' : 'Corporate Guardrails'}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             ${infoRow('Price',             col.guardrails.price)}
             ${infoRow('Cap per Location',  col.guardrails.capRange)}
@@ -990,7 +1053,7 @@ function collectionDetailPanel() {
         <!-- Aggregate KPIs -->
         <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Collection Performance</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;">
-          ${miniStat('Participating', confirmed.length+'/'+col.participation.length, '#6366f1')}
+          ${miniStat(col.type==='venue'?'Businesses In':'Participating', confirmed.length+'/'+col.participation.length, '#6366f1')}
           ${miniStat('Total Cap', totalCap > 0 ? fmtNum(totalCap) : '—', null)}
           ${miniStat('Reserved', totalRes > 0 ? fmtNum(totalRes) : '—', '#0ea5e9')}
           ${miniStat('Checked In', totalCI > 0 ? fmtNum(totalCI) : '—', '#10b981')}
@@ -1020,53 +1083,79 @@ function collectionDetailPanel() {
         </div>
 
         <!-- Participation status -->
-        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Location Participation</div>
-        <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">${col.type==='venue' ? 'Business Participation' : 'Location Participation'}</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
           ${[['confirmed','Confirmed','#10b981'],['pending','Pending','#f59e0b'],['declined','Declined','#ef4444'],['live','Live Now','#10b981'],['ended','Ended','#6b7280']].map(([s,label,color])=>{
             const n = col.participation.filter(p=>p.status===s).length;
             return n>0 ? `<span style="background:${statusBg[s]||'#f3f4f6'};color:${color};font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:20px;">${label}: ${n}</span>` : '';
           }).join('')}
         </div>
 
-        <!-- Per-location table -->
+        <!-- Participation table (internal vs venue) -->
         <div style="background:#f8f9fb;border-radius:12px;overflow:hidden;margin-bottom:22px;">
           <table>
             <thead>
               <tr style="background:#f1f5f9;border-bottom:1px solid #e5e7eb;">
-                ${['Location','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`
-                  <th style="padding:9px 12px;text-align:${i>2?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>
-                `).join('')}
+                ${col.type==='venue'
+                  ? ['Business','Category','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>3?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>`).join('')
+                  : ['Location','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>2?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>`).join('')
+                }
               </tr>
             </thead>
             <tbody>
               ${col.participation.map((p,i)=>{
-                const loc = LOCATIONS.find(l=>l.id===p.locId);
-                const reg = loc ? regionById(loc.region) : null;
                 const sr  = p.res>0&&p.ci>0 ? pct(p.ci,p.res) : null;
-                return `
-                  <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
-                    <td style="padding:10px 12px;">
-                      <div style="font-weight:700;font-size:0.8rem;">${loc?.name||p.locId}</div>
-                      <div style="font-size:0.65rem;color:${reg?.color};">${reg?.abbr} · ${loc?.city}</div>
-                    </td>
-                    <td style="padding:10px 12px;">
-                      <span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
-                    </td>
-                    <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
-                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
-                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
-                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
-                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
-                  </tr>
-                `;
+                if (col.type === 'venue') {
+                  return `
+                    <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                      <td style="padding:10px 12px;">
+                        <div style="font-weight:700;font-size:0.8rem;">${p.bizName}</div>
+                        <div style="font-size:0.65rem;color:#9333ea;">${p.bizType}</div>
+                      </td>
+                      <td style="padding:10px 12px;font-size:0.72rem;color:#475569;">${p.bizCategory}</td>
+                      <td style="padding:10px 12px;">
+                        <span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
+                      </td>
+                      <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                    </tr>
+                  `;
+                } else {
+                  const loc = LOCATIONS.find(l=>l.id===p.locId);
+                  const reg = loc ? regionById(loc.region) : null;
+                  return `
+                    <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                      <td style="padding:10px 12px;">
+                        <div style="font-weight:700;font-size:0.8rem;">${loc?.name||p.locId}</div>
+                        <div style="font-size:0.65rem;color:${reg?.color};">${reg?.abbr} · ${loc?.city}</div>
+                      </td>
+                      <td style="padding:10px 12px;">
+                        <span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
+                      </td>
+                      <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                      <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                    </tr>
+                  `;
+                }
               }).join('')}
             </tbody>
           </table>
         </div>
-
+        ${col.type==='venue' ? `
+          <div style="background:#f8f9fb;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.73rem;color:#64748b;line-height:1.6;">
+            <span style="font-weight:800;color:#0f172a;">🔒 Data Privacy Note:</span> Each participating business owns its own customer data. Venue aggregates (cap, reservations, check-ins) are visible above, but individual attendee identities and contact info are not shared with the venue or other participants.
+          </div>
+        ` : ''}
         <!-- Actions -->
         <div style="display:flex;gap:10px;">
-          ${col.status!=='ended' ? `<button style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Reminder to Pending</button>` : ''}
+          ${col.status!=='ended' && col.type!=='venue' ? `<button style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Reminder to Pending</button>` : ''}
+          ${col.status!=='ended' && col.type==='venue' ? `<button style="flex:1;background:#9333ea;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Invite More Businesses</button>` : ''}
           <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
         </div>
 
