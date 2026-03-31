@@ -367,6 +367,7 @@ function sidebar() {
     { id:'customers',   label:'Customers',    icon:'🙋' },
     { id:'analytics',  label:'Analytics',    icon:'📊' },
     { id:'users',      label:'Users & Access',icon:'👥'},
+    { id:'billing',    label:'Billing',      icon:'💳' },
     { id:'settings',   label:'Settings',     icon:'⚙️' },
   ];
   return `
@@ -425,7 +426,7 @@ function sidebar() {
 // TOPBAR
 // ─────────────────────────────────────────────────────────────
 function topbar() {
-  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', customers:'Customers', analytics:'Analytics', users:'Users & Access', settings:'Settings' };
+  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', customers:'Customers', analytics:'Analytics', users:'Users & Access', billing:'Billing & Subscription', settings:'Settings' };
   return `
     <header style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:58px;display:flex;align-items:center;gap:14px;flex-shrink:0;">
       <div style="flex:1;">
@@ -460,6 +461,7 @@ function renderPage() {
     case 'customers': return rCustomers();
     case 'analytics': return rAnalytics();
     case 'users':     return rUsers();
+    case 'billing':   return rBilling();
     case 'settings':  return rSettings();
     default: return rDashboard();
   }
@@ -1578,6 +1580,316 @@ function rUsers() {
             ${r.can.map(c=>`<div style="font-size:0.7rem;color:#475569;padding:3px 0;border-bottom:1px solid ${r.color}12;line-height:1.4;">✓ ${c}</div>`).join('')}
           </div>
         `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// BILLING & SUBSCRIPTION
+// ─────────────────────────────────────────────────────────────
+function rBilling() {
+  // Plan data
+  const plan = { name:'Enterprise', pricePerLoc:349, locations:20, minLocs:10, renewal:'Apr 1, 2026', billingCycle:'Monthly', csmName:'Priya Nair', csmEmail:'priya.nair@nigh.com' };
+  const monthlyTotal = plan.pricePerLoc * plan.locations;
+  const annualTotal  = monthlyTotal * 12;
+
+  // Value delivered (March 2026)
+  const totalCI     = LOCATIONS.reduce((a,l)=>a+l.mtdCheckins,0);
+  const totalDrops  = LOCATIONS.reduce((a,l)=>a+l.mtdDrops,0);
+  const avgCheckVal = 87; // avg in-store spend per check-in ($)
+  const revenueAttr = totalCI * avgCheckVal;
+  const costPerCI   = totalCI > 0 ? (monthlyTotal / totalCI).toFixed(2) : '—';
+  const roi         = totalCI > 0 ? (revenueAttr / monthlyTotal).toFixed(1) : '—';
+
+  // Usage
+  const activeUsers   = USERS.filter(u=>u.status==='active').length;
+  const activeDrops   = CORP_DROPS.filter(d=>d.status==='live'||d.status==='upcoming').length;
+  const activeColls   = COLLECTIONS.filter(c=>c.status!=='ended').length;
+  const apiCallsUsed  = 14820;
+  const apiCallsLimit = 50000;
+
+  // Tiers
+  const tiers = [
+    { name:'Starter',        price:149,  highlight:false, tag:null,          features:{ locs:'Up to 5', drops:'10/loc/mo',  analytics:'Core',       collections:'Internal only', geofence:false, api:false,  customReports:false, csmTier:'Standard support',     sso:false, sla:false, hierarchy:false } },
+    { name:'Growth',         price:249,  highlight:false, tag:null,          features:{ locs:'Up to 25', drops:'25/loc/mo', analytics:'Full',        collections:'Internal + Venue', geofence:true, api:false, customReports:false, csmTier:'Priority support',     sso:false, sla:false, hierarchy:true  } },
+    { name:'Enterprise',     price:349,  highlight:true,  tag:'YOUR PLAN',   features:{ locs:'Unlimited', drops:'Unlimited',analytics:'Full + Export',collections:'All types',    geofence:true, api:true,   customReports:true,  csmTier:'Dedicated CSM',        sso:true,  sla:true,  hierarchy:true  } },
+    { name:'Enterprise Plus', price:null, highlight:false, tag:'Contact us',  features:{ locs:'Unlimited', drops:'Unlimited',analytics:'Custom',      collections:'All + White-label',geofence:true,api:true,  customReports:true,  csmTier:'Named team + 99.9% SLA',sso:true, sla:true,  hierarchy:true  } },
+  ];
+
+  // Add-ons
+  const addons = [
+    { name:'Additional Locations',    desc:'Expand beyond your contracted count mid-term',              price:'$349/loc/mo',  active:false },
+    { name:'Venue Collection Pack',   desc:'Host unlimited geo-fenced Venue Collections per month',      price:'$499/mo',      active:true  },
+    { name:'API Premium Access',      desc:'Raise API limit to 500K calls/mo + webhook support',        price:'$299/mo',      active:false },
+    { name:'Custom Brand Theming',    desc:'White-label the customer app experience with your brand',   price:'$799/mo',      active:false },
+    { name:'Advanced Data Export',    desc:'Scheduled exports to your data warehouse (Snowflake, BigQuery)', price:'$199/mo', active:false },
+    { name:'Multi-Brand License',     desc:'Manage two or more brand accounts under one contract',      price:'Custom',       active:false },
+  ];
+
+  // Invoices
+  const invoices = [
+    { period:'March 2026',   amount:monthlyTotal, status:'paid',    date:'Mar 1, 2026',  id:'INV-2026-03' },
+    { period:'February 2026',amount:monthlyTotal, status:'paid',    date:'Feb 1, 2026',  id:'INV-2026-02' },
+    { period:'January 2026', amount:monthlyTotal, status:'paid',    date:'Jan 1, 2026',  id:'INV-2026-01' },
+    { period:'December 2025',amount:monthlyTotal, status:'paid',    date:'Dec 1, 2025',  id:'INV-2025-12' },
+    { period:'November 2025',amount:monthlyTotal, status:'paid',    date:'Nov 1, 2025',  id:'INV-2025-11' },
+    { period:'October 2025', amount:monthlyTotal, status:'paid',    date:'Oct 1, 2025',  id:'INV-2025-10' },
+  ];
+
+  function bRow(label, val) {
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.82rem;"><span style="color:#475569;">${label}</span><span style="font-weight:700;color:#0f172a;">${val}</span></div>`;
+  }
+  function check(val, yes='✓', no='–') {
+    return typeof val === 'boolean'
+      ? `<span style="color:${val?'#10b981':'#cbd5e1'};font-weight:800;">${val?yes:no}</span>`
+      : `<span style="font-size:0.78rem;font-weight:600;color:#475569;">${val}</span>`;
+  }
+  function usageMeter(label, used, total, color) {
+    const pctVal = total ? Math.min(100, Math.round(used/total*100)) : 100;
+    const barColor = pctVal >= 90 ? '#ef4444' : pctVal >= 70 ? '#f59e0b' : color;
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.73rem;margin-bottom:5px;">
+          <span style="font-weight:700;color:#0f172a;">${label}</span>
+          <span style="color:${barColor};font-weight:800;">${used}${total?' / '+total:''}</span>
+        </div>
+        <div style="background:#f1f5f9;border-radius:4px;height:7px;overflow:hidden;">
+          <div style="background:${barColor};height:100%;width:${total?pctVal:100}%;border-radius:4px;transition:width 0.3s;"></div>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <!-- Hero KPI bar -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;">
+      ${kpi('Plan',           plan.name,                         'Nigh Enterprise',                  '💳','#6366f1')}
+      ${kpi('Monthly Cost',   '$'+fmtNum(monthlyTotal),          plan.locations+' locations × $'+plan.pricePerLoc, '💰','#0f172a')}
+      ${kpi('Annual Value',   '$'+fmtNum(annualTotal),           'contracted ARR',                   '📅','#7c3aed')}
+      ${kpi('Next Renewal',   plan.renewal,                      'auto-renews monthly',              '🔄','#0ea5e9')}
+      ${kpi('Your CSM',       plan.csmName,                      plan.csmEmail,                      '🙋','#10b981')}
+    </div>
+
+    <!-- ROI / Value Delivered -->
+    <div style="background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:20px;padding:28px 32px;margin-bottom:24px;color:#fff;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:6px;">Value Delivered — March 2026</div>
+          <div style="font-size:1.5rem;font-weight:900;margin-bottom:4px;">$${fmtNum(revenueAttr)} in attributed revenue</div>
+          <div style="font-size:0.82rem;color:#94a3b8;">${fmtNum(totalCI)} check-ins × $${avgCheckVal} avg in-store spend per visit</div>
+        </div>
+        <div style="text-align:right;background:rgba(255,255,255,0.07);border-radius:14px;padding:16px 22px;">
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:6px;">Return on Investment</div>
+          <div style="font-size:2.4rem;font-weight:900;color:#34d399;line-height:1;">${roi}×</div>
+          <div style="font-size:0.72rem;color:#6ee7b7;margin-top:4px;">$${fmtNum(monthlyTotal)} platform cost</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;">
+        ${[
+          ['Check-ins', fmtNum(totalCI), 'this billing period'],
+          ['Drops Run', String(totalDrops), 'across all locations'],
+          ['Cost / Check-in', '$'+costPerCI, 'platform cost only'],
+          ['Active Locations', LOCATIONS.filter(l=>l.status==='active').length+'/'+plan.locations, 'running drops'],
+        ].map(([label,val,sub])=>`
+          <div style="padding:16px 18px;background:rgba(15,23,42,0.4);">
+            <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:4px;font-weight:600;">${label}</div>
+            <div style="font-weight:900;font-size:1.25rem;color:#fff;">${val}</div>
+            <div style="font-size:0.68rem;color:#64748b;margin-top:2px;">${sub}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;">
+
+      <!-- Current plan -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:4px;">Current Plan</div>
+            <div style="font-weight:900;font-size:1.1rem;">Nigh Enterprise</div>
+          </div>
+          <span style="background:#ede9fe;color:#7c3aed;font-size:0.68rem;font-weight:800;padding:4px 10px;border-radius:20px;">Active</span>
+        </div>
+        ${bRow('Price per Location','$349 / location / month')}
+        ${bRow('Contracted Locations','20 locations')}
+        ${bRow('Monthly Total','$'+fmtNum(monthlyTotal))}
+        ${bRow('Billing Cycle','Monthly · auto-renews')}
+        ${bRow('Contract Start','Oct 1, 2025')}
+        ${bRow('Next Renewal',plan.renewal)}
+        ${bRow('Dedicated CSM',plan.csmName)}
+        <div style="display:flex;gap:8px;margin-top:18px;">
+          <button style="flex:1;background:#f1f5f9;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">Modify Contract</button>
+          <button style="flex:1;background:#0f172a;color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Add Locations</button>
+        </div>
+      </div>
+
+      <!-- Usage meters -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;">
+        <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:18px;">Plan Usage — March 2026</div>
+        ${usageMeter('Locations', plan.locations, plan.locations, '#6366f1')}
+        ${usageMeter('Active Users', activeUsers, 50, '#0ea5e9')}
+        ${usageMeter('Active Drops', activeDrops, null, '#10b981')}
+        ${usageMeter('Active Collections', activeColls, null, '#f59e0b')}
+        ${usageMeter('API Calls', fmtNum(apiCallsUsed), fmtNum(apiCallsLimit), '#8b5cf6')}
+        <div style="background:#f0fdf4;border-radius:9px;padding:10px 12px;margin-top:4px;">
+          <div style="font-size:0.72rem;font-weight:700;color:#15803d;">✓ All limits healthy — no action needed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan tiers comparison -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;margin-bottom:24px;">
+      <div style="padding:22px 28px 0;">
+        <div style="font-weight:900;font-size:1rem;margin-bottom:2px;">Plan Comparison</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-bottom:20px;">All plans are priced per active location per month. Volume discounts available for 50+ locations — contact your CSM.</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f8f9fb;border-bottom:2px solid #e5e7eb;">
+              <th style="padding:14px 28px;text-align:left;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;width:220px;">Feature</th>
+              ${tiers.map(t=>`
+                <th style="padding:14px 20px;text-align:center;min-width:140px;${t.highlight?'background:#f5f3ff;':''} ">
+                  ${t.tag ? `<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:${t.highlight?'#7c3aed':'#64748b'};margin-bottom:3px;">${t.tag}</div>` : '<div style="margin-bottom:3px;height:14px;"></div>'}
+                  <div style="font-weight:900;font-size:0.92rem;color:${t.highlight?'#6366f1':'#0f172a'};">${t.name}</div>
+                  <div style="font-size:0.95rem;font-weight:800;color:${t.highlight?'#7c3aed':'#475569'};margin-top:3px;">${t.price ? '$'+t.price+'<span style="font-size:0.65rem;font-weight:600;">/loc/mo</span>' : '<span style="font-size:0.8rem;">Contact Us</span>'}</div>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${[
+              ['Locations',         tiers.map(t=>check(t.features.locs))],
+              ['Drops',             tiers.map(t=>check(t.features.drops))],
+              ['Analytics',         tiers.map(t=>check(t.features.analytics))],
+              ['Collections',       tiers.map(t=>check(t.features.collections))],
+              ['Geo-fencing',       tiers.map(t=>check(t.features.geofence))],
+              ['API Access',        tiers.map(t=>check(t.features.api))],
+              ['Custom Reports',    tiers.map(t=>check(t.features.customReports))],
+              ['Multi-Region Hierarchy', tiers.map(t=>check(t.features.hierarchy))],
+              ['SSO / SAML',        tiers.map(t=>check(t.features.sso))],
+              ['Support',           tiers.map(t=>check(t.features.csmTier))],
+              ['SLA Guarantee',     tiers.map(t=>check(t.features.sla))],
+            ].map(([feat, cells], ri)=>`
+              <tr style="border-bottom:1px solid #f1f5f9;${ri%2?'background:#fafafa':''}">
+                <td style="padding:11px 28px;font-size:0.8rem;font-weight:600;color:#374151;">${feat}</td>
+                ${cells.map((cell,ci)=>`<td style="padding:11px 20px;text-align:center;${tiers[ci].highlight?'background:'+(ri%2?'#f5f3ff':'#faf5ff')+';':''}">${cell}</td>`).join('')}
+              </tr>
+            `).join('')}
+            <tr style="background:#f8f9fb;">
+              <td style="padding:14px 28px;"></td>
+              ${tiers.map(t=>`
+                <td style="padding:14px 20px;text-align:center;${t.highlight?'background:#f5f3ff;':''}">
+                  ${t.highlight
+                    ? `<span style="font-size:0.75rem;font-weight:700;color:#7c3aed;">Current plan</span>`
+                    : t.price
+                      ? `<button style="background:#0f172a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;">${t.price > 349 || !t.price ? 'Upgrade' : 'Downgrade'}</button>`
+                      : `<button style="background:#6366f1;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;">Talk to Sales</button>`
+                  }
+                </td>
+              `).join('')}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add-ons -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:24px;">
+      <div style="font-weight:900;font-size:1rem;margin-bottom:2px;">Add-Ons</div>
+      <div style="font-size:0.78rem;color:#64748b;margin-bottom:20px;">Extend your plan with additional capabilities. Add-ons are billed monthly alongside your base subscription.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        ${addons.map(a=>`
+          <div style="border:1px solid ${a.active?'#6366f1':'#e5e7eb'};background:${a.active?'#f5f3ff':'#fff'};border-radius:12px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;">
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                <div style="font-weight:800;font-size:0.85rem;">${a.name}</div>
+                ${a.active ? `<span style="background:#ede9fe;color:#7c3aed;font-size:0.6rem;font-weight:800;padding:2px 7px;border-radius:20px;">Active</span>` : ''}
+              </div>
+              <div style="font-size:0.73rem;color:#64748b;margin-bottom:10px;line-height:1.5;">${a.desc}</div>
+              <div style="font-weight:800;font-size:0.82rem;color:${a.active?'#7c3aed':'#0f172a'};">${a.price}</div>
+            </div>
+            <button style="flex-shrink:0;border:1px solid ${a.active?'#c4b5fd':'#e5e7eb'};background:${a.active?'#ede9fe':'#f8f9fb'};color:${a.active?'#7c3aed':'#475569'};padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.72rem;cursor:pointer;white-space:nowrap;">${a.active?'Remove':'Add'}</button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px;">
+
+      <!-- Invoice history -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <div>
+            <div style="font-weight:900;font-size:0.95rem;">Invoice History</div>
+            <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">All invoices sent to billing@patagonia.com</div>
+          </div>
+          <button style="background:#f1f5f9;border:none;padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.72rem;cursor:pointer;color:#475569;">Export All</button>
+        </div>
+        ${invoices.map(inv=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;">${inv.period}</div>
+              <div style="font-size:0.68rem;color:#94a3b8;">${inv.id} · ${inv.date}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-weight:800;font-size:0.85rem;">$${fmtNum(inv.amount)}</span>
+              <span style="background:#d1fae5;color:#065f46;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">Paid</span>
+              <button style="background:#f1f5f9;border:none;padding:5px 11px;border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;color:#475569;">PDF</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Payment & contacts -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+          <div style="font-weight:900;font-size:0.95rem;margin-bottom:14px;">Payment Method</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#f8f9fb;border-radius:10px;margin-bottom:14px;">
+            <div style="width:44px;height:28px;background:#1a1f71;border-radius:5px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:0.55rem;font-weight:900;color:#fff;letter-spacing:0.04em;">VISA</span>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;">Visa ending in 4821</div>
+              <div style="font-size:0.68rem;color:#94a3b8;">Expires 09 / 2028 · Corporate card</div>
+            </div>
+            <button style="margin-left:auto;background:#f1f5f9;border:none;padding:6px 12px;border-radius:7px;font-weight:700;font-size:0.72rem;cursor:pointer;color:#475569;">Update</button>
+          </div>
+          ${bRow('Billing Email','billing@patagonia.com')}
+          ${bRow('PO Number','PO-2025-NIGH-001')}
+          ${bRow('Tax ID / EIN','91-0849259')}
+        </div>
+
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+          <div style="font-weight:900;font-size:0.95rem;margin-bottom:14px;">Your Nigh Team</div>
+          ${[
+            { role:'Dedicated CSM',     name:'Priya Nair',    email:'priya.nair@nigh.com',    avatar:'PN', color:'#10b981' },
+            { role:'Account Executive', name:'Devon Carr',    email:'devon.carr@nigh.com',     avatar:'DC', color:'#6366f1' },
+            { role:'Support',           name:'Nigh Enterprise Support', email:'enterprise@nigh.com', avatar:'N', color:'#0f172a' },
+          ].map(p=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:32px;height:32px;background:${p.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:800;color:#fff;flex-shrink:0;">${p.avatar}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.8rem;">${p.name}</div>
+                <div style="font-size:0.68rem;color:#94a3b8;">${p.role} · <a href="mailto:${p.email}" style="color:#6366f1;text-decoration:none;">${p.email}</a></div>
+              </div>
+              <button style="background:#f1f5f9;border:none;padding:6px 12px;border-radius:7px;font-weight:700;font-size:0.7rem;cursor:pointer;color:#475569;">Email</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div style="background:#fff;border:1px solid #fca5a5;border-radius:16px;padding:22px;">
+      <div style="font-weight:900;font-size:0.9rem;color:#b91c1c;margin-bottom:4px;">Danger Zone</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">These actions affect your entire account and all locations. All changes require CSM confirmation.</div>
+      <div style="display:flex;gap:12px;">
+        <button style="background:#fff;border:1px solid #fca5a5;color:#b91c1c;padding:9px 18px;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">Pause Subscription</button>
+        <button style="background:#fff;border:1px solid #fca5a5;color:#b91c1c;padding:9px 18px;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">Reduce Location Count</button>
+        <button style="background:#fff;border:1px solid #fca5a5;color:#b91c1c;padding:9px 18px;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">Cancel Subscription</button>
       </div>
     </div>
   `;
