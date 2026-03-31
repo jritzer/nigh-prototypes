@@ -33,6 +33,8 @@ const S = {
   pushStep: 1,
   pushTarget: 'all',
   userRoleFilter: 'all',
+  collectionDetail: null,
+  collectionFilter: 'all',
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -105,6 +107,125 @@ const CORP_DROPS = [
   { id:'CD08', title:'Surf & Skate Community Night', type:'local', scope:'LA Flagship',    scopeDetail:'1 location',   status:'ended',     date:'Feb 8, 2026',  totalCap:60,  totalRes:57,  totalCI:51,  revenue:0,    creator:'Jess Park'  },
   { id:'CD09', title:'Gear Swap & Sip',              type:'push',  scope:'Pacific Northwest', scopeDetail:'Portland, Seattle', status:'scheduled', date:'Apr 12, 2026', totalCap:100, totalRes:62, totalCI:0, revenue:0, creator:'Dana Kim' },
   { id:'CD10', title:'Founders Day Store Anniversary', type:'local',scope:'NYC SoHo',      scopeDetail:'1 location',   status:'scheduled', date:'Apr 18, 2026', totalCap:75,  totalRes:48,  totalCI:0,   revenue:0,    creator:'Priya Kapoor' },
+];
+
+const COLLECTIONS = [
+  {
+    id:'COL01', name:'Earth Day 2026', theme:'Repair & Reuse',
+    status:'upcoming', windowStart:'Apr 18, 2026', windowEnd:'Apr 22, 2026',
+    scope:'All Locations', creator:'Alex Torres', createdDate:'Mar 10, 2026',
+    guardrails:{ price:'Free ($0)', capRange:'20–50 spots', broadcastWindow:'Within 48 hrs', themeReq:'Sustainability / Repair / Community' },
+    description:'Each location creates a drop tied to Earth Day — repair workshops, gear swaps, trail cleanups, or any experience aligned to our repair-and-reuse mission.',
+    participation:[
+      { locId:'L01', status:'confirmed', dropTitle:'Surf Gear Repair Clinic',         cap:40, res:34, ci:0  },
+      { locId:'L02', status:'confirmed', dropTitle:'Gear Swap & Sip',                 cap:30, res:22, ci:0  },
+      { locId:'L03', status:'pending',   dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L04', status:'confirmed', dropTitle:'Worn Wear Repair Day',            cap:50, res:48, ci:0  },
+      { locId:'L05', status:'declined',  dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L06', status:'confirmed', dropTitle:'Trail Stewardship Morning',       cap:30, res:28, ci:0  },
+      { locId:'L07', status:'confirmed', dropTitle:'Patch & Repair Workshop',         cap:35, res:31, ci:0  },
+      { locId:'L08', status:'confirmed', dropTitle:'Earth Day Gear Swap',             cap:45, res:42, ci:0  },
+      { locId:'L09', status:'confirmed', dropTitle:'Community Repair Café',           cap:30, res:27, ci:0  },
+      { locId:'L10', status:'confirmed', dropTitle:'Ski Gear Tune & Trade',           cap:25, res:20, ci:0  },
+      { locId:'L11', status:'confirmed', dropTitle:'Backcountry Gear Repair Drop',    cap:20, res:16, ci:0  },
+      { locId:'L12', status:'pending',   dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L13', status:'declined',  dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L14', status:'confirmed', dropTitle:'NYC Worn Wear Pop-Up',            cap:50, res:47, ci:0  },
+      { locId:'L15', status:'confirmed', dropTitle:'DC Gear Swap & Stories',          cap:30, res:25, ci:0  },
+      { locId:'L16', status:'pending',   dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L17', status:'confirmed', dropTitle:'ATL Earth Day Trail Walk',        cap:25, res:19, ci:0  },
+      { locId:'L18', status:'confirmed', dropTitle:'Austin Gear Repair Social',       cap:35, res:30, ci:0  },
+      { locId:'L19', status:'pending',   dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L20', status:'confirmed', dropTitle:'Chicago Worn Wear Workshop',      cap:30, res:24, ci:0  },
+    ]
+  },
+  {
+    id:'COL02', name:'Spring Gear Preview', theme:'New Season Drop',
+    status:'live', windowStart:'Mar 28, 2026', windowEnd:'Apr 3, 2026',
+    scope:'West Coast', creator:'Dana Kim', createdDate:'Mar 5, 2026',
+    guardrails:{ price:'Free ($0)', capRange:'30–60 spots', broadcastWindow:'Same day or day before', themeReq:'Spring gear reveal — exclusive in-store first look' },
+    description:'West Coast locations host an exclusive first-look at spring gear before it hits the website. Invite your top followers and regulars for an early in-store preview.',
+    participation:[
+      { locId:'L01', status:'live',      dropTitle:'Spring Gear First Look — LA',    cap:50, res:49, ci:38 },
+      { locId:'L02', status:'live',      dropTitle:'Spring Preview Night',            cap:40, res:37, ci:29 },
+      { locId:'L03', status:'live',      dropTitle:'New Season Sneak Peek',           cap:35, res:32, ci:21 },
+      { locId:'L04', status:'live',      dropTitle:'SF Spring Gear Drop',             cap:60, res:60, ci:44 },
+      { locId:'L05', status:'confirmed', dropTitle:'Palo Alto Gear Preview',          cap:30, res:18, ci:0  },
+      { locId:'L06', status:'live',      dropTitle:'Seattle Spring Reveal',           cap:45, res:42, ci:35 },
+      { locId:'L07', status:'live',      dropTitle:'Portland New Season Preview',     cap:40, res:38, ci:31 },
+    ]
+  },
+  {
+    id:'COL03', name:'Worn Wear Month', theme:'Repair is Radical',
+    status:'ended', windowStart:'Feb 1, 2026', windowEnd:'Feb 28, 2026',
+    scope:'All Locations', creator:'Alex Torres', createdDate:'Jan 12, 2026',
+    guardrails:{ price:'Free ($0)', capRange:'15–40 spots per drop', broadcastWindow:'1–3 days before', themeReq:'Repair, reuse, trade-in — no new product sales events' },
+    description:'February is Worn Wear Month. Every location runs at least one drop centered on repair, trade-in, or reuse. Locations can run multiple drops throughout the month.',
+    participation:[
+      { locId:'L01', status:'ended', dropTitle:'Worn Wear Trade-In Night',          cap:40, res:38, ci:35 },
+      { locId:'L02', status:'ended', dropTitle:'Repair Café Santa Monica',           cap:25, res:24, ci:22 },
+      { locId:'L03', status:'ended', dropTitle:'Gear Trade-In SD',                   cap:30, res:27, ci:24 },
+      { locId:'L04', status:'ended', dropTitle:'SF Worn Wear Day',                   cap:40, res:40, ci:38 },
+      { locId:'L05', status:'ended', dropTitle:'Palo Alto Repair Drop',              cap:20, res:18, ci:16 },
+      { locId:'L06', status:'ended', dropTitle:'Seattle Repair Pop-Up',              cap:35, res:34, ci:31 },
+      { locId:'L07', status:'ended', dropTitle:'Portland Worn Wear Party',           cap:35, res:33, ci:30 },
+      { locId:'L08', status:'ended', dropTitle:'Denver Repair & Brew',               cap:40, res:39, ci:37 },
+      { locId:'L09', status:'ended', dropTitle:'Boulder Trade-In Day',               cap:30, res:29, ci:27 },
+      { locId:'L10', status:'ended', dropTitle:'Breckenridge Ski Gear Swap',         cap:20, res:18, ci:16 },
+      { locId:'L11', status:'ended', dropTitle:'Park City Gear Trade',               cap:15, res:14, ci:12 },
+      { locId:'L12', status:'ended', dropTitle:'Boston Worn Wear Afternoon',         cap:30, res:28, ci:24 },
+      { locId:'L13', status:'declined', dropTitle:null,                              cap:0,  res:0,  ci:0  },
+      { locId:'L14', status:'ended', dropTitle:'NYC SoHo Repair Lab',                cap:40, res:40, ci:38 },
+      { locId:'L15', status:'ended', dropTitle:'DC Gear Exchange',                   cap:25, res:23, ci:20 },
+      { locId:'L16', status:'ended', dropTitle:'Miami Tropical Trade-In',            cap:30, res:27, ci:24 },
+      { locId:'L17', status:'ended', dropTitle:'ATL Worn Wear Social',               cap:20, res:19, ci:17 },
+      { locId:'L18', status:'ended', dropTitle:'Austin Repair Happy Hour',           cap:30, res:29, ci:27 },
+      { locId:'L19', status:'ended', dropTitle:'Dallas Trade-In Drop',               cap:20, res:17, ci:15 },
+      { locId:'L20', status:'ended', dropTitle:'Chicago Worn Wear Night',            cap:30, res:28, ci:25 },
+    ]
+  },
+  {
+    id:'COL04', name:'Fleece Season Launch', theme:'Fall Into Fleece',
+    status:'upcoming', windowStart:'Apr 5, 2026', windowEnd:'Apr 12, 2026',
+    scope:'Northeast', creator:'Fiona Walsh', createdDate:'Mar 20, 2026',
+    guardrails:{ price:'Free or up to $15', capRange:'25–40 spots', broadcastWindow:'1–2 days before', themeReq:'Fleece styles, cozy in-store experience, seasonal transition' },
+    description:'Northeast locations kick off fleece season with an exclusive in-store experience. Think cozy vibes, first look at fall colorways, and a reason to come in before the season hits.',
+    participation:[
+      { locId:'L12', status:'confirmed', dropTitle:'Fleece First Look — Boston',    cap:35, res:21, ci:0 },
+      { locId:'L13', status:'declined',  dropTitle:null,                            cap:0,  res:0,  ci:0 },
+      { locId:'L14', status:'confirmed', dropTitle:'NYC Fall Fleece Preview',        cap:40, res:33, ci:0 },
+      { locId:'L15', status:'pending',   dropTitle:null,                            cap:0,  res:0,  ci:0 },
+    ]
+  },
+  {
+    id:'COL05', name:'Summer Trail Series', theme:'Get Outside',
+    status:'upcoming', windowStart:'Jun 1, 2026', windowEnd:'Jun 30, 2026',
+    scope:'All Locations', creator:'Alex Torres', createdDate:'Mar 28, 2026',
+    guardrails:{ price:'Free ($0)', capRange:'20–60 spots', broadcastWindow:'1–5 days before', themeReq:'Outdoor activity — trail, paddle, bike, climb, or guided walk' },
+    description:'June is our first Summer Trail Series. Every location hosts at least one outdoor or activity-oriented drop tied to their local landscape. The goal: get customers off the couch and into the outdoors with Patagonia.',
+    participation:[
+      { locId:'L01', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L02', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L03', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L04', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L05', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L06', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L07', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L08', status:'confirmed', dropTitle:'Denver Mountain Trail Morning', cap:40, res:0, ci:0 },
+      { locId:'L09', status:'confirmed', dropTitle:'Boulder Flatirons Hike Drop',   cap:35, res:0, ci:0 },
+      { locId:'L10', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L11', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L12', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L13', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L14', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L15', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L16', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L17', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L18', status:'confirmed', dropTitle:'Austin Barton Creek Trail Run', cap:30, res:0, ci:0 },
+      { locId:'L19', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L20', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+    ]
+  },
 ];
 
 const USERS = [
@@ -191,9 +312,10 @@ function layout() {
 function sidebar() {
   const nav = [
     { id:'dashboard',  label:'Dashboard',    icon:'◫'  },
-    { id:'locations',  label:'Locations',    icon:'📍' },
-    { id:'drops',      label:'Drops',        icon:'⚡' },
-    { id:'customers',  label:'Customers',    icon:'🙋' },
+    { id:'locations',   label:'Locations',    icon:'📍' },
+    { id:'drops',       label:'Drops',        icon:'⚡' },
+    { id:'collections', label:'Collections',  icon:'🗂️' },
+    { id:'customers',   label:'Customers',    icon:'🙋' },
     { id:'analytics',  label:'Analytics',    icon:'📊' },
     { id:'users',      label:'Users & Access',icon:'👥'},
     { id:'settings',   label:'Settings',     icon:'⚙️' },
@@ -254,7 +376,7 @@ function sidebar() {
 // TOPBAR
 // ─────────────────────────────────────────────────────────────
 function topbar() {
-  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', customers:'Customers', analytics:'Analytics', users:'Users & Access', settings:'Settings' };
+  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', customers:'Customers', analytics:'Analytics', users:'Users & Access', settings:'Settings' };
   return `
     <header style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:58px;display:flex;align-items:center;gap:14px;flex-shrink:0;">
       <div style="flex:1;">
@@ -285,6 +407,7 @@ function renderPage() {
     case 'dashboard': return rDashboard();
     case 'locations': return rLocations();
     case 'drops':     return rDrops();
+    case 'collections': return rCollections();
     case 'customers': return rCustomers();
     case 'analytics': return rAnalytics();
     case 'users':     return rUsers();
@@ -710,6 +833,247 @@ const CUSTOMERS = [
 ];
 
 const CUST_SORT_OPTIONS = ['drops','checkins','spend','showRate'];
+
+// ─────────────────────────────────────────────────────────────
+// COLLECTIONS
+// ─────────────────────────────────────────────────────────────
+function rCollections() {
+  const filter = S.collectionFilter || 'all';
+  const list = filter === 'all' ? COLLECTIONS : COLLECTIONS.filter(c=>c.status===filter);
+
+  const statusColors = { live:'#10b981', upcoming:'#3b82f6', ended:'#6b7280' };
+  const statusBg     = { live:'#d1fae5', upcoming:'#dbeafe', ended:'#f3f4f6' };
+
+  // Summary KPIs
+  const totalCollections  = COLLECTIONS.length;
+  const liveCount         = COLLECTIONS.filter(c=>c.status==='live').length;
+  const upcomingCount     = COLLECTIONS.filter(c=>c.status==='upcoming').length;
+  const totalParticipants = COLLECTIONS.reduce((a,c)=>a+c.participation.filter(p=>['confirmed','live','ended'].includes(p.status)).length,0);
+
+  return `
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;">
+      ${kpi('Collections',    String(totalCollections), 'total campaigns',             '🗂️','#6366f1')}
+      ${kpi('Live Now',       String(liveCount),        'actively running',             '🟢','#10b981')}
+      ${kpi('Upcoming',       String(upcomingCount),    'in planning or confirmed',     '📅','#3b82f6')}
+      ${kpi('Total Participants', String(totalParticipants), 'location drops confirmed', '📍','#f59e0b')}
+    </div>
+
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:18px;align-items:center;">
+      ${['all','live','upcoming','ended'].map(f=>`
+        <button onclick="ss({collectionFilter:'${f}'})" style="background:${filter===f?'#0f172a':'#fff'};color:${filter===f?'#fff':'#475569'};border:1px solid ${filter===f?'#0f172a':'#e5e7eb'};padding:7px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;text-transform:capitalize;">${f==='all'?'All ('+COLLECTIONS.length+')':f.charAt(0).toUpperCase()+f.slice(1)+' ('+COLLECTIONS.filter(c=>c.status===f).length+')'}</button>
+      `).join('')}
+      <button style="margin-left:auto;background:#0f172a;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;">+ New Collection</button>
+    </div>
+
+    <!-- Collection cards -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      ${list.map(col => {
+        const confirmed  = col.participation.filter(p=>['confirmed','live','ended'].includes(p.status)).length;
+        const pending    = col.participation.filter(p=>p.status==='pending').length;
+        const declined   = col.participation.filter(p=>p.status==='declined').length;
+        const totalLocs  = col.participation.length;
+        const totalCap   = col.participation.reduce((a,p)=>a+p.cap,0);
+        const totalRes   = col.participation.reduce((a,p)=>a+p.res,0);
+        const totalCI    = col.participation.reduce((a,p)=>a+p.ci,0);
+        const showRate   = totalRes > 0 && totalCI > 0 ? pct(totalCI,totalRes) : null;
+
+        return `
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+            <!-- Header row -->
+            <div style="padding:20px 22px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid #f1f5f9;">
+              <div style="width:44px;height:44px;background:${statusBg[col.status]};border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🗂️</div>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;">
+                  <span style="font-weight:900;font-size:1rem;">${col.name}</span>
+                  <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+                  <span style="background:#f1f5f9;color:#475569;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;">${col.scope}</span>
+                </div>
+                <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">${col.windowStart} → ${col.windowEnd} · Theme: <em>${col.theme}</em></div>
+                <div style="font-size:0.75rem;color:#94a3b8;">${col.description}</div>
+              </div>
+              <button onclick="ss({collectionDetail:'${col.id}'})" style="background:#f1f5f9;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#0f172a;white-space:nowrap;flex-shrink:0;">View Details →</button>
+            </div>
+
+            <!-- Stats row -->
+            <div style="padding:16px 22px;display:grid;grid-template-columns:repeat(7,1fr);gap:0;background:#fafafa;">
+              ${collStat('Locations',  totalLocs+' total',  '#475569')}
+              ${collStat('Confirmed',  confirmed,           '#10b981')}
+              ${collStat('Pending',    pending,             '#f59e0b')}
+              ${collStat('Declined',   declined,            '#ef4444')}
+              ${collStat('Total Cap',  totalCap||'—',       '#6366f1')}
+              ${collStat('Reserved',   totalRes||'—',       '#0ea5e9')}
+              ${collStat('Checked In', totalCI||'—',        '#10b981')}
+            </div>
+
+            <!-- Participation bar -->
+            <div style="padding:10px 22px 14px;display:flex;gap:4px;align-items:center;">
+              <div style="flex:1;height:6px;background:#f1f5f9;border-radius:4px;overflow:hidden;display:flex;">
+                <div style="background:#10b981;width:${pct(confirmed,totalLocs)}%;"></div>
+                <div style="background:#fbbf24;width:${pct(pending,totalLocs)}%;"></div>
+                <div style="background:#fca5a5;width:${pct(declined,totalLocs)}%;"></div>
+              </div>
+              <span style="font-size:0.68rem;color:#64748b;margin-left:8px;white-space:nowrap;">${confirmed}/${totalLocs} in</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    ${S.collectionDetail ? collectionDetailPanel() : ''}
+  `;
+}
+
+function collStat(label, value, color) {
+  return `<div style="text-align:center;padding:0 8px;border-right:1px solid #e5e7eb;last-child{border:none}">
+    <div style="font-size:0.62rem;color:#94a3b8;font-weight:600;margin-bottom:3px;">${label}</div>
+    <div style="font-weight:800;font-size:0.95rem;color:${color};">${value}</div>
+  </div>`;
+}
+
+function collectionDetailPanel() {
+  const col = COLLECTIONS.find(c=>c.id===S.collectionDetail);
+  if (!col) return '';
+
+  const statusColors = { live:'#10b981', upcoming:'#3b82f6', ended:'#6b7280', confirmed:'#10b981', pending:'#f59e0b', declined:'#ef4444' };
+  const statusBg     = { live:'#d1fae5', upcoming:'#dbeafe', ended:'#f3f4f6', confirmed:'#d1fae5', pending:'#fef3c7', declined:'#fee2e2' };
+
+  const totalCap  = col.participation.reduce((a,p)=>a+p.cap,0);
+  const totalRes  = col.participation.reduce((a,p)=>a+p.res,0);
+  const totalCI   = col.participation.reduce((a,p)=>a+p.ci,0);
+  const confirmed = col.participation.filter(p=>['confirmed','live','ended'].includes(p.status));
+  const pending   = col.participation.filter(p=>p.status==='pending');
+  const declined  = col.participation.filter(p=>p.status==='declined');
+  const showRate  = totalRes > 0 && totalCI > 0 ? pct(totalCI,totalRes) : null;
+  const fillRate  = totalCap > 0 && totalRes > 0 ? pct(totalRes,totalCap) : null;
+
+  // Timeline: collection window relative to today (Mar 30 2026)
+  const today = new Date('2026-03-30');
+  const winStart = new Date(col.windowStart);
+  const winEnd   = new Date(col.windowEnd);
+  const totalDays = Math.max(1, Math.round((winEnd-winStart)/(1000*60*60*24)));
+  const daysUntil = Math.round((winStart-today)/(1000*60*60*24));
+  const daysLeft  = Math.round((winEnd-today)/(1000*60*60*24));
+
+  return `
+    <div onclick="ss({collectionDetail:null})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;display:flex;align-items:flex-start;justify-content:flex-end;overflow:hidden;">
+      <div onclick="event.stopPropagation()" style="background:#fff;width:680px;height:100%;overflow-y:auto;padding:28px;box-shadow:-8px 0 32px rgba(0,0,0,0.12);">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:4px;">Collection</div>
+            <div style="font-weight:900;font-size:1.3rem;margin-bottom:4px;">${col.name}</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+              <span style="font-size:0.75rem;color:#64748b;">${col.windowStart} → ${col.windowEnd}</span>
+              <span style="font-size:0.75rem;color:#94a3b8;">${col.scope} · Created by ${col.creator}</span>
+            </div>
+          </div>
+          <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;flex-shrink:0;">✕</button>
+        </div>
+
+        <p style="font-size:0.82rem;color:#64748b;line-height:1.65;margin:14px 0 20px;">${col.description}</p>
+
+        <!-- Guardrails -->
+        <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:22px;">
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Corporate Guardrails</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${infoRow('Price',             col.guardrails.price)}
+            ${infoRow('Cap per Location',  col.guardrails.capRange)}
+            ${infoRow('Broadcast Window',  col.guardrails.broadcastWindow)}
+            ${infoRow('Theme Required',    col.guardrails.themeReq)}
+          </div>
+        </div>
+
+        <!-- Aggregate KPIs -->
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Collection Performance</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;">
+          ${miniStat('Participating', confirmed.length+'/'+col.participation.length, '#6366f1')}
+          ${miniStat('Total Cap', totalCap > 0 ? fmtNum(totalCap) : '—', null)}
+          ${miniStat('Reserved', totalRes > 0 ? fmtNum(totalRes) : '—', '#0ea5e9')}
+          ${miniStat('Checked In', totalCI > 0 ? fmtNum(totalCI) : '—', '#10b981')}
+        </div>
+        ${(fillRate||showRate) ? `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;">
+            ${fillRate ? `<div style="background:#f8f9fb;border-radius:10px;padding:14px;"><div style="font-size:0.65rem;color:#94a3b8;margin-bottom:6px;">Fill Rate (res/cap)</div><div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="background:#6366f1;height:100%;width:${fillRate}%;border-radius:4px;"></div></div><div style="font-weight:800;font-size:1rem;color:#6366f1;">${fillRate}%</div></div>` : ''}
+            ${showRate ? `<div style="background:#f8f9fb;border-radius:10px;padding:14px;"><div style="font-size:0.65rem;color:#94a3b8;margin-bottom:6px;">Show Rate (ci/res)</div><div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden;margin-bottom:4px;"><div style="background:${showColor(showRate)};height:100%;width:${showRate}%;border-radius:4px;"></div></div><div style="font-weight:800;font-size:1rem;color:${showColor(showRate)};">${showRate}%</div></div>` : ''}
+          </div>
+        `:''}
+
+        <!-- Timeline -->
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Collection Timeline</div>
+        <div style="background:#f8f9fb;border-radius:12px;padding:18px;margin-bottom:22px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#64748b;margin-bottom:8px;">
+            <span>${col.windowStart}</span>
+            <span>${col.windowEnd}</span>
+          </div>
+          <div style="background:#e5e7eb;border-radius:6px;height:12px;position:relative;margin-bottom:10px;">
+            <div style="background:linear-gradient(90deg,#6366f1,#8b5cf6);height:100%;border-radius:6px;width:100%;"></div>
+            ${col.status==='live' ? `<div style="position:absolute;left:${Math.max(0,Math.min(100,pct(Math.round((today-winStart)/(1000*60*60*24)),totalDays)))}%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:#ef4444;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #ef4444;"></div>` : ''}
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#94a3b8;">
+            <span>Duration: ${totalDays} days</span>
+            <span>${col.status==='upcoming' ? (daysUntil>0?'Starts in '+daysUntil+' day'+(daysUntil!==1?'s':''):'Starts today') : col.status==='live' ? (daysLeft>0?daysLeft+' day'+(daysLeft!==1?'s':'')+' remaining':'Ending today') : 'Ended'}</span>
+          </div>
+        </div>
+
+        <!-- Participation status -->
+        <div style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:10px;">Location Participation</div>
+        <div style="display:flex;gap:10px;margin-bottom:14px;">
+          ${[['confirmed','Confirmed','#10b981'],['pending','Pending','#f59e0b'],['declined','Declined','#ef4444'],['live','Live Now','#10b981'],['ended','Ended','#6b7280']].map(([s,label,color])=>{
+            const n = col.participation.filter(p=>p.status===s).length;
+            return n>0 ? `<span style="background:${statusBg[s]||'#f3f4f6'};color:${color};font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:20px;">${label}: ${n}</span>` : '';
+          }).join('')}
+        </div>
+
+        <!-- Per-location table -->
+        <div style="background:#f8f9fb;border-radius:12px;overflow:hidden;margin-bottom:22px;">
+          <table>
+            <thead>
+              <tr style="background:#f1f5f9;border-bottom:1px solid #e5e7eb;">
+                ${['Location','Status','Drop Title','Cap','Res','CI','Show'].map((h,i)=>`
+                  <th style="padding:9px 12px;text-align:${i>2?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748b;white-space:nowrap;">${h}</th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${col.participation.map((p,i)=>{
+                const loc = LOCATIONS.find(l=>l.id===p.locId);
+                const reg = loc ? regionById(loc.region) : null;
+                const sr  = p.res>0&&p.ci>0 ? pct(p.ci,p.res) : null;
+                return `
+                  <tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                    <td style="padding:10px 12px;">
+                      <div style="font-weight:700;font-size:0.8rem;">${loc?.name||p.locId}</div>
+                      <div style="font-size:0.65rem;color:${reg?.color};">${reg?.abbr} · ${loc?.city}</div>
+                    </td>
+                    <td style="padding:10px 12px;">
+                      <span style="background:${statusBg[p.status]||'#f3f4f6'};color:${statusColors[p.status]||'#6b7280'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span>
+                    </td>
+                    <td style="padding:10px 12px;font-size:0.78rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                    <td style="padding:10px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Actions -->
+        <div style="display:flex;gap:10px;">
+          ${col.status!=='ended' ? `<button style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Reminder to Pending</button>` : ''}
+          <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
 
 function rCustomers() {
   const custSort = S.custSort || 'checkins';
