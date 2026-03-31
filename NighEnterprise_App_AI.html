@@ -240,6 +240,7 @@ const COLLECTIONS = [
     venueName:'Flatirons Crossing',
     venueCity:'Broomfield, CO',
     venueType:'Shopping Mall',
+    geoFence:{ enabled:true, boundaryType:'radius', radius:'1,200 ft', address:'1 W Flatiron Crossing Dr, Broomfield, CO 80021', customerMessage:"You're at Flatirons Crossing — discover exclusive drops from shops inside the mall" },
     guardrails:{ price:'Free–$25', capRange:'15–50 spots', broadcastWindow:'1–3 days before', themeReq:'Shop, explore, or experience something local — any category welcome' },
     description:'Flatirons Crossing is hosting a Shop + Drop Weekend where independent retailers and anchors across the mall create exclusive Nigh drops. Shoppers get a passport-style itinerary of experiences across the mall over three days.',
     participation:[
@@ -263,6 +264,7 @@ const COLLECTIONS = [
     venueName:'Ball Arena',
     venueCity:'Denver, CO',
     venueType:'Sports & Entertainment Venue',
+    geoFence:{ enabled:true, boundaryType:'radius', radius:'600 ft', address:'1000 Chopper Cir, Denver, CO 80204', customerMessage:"You're inside Ball Arena — exclusive vendor drops are live tonight" },
     guardrails:{ price:'Free–$10', capRange:'20–75 spots', broadcastWindow:'Same day or day before', themeReq:'Pre-game or event experience — food, merch, or on-site activity' },
     description:'Ball Arena is activating Nigh for vendor drops tied to home game nights. Each vendor creates a drop for that night\'s attendees — exclusive offers, tastings, and merch moments before the doors open.',
     participation:[
@@ -939,6 +941,7 @@ function rCollections() {
                     ? `<span style="background:#fdf4ff;color:#9333ea;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏟️ Venue</span>`
                     : `<span style="background:#f0fdf4;color:#15803d;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">🏢 Internal</span>`}
                   <span style="background:#f1f5f9;color:#475569;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;">${col.scope}</span>
+                  ${col.geoFence?.enabled ? `<span style="background:#fef9c3;color:#854d0e;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;">📍 Geo-fenced · ${col.geoFence.radius}</span>` : ''}
                 </div>
                 <div style="font-size:0.78rem;color:#64748b;margin-bottom:6px;">${col.windowStart} → ${col.windowEnd} · Theme: <em>${col.theme}</em></div>
                 <div style="font-size:0.75rem;color:#94a3b8;">${col.description}</div>
@@ -1042,6 +1045,29 @@ function collectionDetailPanel() {
         ` : ''}
 
         <p style="font-size:0.82rem;color:#64748b;line-height:1.65;margin:14px 0 20px;">${col.description}</p>
+
+        ${col.geoFence ? `
+          <!-- Geo-fence block -->
+          <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1rem;">📍</span>
+                <span style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence ${col.geoFence.enabled ? '<span style="background:#d97706;color:#fff;font-size:0.6rem;padding:2px 7px;border-radius:20px;margin-left:4px;">Active</span>' : '<span style="background:#e5e7eb;color:#6b7280;font-size:0.6rem;padding:2px 7px;border-radius:20px;margin-left:4px;">Inactive</span>'}</span>
+              </div>
+              <button style="font-size:0.72rem;font-weight:700;color:#92400e;background:transparent;border:1px solid #fcd34d;border-radius:7px;padding:4px 10px;cursor:pointer;">Edit Boundary</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+              ${infoRow('Boundary Type', col.geoFence.boundaryType==='radius' ? 'Circular radius' : 'Custom polygon')}
+              ${infoRow('Radius', col.geoFence.radius)}
+              ${infoRow('Center Address', col.geoFence.address)}
+              ${infoRow('Trigger', 'On entry — auto-surfaces drops')}
+            </div>
+            <div style="background:#fff8e1;border-radius:8px;padding:10px 12px;">
+              <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#92400e;margin-bottom:4px;">Customer-Facing Message</div>
+              <div style="font-size:0.78rem;color:#78350f;font-style:italic;">"${col.geoFence.customerMessage}"</div>
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Guardrails -->
         <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:22px;">
@@ -1716,6 +1742,50 @@ function newCollModal() {
             </div>
           </div>
 
+          <!-- Geo-fence section -->
+          <div style="background:#fefce8;border:1px solid #fde68a;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1rem;">📍</span>
+                <div>
+                  <div style="font-weight:800;font-size:0.82rem;color:#78350f;">Geo-fence</div>
+                  <div style="font-size:0.7rem;color:#92400e;">Drops only surface in-app when the customer is physically within the boundary</div>
+                </div>
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <span style="font-size:0.72rem;font-weight:700;color:#78350f;">${isVenue ? 'On (recommended)' : 'Optional'}</span>
+                <input type="checkbox" ${isVenue ? 'checked' : ''} style="width:16px;height:16px;accent-color:#d97706;cursor:pointer;">
+              </label>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Boundary Type</label>
+                <select style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;">
+                  <option>Circular radius</option>
+                  <option>Custom polygon</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Radius</label>
+                <select style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;">
+                  <option>300 ft — tight (store interior)</option>
+                  <option ${isVenue?'selected':''}>600 ft — standard (venue grounds)</option>
+                  <option>1,000 ft — wide (festival / mall)</option>
+                  <option>2,500 ft — large (amusement park)</option>
+                  <option>Custom</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Center Address</label>
+              <input placeholder="e.g. 1000 Chopper Cir, Denver, CO 80204" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fde68a'">
+            </div>
+            <div>
+              <label style="font-size:0.68rem;font-weight:700;color:#92400e;display:block;margin-bottom:5px;">Customer-Facing Message (shown on geo-fence trigger)</label>
+              <input placeholder='e.g. "You&apos;re inside Ball Arena — exclusive drops are live"' style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:8px;padding:9px 11px;font-size:0.82rem;font-family:inherit;outline:none;background:#fff8e1;" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fde68a'">
+            </div>
+          </div>
+
           <div style="display:flex;gap:10px;">
             <button onclick="ss({newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
             <button onclick="ss({newCollStep:3})" style="flex:2;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review & Create →</button>
@@ -1732,6 +1802,7 @@ function newCollModal() {
               ${infoRow('Scope', isVenue ? '(venue name from step 1)' : '(from step 2)')}
               ${infoRow('Price Guardrail', '(from step 2)')}
               ${infoRow('Cap Guardrail', '(from step 2)')}
+              ${infoRow('Geo-fence', isVenue ? '📍 Enabled · 600 ft radius' : '—')}
             </div>
           </div>
 
