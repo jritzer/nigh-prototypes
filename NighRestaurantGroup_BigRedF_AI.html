@@ -63,49 +63,57 @@ const GROUP={
 };
 
 const BRANDS=[
-  {id:'B01',name:'Jax Fish House &amp; Oyster Bar', short:'Jax Fish House', color:'#1a4f7a', abbr:'JAX',  cuisine:'Seafood &amp; Oyster Bar',    emoji:'&#129442;'},
-  {id:'B02',name:'West End Tavern',                 short:'West End Tavern',color:'#92400e', abbr:'WET',  cuisine:'American Gastropub',          emoji:'&#127866;'},
-  {id:'B03',name:'Centro Mexican Kitchen',          short:'Centro',         color:'#b91c1c', abbr:'CTR',  cuisine:'Mexican Kitchen',             emoji:'&#127790;'},
-  {id:'B04',name:'Zolo Grill',                      short:'Zolo',           color:'#0d9488', abbr:'ZLO',  cuisine:'Southwestern American',       emoji:'&#127797;'},
-  {id:'B05',name:'Lola Coastal Mexican',            short:'Lola',           color:'#0e7490', abbr:'LOLA', cuisine:'Coastal Mexican &amp; Tequila',emoji:'&#127754;'},
-  {id:'B06',name:'OAK at Fourteenth',               short:'OAK',            color:'#78350f', abbr:'OAK',  cuisine:'Upscale American &amp; Wood Fire',emoji:'&#128293;'},
+  {id:'B01',name:'Jax Fish House &amp; Oyster Bar', short:'Jax Fish House', color:'#1a4f7a', abbr:'JAX',  cuisine:'Seafood &amp; Oyster Bar',          emoji:'&#129442;'},
+  {id:'B02',name:'The Post Brewing Co.',             short:'The Post',       color:'#7c3626', abbr:'POST', cuisine:'Hot Chicken &amp; Craft Beer',      emoji:'&#127831;'},
+  {id:'B03',name:'West End Tavern',                  short:'West End',       color:'#92400e', abbr:'WET',  cuisine:'BBQ &amp; Whiskey Bar',             emoji:'&#127866;'},
+  {id:'B04',name:'Centro Mexican Kitchen',           short:'Centro',         color:'#b91c1c', abbr:'CTR',  cuisine:'Colorado-Inspired Mexican',         emoji:'&#127790;'},
+  {id:'B05',name:'Velvet Elk Lounge',                short:'Velvet Elk',     color:'#5b21b6', abbr:'VEL',  cuisine:'Live Music &amp; Craft Cocktails',  emoji:'&#127926;'},
+  {id:'B06',name:'Wonder Press Juice',               short:'Wonder Press',   color:'#166534', abbr:'WPJ',  cuisine:'Cold-Pressed Juice &amp; Wellness', emoji:'&#129381;'},
 ];
 
-const CITIES=['Boulder','Denver','Fort Collins','Kansas City'];
+const CITIES=['Boulder','Denver','Fort Collins','Colorado Springs','Lafayette','Longmont','Estes Park'];
 
 const LOCATIONS=[
-  {id:'L01',brand:'B01',name:'Jax Fish House \u2014 Boulder',        city:'Boulder',      state:'CO',status:'active',capacity:120,openYear:1994},
-  {id:'L02',brand:'B01',name:'Jax Fish House \u2014 Denver LoDo',    city:'Denver',       state:'CO',status:'active',capacity:140,openYear:2005},
-  {id:'L03',brand:'B01',name:'Jax Fish House \u2014 Fort Collins',   city:'Fort Collins', state:'CO',status:'active',capacity:110,openYear:2012},
-  {id:'L04',brand:'B01',name:'Jax Fish House \u2014 Kansas City',    city:'Kansas City',  state:'MO',status:'active',capacity:130,openYear:2018},
-  {id:'L05',brand:'B02',name:'West End Tavern \u2014 Boulder',        city:'Boulder',      state:'CO',status:'active',capacity:95, openYear:2003},
-  {id:'L06',brand:'B02',name:'West End Tavern \u2014 Fort Collins',   city:'Fort Collins', state:'CO',status:'active',capacity:90, openYear:2016},
-  {id:'L07',brand:'B03',name:'Centro Mexican Kitchen \u2014 Boulder', city:'Boulder',      state:'CO',status:'active',capacity:100,openYear:2007},
-  {id:'L08',brand:'B03',name:'Centro Mexican Kitchen \u2014 Ft Collins',city:'Fort Collins',state:'CO',status:'active',capacity:95, openYear:2014},
-  {id:'L09',brand:'B03',name:'Centro Mexican Kitchen \u2014 Denver',  city:'Denver',       state:'CO',status:'active',capacity:110,openYear:2019},
-  {id:'L10',brand:'B04',name:'Zolo Grill \u2014 Boulder',             city:'Boulder',      state:'CO',status:'active',capacity:85, openYear:2001},
-  {id:'L11',brand:'B04',name:'Zolo Grill \u2014 Denver Cherry Creek', city:'Denver',       state:'CO',status:'active',capacity:90, openYear:2011},
-  {id:'L12',brand:'B04',name:'Zolo Grill \u2014 Fort Collins',        city:'Fort Collins', state:'CO',status:'active',capacity:80, openYear:2020},
-  {id:'L13',brand:'B05',name:'Lola Coastal Mexican \u2014 Denver LoHi',city:'Denver',      state:'CO',status:'active',capacity:120,openYear:2009},
-  {id:'L14',brand:'B05',name:'Lola Coastal Mexican \u2014 Denver RiNo',city:'Denver',      state:'CO',status:'active',capacity:115,openYear:2021},
-  {id:'L15',brand:'B05',name:'Lola Coastal Mexican \u2014 Boulder',   city:'Boulder',      state:'CO',status:'active',capacity:100,openYear:2023},
-  {id:'L16',brand:'B06',name:'OAK at Fourteenth \u2014 Boulder',      city:'Boulder',      state:'CO',status:'active',capacity:75, openYear:2010},
-  {id:'L17',brand:'B06',name:'OAK at Fourteenth \u2014 Denver',       city:'Denver',       state:'CO',status:'active',capacity:80, openYear:2022},
+  // Jax Fish House & Oyster Bar — 4 locations
+  {id:'L01',brand:'B01',name:'Jax Fish House \u2014 Boulder',          city:'Boulder',          state:'CO',status:'active',capacity:120,openYear:1994,address:'1352 Pearl St'},
+  {id:'L02',brand:'B01',name:'Jax Fish House \u2014 Denver LoDo',      city:'Denver',           state:'CO',status:'active',capacity:140,openYear:2005,address:'1539 17th St'},
+  {id:'L03',brand:'B01',name:'Jax Fish House \u2014 Fort Collins',     city:'Fort Collins',     state:'CO',status:'active',capacity:110,openYear:2012,address:'123 N College Ave'},
+  {id:'L04',brand:'B01',name:'Jax Fish House \u2014 Colorado Springs', city:'Colorado Springs', state:'CO',status:'active',capacity:115,openYear:2017,address:'6 S Tejon St'},
+  // The Post Brewing Co. — 5 locations
+  {id:'L05',brand:'B02',name:'The Post \u2014 Boulder',                city:'Boulder',          state:'CO',status:'active',capacity:130,openYear:2014,address:'2027 13th St'},
+  {id:'L06',brand:'B02',name:'The Post \u2014 Lafayette',              city:'Lafayette',        state:'CO',status:'active',capacity:120,openYear:2014,address:'105 W Emma St'},
+  {id:'L07',brand:'B02',name:'The Post \u2014 Longmont',               city:'Longmont',         state:'CO',status:'active',capacity:115,openYear:2016,address:'360 Main St'},
+  {id:'L08',brand:'B02',name:'The Post \u2014 Rosedale',               city:'Denver',           state:'CO',status:'active',capacity:125,openYear:2019,address:'2027 E Colfax Ave'},
+  {id:'L09',brand:'B02',name:'The Post \u2014 Estes Park',             city:'Estes Park',       state:'CO',status:'active',capacity:100,openYear:2022,address:'200 Moraine Ave'},
+  // West End Tavern — 1 location
+  {id:'L10',brand:'B03',name:'West End Tavern',                        city:'Boulder',          state:'CO',status:'active',capacity:95, openYear:1987,address:'926 Pearl St'},
+  // Centro Mexican Kitchen — 1 location
+  {id:'L11',brand:'B04',name:'Centro Mexican Kitchen',                 city:'Boulder',          state:'CO',status:'active',capacity:100,openYear:2001,address:'950 Pearl St'},
+  // Velvet Elk Lounge — 1 location
+  {id:'L12',brand:'B05',name:'Velvet Elk Lounge',                      city:'Boulder',          state:'CO',status:'active',capacity:80, openYear:2018,address:'2037 13th St'},
+  // Wonder Press Juice — 1 location
+  {id:'L13',brand:'B06',name:'Wonder Press Juice',                     city:'Boulder',          state:'CO',status:'active',capacity:30, openYear:2013,address:'946 Pearl St'},
 ];
 
 const DROPS=[
-  {id:'D01',title:'Jax Happy Hour Oyster Special',         type:'happy-hour', status:'live',      brand:'B01',locId:'L01',cap:80, res:74, checkins:68, showRate:92,price:0,  broadcastHrs:3},
-  {id:'D02',title:'Catch of the Day \u2014 Limited Plate', type:'menu-drop',  status:'live',      brand:'B01',locId:'L02',cap:40, res:38, checkins:34, showRate:89,price:28, broadcastHrs:4},
-  {id:'D03',title:'West End Burger &amp; Pint Special',    type:'happy-hour', status:'live',      brand:'B02',locId:'L05',cap:60, res:55, checkins:50, showRate:91,price:0,  broadcastHrs:3},
-  {id:'D04',title:'Live Music Thursday Night',             type:'event',      status:'live',      brand:'B02',locId:'L06',cap:120,res:98, checkins:87, showRate:89,price:15, broadcastHrs:6},
-  {id:'D05',title:'Margarita Monday Happy Hour',           type:'happy-hour', status:'live',      brand:'B03',locId:'L07',cap:90, res:84, checkins:79, showRate:94,price:0,  broadcastHrs:3},
-  {id:'D06',title:'Chef\u2019s Tasting Menu \u2014 Seasonal',type:'vip',      status:'live',      brand:'B03',locId:'L09',cap:20, res:20, checkins:18, showRate:90,price:95, broadcastHrs:2},
-  {id:'D07',title:'Zolo Taco Tuesday Special',             type:'happy-hour', status:'live',      brand:'B04',locId:'L10',cap:100,res:92, checkins:85, showRate:92,price:0,  broadcastHrs:4},
-  {id:'D08',title:'Southwestern Wine Dinner',              type:'event',      status:'scheduled', brand:'B04',locId:'L11',cap:35, res:28, checkins:0,  showRate:0, price:85, broadcastHrs:3},
-  {id:'D09',title:'Lola Tequila Tasting Night',            type:'event',      status:'live',      brand:'B05',locId:'L13',cap:45, res:43, checkins:39, showRate:91,price:65, broadcastHrs:4},
-  {id:'D10',title:'Coastal Happy Hour \u2014 Fish Tacos',  type:'happy-hour', status:'live',      brand:'B05',locId:'L14',cap:75, res:68, checkins:62, showRate:91,price:0,  broadcastHrs:3},
-  {id:'D11',title:"OAK Chef's Table Experience",           type:'vip',        status:'live',      brand:'B06',locId:'L16',cap:12, res:12, checkins:10, showRate:83,price:195,broadcastHrs:2},
-  {id:'D12',title:'OAK Wood-Fire Sunday Brunch Drop',      type:'menu-drop',  status:'draft',     brand:'B06',locId:'L17',cap:30, res:0,  checkins:0,  showRate:0, price:45, broadcastHrs:4},
+  // Jax Fish House — oyster & seafood drops
+  {id:'D01',title:'Jax Happy Hour \u2014 Half-Price Oysters',          type:'happy-hour',status:'live',      brand:'B01',locId:'L01',cap:80, res:74, checkins:68, showRate:92,price:0,  broadcastHrs:3},
+  {id:'D02',title:"Today's Catch \u2014 Limited Plate",                type:'menu-drop', status:'live',      brand:'B01',locId:'L02',cap:40, res:38, checkins:34, showRate:89,price:28, broadcastHrs:4},
+  {id:'D03',title:'Oyster Club VIP \u2014 Rare Variety Access',        type:'vip',        status:'live',      brand:'B01',locId:'L04',cap:16, res:14, checkins:12, showRate:86,price:65, broadcastHrs:2},
+  // The Post — hot chicken & craft beer drops
+  {id:'D04',title:'Pint Night \u2014 Craft Beer Happy Hour',           type:'happy-hour',status:'live',      brand:'B02',locId:'L05',cap:100,res:88, checkins:79, showRate:90,price:0,  broadcastHrs:3},
+  {id:'D05',title:'New Tap Release \u2014 Weekly Brew Drop',           type:'menu-drop', status:'scheduled', brand:'B02',locId:'L06',cap:60, res:37, checkins:0,  showRate:0, price:0,  broadcastHrs:4},
+  {id:'D06',title:'Hot Chicken &amp; Trivia Night',                    type:'event',      status:'live',      brand:'B02',locId:'L07',cap:110,res:94, checkins:83, showRate:88,price:10, broadcastHrs:5},
+  // West End Tavern — BBQ & whiskey drops
+  {id:'D07',title:'Whiskey Happy Hour \u2014 Mon\u2013Thu 3\u20136pm', type:'happy-hour',status:'live',      brand:'B03',locId:'L10',cap:60, res:54, checkins:49, showRate:91,price:0,  broadcastHrs:3},
+  {id:'D08',title:'New Bourbon Barrel Release \u2014 Limited Pour',    type:'menu-drop', status:'scheduled', brand:'B03',locId:'L10',cap:40, res:24, checkins:0,  showRate:0, price:0,  broadcastHrs:4},
+  // Centro Mexican Kitchen — margarita & brunch drops
+  {id:'D09',title:'Margarita Monday \u2014 All-Night Happy Hour',      type:'happy-hour',status:'live',      brand:'B04',locId:'L11',cap:90, res:85, checkins:80, showRate:94,price:0,  broadcastHrs:10},
+  {id:'D10',title:'Weekend Brunch \u2014 Chef\u2019s Seasonal Menu',   type:'menu-drop', status:'live',      brand:'B04',locId:'L11',cap:50, res:47, checkins:43, showRate:91,price:0,  broadcastHrs:4},
+  // Velvet Elk Lounge — live music & VIP drops
+  {id:'D11',title:'Live Music Tonight \u2014 Local Artist',            type:'event',      status:'live',      brand:'B05',locId:'L12',cap:80, res:71, checkins:63, showRate:89,price:10, broadcastHrs:4},
+  // Wonder Press — wellness & juice drops
+  {id:'D12',title:'Morning Wellness Hour \u2014 Seasonal Cleanse Drop',type:'menu-drop', status:'live',      brand:'B06',locId:'L13',cap:25, res:22, checkins:20, showRate:91,price:0,  broadcastHrs:2},
 ];
 
 const GEO_TIERS={
@@ -183,7 +191,7 @@ function sidebar(){
       ${nighBug(30)}
       <div>
         <div style="color:#fff;font-weight:900;font-size:0.82rem;line-height:1.1;">Big Red F</div>
-        <div style="color:rgba(255,255,255,0.6);font-size:0.6rem;margin-top:1px;">17 Locations &middot; 6 Brands &middot; 4 Cities</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.6rem;margin-top:1px;">13 Locations &middot; 6 Brands &middot; 7 Cities</div>
       </div>
     </div>
     <div style="padding:0 12px 14px;">
@@ -529,16 +537,16 @@ function rDrops(){
 CUSTOMER_DATA=[
   {id:'G01',name:'Amber Collins',  tier:'VIP Regular', favBrand:'B01',visits:18,drops:9, spend:640, city:'Boulder'},
   {id:'G02',name:'Tyler Marsh',    tier:'Loyal Guest',  favBrand:'B02',visits:12,drops:5, spend:310, city:'Boulder'},
-  {id:'G03',name:'Priya Nair',     tier:'VIP Regular', favBrand:'B05',visits:21,drops:11,spend:890, city:'Denver'},
-  {id:'G04',name:'Jake Whitfield', tier:'New Guest',    favBrand:'B03',visits:3, drops:2, spend:85,  city:'Fort Collins'},
-  {id:'G05',name:'Sofia Reyes',    tier:'Loyal Guest',  favBrand:'B03',visits:9, drops:4, spend:195, city:'Denver'},
-  {id:'G06',name:'Marcus Webb',    tier:'VIP Regular', favBrand:'B06',visits:15,drops:8, spend:1140,city:'Boulder'},
-  {id:'G07',name:'Dana Kim',       tier:'New Guest',    favBrand:'B04',visits:2, drops:1, spend:45,  city:'Fort Collins'},
-  {id:'G08',name:'Leo Fontaine',   tier:'Loyal Guest',  favBrand:'B01',visits:11,drops:6, spend:420, city:'Kansas City'},
-  {id:'G09',name:'Rachel Torres',  tier:'VIP Regular', favBrand:'B05',visits:24,drops:13,spend:1080,city:'Denver'},
-  {id:'G10',name:'Ethan Brooks',   tier:'Loyal Guest',  favBrand:'B02',visits:8, drops:3, spend:175, city:'Boulder'},
-  {id:'G11',name:'Mia Johnson',    tier:'New Guest',    favBrand:'B06',visits:4, drops:2, spend:260, city:'Denver'},
-  {id:'G12',name:'Noah Park',      tier:'Loyal Guest',  favBrand:'B04',visits:7, drops:3, spend:155, city:'Fort Collins'},
+  {id:'G03',name:'Priya Nair',     tier:'VIP Regular', favBrand:'B05',visits:21,drops:11,spend:890, city:'Boulder'},
+  {id:'G04',name:'Jake Whitfield', tier:'New Guest',    favBrand:'B04',visits:3, drops:2, spend:85,  city:'Boulder'},
+  {id:'G05',name:'Sofia Reyes',    tier:'Loyal Guest',  favBrand:'B04',visits:9, drops:4, spend:195, city:'Boulder'},
+  {id:'G06',name:'Marcus Webb',    tier:'VIP Regular', favBrand:'B06',visits:15,drops:8, spend:480, city:'Boulder'},
+  {id:'G07',name:'Dana Kim',       tier:'New Guest',    favBrand:'B02',visits:2, drops:1, spend:45,  city:'Lafayette'},
+  {id:'G08',name:'Leo Fontaine',   tier:'Loyal Guest',  favBrand:'B01',visits:11,drops:6, spend:420, city:'Fort Collins'},
+  {id:'G09',name:'Rachel Torres',  tier:'VIP Regular', favBrand:'B05',visits:24,drops:13,spend:1080,city:'Boulder'},
+  {id:'G10',name:'Ethan Brooks',   tier:'Loyal Guest',  favBrand:'B03',visits:8, drops:3, spend:175, city:'Boulder'},
+  {id:'G11',name:'Mia Johnson',    tier:'New Guest',    favBrand:'B06',visits:4, drops:2, spend:110, city:'Boulder'},
+  {id:'G12',name:'Noah Park',      tier:'Loyal Guest',  favBrand:'B02',visits:7, drops:3, spend:155, city:'Longmont'},
 ];
 
 function rCustomers(){
@@ -585,11 +593,11 @@ function rCustomers(){
 
 // ── COLLECTIONS ────────────────────────────────────────────────────────────
 COLLECTIONS_DATA=[
-  {id:'CO01',name:'Jax Happy Hour Pass',        brand:'B01',type:'brand', status:'live',  geo:'dining',participants:4, bizName:'Jax Fish House',      dropTitle:'Oyster Happy Hour',  cap:200,res:182,ci:164},
-  {id:'CO02',name:'Colorado Restaurant Week',    brand:null, type:'group', status:'live',  geo:'block',  participants:17,bizName:'Big Red F Group',      dropTitle:'Group-Wide Special', cap:500,res:441,ci:392},
-  {id:'CO03',name:'West End Live Music Nights',  brand:'B02',type:'brand', status:'live',  geo:'block',  participants:2, bizName:'West End Tavern',      dropTitle:'Live Music Thursday',cap:240,res:193,ci:175},
-  {id:'CO04',name:'OAK Chef Experience Series',  brand:'B06',type:'brand', status:'live',  geo:'table',  participants:2, bizName:'OAK at Fourteenth',    dropTitle:"Chef Table Drop",   cap:24, res:24, ci:20},
-  {id:'CO05',name:'Taco Tuesday City-Wide',      brand:'B03',type:'brand', status:'ended', geo:'block',  participants:3, bizName:'Centro Mexican Kitchen',dropTitle:'Margarita Monday',  cap:270,res:252,ci:218},
+  {id:'CO01',name:'Jax Happy Hour Pass',          brand:'B01',type:'brand', status:'live',  geo:'dining',participants:4, bizName:'Jax Fish House',       dropTitle:'Half-Price Oysters', cap:200,res:182,ci:164},
+  {id:'CO02',name:'Colorado Restaurant Week',      brand:null, type:'group', status:'live',  geo:'block',  participants:13,bizName:'Big Red F Group',       dropTitle:'Group-Wide Special', cap:500,res:441,ci:392},
+  {id:'CO03',name:'The Post Pint Club',            brand:'B02',type:'brand', status:'live',  geo:'block',  participants:5, bizName:'The Post Brewing Co.',  dropTitle:'New Tap Release',    cap:300,res:248,ci:219},
+  {id:'CO04',name:'Velvet Elk Live Music Series',  brand:'B05',type:'brand', status:'live',  geo:'block',  participants:1, bizName:'Velvet Elk Lounge',    dropTitle:'Live Music Tonight',  cap:80, res:71, ci:63},
+  {id:'CO05',name:'Margarita Monday All-Access',   brand:'B04',type:'brand', status:'ended', geo:'dining', participants:1, bizName:'Centro Mexican Kitchen',dropTitle:'Margarita Monday',   cap:270,res:252,ci:218},
 ];
 
 function collStat(label,val,color){
@@ -752,18 +760,18 @@ function rAnalytics(){
 
 // ── USERS ──────────────────────────────────────────────────────────────────
 USERS_DATA=[
-  {id:'U01',name:'Dave Query',      email:'d.query@bigredf.com',    role:'Group Owner',      team:'Big Red F HQ',        lastLogin:'Today 8:30 AM', status:'active'},
-  {id:'U02',name:'Kelly Rios',      email:'k.rios@bigredf.com',     role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'Today 9:45 AM', status:'active'},
-  {id:'U03',name:'Sam Fletcher',    email:'s.fletcher@jaxfish.com', role:'Brand Manager',    team:'Jax Fish House',      lastLogin:'Today 10:12 AM',status:'active'},
-  {id:'U04',name:'Tara Hodge',      email:'t.hodge@bigredf.com',    role:'Brand Manager',    team:'West End Tavern',     lastLogin:'Yesterday',     status:'active'},
-  {id:'U05',name:'Marco Ibarra',    email:'m.ibarra@centromx.com',  role:'Brand Manager',    team:'Centro Mexican',      lastLogin:'Today 11:00 AM',status:'active'},
-  {id:'U06',name:'Jin Yoo',         email:'j.yoo@bigredf.com',      role:'Brand Manager',    team:'Zolo Grill',          lastLogin:'2 days ago',    status:'active'},
-  {id:'U07',name:'Alexis Monroe',   email:'a.monroe@lolaco.com',    role:'Brand Manager',    team:'Lola Coastal',        lastLogin:'Today 8:55 AM', status:'active'},
-  {id:'U08',name:'Ryan Castillo',   email:'r.castillo@oak14.com',   role:'Brand Manager',    team:'OAK at Fourteenth',   lastLogin:'Today 10:40 AM',status:'active'},
-  {id:'U09',name:'Jen Park',        email:'j.park@jaxfish.com',     role:'Location Manager', team:'Jax Boulder',         lastLogin:'Today 9:10 AM', status:'active'},
-  {id:'U10',name:'Tom Walsh',       email:'t.walsh@jaxfish.com',    role:'Location Manager', team:'Jax Denver LoDo',     lastLogin:'Today 7:50 AM', status:'active'},
-  {id:'U11',name:'Cara Singh',      email:'c.singh@bigredf.com',    role:'Location Manager', team:'West End Boulder',    lastLogin:'Today 11:20 AM',status:'active'},
-  {id:'U12',name:'Nadia Osei',      email:'n.osei@bigredf.com',     role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'3 weeks ago',   status:'inactive'},
+  {id:'U01',name:'Dave Query',      email:'d.query@bigredf.com',       role:'Group Owner',      team:'Big Red F HQ',        lastLogin:'Today 8:30 AM', status:'active'},
+  {id:'U02',name:'Kelly Rios',      email:'k.rios@bigredf.com',        role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'Today 9:45 AM', status:'active'},
+  {id:'U03',name:'Sam Fletcher',    email:'s.fletcher@jaxfish.com',    role:'Brand Manager',    team:'Jax Fish House',      lastLogin:'Today 10:12 AM',status:'active'},
+  {id:'U04',name:'Nick Tedeschi',   email:'n.tedeschi@thepostco.com',  role:'Brand Manager',    team:'The Post',            lastLogin:'Today 9:20 AM', status:'active'},
+  {id:'U05',name:'Tara Hodge',      email:'t.hodge@bigredf.com',       role:'Brand Manager',    team:'West End Tavern',     lastLogin:'Yesterday',     status:'active'},
+  {id:'U06',name:'Marco Ibarra',    email:'m.ibarra@centromx.com',     role:'Brand Manager',    team:'Centro Mexican',      lastLogin:'Today 11:00 AM',status:'active'},
+  {id:'U07',name:'Alexis Monroe',   email:'a.monroe@velvetelk.com',    role:'Brand Manager',    team:'Velvet Elk Lounge',   lastLogin:'Today 8:55 AM', status:'active'},
+  {id:'U08',name:'Ryan Castillo',   email:'r.castillo@wonderpress.com',role:'Brand Manager',    team:'Wonder Press Juice',  lastLogin:'Today 10:40 AM',status:'active'},
+  {id:'U09',name:'Jen Park',        email:'j.park@jaxfish.com',        role:'Location Manager', team:'Jax Boulder',         lastLogin:'Today 9:10 AM', status:'active'},
+  {id:'U10',name:'Tom Walsh',       email:'t.walsh@jaxfish.com',       role:'Location Manager', team:'Jax Denver LoDo',     lastLogin:'Today 7:50 AM', status:'active'},
+  {id:'U11',name:'Cara Singh',      email:'c.singh@bigredf.com',       role:'Location Manager', team:'West End Boulder',    lastLogin:'Today 11:20 AM',status:'active'},
+  {id:'U12',name:'Nadia Osei',      email:'n.osei@bigredf.com',        role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'3 weeks ago',   status:'inactive'},
 ];
 
 function rUsers(){
@@ -808,11 +816,11 @@ function rUsers(){
 
 // ── BILLING ────────────────────────────────────────────────────────────────
 function rBilling(){
-  const locs=17,ppL=149,monthly=locs*ppL;
+  const locs=13,ppL=149,monthly=locs*ppL;
   const invoices=[
-    {date:'Mar 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
-    {date:'Feb 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
-    {date:'Jan 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
+    {date:'Mar 1, 2026',desc:'Restaurant Group Pro &middot; 13 locations',amt:monthly,status:'paid'},
+    {date:'Feb 1, 2026',desc:'Restaurant Group Pro &middot; 13 locations',amt:monthly,status:'paid'},
+    {date:'Jan 1, 2026',desc:'Restaurant Group Pro &middot; 13 locations',amt:monthly,status:'paid'},
   ];
   return `<div style="padding:28px 32px;">
     <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Billing &amp; Plan</div>
@@ -846,7 +854,7 @@ function rBilling(){
     </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
       ${[
-        {label:'Active Locations',val:'17',sub:'Across 4 cities'},
+        {label:'Active Locations',val:'13',sub:'Across 7 cities'},
         {label:'Monthly Cost',val:fmtMoney(monthly),sub:'Auto-renews Apr 1'},
         {label:'Cost per Drop',val:fmtMoney(Math.round(monthly/DROPS.length)),sub:`${DROPS.length} total drops`},
         {label:'Est. ROI',val:'8.7x',sub:'Based on guest spend lift'},
@@ -894,7 +902,7 @@ function rSettings(){
       sRow('Headquarters','Boulder, CO')+
       sRow('Primary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#C41230;display:inline-block;"></span>#C41230 Big Red</span>')+
       sRow('Active Brands','6 restaurant brands')+
-      sRow('Cities','Boulder, Denver, Fort Collins, Kansas City')
+      sRow('Cities','Boulder, Denver, Fort Collins, Colorado Springs, Lafayette, Longmont, Estes Park')
     )}
     ${sCard('Brand Profiles',`
       <div style="display:flex;flex-direction:column;gap:8px;">
@@ -964,7 +972,7 @@ function newCollModal(){
               <div onclick="ss({newCollBrand:null})" style="border:2px solid ${!S.newCollBrand?'#C41230':'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${!S.newCollBrand?'#fef2f2':'#fff'};">
                 <div style="font-size:1rem;">&#127860;</div>
                 <div style="font-weight:700;font-size:0.82rem;margin-top:4px;">All Brands</div>
-                <div style="font-size:0.7rem;color:#64748b;">Group-wide collection, 17 locations</div>
+                <div style="font-size:0.7rem;color:#64748b;">Group-wide collection, 13 locations</div>
               </div>
               ${BRANDS.map(b=>`<div onclick="ss({newCollBrand:'${b.id}'})" style="border:2px solid ${S.newCollBrand===b.id?b.color:'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${S.newCollBrand===b.id?b.color+'10':'#fff'};">
                 <div style="font-size:1rem;">${b.emoji}</div>
@@ -992,7 +1000,7 @@ function newCollModal(){
           <div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:16px;">
             <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
             ${infoRow('Brand Scope',S.newCollBrand?BRANDS.find(b=>b.id===S.newCollBrand)?.short||'—':'All Brands (Group-wide)')}
-            ${infoRow('Locations',S.newCollBrand?LOCATIONS.filter(l=>l.brand===S.newCollBrand).length+' locations':'17 locations')}
+            ${infoRow('Locations',S.newCollBrand?LOCATIONS.filter(l=>l.brand===S.newCollBrand).length+' locations':'13 locations')}
             ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
           </div>
           <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#991b1b;">
