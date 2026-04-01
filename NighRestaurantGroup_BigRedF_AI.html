@@ -63,12 +63,12 @@ const GROUP={
 };
 
 const BRANDS=[
-  {id:'B01',name:'Jax Fish House &amp; Oyster Bar', short:'Jax Fish House', color:'#1a4f7a', abbr:'JAX',  cuisine:'Seafood &amp; Oyster Bar',          emoji:'&#129442;'},
-  {id:'B02',name:'The Post Brewing Co.',             short:'The Post',       color:'#7c3626', abbr:'POST', cuisine:'Hot Chicken &amp; Craft Beer',      emoji:'&#127831;'},
-  {id:'B03',name:'West End Tavern',                  short:'West End',       color:'#92400e', abbr:'WET',  cuisine:'BBQ &amp; Whiskey Bar',             emoji:'&#127866;'},
-  {id:'B04',name:'Centro Mexican Kitchen',           short:'Centro',         color:'#b91c1c', abbr:'CTR',  cuisine:'Colorado-Inspired Mexican',         emoji:'&#127790;'},
-  {id:'B05',name:'Velvet Elk Lounge',                short:'Velvet Elk',     color:'#5b21b6', abbr:'VEL',  cuisine:'Live Music &amp; Craft Cocktails',  emoji:'&#127926;'},
-  {id:'B06',name:'Wonder Press Juice',               short:'Wonder Press',   color:'#166534', abbr:'WPJ',  cuisine:'Cold-Pressed Juice &amp; Wellness', emoji:'&#129381;'},
+  {id:'B01',name:'Jax Fish House &amp; Oyster Bar', short:'Jax Fish House', color:'#1a4f7a', abbr:'JAX',  cuisine:'Seafood &amp; Oyster Bar',          logo:'https://images.getbento.com/accounts/c9d2ecc014b2103194d1fa109d579dc0/media/images/89641logo-cream_jax.png'},
+  {id:'B02',name:'The Post Brewing Co.',             short:'The Post',       color:'#7c3626', abbr:'POST', cuisine:'Hot Chicken &amp; Craft Beer',      logo:'https://images.getbento.com/accounts/84cc6cbbf16870c72d4f75f937d29e51/media/images/12242Post-2025Branding_Type-White_1.png'},
+  {id:'B03',name:'West End Tavern',                  short:'West End',       color:'#92400e', abbr:'WET',  cuisine:'BBQ &amp; Whiskey Bar',             logo:'https://images.getbento.com/accounts/5962c30dd4c1d459390adc54144f038f/media/images/49420west-end-tavern_Logo.png'},
+  {id:'B04',name:'Centro Mexican Kitchen',           short:'Centro',         color:'#b91c1c', abbr:'CTR',  cuisine:'Colorado-Inspired Mexican',         logo:'https://www.centromexican.com/files/2023/05/Mission-Statement-Centro-Logo.png'},
+  {id:'B05',name:'Velvet Elk Lounge',                short:'Velvet Elk',     color:'#5b21b6', abbr:'VEL',  cuisine:'Live Music &amp; Craft Cocktails',  logo:'https://images.getbento.com/accounts/ecaa8e8f42deabad027a7392e9ce5335/media/images/99742Velvet_Elk_Lounge_Logo_Yellow-01.png'},
+  {id:'B06',name:'Wonder Press Juice',               short:'Wonder Press',   color:'#166534', abbr:'WPJ',  cuisine:'Cold-Pressed Juice &amp; Wellness', logo:'https://images.getbento.com/accounts/a2f2d2bb2594a08d55649738c3b9bc5c/media/images/52254Black-WonderPress-Logo.png'},
 ];
 
 const CITIES=['Boulder','Denver','Fort Collins','Colorado Springs','Lafayette','Longmont','Estes Park'];
@@ -147,6 +147,13 @@ function brandBadge(brandId){
   if(!b) return '';
   return `<span style="background:${b.color}18;color:${b.color};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${b.abbr}</span>`;
 }
+// brandIcon: renders actual brand logo in a colored pill — works on both dark and light backgrounds
+function brandIcon(b,h){
+  if(!b||!b.logo) return '';
+  h=h||16;
+  const pad=Math.max(2,Math.round(h*0.2));
+  return `<span style="display:inline-flex;align-items:center;justify-content:center;background:${b.color};border-radius:5px;padding:${pad}px ${pad+3}px;flex-shrink:0;line-height:0;"><img src="${b.logo}" alt="${b.short}" style="height:${h}px;max-width:${Math.round(h*4)}px;object-fit:contain;filter:brightness(0) invert(1);display:block;"></span>`;
+}
 function dropTypeBadge(type){
   const map={
     'happy-hour':{bg:'#fef3c7',c:'#92400e',label:'&#127867; Happy Hour'},
@@ -197,7 +204,7 @@ function sidebar(){
     <div style="padding:0 12px 14px;">
       <div style="font-size:0.6rem;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;padding:0 6px;margin-bottom:6px;">Brands</div>
       ${BRANDS.map(b=>`<button onclick="ss({selectedBrand:S.selectedBrand==='${b.id}'?null:'${b.id}'})" style="width:100%;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:${S.selectedBrand===b.id?b.color+'40':'transparent'};border:1px solid ${S.selectedBrand===b.id?b.color+'80':'transparent'};color:${S.selectedBrand===b.id?'#fff':'rgba(255,255,255,0.65)'};font-size:0.72rem;font-weight:${S.selectedBrand===b.id?'700':'500'};cursor:pointer;text-align:left;margin-bottom:2px;">
-        <span style="font-size:0.85rem;">${b.emoji}</span>
+        <span style="font-size:0.85rem;">${brandIcon(b,16)}</span>
         <span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${b.short}</span>
       </button>`).join('')}
     </div>
@@ -213,7 +220,7 @@ function topbar(){
   const liveCount=DROPS.filter(d=>d.status==='live'&&(!S.selectedBrand||d.brand===S.selectedBrand)).length;
   return `<div style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;">
     ${activeBrand?`<div style="display:flex;align-items:center;gap:8px;background:${activeBrand.color}10;border:1px solid ${activeBrand.color}30;padding:5px 12px;border-radius:8px;">
-      <span style="font-size:1rem;">${activeBrand.emoji}</span>
+      <span style="font-size:1rem;">${brandIcon(activeBrand,16)}</span>
       <span style="font-size:0.8rem;font-weight:700;color:${activeBrand.color};">${activeBrand.short}</span>
       <button onclick="ss({selectedBrand:null})" style="background:none;border:none;cursor:pointer;color:${activeBrand.color};font-size:0.9rem;padding:0 2px;">&#10005;</button>
     </div>`:'<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:0.8rem;font-weight:700;color:#C41230;">All Brands</span><span style="font-size:0.72rem;color:#94a3b8;">&middot; 6 brands</span></div>'}
@@ -320,7 +327,7 @@ function rDashboard(){
           return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
               <span style="font-size:0.72rem;font-weight:900;color:#94a3b8;width:18px;">#${i+1}</span>
-              <span style="font-size:1rem;">${b.emoji}</span>
+              <span style="font-size:1rem;">${brandIcon(b,16)}</span>
               <div style="font-weight:700;font-size:0.82rem;color:#0f172a;flex:1;">${d.title}</div>
               ${dropTypeBadge(d.type)}
             </div>
@@ -345,7 +352,7 @@ function rDashboard(){
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px;">
           <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Brand Snapshot</div>
           ${brandStats.map(b=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-            <span style="font-size:0.9rem;">${b.emoji}</span>
+            <span style="font-size:0.9rem;">${brandIcon(b,16)}</span>
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.72rem;font-weight:700;color:#0f172a;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${b.short}</div>
               <div style="background:#f1f5f9;border-radius:20px;height:4px;overflow:hidden;margin-top:3px;">
@@ -364,7 +371,7 @@ function rDashboard(){
         ${brandStats.map((b,i)=>{
           const isLast=i===brandStats.length-1;
           return `<div style="padding:14px 12px;border-right:${isLast?'none':'1px solid #e5e7eb'};text-align:center;background:${S.selectedBrand===b.id?b.color+'08':'#fff'};" onclick="ss({selectedBrand:S.selectedBrand===b.id?null:'${b.id}'})" style="cursor:pointer;">
-            <div style="font-size:1.3rem;margin-bottom:6px;">${b.emoji}</div>
+            <div style="font-size:1.3rem;margin-bottom:6px;">${brandIcon(b,16)}</div>
             <div style="font-size:0.65rem;font-weight:800;color:${b.color};margin-bottom:4px;">${b.abbr}</div>
             <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${fmtNum(b.ci)}</div>
             <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${b.conv}% conv</div>
@@ -399,7 +406,7 @@ function rLocByBrand(){
         return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
           <div style="padding:14px 20px;background:${b.color}08;border-bottom:2px solid ${b.color}25;display:flex;align-items:center;justify-content:space-between;">
             <div style="display:flex;align-items:center;gap:12px;">
-              <span style="font-size:1.4rem;">${b.emoji}</span>
+              ${brandIcon(b,22)}
               <div>
                 <div style="font-weight:800;font-size:0.95rem;color:#0f172a;">${b.name}</div>
                 <div style="font-size:0.7rem;color:#64748b;margin-top:1px;">${b.cuisine} &middot; ${bLocs.length} location${bLocs.length!==1?'s':''}</div>
@@ -439,7 +446,7 @@ function rLocByLocation(){
         const totalCI=DROPS.filter(d=>d.locId===loc.id).reduce((s,d)=>s+(d.checkins||0),0);
         return `<div onclick="ss({locationDetail:'${loc.id}'})" style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;border-top:3px solid ${b?b.color:'#e5e7eb'};padding:16px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-            <span style="font-size:1.1rem;">${b?b.emoji:''}</span>
+            <span style="font-size:1.1rem;">${brandIcon(b,16)}</span>
             ${brandBadge(loc.brand)}
           </div>
           <div style="font-weight:700;font-size:0.85rem;color:#0f172a;margin-bottom:3px;">${loc.name.split('\u2014')[0].trim()}</div>
@@ -465,7 +472,7 @@ function locationDetail(locId){
   return `<div style="padding:28px 32px;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
       <button onclick="ss({locationDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
-      <span style="font-size:1.4rem;">${b?b.emoji:''}</span>
+      ${brandIcon(b,22)}
       <div>
         <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${loc.name}</div>
         <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${loc.city}, ${loc.state} &middot; Open since ${loc.openYear} &middot; ${loc.capacity} seats</div>
@@ -519,7 +526,7 @@ function rDrops(){
             <div style="margin-top:3px;">${badge(d.status)}</div>
           </div>
           <div>${dropTypeBadge(d.type)}</div>
-          <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:0.9rem;">${b.emoji}</span>${brandBadge(d.brand)}</div>
+          <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:0.9rem;">${brandIcon(b,16)}</span>${brandBadge(d.brand)}</div>
           <div>
             <div style="font-size:0.78rem;font-weight:600;color:#0f172a;">${loc?loc.name.split('\u2014')[0].trim():'—'}</div>
             <div style="font-size:0.68rem;color:#94a3b8;">${loc?loc.city:'—'}</div>
@@ -580,7 +587,7 @@ function rCustomers(){
         return `<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1fr 1fr 50px 50px 80px 100px;gap:8px;align-items:center;">
           <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${g.name}</div>
           <div><span style="background:${tc}15;color:${tc};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${g.tier}</span></div>
-          <div style="display:flex;align-items:center;gap:4px;"><span>${b?b.emoji:''}</span><span style="font-size:0.72rem;color:#475569;">${b?b.short:'—'}</span></div>
+          <div style="display:flex;align-items:center;gap:4px;"><span>${brandIcon(b,16)}</span><span style="font-size:0.72rem;color:#475569;">${b?b.short:'—'}</span></div>
           <div style="font-size:0.82rem;font-weight:700;">${g.visits}</div>
           <div style="font-size:0.82rem;font-weight:700;color:#C41230;">${g.drops}</div>
           <div style="font-size:0.82rem;font-weight:700;">${fmtMoney(g.spend)}</div>
@@ -627,7 +634,7 @@ function rCollections(){
           <div style="padding:16px 18px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <div style="display:flex;align-items:center;gap:6px;">
-                ${b?`<span>${b.emoji}</span><span style="background:${b.color}15;color:${b.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${b.abbr}</span>`:'<span style="background:#fef2f2;color:#C41230;font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">GROUP</span>'}
+                ${b?`<span>${brandIcon(b,16)}</span><span style="background:${b.color}15;color:${b.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${b.abbr}</span>`:'<span style="background:#fef2f2;color:#C41230;font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">GROUP</span>'}
               </div>
               ${badge(col.status)}
             </div>
@@ -654,7 +661,7 @@ function collectionDetailPanel(colId){
   return `<div style="padding:28px 32px;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
       <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
-      ${b?`<span style="font-size:1.3rem;">${b.emoji}</span>`:''}
+      ${b?brandIcon(b,20):''}
       <div>
         <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${col.name}</div>
         <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${col.bizName} &middot; ${col.type==='group'?'Group-wide':'Brand'} collection</div>
@@ -706,7 +713,7 @@ function rAnalytics(){
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
         ${brandStats.filter(b=>b.ci>0).map(b=>`<div style="background:#fff;border-radius:12px;border:2px solid ${b.color}30;padding:16px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-            <span style="font-size:1.3rem;">${b.emoji}</span>
+            ${brandIcon(b,20)}
             <div>
               <div style="font-size:0.78rem;font-weight:800;color:#0f172a;">${b.short}</div>
               <div style="font-size:0.65rem;color:#64748b;">${b.dropCount} drops</div>
@@ -725,7 +732,7 @@ function rAnalytics(){
         </div>
         ${brandStats.map((b,i)=>`<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;align-items:center;">
           <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1rem;">${b.emoji}</span>
+            <span style="font-size:1rem;">${brandIcon(b,16)}</span>
             <div>
               <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${b.short}</div>
               <div style="font-size:0.68rem;color:#64748b;">${b.cuisine}</div>
@@ -747,7 +754,7 @@ function rAnalytics(){
         const b=brandById(d.brand)||BRANDS[0];
         return `<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px 80px;gap:8px;align-items:center;">
           <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
-          <div style="display:flex;align-items:center;gap:4px;"><span>${b.emoji}</span>${brandBadge(d.brand)}</div>
+          <div style="display:flex;align-items:center;gap:4px;"><span>${brandIcon(b,16)}</span>${brandBadge(d.brand)}</div>
           <div>${dropTypeBadge(d.type)}</div>
           <div style="font-size:0.82rem;font-weight:700;">${d.cap}</div>
           <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
@@ -844,7 +851,7 @@ function rBilling(){
           const bCost=bLocs*ppL;
           const isLast=i===BRANDS.length-1;
           return `<div style="padding:16px 12px;border-right:${isLast?'none':'1px solid #e5e7eb'};text-align:center;">
-            <div style="font-size:1.2rem;margin-bottom:6px;">${b.emoji}</div>
+            <div style="margin-bottom:8px;">${brandIcon(b,24)}</div>
             <div style="font-size:0.65rem;font-weight:800;color:${b.color};margin-bottom:4px;">${b.abbr}</div>
             <div style="font-size:1rem;font-weight:900;color:#0f172a;">${fmtMoney(bCost)}</div>
             <div style="font-size:0.65rem;color:#94a3b8;margin-top:2px;">${bLocs} loc/mo</div>
@@ -908,7 +915,7 @@ function rSettings(){
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${BRANDS.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:${b.color}06;border-radius:8px;border:1px solid ${b.color}20;">
           <div style="display:flex;align-items:center;gap:10px;">
-            <span style="font-size:1.1rem;">${b.emoji}</span>
+            <span style="font-size:1.1rem;">${brandIcon(b,16)}</span>
             <div>
               <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${b.name}</div>
               <div style="font-size:0.68rem;color:#64748b;">${b.cuisine} &middot; ${LOCATIONS.filter(l=>l.brand===b.id).length} locations</div>
@@ -975,7 +982,7 @@ function newCollModal(){
                 <div style="font-size:0.7rem;color:#64748b;">Group-wide collection, 13 locations</div>
               </div>
               ${BRANDS.map(b=>`<div onclick="ss({newCollBrand:'${b.id}'})" style="border:2px solid ${S.newCollBrand===b.id?b.color:'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${S.newCollBrand===b.id?b.color+'10':'#fff'};">
-                <div style="font-size:1rem;">${b.emoji}</div>
+                <div style="font-size:1rem;">${brandIcon(b,16)}</div>
                 <div style="font-weight:700;font-size:0.78rem;margin-top:4px;">${b.short}</div>
                 <div style="font-size:0.68rem;color:#64748b;">${LOCATIONS.filter(l=>l.brand===b.id).length} locations</div>
               </div>`).join('')}
@@ -1051,7 +1058,7 @@ function pushStep1(){
         return `<div style="border:2px solid ${S.pushDrop===d.id?b.color:'#e5e7eb'};border-radius:10px;padding:12px 14px;cursor:pointer;background:${S.pushDrop===d.id?b.color+'08':'#fff'};" onclick="ss({pushDrop:'${d.id}'})">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
             <div style="display:flex;align-items:center;gap:6px;">
-              <span style="font-size:0.9rem;">${b.emoji}</span>
+              <span style="font-size:0.9rem;">${brandIcon(b,16)}</span>
               <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
             </div>
             ${dropTypeBadge(d.type)}
@@ -1091,7 +1098,7 @@ function pushStep3(){
     <div style="background:#0f172a;border-radius:16px;padding:16px;margin-bottom:16px;">
       <div style="background:#1e293b;border-radius:12px;padding:16px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="width:36px;height:36px;border-radius:8px;background:#C41230;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${b?b.emoji:'🍽️'}</div>
+          <div style="width:36px;height:36px;border-radius:8px;background:${b?b.color:'#C41230'};display:flex;align-items:center;justify-content:center;">${b?`<img src="${b.logo}" alt="${b.short}" style="height:18px;max-width:64px;object-fit:contain;filter:brightness(0) invert(1);display:block;">`:'🍽️'}</div>
           <div>
             <div style="color:#fff;font-size:0.78rem;font-weight:700;">${b?b.short:'Big Red F'} &middot; Nigh</div>
             <div style="color:#94a3b8;font-size:0.7rem;">now</div>
