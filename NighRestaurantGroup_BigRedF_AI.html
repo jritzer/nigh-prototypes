@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Red F Restaurant Group &middot; Nigh</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f9fb;overflow:hidden;height:100vh;}
+#app{display:flex;height:100vh;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:10px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+
+// ── ICONS ────────────────────────────────────────────────────────────────
+const I={
+  dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  locations:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+  drops:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
+  customers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  collections:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7z"/><path d="M12 3v18"/><path d="M3 7l9 4 9-4"/></svg>',
+  analytics:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  billing:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12H4M20 12h2M5.64 18.36l1.41-1.41M16.95 7.05l1.41-1.41"/></svg>',
+};
+function ic(name,size=16){return `<svg width="${size}" height="${size}" style="display:inline-block;vertical-align:middle;">${I[name]||''}</svg>`;}
+function nighBug(size=30){return `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#111"/><ellipse cx="50" cy="42" rx="22" ry="26" fill="#fff"/><circle cx="50" cy="52" r="11" fill="#111"/><circle cx="43" cy="30" r="4" fill="#111"/><circle cx="57" cy="30" r="4" fill="#111"/><line x1="28" y1="38" x2="12" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="28" y1="44" x2="10" y2="44" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="72" y1="38" x2="88" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="72" y1="44" x2="90" y2="44" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+const S={
+  page:'dashboard',
+  selectedBrand:null,
+  selectedCity:null,
+  hierarchyView:'brand',
+  locationDetail:null,
+  collectionDetail:null,
+  showNewColl:false,
+  newCollStep:1,
+  newCollGeo:'dining',
+  newCollBrand:null,
+  showPush:false,
+  pushStep:1,
+  pushDrop:null,
+  pushScope:null,
+};
+
+// ── GROUP DATA ────────────────────────────────────────────────────────────
+const GROUP={
+  name:'Big Red F Restaurant Group',
+  short:'Big Red F',
+  color:'#C41230',
+  dark:'#1a0505',
+  gold:'#d97706',
+  abbr:'BRF',
+  hq:'Boulder, CO',
+};
+
+const BRANDS=[
+  {id:'B01',name:'Jax Fish House &amp; Oyster Bar', short:'Jax Fish House', color:'#1a4f7a', abbr:'JAX',  cuisine:'Seafood &amp; Oyster Bar',    emoji:'&#129442;'},
+  {id:'B02',name:'West End Tavern',                 short:'West End Tavern',color:'#92400e', abbr:'WET',  cuisine:'American Gastropub',          emoji:'&#127866;'},
+  {id:'B03',name:'Centro Mexican Kitchen',          short:'Centro',         color:'#b91c1c', abbr:'CTR',  cuisine:'Mexican Kitchen',             emoji:'&#127790;'},
+  {id:'B04',name:'Zolo Grill',                      short:'Zolo',           color:'#0d9488', abbr:'ZLO',  cuisine:'Southwestern American',       emoji:'&#127797;'},
+  {id:'B05',name:'Lola Coastal Mexican',            short:'Lola',           color:'#0e7490', abbr:'LOLA', cuisine:'Coastal Mexican &amp; Tequila',emoji:'&#127754;'},
+  {id:'B06',name:'OAK at Fourteenth',               short:'OAK',            color:'#78350f', abbr:'OAK',  cuisine:'Upscale American &amp; Wood Fire',emoji:'&#128293;'},
+];
+
+const CITIES=['Boulder','Denver','Fort Collins','Kansas City'];
+
+const LOCATIONS=[
+  {id:'L01',brand:'B01',name:'Jax Fish House \u2014 Boulder',        city:'Boulder',      state:'CO',status:'active',capacity:120,openYear:1994},
+  {id:'L02',brand:'B01',name:'Jax Fish House \u2014 Denver LoDo',    city:'Denver',       state:'CO',status:'active',capacity:140,openYear:2005},
+  {id:'L03',brand:'B01',name:'Jax Fish House \u2014 Fort Collins',   city:'Fort Collins', state:'CO',status:'active',capacity:110,openYear:2012},
+  {id:'L04',brand:'B01',name:'Jax Fish House \u2014 Kansas City',    city:'Kansas City',  state:'MO',status:'active',capacity:130,openYear:2018},
+  {id:'L05',brand:'B02',name:'West End Tavern \u2014 Boulder',        city:'Boulder',      state:'CO',status:'active',capacity:95, openYear:2003},
+  {id:'L06',brand:'B02',name:'West End Tavern \u2014 Fort Collins',   city:'Fort Collins', state:'CO',status:'active',capacity:90, openYear:2016},
+  {id:'L07',brand:'B03',name:'Centro Mexican Kitchen \u2014 Boulder', city:'Boulder',      state:'CO',status:'active',capacity:100,openYear:2007},
+  {id:'L08',brand:'B03',name:'Centro Mexican Kitchen \u2014 Ft Collins',city:'Fort Collins',state:'CO',status:'active',capacity:95, openYear:2014},
+  {id:'L09',brand:'B03',name:'Centro Mexican Kitchen \u2014 Denver',  city:'Denver',       state:'CO',status:'active',capacity:110,openYear:2019},
+  {id:'L10',brand:'B04',name:'Zolo Grill \u2014 Boulder',             city:'Boulder',      state:'CO',status:'active',capacity:85, openYear:2001},
+  {id:'L11',brand:'B04',name:'Zolo Grill \u2014 Denver Cherry Creek', city:'Denver',       state:'CO',status:'active',capacity:90, openYear:2011},
+  {id:'L12',brand:'B04',name:'Zolo Grill \u2014 Fort Collins',        city:'Fort Collins', state:'CO',status:'active',capacity:80, openYear:2020},
+  {id:'L13',brand:'B05',name:'Lola Coastal Mexican \u2014 Denver LoHi',city:'Denver',      state:'CO',status:'active',capacity:120,openYear:2009},
+  {id:'L14',brand:'B05',name:'Lola Coastal Mexican \u2014 Denver RiNo',city:'Denver',      state:'CO',status:'active',capacity:115,openYear:2021},
+  {id:'L15',brand:'B05',name:'Lola Coastal Mexican \u2014 Boulder',   city:'Boulder',      state:'CO',status:'active',capacity:100,openYear:2023},
+  {id:'L16',brand:'B06',name:'OAK at Fourteenth \u2014 Boulder',      city:'Boulder',      state:'CO',status:'active',capacity:75, openYear:2010},
+  {id:'L17',brand:'B06',name:'OAK at Fourteenth \u2014 Denver',       city:'Denver',       state:'CO',status:'active',capacity:80, openYear:2022},
+];
+
+const DROPS=[
+  {id:'D01',title:'Jax Happy Hour Oyster Special',         type:'happy-hour', status:'live',      brand:'B01',locId:'L01',cap:80, res:74, checkins:68, showRate:92,price:0,  broadcastHrs:3},
+  {id:'D02',title:'Catch of the Day \u2014 Limited Plate', type:'menu-drop',  status:'live',      brand:'B01',locId:'L02',cap:40, res:38, checkins:34, showRate:89,price:28, broadcastHrs:4},
+  {id:'D03',title:'West End Burger &amp; Pint Special',    type:'happy-hour', status:'live',      brand:'B02',locId:'L05',cap:60, res:55, checkins:50, showRate:91,price:0,  broadcastHrs:3},
+  {id:'D04',title:'Live Music Thursday Night',             type:'event',      status:'live',      brand:'B02',locId:'L06',cap:120,res:98, checkins:87, showRate:89,price:15, broadcastHrs:6},
+  {id:'D05',title:'Margarita Monday Happy Hour',           type:'happy-hour', status:'live',      brand:'B03',locId:'L07',cap:90, res:84, checkins:79, showRate:94,price:0,  broadcastHrs:3},
+  {id:'D06',title:'Chef\u2019s Tasting Menu \u2014 Seasonal',type:'vip',      status:'live',      brand:'B03',locId:'L09',cap:20, res:20, checkins:18, showRate:90,price:95, broadcastHrs:2},
+  {id:'D07',title:'Zolo Taco Tuesday Special',             type:'happy-hour', status:'live',      brand:'B04',locId:'L10',cap:100,res:92, checkins:85, showRate:92,price:0,  broadcastHrs:4},
+  {id:'D08',title:'Southwestern Wine Dinner',              type:'event',      status:'scheduled', brand:'B04',locId:'L11',cap:35, res:28, checkins:0,  showRate:0, price:85, broadcastHrs:3},
+  {id:'D09',title:'Lola Tequila Tasting Night',            type:'event',      status:'live',      brand:'B05',locId:'L13',cap:45, res:43, checkins:39, showRate:91,price:65, broadcastHrs:4},
+  {id:'D10',title:'Coastal Happy Hour \u2014 Fish Tacos',  type:'happy-hour', status:'live',      brand:'B05',locId:'L14',cap:75, res:68, checkins:62, showRate:91,price:0,  broadcastHrs:3},
+  {id:'D11',title:"OAK Chef's Table Experience",           type:'vip',        status:'live',      brand:'B06',locId:'L16',cap:12, res:12, checkins:10, showRate:83,price:195,broadcastHrs:2},
+  {id:'D12',title:'OAK Wood-Fire Sunday Brunch Drop',      type:'menu-drop',  status:'draft',     brand:'B06',locId:'L17',cap:30, res:0,  checkins:0,  showRate:0, price:45, broadcastHrs:4},
+];
+
+const GEO_TIERS={
+  table:        {label:'Seated Table / In-Restaurant (~30 ft)',  short:'~30 ft'  },
+  dining:       {label:'Dining Room / Full Restaurant (~150 ft)',short:'~150 ft' },
+  block:        {label:'Block Radius (~500 ft)',                  short:'~500 ft' },
+  neighborhood: {label:'Neighborhood Reach (~1,500 ft)',         short:'~1,500 ft'},
+};
+
+let CUSTOMER_DATA=[];
+let COLLECTIONS_DATA=[];
+let USERS_DATA=[];
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function brandById(id){return BRANDS.find(b=>b.id===id);}
+function locById(id){return LOCATIONS.find(l=>l.id===id);}
+function filteredLocations(){
+  return LOCATIONS.filter(l=>{
+    if(S.selectedBrand&&l.brand!==S.selectedBrand) return false;
+    if(S.selectedCity&&l.city!==S.selectedCity) return false;
+    return true;
+  });
+}
+function badge(status){
+  const map={live:'#dcfce7:#16a34a:Live',scheduled:'#fef9c3:#854d0e:Scheduled',draft:'#f1f5f9:#64748b:Draft',ended:'#fee2e2:#b91c1c:Ended',active:'#dcfce7:#16a34a:Active',paused:'#fef3c7:#b45309:Paused'};
+  const [bg,color,label]=(map[status]||'#f1f5f9:#64748b:Unknown').split(':');
+  return `<span style="background:${bg};color:${color};font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:20px;">${label}</span>`;
+}
+function brandBadge(brandId){
+  const b=brandById(brandId);
+  if(!b) return '';
+  return `<span style="background:${b.color}18;color:${b.color};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${b.abbr}</span>`;
+}
+function dropTypeBadge(type){
+  const map={
+    'happy-hour':{bg:'#fef3c7',c:'#92400e',label:'&#127867; Happy Hour'},
+    'menu-drop': {bg:'#f0fdf4',c:'#14532d',label:'&#129389; Menu Drop'},
+    'event':     {bg:'#f3e8ff',c:'#5b21b6',label:'&#127917; Event'},
+    'vip':       {bg:'#fef9c3',c:'#713f12',label:'&#11088; VIP Dining'},
+  };
+  const t=map[type]||{bg:'#f1f5f9',c:'#475569',label:type};
+  return `<span style="background:${t.bg};color:${t.c};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${t.label}</span>`;
+}
+function pct(a,b){return b>0?Math.round(a/b*100):0;}
+function fmtMoney(n){return '$'+n.toLocaleString();}
+function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
+function infoRow(label,val){return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${label}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${val}</span></div>`;}
+
+// ── LAYOUT ────────────────────────────────────────────────────────────────
+function layout(){
+  return `<div style="display:flex;height:100vh;overflow:hidden;">
+    ${sidebar()}
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      ${topbar()}
+      <div style="flex:1;overflow-y:auto;">${renderPage()}</div>
+    </div>
+  </div>`;
+}
+
+function sidebar(){
+  const nav=[
+    {id:'dashboard', label:'Dashboard',   icon:'dashboard'},
+    {id:'locations', label:'Locations',   icon:'locations'},
+    {id:'drops',     label:'Drops',       icon:'drops'},
+    {id:'customers', label:'Guests',      icon:'customers'},
+    {id:'collections',label:'Collections',icon:'collections'},
+    {id:'analytics', label:'Analytics',   icon:'analytics'},
+    {id:'users',     label:'Team',        icon:'users'},
+    {id:'billing',   label:'Billing',     icon:'billing'},
+    {id:'settings',  label:'Settings',    icon:'settings'},
+  ];
+  return `<div style="width:220px;min-width:220px;background:linear-gradient(180deg,#1a0505 0%,#C41230 100%);display:flex;flex-direction:column;padding:20px 0;overflow-y:auto;">
+    <div style="padding:0 18px 20px;display:flex;align-items:center;gap:10px;">
+      ${nighBug(30)}
+      <div>
+        <div style="color:#fff;font-weight:900;font-size:0.82rem;line-height:1.1;">Big Red F</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.6rem;margin-top:1px;">17 Locations &middot; 6 Brands &middot; 4 Cities</div>
+      </div>
+    </div>
+    <div style="padding:0 12px 14px;">
+      <div style="font-size:0.6rem;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;padding:0 6px;margin-bottom:6px;">Brands</div>
+      ${BRANDS.map(b=>`<button onclick="ss({selectedBrand:S.selectedBrand==='${b.id}'?null:'${b.id}'})" style="width:100%;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:${S.selectedBrand===b.id?b.color+'40':'transparent'};border:1px solid ${S.selectedBrand===b.id?b.color+'80':'transparent'};color:${S.selectedBrand===b.id?'#fff':'rgba(255,255,255,0.65)'};font-size:0.72rem;font-weight:${S.selectedBrand===b.id?'700':'500'};cursor:pointer;text-align:left;margin-bottom:2px;">
+        <span style="font-size:0.85rem;">${b.emoji}</span>
+        <span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${b.short}</span>
+      </button>`).join('')}
+    </div>
+    <div style="height:1px;background:rgba(255,255,255,0.12);margin:0 18px 14px;"></div>
+    ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 18px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.6)'};font-size:0.78rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;">
+      <span style="opacity:0.9;">${ic(n.icon,14)}</span>${n.label}
+    </button>`).join('')}
+  </div>`;
+}
+
+function topbar(){
+  const activeBrand=S.selectedBrand?brandById(S.selectedBrand):null;
+  const liveCount=DROPS.filter(d=>d.status==='live'&&(!S.selectedBrand||d.brand===S.selectedBrand)).length;
+  return `<div style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;">
+    ${activeBrand?`<div style="display:flex;align-items:center;gap:8px;background:${activeBrand.color}10;border:1px solid ${activeBrand.color}30;padding:5px 12px;border-radius:8px;">
+      <span style="font-size:1rem;">${activeBrand.emoji}</span>
+      <span style="font-size:0.8rem;font-weight:700;color:${activeBrand.color};">${activeBrand.short}</span>
+      <button onclick="ss({selectedBrand:null})" style="background:none;border:none;cursor:pointer;color:${activeBrand.color};font-size:0.9rem;padding:0 2px;">&#10005;</button>
+    </div>`:'<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:0.8rem;font-weight:700;color:#C41230;">All Brands</span><span style="font-size:0.72rem;color:#94a3b8;">&middot; 6 brands</span></div>'}
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:8px;padding:3px;">
+      ${CITIES.map(c=>`<button onclick="ss({selectedCity:S.selectedCity==='${c}'?null:'${c}'})" style="padding:4px 10px;border-radius:6px;border:none;font-size:0.7rem;font-weight:700;cursor:pointer;background:${S.selectedCity===c?'#C41230':'transparent'};color:${S.selectedCity===c?'#fff':'#64748b'};">${c}</button>`).join('')}
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:5px 12px;display:flex;align-items:center;gap:6px;">
+        <span style="width:7px;height:7px;background:#16a34a;border-radius:50%;display:inline-block;"></span>
+        <span style="font-size:0.72rem;font-weight:700;color:#C41230;">${liveCount} drops live</span>
+      </div>
+      <div style="display:flex;gap:3px;background:#f1f5f9;border-radius:8px;padding:3px;">
+        ${[{v:'brand',l:'By Brand'},{v:'location',l:'By Location'}].map(h=>`<button onclick="ss({hierarchyView:'${h.v}'})" style="padding:4px 10px;border-radius:5px;border:none;font-size:0.7rem;font-weight:700;cursor:pointer;background:${S.hierarchyView===h.v?'#C41230':'transparent'};color:${S.hierarchyView===h.v?'#fff':'#64748b'};">${h.l}</button>`).join('')}
+      </div>
+      <button onclick="ss({showPush:true,pushStep:1})" style="background:#C41230;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('drops',13)} Push Drop</button>
+    </div>
+  </div>`;
+}
+
+function renderPage(){
+  const pages={dashboard:rDashboard,locations:rLocations,drops:rDrops,customers:rCustomers,collections:rCollections,analytics:rAnalytics,users:rUsers,billing:rBilling,settings:rSettings};
+  return (pages[S.page]||rDashboard)();
+}
+
+// ── DASHBOARD HELPERS ─────────────────────────────────────────────────────
+function kpi(label,val,sub,color){
+  return `<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+    <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:4px;">${label}</div>
+    <div style="font-size:1.6rem;font-weight:900;color:${color||'#0f172a'};">${val}</div>
+    <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${sub}</div>
+  </div>`;
+}
+function statusBar(label,val,max,color,sub){
+  const p=max>0?Math.min(Math.round(val/max*100),100):0;
+  return `<div style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+      <span style="font-size:0.75rem;font-weight:600;color:#0f172a;">${label}</span>
+      <span style="font-size:0.75rem;font-weight:700;color:${color};">${val.toLocaleString()}${sub?' &middot; '+sub:''}</span>
+    </div>
+    <div style="background:#f1f5f9;border-radius:20px;height:6px;overflow:hidden;">
+      <div style="height:6px;border-radius:20px;background:${color};width:${p}%;"></div>
+    </div>
+  </div>`;
+}
+function miniStat(label,val,color){
+  return `<div style="background:#f8f9fb;border-radius:8px;padding:8px 10px;">
+    <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:2px;">${label}</div>
+    <div style="font-size:0.88rem;font-weight:800;color:${color||'#0f172a'};">${val}</div>
+  </div>`;
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+function rDashboard(){
+  const fDrops=DROPS.filter(d=>!S.selectedBrand||d.brand===S.selectedBrand);
+  const liveDrops=fDrops.filter(d=>d.status==='live');
+  const active=fDrops.filter(d=>d.status!=='draft');
+  const totalCI=active.reduce((s,d)=>s+(d.checkins||0),0);
+  const totalRes=active.reduce((s,d)=>s+(d.res||0),0);
+  const overallConv=pct(totalCI,totalRes);
+  const maxCI=Math.max(...active.map(d=>d.checkins||0),1);
+  const sorted=[...active].sort((a,b)=>(b.checkins||0)-(a.checkins||0));
+
+  const brandStats=BRANDS.map(b=>{
+    const bDrops=active.filter(d=>d.brand===b.id);
+    const ci=bDrops.reduce((s,d)=>s+(d.checkins||0),0);
+    const res=bDrops.reduce((s,d)=>s+(d.res||0),0);
+    const locs=LOCATIONS.filter(l=>l.brand===b.id).length;
+    return {...b,ci,res,conv:res>0?pct(ci,res):0,dropCount:bDrops.length,locs};
+  }).sort((a,b)=>b.ci-a.ci);
+  const maxBrandCI=Math.max(...brandStats.map(b=>b.ci),1);
+
+  const typeStats=[
+    {type:'happy-hour',label:'Happy Hour'},
+    {type:'menu-drop', label:'Menu Drops'},
+    {type:'event',     label:'Events'},
+    {type:'vip',       label:'VIP Dining'},
+  ].map(t=>({...t,ci:active.filter(d=>d.type===t.type).reduce((s,d)=>s+(d.checkins||0),0)}));
+  const maxTypeCI=Math.max(...typeStats.map(t=>t.ci),1);
+
+  return `<div style="padding:28px 32px;">
+    <div style="margin-bottom:20px;">
+      <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Dashboard</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${liveDrops.length} drops live &middot; ${totalCI.toLocaleString()} total redemptions &middot; ${S.selectedBrand?brandById(S.selectedBrand)?.short+' only':'All 6 brands'}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+      ${kpi('Drops Live',liveDrops.length,`${fDrops.length} total drops`,'#C41230')}
+      ${kpi('Total Redemptions',fmtNum(totalCI),'Guest check-ins across all brands')}
+      ${kpi('Reservations',fmtNum(totalRes),'Drop reservations / RSVPs')}
+      ${kpi('Redemption Rate',overallConv+'%','Reserved \u2192 Redeemed',showColor(overallConv))}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;margin-bottom:20px;">
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+        <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">Top Drops by Redemptions</div>
+          <div style="font-size:0.72rem;color:#64748b;">${sorted.length} active drops</div>
+        </div>
+        ${sorted.slice(0,7).map((d,i)=>{
+          const conv=d.res>0?pct(d.checkins,d.res):0;
+          const b=brandById(d.brand)||BRANDS[0];
+          const loc=locById(d.locId);
+          return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:0.72rem;font-weight:900;color:#94a3b8;width:18px;">#${i+1}</span>
+              <span style="font-size:1rem;">${b.emoji}</span>
+              <div style="font-weight:700;font-size:0.82rem;color:#0f172a;flex:1;">${d.title}</div>
+              ${dropTypeBadge(d.type)}
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding-left:26px;">
+              ${brandBadge(d.brand)}
+              <span style="font-size:0.7rem;color:#64748b;">${loc?loc.city:'—'}</span>
+              <div style="flex:1;background:#f1f5f9;border-radius:20px;height:5px;overflow:hidden;">
+                <div style="height:5px;border-radius:20px;background:${b.color};width:${Math.round((d.checkins||0)/maxCI*100)}%;"></div>
+              </div>
+              <span style="font-size:0.78rem;font-weight:800;color:#0f172a;min-width:36px;text-align:right;">${fmtNum(d.checkins)}</span>
+              <span style="font-size:0.75rem;font-weight:700;color:${showColor(conv)};min-width:34px;text-align:right;">${conv}%</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px;">
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Drop Type Mix</div>
+          ${typeStats.map(t=>statusBar(t.label,t.ci,maxTypeCI,'#C41230','')).join('')}
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px;">
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Brand Snapshot</div>
+          ${brandStats.map(b=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:0.9rem;">${b.emoji}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.72rem;font-weight:700;color:#0f172a;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${b.short}</div>
+              <div style="background:#f1f5f9;border-radius:20px;height:4px;overflow:hidden;margin-top:3px;">
+                <div style="height:4px;border-radius:20px;background:${b.color};width:${Math.round(b.ci/maxBrandCI*100)}%;"></div>
+              </div>
+            </div>
+            <span style="font-size:0.75rem;font-weight:800;color:${b.color};min-width:28px;text-align:right;">${fmtNum(b.ci)}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+      <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:14px;">Brand Performance Breakdown</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${brandStats.map((b,i)=>{
+          const isLast=i===brandStats.length-1;
+          return `<div style="padding:14px 12px;border-right:${isLast?'none':'1px solid #e5e7eb'};text-align:center;background:${S.selectedBrand===b.id?b.color+'08':'#fff'};" onclick="ss({selectedBrand:S.selectedBrand===b.id?null:'${b.id}'})" style="cursor:pointer;">
+            <div style="font-size:1.3rem;margin-bottom:6px;">${b.emoji}</div>
+            <div style="font-size:0.65rem;font-weight:800;color:${b.color};margin-bottom:4px;">${b.abbr}</div>
+            <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${fmtNum(b.ci)}</div>
+            <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${b.conv}% conv</div>
+            <div style="font-size:0.62rem;color:#94a3b8;">${b.locs} loc &middot; ${b.dropCount} drops</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── LOCATIONS ─────────────────────────────────────────────────────────────
+function rLocations(){
+  if(S.locationDetail) return locationDetail(S.locationDetail);
+  return S.hierarchyView==='brand'?rLocByBrand():rLocByLocation();
+}
+
+function rLocByBrand(){
+  const visibleBrands=S.selectedBrand?BRANDS.filter(b=>b.id===S.selectedBrand):BRANDS;
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Locations</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${filteredLocations().length} locations across ${visibleBrands.length} brand${visibleBrands.length!==1?'s':''}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      ${visibleBrands.map(b=>{
+        const bLocs=LOCATIONS.filter(l=>l.brand===b.id&&(!S.selectedCity||l.city===S.selectedCity));
+        if(bLocs.length===0) return '';
+        const bDrops=DROPS.filter(d=>d.brand===b.id&&d.status==='live');
+        return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+          <div style="padding:14px 20px;background:${b.color}08;border-bottom:2px solid ${b.color}25;display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:1.4rem;">${b.emoji}</span>
+              <div>
+                <div style="font-weight:800;font-size:0.95rem;color:#0f172a;">${b.name}</div>
+                <div style="font-size:0.7rem;color:#64748b;margin-top:1px;">${b.cuisine} &middot; ${bLocs.length} location${bLocs.length!==1?'s':''}</div>
+              </div>
+            </div>
+            <div style="font-size:0.78rem;font-weight:700;color:${b.color};">${bDrops.length} live drop${bDrops.length!==1?'s':''}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+            ${bLocs.map((loc,i)=>{
+              const locDrops=DROPS.filter(d=>d.locId===loc.id&&d.status==='live');
+              const totalCI=DROPS.filter(d=>d.locId===loc.id).reduce((s,d)=>s+(d.checkins||0),0);
+              return `<div onclick="ss({locationDetail:'${loc.id}'})" style="padding:14px 16px;border-right:${(i+1)%3===0?'none':'1px solid #e5e7eb'};border-bottom:${i>=bLocs.length-3?'none':'1px solid #e5e7eb'};cursor:pointer;background:#fff;transition:background 0.1s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='#fff'">
+                <div style="font-weight:700;font-size:0.82rem;color:#0f172a;margin-bottom:3px;">${loc.name.split('\u2014')[1]?loc.name.split('\u2014')[1].trim():loc.city}</div>
+                <div style="font-size:0.7rem;color:#64748b;margin-bottom:6px;">${loc.city}, ${loc.state}</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  ${badge(loc.status)}
+                  <span style="font-size:0.68rem;color:#94a3b8;">${locDrops.length} live &middot; ${fmtNum(totalCI)} total</span>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function rLocByLocation(){
+  const locs=filteredLocations();
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:6px;">Locations</div>
+    <div style="font-size:0.82rem;color:#64748b;margin-bottom:20px;">${locs.length} locations</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      ${locs.map(loc=>{
+        const b=brandById(loc.brand);
+        const locDrops=DROPS.filter(d=>d.locId===loc.id&&d.status==='live');
+        const totalCI=DROPS.filter(d=>d.locId===loc.id).reduce((s,d)=>s+(d.checkins||0),0);
+        return `<div onclick="ss({locationDetail:'${loc.id}'})" style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;border-top:3px solid ${b?b.color:'#e5e7eb'};padding:16px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:1.1rem;">${b?b.emoji:''}</span>
+            ${brandBadge(loc.brand)}
+          </div>
+          <div style="font-weight:700;font-size:0.85rem;color:#0f172a;margin-bottom:3px;">${loc.name.split('\u2014')[0].trim()}</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;">${loc.city}, ${loc.state} &middot; Since ${loc.openYear}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${badge(loc.status)}
+            <span style="font-size:0.68rem;color:#94a3b8;">${locDrops.length} live &middot; ${fmtNum(totalCI)} total</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function locationDetail(locId){
+  const loc=LOCATIONS.find(l=>l.id===locId);
+  if(!loc) return '';
+  const b=brandById(loc.brand);
+  const locDrops=DROPS.filter(d=>d.locId===loc.id);
+  const liveDrops=locDrops.filter(d=>d.status==='live');
+  const totalCI=locDrops.reduce((s,d)=>s+(d.checkins||0),0);
+  const totalRes=locDrops.reduce((s,d)=>s+(d.res||0),0);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="ss({locationDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
+      <span style="font-size:1.4rem;">${b?b.emoji:''}</span>
+      <div>
+        <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${loc.name}</div>
+        <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${loc.city}, ${loc.state} &middot; Open since ${loc.openYear} &middot; ${loc.capacity} seats</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${miniStat('Brand',b?b.short:'—',b?b.color:'#0f172a')}
+      ${miniStat('Live Drops',liveDrops.length,'#16a34a')}
+      ${miniStat('Redemptions',fmtNum(totalCI),'#C41230')}
+      ${miniStat('Conv %',pct(totalCI,totalRes)+'%',showColor(pct(totalCI,totalRes)))}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.85rem;font-weight:800;color:#0f172a;">Drops at this Location</div>
+      ${locDrops.length?locDrops.map((d,i)=>`<div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+          <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+          ${badge(d.status)}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${dropTypeBadge(d.type)}
+          <span style="font-size:0.72rem;color:#64748b;">${d.checkins} redemptions &middot; ${pct(d.checkins,d.res)}% conv &middot; ${d.price>0?fmtMoney(d.price):'Free'}</span>
+        </div>
+      </div>`).join(''):'<div style="padding:20px;text-align:center;color:#94a3b8;font-size:0.82rem;">No drops at this location yet.</div>'}
+    </div>
+  </div>`;
+}
+
+// ── DROPS ─────────────────────────────────────────────────────────────────
+function rDrops(){
+  const visibleDrops=DROPS.filter(d=>!S.selectedBrand||d.brand===S.selectedBrand);
+  const liveCount=visibleDrops.filter(d=>d.status==='live').length;
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Drops</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${liveCount} live &middot; ${visibleDrops.length} total drops</div>
+      </div>
+      <button style="background:#C41230;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ New Drop</button>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 90px 80px 1.2fr 70px 70px 70px;gap:8px;">
+        ${['Drop','Type','Brand','Location &middot; City','Cap','Redemp.','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${visibleDrops.map((d,i)=>{
+        const conv=d.res>0?pct(d.checkins,d.res):0;
+        const loc=locById(d.locId);
+        const b=brandById(d.brand)||BRANDS[0];
+        return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 90px 80px 1.2fr 70px 70px 70px;gap:8px;align-items:center;">
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+            <div style="margin-top:3px;">${badge(d.status)}</div>
+          </div>
+          <div>${dropTypeBadge(d.type)}</div>
+          <div style="display:flex;align-items:center;gap:4px;"><span style="font-size:0.9rem;">${b.emoji}</span>${brandBadge(d.brand)}</div>
+          <div>
+            <div style="font-size:0.78rem;font-weight:600;color:#0f172a;">${loc?loc.name.split('\u2014')[0].trim():'—'}</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">${loc?loc.city:'—'}</div>
+          </div>
+          <div style="font-size:0.82rem;font-weight:700;">${d.cap}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:${d.checkins>0?showColor(conv):'#94a3b8'};">${d.checkins>0?conv+'%':'—'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── CUSTOMERS ─────────────────────────────────────────────────────────────
+CUSTOMER_DATA=[
+  {id:'G01',name:'Amber Collins',  tier:'VIP Regular', favBrand:'B01',visits:18,drops:9, spend:640, city:'Boulder'},
+  {id:'G02',name:'Tyler Marsh',    tier:'Loyal Guest',  favBrand:'B02',visits:12,drops:5, spend:310, city:'Boulder'},
+  {id:'G03',name:'Priya Nair',     tier:'VIP Regular', favBrand:'B05',visits:21,drops:11,spend:890, city:'Denver'},
+  {id:'G04',name:'Jake Whitfield', tier:'New Guest',    favBrand:'B03',visits:3, drops:2, spend:85,  city:'Fort Collins'},
+  {id:'G05',name:'Sofia Reyes',    tier:'Loyal Guest',  favBrand:'B03',visits:9, drops:4, spend:195, city:'Denver'},
+  {id:'G06',name:'Marcus Webb',    tier:'VIP Regular', favBrand:'B06',visits:15,drops:8, spend:1140,city:'Boulder'},
+  {id:'G07',name:'Dana Kim',       tier:'New Guest',    favBrand:'B04',visits:2, drops:1, spend:45,  city:'Fort Collins'},
+  {id:'G08',name:'Leo Fontaine',   tier:'Loyal Guest',  favBrand:'B01',visits:11,drops:6, spend:420, city:'Kansas City'},
+  {id:'G09',name:'Rachel Torres',  tier:'VIP Regular', favBrand:'B05',visits:24,drops:13,spend:1080,city:'Denver'},
+  {id:'G10',name:'Ethan Brooks',   tier:'Loyal Guest',  favBrand:'B02',visits:8, drops:3, spend:175, city:'Boulder'},
+  {id:'G11',name:'Mia Johnson',    tier:'New Guest',    favBrand:'B06',visits:4, drops:2, spend:260, city:'Denver'},
+  {id:'G12',name:'Noah Park',      tier:'Loyal Guest',  favBrand:'B04',visits:7, drops:3, spend:155, city:'Fort Collins'},
+];
+
+function rCustomers(){
+  const tierColors={'VIP Regular':'#C41230','Loyal Guest':'#1a4f7a','New Guest':'#16a34a'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Guests</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${CUSTOMER_DATA.length} guests &middot; 3 tiers</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+      ${['VIP Regular','Loyal Guest','New Guest'].map(tier=>{
+        const guests=CUSTOMER_DATA.filter(g=>g.tier===tier);
+        const avgSpend=guests.length?Math.round(guests.reduce((s,g)=>s+g.spend,0)/guests.length):0;
+        const tc=tierColors[tier];
+        return `<div style="background:#fff;border-radius:12px;border:2px solid ${tc}25;padding:14px 16px;">
+          <div style="font-size:0.65rem;font-weight:800;color:${tc};text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">${tier}</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#0f172a;">${guests.length}</div>
+          <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">${fmtMoney(avgSpend)} avg spend</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1fr 1fr 50px 50px 80px 100px;gap:8px;">
+        ${['Name','Tier','Fav Brand','Visits','Drops','Spend','City'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${CUSTOMER_DATA.map((g,i)=>{
+        const b=brandById(g.favBrand);
+        const tc=tierColors[g.tier]||'#64748b';
+        return `<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1fr 1fr 50px 50px 80px 100px;gap:8px;align-items:center;">
+          <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${g.name}</div>
+          <div><span style="background:${tc}15;color:${tc};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${g.tier}</span></div>
+          <div style="display:flex;align-items:center;gap:4px;"><span>${b?b.emoji:''}</span><span style="font-size:0.72rem;color:#475569;">${b?b.short:'—'}</span></div>
+          <div style="font-size:0.82rem;font-weight:700;">${g.visits}</div>
+          <div style="font-size:0.82rem;font-weight:700;color:#C41230;">${g.drops}</div>
+          <div style="font-size:0.82rem;font-weight:700;">${fmtMoney(g.spend)}</div>
+          <div style="font-size:0.75rem;color:#64748b;">${g.city}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── COLLECTIONS ────────────────────────────────────────────────────────────
+COLLECTIONS_DATA=[
+  {id:'CO01',name:'Jax Happy Hour Pass',        brand:'B01',type:'brand', status:'live',  geo:'dining',participants:4, bizName:'Jax Fish House',      dropTitle:'Oyster Happy Hour',  cap:200,res:182,ci:164},
+  {id:'CO02',name:'Colorado Restaurant Week',    brand:null, type:'group', status:'live',  geo:'block',  participants:17,bizName:'Big Red F Group',      dropTitle:'Group-Wide Special', cap:500,res:441,ci:392},
+  {id:'CO03',name:'West End Live Music Nights',  brand:'B02',type:'brand', status:'live',  geo:'block',  participants:2, bizName:'West End Tavern',      dropTitle:'Live Music Thursday',cap:240,res:193,ci:175},
+  {id:'CO04',name:'OAK Chef Experience Series',  brand:'B06',type:'brand', status:'live',  geo:'table',  participants:2, bizName:'OAK at Fourteenth',    dropTitle:"Chef Table Drop",   cap:24, res:24, ci:20},
+  {id:'CO05',name:'Taco Tuesday City-Wide',      brand:'B03',type:'brand', status:'ended', geo:'block',  participants:3, bizName:'Centro Mexican Kitchen',dropTitle:'Margarita Monday',  cap:270,res:252,ci:218},
+];
+
+function collStat(label,val,color){
+  return `<div style="text-align:center;padding:10px 8px;">
+    <div style="font-size:1.2rem;font-weight:900;color:${color||'#0f172a'};">${val}</div>
+    <div style="font-size:0.65rem;color:#94a3b8;margin-top:2px;">${label}</div>
+  </div>`;
+}
+
+function rCollections(){
+  if(S.collectionDetail) return collectionDetailPanel(S.collectionDetail);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Collections</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${COLLECTIONS_DATA.filter(c=>c.status==='live').length} live &middot; ${COLLECTIONS_DATA.length} total</div>
+      </div>
+      <button onclick="ss({showNewColl:true,newCollStep:1})" style="background:#C41230;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ New Collection</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      ${COLLECTIONS_DATA.map(col=>{
+        const conv=col.res>0?pct(col.ci,col.res):0;
+        const b=col.brand?brandById(col.brand):null;
+        const ac=b?b.color:'#C41230';
+        return `<div onclick="ss({collectionDetail:'${col.id}'})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="height:4px;background:${ac};"></div>
+          <div style="padding:16px 18px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                ${b?`<span>${b.emoji}</span><span style="background:${b.color}15;color:${b.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${b.abbr}</span>`:'<span style="background:#fef2f2;color:#C41230;font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">GROUP</span>'}
+              </div>
+              ${badge(col.status)}
+            </div>
+            <div style="font-weight:800;font-size:0.9rem;color:#0f172a;margin-bottom:4px;">${col.name}</div>
+            <div style="font-size:0.72rem;color:#64748b;margin-bottom:12px;">${col.bizName} &middot; ${col.participants} loc &middot; ${GEO_TIERS[col.geo]?GEO_TIERS[col.geo].short:'—'}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #f1f5f9;">
+              ${collStat('Reserved',col.res,'#0f172a')}
+              ${collStat('Redeemed',col.ci,ac)}
+              ${collStat('Conv %',conv+'%',showColor(conv))}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function collectionDetailPanel(colId){
+  const col=COLLECTIONS_DATA.find(c=>c.id===colId);
+  if(!col) return '';
+  const conv=col.res>0?pct(col.ci,col.res):0;
+  const b=col.brand?brandById(col.brand):null;
+  const ac=b?b.color:'#C41230';
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
+      ${b?`<span style="font-size:1.3rem;">${b.emoji}</span>`:''}
+      <div>
+        <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${col.name}</div>
+        <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${col.bizName} &middot; ${col.type==='group'?'Group-wide':'Brand'} collection</div>
+      </div>
+      ${badge(col.status)}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${miniStat('Type',col.type==='group'?'Group-Wide':'Brand',ac)}
+      ${miniStat('Locations',col.participants,'#0f172a')}
+      ${miniStat('Geo-Fence',GEO_TIERS[col.geo]?GEO_TIERS[col.geo].short:'—','#0f172a')}
+      ${miniStat('Conv %',conv+'%',showColor(conv))}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;margin-bottom:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center;">
+      ${[['Cap',col.cap,'#64748b'],['Reserved',col.res,'#0f172a'],['Redeemed',col.ci,ac]].map(([l,v,c])=>`<div>
+        <div style="font-size:2rem;font-weight:900;color:${c};">${v}</div>
+        <div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">${l}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;">
+      ${col.status!=='ended'?`<button style="flex:1;background:#C41230;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Push Reminder</button>`:''}
+      <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+    </div>
+  </div>`;
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────────
+function rAnalytics(){
+  const active=DROPS.filter(d=>d.status!=='draft'&&(!S.selectedBrand||d.brand===S.selectedBrand));
+  const sorted=[...active].sort((a,b)=>(b.checkins||0)-(a.checkins||0));
+  const brandStats=BRANDS.map(b=>{
+    const bDrops=active.filter(d=>d.brand===b.id);
+    const ci=bDrops.reduce((s,d)=>s+(d.checkins||0),0);
+    const res=bDrops.reduce((s,d)=>s+(d.res||0),0);
+    return {...b,dropCount:bDrops.length,ci,res,conv:res>0?pct(ci,res):0};
+  }).sort((a,b)=>b.ci-a.ci);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Analytics</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${active.length} active drops &middot; ${active.reduce((s,d)=>s+(d.checkins||0),0).toLocaleString()} total redemptions</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({hierarchyView:'brand'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='brand'?'#C41230':'#f1f5f9'};color:${S.hierarchyView==='brand'?'#fff':'#475569'};">By Brand</button>
+        <button onclick="ss({hierarchyView:'location'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='location'?'#C41230':'#f1f5f9'};color:${S.hierarchyView==='location'?'#fff':'#475569'};">By Drop</button>
+      </div>
+    </div>
+    ${S.hierarchyView==='brand'?`
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        ${brandStats.filter(b=>b.ci>0).map(b=>`<div style="background:#fff;border-radius:12px;border:2px solid ${b.color}30;padding:16px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span style="font-size:1.3rem;">${b.emoji}</span>
+            <div>
+              <div style="font-size:0.78rem;font-weight:800;color:#0f172a;">${b.short}</div>
+              <div style="font-size:0.65rem;color:#64748b;">${b.dropCount} drops</div>
+            </div>
+          </div>
+          <div style="font-size:1.6rem;font-weight:900;color:${b.color};">${fmtNum(b.ci)}</div>
+          <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">${b.conv}% conv rate</div>
+          <div style="margin-top:8px;background:#f1f5f9;border-radius:20px;height:5px;overflow:hidden;">
+            <div style="height:5px;border-radius:20px;background:${b.color};width:${Math.min(b.conv,100)}%;"></div>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+        <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;">
+          ${['Brand','Drops','Reserved','Redeemed','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+        </div>
+        ${brandStats.map((b,i)=>`<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1rem;">${b.emoji}</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${b.short}</div>
+              <div style="font-size:0.68rem;color:#64748b;">${b.cuisine}</div>
+            </div>
+          </div>
+          <div style="font-size:0.85rem;font-weight:700;">${b.dropCount}</div>
+          <div style="font-size:0.85rem;font-weight:700;">${fmtNum(b.res)}</div>
+          <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">${fmtNum(b.ci)}</div>
+          <div style="font-size:0.85rem;font-weight:800;color:${showColor(b.conv)};">${b.conv}%</div>
+        </div>`).join('')}
+      </div>
+    </div>`:`
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 80px 80px 80px;gap:8px;">
+        ${['Drop','Brand','Type','Cap','Redeemed','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${sorted.map((d,i)=>{
+        const conv=d.res>0?pct(d.checkins,d.res):0;
+        const b=brandById(d.brand)||BRANDS[0];
+        return `<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px 80px;gap:8px;align-items:center;">
+          <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+          <div style="display:flex;align-items:center;gap:4px;"><span>${b.emoji}</span>${brandBadge(d.brand)}</div>
+          <div>${dropTypeBadge(d.type)}</div>
+          <div style="font-size:0.82rem;font-weight:700;">${d.cap}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:${showColor(conv)};">${conv}%</div>
+        </div>`;
+      }).join('')}
+    </div>`}
+  </div>`;
+}
+
+// ── USERS ──────────────────────────────────────────────────────────────────
+USERS_DATA=[
+  {id:'U01',name:'Dave Query',      email:'d.query@bigredf.com',    role:'Group Owner',      team:'Big Red F HQ',        lastLogin:'Today 8:30 AM', status:'active'},
+  {id:'U02',name:'Kelly Rios',      email:'k.rios@bigredf.com',     role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'Today 9:45 AM', status:'active'},
+  {id:'U03',name:'Sam Fletcher',    email:'s.fletcher@jaxfish.com', role:'Brand Manager',    team:'Jax Fish House',      lastLogin:'Today 10:12 AM',status:'active'},
+  {id:'U04',name:'Tara Hodge',      email:'t.hodge@bigredf.com',    role:'Brand Manager',    team:'West End Tavern',     lastLogin:'Yesterday',     status:'active'},
+  {id:'U05',name:'Marco Ibarra',    email:'m.ibarra@centromx.com',  role:'Brand Manager',    team:'Centro Mexican',      lastLogin:'Today 11:00 AM',status:'active'},
+  {id:'U06',name:'Jin Yoo',         email:'j.yoo@bigredf.com',      role:'Brand Manager',    team:'Zolo Grill',          lastLogin:'2 days ago',    status:'active'},
+  {id:'U07',name:'Alexis Monroe',   email:'a.monroe@lolaco.com',    role:'Brand Manager',    team:'Lola Coastal',        lastLogin:'Today 8:55 AM', status:'active'},
+  {id:'U08',name:'Ryan Castillo',   email:'r.castillo@oak14.com',   role:'Brand Manager',    team:'OAK at Fourteenth',   lastLogin:'Today 10:40 AM',status:'active'},
+  {id:'U09',name:'Jen Park',        email:'j.park@jaxfish.com',     role:'Location Manager', team:'Jax Boulder',         lastLogin:'Today 9:10 AM', status:'active'},
+  {id:'U10',name:'Tom Walsh',       email:'t.walsh@jaxfish.com',    role:'Location Manager', team:'Jax Denver LoDo',     lastLogin:'Today 7:50 AM', status:'active'},
+  {id:'U11',name:'Cara Singh',      email:'c.singh@bigredf.com',    role:'Location Manager', team:'West End Boulder',    lastLogin:'Today 11:20 AM',status:'active'},
+  {id:'U12',name:'Nadia Osei',      email:'n.osei@bigredf.com',     role:'Group Admin',      team:'Big Red F HQ',        lastLogin:'3 weeks ago',   status:'inactive'},
+];
+
+function rUsers(){
+  const roleColors={'Group Owner':'#C41230','Group Admin':'#7c3aed','Brand Manager':'#1a4f7a','Location Manager':'#16a34a'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Team &amp; Access</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${USERS_DATA.filter(u=>u.status==='active').length} active users &middot; 4 roles</div>
+      </div>
+      <button style="background:#C41230;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ Invite User</button>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1.5fr 1fr 1.2fr 120px 80px;gap:8px;">
+        ${['Name','Email','Role','Team','Last Login','Status'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${USERS_DATA.map((u,i)=>`<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1.5fr 1fr 1.2fr 120px 80px;gap:8px;align-items:center;">
+        <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${u.name}</div>
+        <div style="font-size:0.72rem;color:#64748b;">${u.email}</div>
+        <div><span style="background:${roleColors[u.role]||'#64748b'}15;color:${roleColors[u.role]||'#64748b'};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${u.role}</span></div>
+        <div style="font-size:0.75rem;color:#475569;">${u.team}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${u.lastLogin}</div>
+        <div><span style="background:${u.status==='active'?'#dcfce7':'#f1f5f9'};color:${u.status==='active'?'#16a34a':'#94a3b8'};font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${u.status}</span></div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">Access Hierarchy</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${[
+          {role:'Group Owner',  color:'#C41230',can:['All brands &amp; locations','Full analytics','Billing &amp; contracts','User management','Group-wide drops']},
+          {role:'Group Admin',  color:'#7c3aed',can:['All brands &amp; locations','Full analytics','View billing','User management','Group-wide drops']},
+          {role:'Brand Manager',color:'#1a4f7a',can:['Assigned brand only','Brand analytics','Brand drops','Location managers','No billing']},
+          {role:'Location Manager',color:'#16a34a',can:['Assigned location','Location drops','Guest check-ins','No cross-brand data','No billing']},
+        ].map(r=>`<div style="padding:14px;border-right:1px solid #e5e7eb;">
+          <div style="font-size:0.72rem;font-weight:800;color:${r.color};margin-bottom:8px;">${r.role}</div>
+          ${r.can.map(c=>`<div style="font-size:0.68rem;color:#475569;padding:3px 0;border-bottom:1px solid #f8f9fb;">&#10003; ${c}</div>`).join('')}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── BILLING ────────────────────────────────────────────────────────────────
+function rBilling(){
+  const locs=17,ppL=149,monthly=locs*ppL;
+  const invoices=[
+    {date:'Mar 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
+    {date:'Feb 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
+    {date:'Jan 1, 2026',desc:'Restaurant Group Pro &middot; 17 locations',amt:monthly,status:'paid'},
+  ];
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Billing &amp; Plan</div>
+    <div style="background:linear-gradient(135deg,#1a0505 0%,#C41230 100%);border-radius:16px;padding:24px 28px;color:#fff;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;opacity:0.8;letter-spacing:0.08em;margin-bottom:6px;">CURRENT PLAN</div>
+        <div style="font-size:1.8rem;font-weight:900;">Restaurant Group Pro</div>
+        <div style="font-size:0.85rem;opacity:0.85;margin-top:4px;">Multi-brand management &middot; 6 brand profiles &middot; Group-wide collections &amp; analytics</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.75rem;opacity:0.8;margin-bottom:4px;">MONTHLY TOTAL</div>
+        <div style="font-size:2.8rem;font-weight:900;">${fmtMoney(monthly)}</div>
+        <div style="font-size:0.8rem;opacity:0.75;">${locs} locations &times; ${fmtMoney(ppL)}/loc/mo</div>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 20px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.82rem;font-weight:800;color:#0f172a;">Cost by Brand</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;">
+        ${BRANDS.map((b,i)=>{
+          const bLocs=LOCATIONS.filter(l=>l.brand===b.id).length;
+          const bCost=bLocs*ppL;
+          const isLast=i===BRANDS.length-1;
+          return `<div style="padding:16px 12px;border-right:${isLast?'none':'1px solid #e5e7eb'};text-align:center;">
+            <div style="font-size:1.2rem;margin-bottom:6px;">${b.emoji}</div>
+            <div style="font-size:0.65rem;font-weight:800;color:${b.color};margin-bottom:4px;">${b.abbr}</div>
+            <div style="font-size:1rem;font-weight:900;color:#0f172a;">${fmtMoney(bCost)}</div>
+            <div style="font-size:0.65rem;color:#94a3b8;margin-top:2px;">${bLocs} loc/mo</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+      ${[
+        {label:'Active Locations',val:'17',sub:'Across 4 cities'},
+        {label:'Monthly Cost',val:fmtMoney(monthly),sub:'Auto-renews Apr 1'},
+        {label:'Cost per Drop',val:fmtMoney(Math.round(monthly/DROPS.length)),sub:`${DROPS.length} total drops`},
+        {label:'Est. ROI',val:'8.7x',sub:'Based on guest spend lift'},
+      ].map(s=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:4px;">${s.label}</div>
+        <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${s.val}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${s.sub}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.82rem;font-weight:800;color:#0f172a;">Invoice History</div>
+      ${invoices.map((inv,i)=>`<div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:0.82rem;">${inv.desc}</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">${inv.date}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-weight:800;font-size:0.9rem;">${fmtMoney(inv.amt)}</div>
+          <span style="background:#dcfce7;color:#16a34a;font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${inv.status}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+function rSettings(){
+  function sCard(title,content){
+    return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;margin-bottom:16px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">${title}</div>
+      ${content}
+    </div>`;
+  }
+  function sRow(label,val,sub){
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+      <div><div style="font-size:0.82rem;font-weight:600;color:#0f172a;">${label}</div>${sub?`<div style="font-size:0.7rem;color:#94a3b8;margin-top:1px;">${sub}</div>`:''}</div>
+      <div style="font-size:0.82rem;font-weight:700;color:#475569;">${val}</div>
+    </div>`;
+  }
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Settings</div>
+    ${sCard('Group Settings',
+      sRow('Group Name','Big Red F Restaurant Group')+
+      sRow('Short Name','Big Red F')+
+      sRow('Headquarters','Boulder, CO')+
+      sRow('Primary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#C41230;display:inline-block;"></span>#C41230 Big Red</span>')+
+      sRow('Active Brands','6 restaurant brands')+
+      sRow('Cities','Boulder, Denver, Fort Collins, Kansas City')
+    )}
+    ${sCard('Brand Profiles',`
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${BRANDS.map(b=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:${b.color}06;border-radius:8px;border:1px solid ${b.color}20;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.1rem;">${b.emoji}</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${b.name}</div>
+              <div style="font-size:0.68rem;color:#64748b;">${b.cuisine} &middot; ${LOCATIONS.filter(l=>l.brand===b.id).length} locations</div>
+            </div>
+          </div>
+          <span style="background:${b.color}15;color:${b.color};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${b.abbr}</span>
+        </div>`).join('')}
+      </div>
+    `)}
+    ${sCard('Drop Policies',
+      sRow('Max Simultaneous Drops','5 per location','Per brand location')+
+      sRow('Default Geo-Fence','~150 ft (Dining Room)','Can be adjusted per drop')+
+      sRow('Default Broadcast Window','3 hours','Typical happy hour / service window')+
+      sRow('Group-wide drops','Enabled','Drops can broadcast across all brands')+
+      sRow('Cross-brand analytics','Enabled','Compare performance across brands')
+    )}
+    ${sCard('Geo-Fence Tiers',
+      Object.entries(GEO_TIERS).map(([k,v])=>sRow(v.short,v.label)).join('')
+    )}
+    ${sCard('Hierarchy: Group &rarr; Brand &rarr; Location',`
+      <div style="display:flex;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${['Big Red F (Group)','6 Brands','4 Cities','17 Locations'].map((l,i)=>`<div style="flex:1;padding:10px 12px;background:${i%2?'#f8f9fb':'#fff'};border-right:1px solid #e5e7eb;text-align:center;">
+          <div style="font-size:0.65rem;font-weight:800;color:#64748b;text-transform:uppercase;">Level ${i+1}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-top:3px;">${l}</div>
+        </div>`).join('')}
+      </div>
+    `)}
+    ${sCard('Alerts &amp; Notifications',
+      sRow('Redemption spike alerts','Enabled','Notify when location redemptions +30% in 15 min')+
+      sRow('Capacity warnings','Enabled','Alert at 85% and 95% of drop cap')+
+      sRow('Cross-brand performance','Weekly','Weekly digest comparing brand performance')+
+      sRow('New guest milestones','Enabled','Alert when guest reaches VIP Regular tier')
+    )}
+  </div>`;
+}
+
+// ── NEW COLLECTION MODAL ────────────────────────────────────────────────────
+function newCollModal(){
+  const step=S.newCollStep||1;
+  const steps=['Scope','Geo-Fence','Review'];
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false,newCollStep:1})">
+    <div style="background:#fff;border-radius:18px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:linear-gradient(135deg,#1a0505 0%,#C41230 100%);padding:20px 24px;border-radius:18px 18px 0 0;">
+        <div style="color:#fff;font-size:1.1rem;font-weight:800;">New Collection</div>
+        <div style="display:flex;gap:6px;margin-top:14px;">
+          ${steps.map((s,i)=>`<div style="flex:1;">
+            <div style="height:4px;border-radius:2px;background:${i+1<=step?'#fff':'rgba(255,255,255,0.3)'};margin-bottom:5px;"></div>
+            <div style="font-size:0.65rem;font-weight:700;color:${i+1<=step?'#fff':'rgba(255,255,255,0.5)'};">Step ${i+1}: ${s}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Collection Name</label>
+            <input placeholder="e.g. Happy Hour Passport \u2014 Spring 2026" style="width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:0.85rem;box-sizing:border-box;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Brand Scope</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div onclick="ss({newCollBrand:null})" style="border:2px solid ${!S.newCollBrand?'#C41230':'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${!S.newCollBrand?'#fef2f2':'#fff'};">
+                <div style="font-size:1rem;">&#127860;</div>
+                <div style="font-weight:700;font-size:0.82rem;margin-top:4px;">All Brands</div>
+                <div style="font-size:0.7rem;color:#64748b;">Group-wide collection, 17 locations</div>
+              </div>
+              ${BRANDS.map(b=>`<div onclick="ss({newCollBrand:'${b.id}'})" style="border:2px solid ${S.newCollBrand===b.id?b.color:'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${S.newCollBrand===b.id?b.color+'10':'#fff'};">
+                <div style="font-size:1rem;">${b.emoji}</div>
+                <div style="font-weight:700;font-size:0.78rem;margin-top:4px;">${b.short}</div>
+                <div style="font-size:0.68rem;color:#64748b;">${LOCATIONS.filter(l=>l.brand===b.id).length} locations</div>
+              </div>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===2?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Geo-Fence Tier</label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#C41230':'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fef2f2':'#fff'};">
+                <input type="radio" name="collGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
+                <div>
+                  <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${v.short}</div>
+                  <div style="font-size:0.7rem;color:#64748b;">${v.label}</div>
+                </div>
+              </label>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===3?`
+          <div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
+            ${infoRow('Brand Scope',S.newCollBrand?BRANDS.find(b=>b.id===S.newCollBrand)?.short||'—':'All Brands (Group-wide)')}
+            ${infoRow('Locations',S.newCollBrand?LOCATIONS.filter(l=>l.brand===S.newCollBrand).length+' locations':'17 locations')}
+            ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+          </div>
+          <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#991b1b;">
+            Drops can be added after the collection is created. Group-wide collections will appear across all brand apps.
+          </div>
+        `:''}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({newCollStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({newCollStep:${step+1}})" style="flex:2;background:#C41230;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next: ${steps[step]}</button>`:`<button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:2;background:#1a0505;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Create Collection</button>`}
+          <button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── PUSH MODAL ──────────────────────────────────────────────────────────────
+function pushModal(){
+  const step=S.pushStep||1;
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showPush:false,pushStep:1})">
+    <div style="background:#fff;border-radius:18px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:#C41230;padding:20px 24px;border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Push Drop</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:0.78rem;margin-top:2px;">Step ${step} of 3</div>
+        </div>
+        <button onclick="ss({showPush:false,pushStep:1})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;">X</button>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?pushStep1():step===2?pushStep2():pushStep3()}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({pushStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({pushStep:${step+1}})" style="flex:2;background:#C41230;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next</button>`:`<button onclick="ss({showPush:false,pushStep:1})" style="flex:2;background:#1a0505;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Push</button>`}
+          ${step===1?`<button onclick="ss({showPush:false,pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>`:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function pushStep1(){
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Select a Drop to Push</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;">
+      ${DROPS.filter(d=>d.status==='live'&&(!S.selectedBrand||d.brand===S.selectedBrand)).map(d=>{
+        const b=brandById(d.brand)||BRANDS[0];
+        const loc=locById(d.locId);
+        return `<div style="border:2px solid ${S.pushDrop===d.id?b.color:'#e5e7eb'};border-radius:10px;padding:12px 14px;cursor:pointer;background:${S.pushDrop===d.id?b.color+'08':'#fff'};" onclick="ss({pushDrop:'${d.id}'})">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:0.9rem;">${b.emoji}</span>
+              <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+            </div>
+            ${dropTypeBadge(d.type)}
+          </div>
+          <div style="font-size:0.7rem;color:#64748b;">${b.short} &middot; ${loc?loc.city:'—'} &middot; ${d.checkins} redemptions</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep2(){
+  const scopes=['All Guests Nearby','Guests in Restaurant','Guests on Block','VIP Regulars Only','Loyal Guests &amp; VIP'];
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Who receives this push?</div>
+    <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Select the audience for this drop notification</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      ${scopes.map(sc=>`<div onclick="ss({pushScope:'${sc}'})" style="padding:8px 14px;border-radius:20px;border:2px solid ${S.pushScope===sc?'#C41230':'#e5e7eb'};background:${S.pushScope===sc?'#fef2f2':'#fff'};font-size:0.75rem;font-weight:700;cursor:pointer;color:${S.pushScope===sc?'#C41230':'#475569'};">${sc}</div>`).join('')}
+    </div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Geo-Fence Tier</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#C41230':'#e5e7eb'};border-radius:8px;padding:8px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fef2f2':'#fff'};">
+        <input type="radio" name="pushGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
+        <span style="font-size:0.75rem;font-weight:600;color:#0f172a;">${v.short}</span>
+        <span style="font-size:0.68rem;color:#94a3b8;">${v.label}</span>
+      </label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep3(){
+  const drop=DROPS.find(d=>d.id===S.pushDrop);
+  const b=drop?brandById(drop.brand):null;
+  const loc=drop?locById(drop.locId):null;
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Preview &amp; Confirm</div>
+    <div style="background:#0f172a;border-radius:16px;padding:16px;margin-bottom:16px;">
+      <div style="background:#1e293b;border-radius:12px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:#C41230;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">${b?b.emoji:'🍽️'}</div>
+          <div>
+            <div style="color:#fff;font-size:0.78rem;font-weight:700;">${b?b.short:'Big Red F'} &middot; Nigh</div>
+            <div style="color:#94a3b8;font-size:0.7rem;">now</div>
+          </div>
+        </div>
+        <div style="color:#fff;font-weight:800;font-size:0.88rem;margin-bottom:4px;">${drop?drop.title:'Drop Selected'}</div>
+        <div style="color:#cbd5e1;font-size:0.78rem;">${loc?loc.city:'—'} &middot; Tap to redeem</div>
+      </div>
+    </div>
+    <div style="background:#f8f9fb;border-radius:10px;padding:14px 16px;">
+      ${infoRow('Drop',drop?drop.title:'Not selected')}
+      ${infoRow('Brand',b?b.short:'—')}
+      ${infoRow('Location',loc?loc.city:'—')}
+      ${infoRow('Audience',S.pushScope||'Not set')}
+      ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+    </div>
+  </div>`;
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('app').innerHTML=`
+    ${layout()}
+    ${S.showNewColl?newCollModal():''}
+    ${S.showPush?pushModal():''}
+  `;
+}
+
+window.ss=function(patch){Object.assign(S,patch);render();};
+window.go=function(page){S.page=page;render();};
+window.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>
