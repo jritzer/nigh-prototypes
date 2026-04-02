@@ -101,7 +101,6 @@ const S={
   partnerSearch:'',
   selectedOwnDrops:[],
   selectedPartner:null,
-  partnerDropTitle:'',
   newCollStep:1,
   inviteSent:false,
 };
@@ -319,27 +318,39 @@ function detailView(){
           const sr=pct(d.ci,d.res);
           const isLive=d.partnerStatus==='approved'||d.source==='own';
           const isDimmed=d.partnerStatus==='pending'||d.partnerStatus==='declined'||d.partnerStatus==='expired';
-          return `<div style="background:#fff;border-radius:12px;border:1px solid ${d.partnerStatus==='declined'?'#fecaca':d.partnerStatus==='pending'?'#fde68a':'#e5e7eb'};padding:13px 16px;display:flex;align-items:center;gap:14px;opacity:${isDimmed?'0.75':'1'};">
-            <!-- Source indicator -->
-            <div style="width:3px;height:40px;border-radius:2px;background:${isPartner?(d.partnerStatus==='approved'?'#16a34a':d.partnerStatus==='pending'?'#ca8a04':d.partnerStatus==='declined'?'#dc2626':'#94a3b8'):'#1d4ed8'};flex-shrink:0;"></div>
-            <!-- Partner logo or own badge -->
-            ${isPartner&&p?partnerLogo(p.id,30):`<div style="width:30px;height:30px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#1d4ed8;flex-shrink:0;">OWN</div>`}
+          const stripeColor=isPartner?(d.partnerStatus==='approved'?'#16a34a':d.partnerStatus==='pending'?'#ca8a04':d.partnerStatus==='declined'?'#dc2626':'#94a3b8'):'#1d4ed8';
+          return `<div style="background:#fff;border-radius:12px;border:1px solid ${d.partnerStatus==='declined'?'#fecaca':d.partnerStatus==='pending'?'#fde68a':'#e5e7eb'};padding:13px 16px;display:flex;align-items:center;gap:14px;opacity:${isDimmed?'0.78':'1'};">
+            <!-- Source stripe -->
+            <div style="width:3px;height:44px;border-radius:2px;background:${stripeColor};flex-shrink:0;"></div>
+            <!-- Logo -->
+            ${isPartner&&p?partnerLogo(p.id,30):`<div style="width:30px;height:30px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:800;color:#1d4ed8;flex-shrink:0;">OWN</div>`}
             <!-- Content -->
             <div style="flex:1;min-width:0;">
-              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
-              <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
-                ${isPartner&&p?`<span style="font-size:0.68rem;font-weight:700;color:${p.color};background:${p.color}15;padding:2px 7px;border-radius:20px;">${p.name}</span>`:`<span style="font-size:0.68rem;font-weight:700;color:#1d4ed8;background:#eff6ff;padding:2px 7px;border-radius:20px;">${ORG.name}</span>`}
-                ${isPartner?partnerBadge(d.partnerStatus):''}
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</span>
+                ${isPartner?`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`:''}
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                ${isPartner&&p
+                  ?`<span style="font-size:0.68rem;font-weight:700;color:${p.color};background:${p.color}18;padding:2px 7px;border-radius:20px;">${p.name}</span>
+                    <span style="font-size:0.65rem;color:#94a3b8;">Managed by ${p.name}</span>
+                    ${partnerBadge(d.partnerStatus)}`
+                  :`<span style="font-size:0.68rem;font-weight:700;color:#1d4ed8;background:#eff6ff;padding:2px 7px;border-radius:20px;">${ORG.name}</span>`}
               </div>
             </div>
-            <!-- Stats (only for live drops) -->
-            ${isLive&&d.res>0?`<div style="display:grid;grid-template-columns:52px 52px 52px;gap:6px;text-align:center;flex-shrink:0;">
-              <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.res}</div><div style="font-size:0.58rem;color:#94a3b8;">reserv.</div></div>
-              <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.ci}</div><div style="font-size:0.58rem;color:#94a3b8;">check-ins</div></div>
-              <div><div style="font-size:0.82rem;font-weight:800;color:${showColor(sr)};">${sr}%</div><div style="font-size:0.58rem;color:#94a3b8;">show rate</div></div>
-            </div>`:`<div style="width:174px;text-align:center;font-size:0.7rem;color:#94a3b8;">${d.partnerStatus==='pending'?'Awaiting approval…':d.partnerStatus==='declined'?'Partner declined':'No activity yet'}</div>`}
-            <!-- Remove button -->
-            <button onclick="event.stopPropagation()" style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;border:none;color:#94a3b8;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.1s;" onmouseover="this.style.background='#fee2e2';this.style.color='#b91c1c'" onmouseout="this.style.background='#f1f5f9';this.style.color='#94a3b8'">✕</button>
+            <!-- Stats -->
+            ${isLive&&d.res>0
+              ?`<div style="display:grid;grid-template-columns:52px 52px 52px;gap:6px;text-align:center;flex-shrink:0;">
+                  <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.res}</div><div style="font-size:0.58rem;color:#94a3b8;">reserv.</div></div>
+                  <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.ci}</div><div style="font-size:0.58rem;color:#94a3b8;">check-ins</div></div>
+                  <div><div style="font-size:0.82rem;font-weight:800;color:${showColor(sr)};">${sr}%</div><div style="font-size:0.58rem;color:#94a3b8;">show rate</div></div>
+                </div>`
+              :`<div style="width:174px;text-align:center;font-size:0.7rem;color:#94a3b8;font-style:italic;">${d.partnerStatus==='pending'?'Waiting for partner to add drop…':d.partnerStatus==='declined'?'Partner declined':'No activity yet'}</div>`}
+            <!-- Actions: own drops get Edit, partner drops are read-only -->
+            <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+              ${!isPartner?`<button onclick="event.stopPropagation()" style="font-size:0.65rem;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid #e5e7eb;background:#fff;color:#475569;cursor:pointer;">Edit</button>`:''}
+              <button onclick="event.stopPropagation()" style="width:22px;height:22px;border-radius:50%;background:#f1f5f9;border:none;color:#94a3b8;font-size:0.68rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.1s;" onmouseover="this.style.background='#fee2e2';this.style.color='#b91c1c'" onmouseout="this.style.background='#f1f5f9';this.style.color='#94a3b8'">✕</button>
+            </div>
           </div>`;
         }).join('')}
       </div>
@@ -444,7 +455,7 @@ function addDropPanel(coll){
           return `<button onclick="ss({addDropOpen:false})" style="width:100%;padding:9px;background:${bg};color:${fg};border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:${cur};">${lbl}</button>`;
         }
         if(S.inviteSent) return `<div style="text-align:center;background:#dcfce7;border-radius:9px;padding:9px;font-size:0.78rem;font-weight:700;color:#15803d;">&#10003; Invitation sent!</div>`;
-        const ready=S.selectedPartner&&S.partnerDropTitle;
+        const ready=!!S.selectedPartner;
         const bg=ready?ORG.color:'#e5e7eb';
         const fg=ready?'#fff':'#94a3b8';
         const cur=ready?'pointer':'default';
@@ -475,15 +486,16 @@ function ownDropsPanel(){
 }
 
 function partnerInvitePanel(filteredPartners){
+  const sel=S.selectedPartner?partner(S.selectedPartner):null;
   return `<div>
-    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;line-height:1.5;">Select a partner org on Nigh and specify which drop you'd like them to include. They'll receive an invitation to approve.</div>
+    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;line-height:1.6;">Select a partner org to invite. They'll choose which of their drops to contribute — they own and control all drop details.</div>
 
     <!-- Search -->
     <input oninput="ss({partnerSearch:this.value,selectedPartner:null})" value="${S.partnerSearch}" placeholder="Search partner orgs…" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;margin-bottom:10px;outline:none;" />
 
     <!-- Partner list -->
-    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
-      ${filteredPartners.map(p=>`<div onclick="ss({selectedPartner:'${p.id}',partnerDropTitle:''})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${S.selectedPartner===p.id?ORG.color:'#e5e7eb'};background:${S.selectedPartner===p.id?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:${S.selectedPartner?'14px':'0'};">
+      ${filteredPartners.map(p=>`<div onclick="ss({selectedPartner:'${p.id}'})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${S.selectedPartner===p.id?ORG.color:'#e5e7eb'};background:${S.selectedPartner===p.id?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
         ${partnerLogo(p.id,26)}
         <div style="flex:1;">
           <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${p.name}</div>
@@ -493,12 +505,18 @@ function partnerInvitePanel(filteredPartners){
       </div>`).join('')}
     </div>
 
-    <!-- Drop title input (shown once partner selected) -->
-    ${S.selectedPartner?`<div style="border-top:1px solid #f1f5f9;padding-top:12px;">
-      <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Drop to request from ${partner(S.selectedPartner).name}</label>
-      <input oninput="ss({partnerDropTitle:this.value})" value="${S.partnerDropTitle}" placeholder="e.g. Nike Summer Early Access Drop" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;outline:none;margin-bottom:8px;" />
-      <div style="background:#f8fafc;border-radius:9px;padding:10px 12px;font-size:0.7rem;color:#64748b;line-height:1.5;">
-        <strong style="color:#0f172a;">How it works:</strong> ${partner(S.selectedPartner).name} will receive an email and in-app notification. Once they approve, this drop will appear live in your bundle.
+    <!-- Confirmation block (shown once partner selected) -->
+    ${sel?`<div style="border-top:1px solid #f1f5f9;padding-top:12px;">
+      <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+        ${partnerLogo(sel.id,32)}
+        <div>
+          <div style="font-size:0.8rem;font-weight:800;color:#0f172a;">${sel.name}</div>
+          <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">Will choose & control their own drop</div>
+        </div>
+      </div>
+      <div style="background:${ORG.color}10;border-radius:9px;padding:10px 12px;display:flex;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:0.69rem;color:${ORG.color};font-weight:600;line-height:1.55;">${sel.name} will receive an invitation, then select or create the drop they want to contribute. They set all details — capacity, geo-fence, and timing.</span>
       </div>
     </div>`:''}
   </div>`;
@@ -568,7 +586,7 @@ function newCollView(){
       </div>
       <div style="background:${ORG.color}12;border-radius:12px;padding:14px 16px;display:flex;gap:10px;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style="font-size:0.75rem;color:${ORG.color};font-weight:600;line-height:1.5;">Your 2 own drops will be live immediately. Partner invitations will be sent to Nike and Nordstrom — their drops will appear in the bundle once approved.</span>
+        <span style="font-size:0.75rem;color:${ORG.color};font-weight:600;line-height:1.5;">Your 2 own drops go live in the bundle immediately. Nike and Nordstrom will each receive an invitation — they choose and fully control the drop they contribute. Their drops appear in the bundle once submitted.</span>
       </div>
     </div>`;
   }
