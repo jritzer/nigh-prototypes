@@ -1759,7 +1759,7 @@ function rBilling(){
         <div style="font-size:0.8rem;font-weight:700;color:#64748b;margin-bottom:6px;">${c.plan}</div>
         <div style="font-size:2.2rem;font-weight:900;color:#0f172a;margin-bottom:4px;">${fmtMoney(monthly)}<span style="font-size:1rem;color:#94a3b8;font-weight:500;">/mo</span></div>
         <div style="font-size:0.78rem;color:#94a3b8;margin-bottom:16px;">${locs.length} ${c.locsLabel.toLowerCase()} &times; ${fmtMoney(c.ppl)}/location/mo</div>
-        ${infoRow('Next billing date','Apr 1, 2026')}
+        ${infoRow('Next billing date','May 1, 2026')}
         ${infoRow('Payment method','Visa ending ···· 4242')}
         ${infoRow('Billing contact','billing@'+c.short.toLowerCase().replace(/\s/g,'')+'.com')}
         <div style="margin-top:14px;display:flex;gap:8px;">
@@ -1931,16 +1931,14 @@ function rSetup(){
         </div>`).join('')}
     </div>`);
 
-  // ── 6. Import ──
+  // ── 6. Import ── (POS/API integrations live in Settings > Integrations)
   const importMethods=[
-    {icon:'&#128196;',label:'CSV Import',          desc:'Upload a spreadsheet of locations with a standard template',    action:'Download Template',  color:'#1d4ed8',bg:'#eff6ff'},
-    {icon:'&#128279;',label:'POS / Property Sync', desc:'Connect to your point-of-sale or property management system',  action:'Connect',            color:'#15803d',bg:'#f0fdf4'},
-    {icon:'&#9881;',  label:'API Integration',     desc:'Programmatically push location data from your internal systems',action:'View Docs',          color:'#7c3aed',bg:'#f5f3ff'},
-    {icon:'&#43;',   label:'Manual Entry',         desc:'Add locations one at a time directly in the platform',          action:'Add Location',       color:'#475569',bg:'#f8fafc'},
+    {icon:'&#128196;',label:'CSV Import',    desc:'Upload a spreadsheet of locations using the standard Nigh template', action:'Download Template',color:'#1d4ed8',bg:'#eff6ff'},
+    {icon:'&#43;',   label:'Manual Entry',  desc:'Add locations one at a time directly in the platform',                action:'Add Location',    color:'#475569',bg:'#f8fafc'},
   ];
   const importHTML=card(`
-    ${sectionHd('Import & Sync Locations','Bring your location data into Nigh — one time or on a continuous sync.')}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    ${sectionHd('Import Locations','Add location data to Nigh. For ongoing sync via POS or API, see <span onclick="go(\'settings\')" style="color:${c.color};cursor:pointer;text-decoration:underline;">Settings &rarr; Integrations</span>.')}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
       ${importMethods.map(m=>`
         <div style="border:1.5px solid #e5e7eb;border-radius:12px;padding:16px;">
           <div style="font-size:1.4rem;margin-bottom:8px;">${m.icon}</div>
@@ -1948,6 +1946,9 @@ function rSetup(){
           <div style="font-size:0.7rem;color:#64748b;line-height:1.4;margin-bottom:12px;">${m.desc}</div>
           <button style="padding:6px 14px;background:${m.bg};color:${m.color};border:1px solid ${m.color}30;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">${m.action}</button>
         </div>`).join('')}
+    </div>
+    <div style="padding:12px 14px;background:#f8fafc;border-radius:10px;border:1px solid #f1f5f9;font-size:0.7rem;color:#64748b;">
+      &#128279; For continuous POS sync or API-driven location management, connect your systems under <span onclick="go('settings')" style="color:${c.color};cursor:pointer;font-weight:700;">Settings &rarr; Integrations</span>.
     </div>`);
 
   return `<div style="padding:28px 32px;max-width:960px;">
@@ -1983,12 +1984,15 @@ function rSettings(){
     </div>`;
   }
   return `<div style="padding:28px 32px;">
-    <div style="font-size:1.3rem;font-weight:900;color:#0f172a;margin-bottom:20px;">Settings</div>
+    <div style="margin-bottom:20px;">
+      <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Settings</div>
+      <div style="font-size:0.73rem;color:#94a3b8;margin-top:3px;">Operational preferences, notifications &amp; integrations &mdash; for structural setup (hierarchy, geo tiers, drop types) see <span onclick="go('setup')" style="color:${c.color};cursor:pointer;font-weight:700;">Configure</span></div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
       <div>
         ${settingsSection('Organization',[
           {label:'Organization Name',desc:c.name,action:'Edit'},
-          {label:'Plan',desc:c.plan,action:'Upgrade'},
+          {label:'Plan',desc:c.plan+' &mdash; <span onclick="go(\'billing\')" style="color:'+c.color+';cursor:pointer;font-weight:700;">View Billing &rarr;</span>'},
           {label:'Time Zone',desc:'America/Denver (MDT)',action:'Change'},
         ])}
         ${settingsSection('Drop Defaults',[
