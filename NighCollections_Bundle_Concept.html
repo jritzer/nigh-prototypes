@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nigh · Collections Bundle Concept</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;overflow:hidden;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+select,button,input,textarea{font-family:inherit;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+
+// ── BRAND ─────────────────────────────────────────────────────────────────────
+const ORG={name:'Flatirons Mall',color:'#1a4a8a',grad:'linear-gradient(180deg,#0f2d5e 0%,#1a4a8a 100%)',plan:'Enterprise Mall Pro'};
+
+// ── PARTNER ORGS ─────────────────────────────────────────────────────────────
+const PARTNERS=[
+  {id:'P01',name:'Nike',          short:'Nike',    color:'#111111',logo:'⊛'},
+  {id:'P02',name:'Nordstrom',     short:'Nordstrom',color:'#1a1a2e',logo:'N'},
+  {id:'P03',name:'Apple Store',   short:'Apple',   color:'#555555',logo:''},
+  {id:'P04',name:'Pottery Barn',  short:'PB',      color:'#7c4a2d',logo:'PB'},
+  {id:'P05',name:"Chick-fil-A",   short:'CFA',     color:'#e4002b',logo:'♥'},
+  {id:'P06',name:'REI Co-op',     short:'REI',     color:'#2a5c3f',logo:'⛺'},
+  {id:'P07',name:'Sephora',       short:'Sep',     color:'#000000',logo:'S'},
+  {id:'P08',name:"Macy's",        short:"Macy's",  color:'#cc0000',logo:'★'},
+];
+
+function partner(id){return PARTNERS.find(p=>p.id===id);}
+
+// ── OWN DROPS ─────────────────────────────────────────────────────────────────
+const OWN_DROPS=[
+  {id:'OD01',title:'Food Court Happy Hour',      type:'event',   status:'live',     loc:'Food Court',    cap:300,res:241},
+  {id:'OD02',title:'Mall Walker Early Entry',    type:'event',   status:'live',     loc:'Main Entrance',  cap:150,res:98},
+  {id:'OD03',title:'Free Parking Validation',    type:'offer',   status:'live',     loc:'Parking Garage', cap:500,res:389},
+  {id:'OD04',title:'Kids Zone Weekend Drop',     type:'event',   status:'scheduled',loc:'Kids Zone',      cap:200,res:0},
+  {id:'OD05',title:'Gift Card Bonus Weekend',    type:'offer',   status:'scheduled',loc:'Guest Services', cap:100,res:22},
+  {id:'OD06',title:'VIP Shopper Lounge Access',  type:'vip',     status:'live',     loc:'Level 2 Lounge', cap:50, res:48},
+];
+
+// ── COLLECTIONS ───────────────────────────────────────────────────────────────
+const COLLECTIONS=[
+  {
+    id:'C01',
+    name:'Holiday Shopping Pass',
+    desc:'Everything guests need for the holiday season — deals, parking, and exclusive drops across 6 top stores.',
+    status:'active',
+    enrolled:1840,
+    icon:'🎁',
+    drops:[
+      {id:'CD01',source:'own',   dropId:'OD03',title:'Free Parking Validation',      type:'offer',   ownerId:null,      partnerStatus:null, cap:500,res:389,ci:312},
+      {id:'CD02',source:'own',   dropId:'OD06',title:'VIP Shopper Lounge Access',     type:'vip',     ownerId:null,      partnerStatus:null, cap:50, res:48, ci:41},
+      {id:'CD03',source:'partner',dropId:'PD01',title:'Nike Holiday Early Access',    type:'launch',  ownerId:'P01',     partnerStatus:'approved',  cap:200,res:183,ci:164},
+      {id:'CD04',source:'partner',dropId:'PD02',title:'Nordstrom 20% Off Drop',       type:'offer',   ownerId:'P02',     partnerStatus:'approved',  cap:300,res:271,ci:240},
+      {id:'CD05',source:'partner',dropId:'PD03',title:'Apple Holiday Bundle Reveal',  type:'launch',  ownerId:'P03',     partnerStatus:'pending',   cap:150,res:0,  ci:0},
+      {id:'CD06',source:'partner',dropId:'PD04',title:"Macy's VIP Friends & Family",  type:'vip',     ownerId:'P08',     partnerStatus:'pending',   cap:200,res:0,  ci:0},
+      {id:'CD07',source:'partner',dropId:'PD05',title:'Sephora Beauty Drop',          type:'offer',   ownerId:'P07',     partnerStatus:'declined',  cap:100,res:0,  ci:0},
+      {id:'CD08',source:'own',   dropId:'OD01',title:'Food Court Happy Hour',         type:'event',   ownerId:null,      partnerStatus:null, cap:300,res:241,ci:198},
+    ],
+  },
+  {
+    id:'C02',
+    name:'Spring Weekend Kickoff',
+    desc:'A curated spring drop bundle — outdoor brands, food, and mall events all in one pass.',
+    status:'active',
+    enrolled:612,
+    icon:'🌸',
+    drops:[
+      {id:'CD11',source:'own',   dropId:'OD01',title:'Food Court Happy Hour',         type:'event',   ownerId:null,  partnerStatus:null,       cap:300,res:241,ci:198},
+      {id:'CD12',source:'own',   dropId:'OD04',title:'Kids Zone Weekend Drop',        type:'event',   ownerId:null,  partnerStatus:null,       cap:200,res:0,  ci:0},
+      {id:'CD13',source:'partner',dropId:'PD11',title:'REI Spring Gear Early Access', type:'launch',  ownerId:'P06', partnerStatus:'approved',  cap:120,res:108,ci:94},
+      {id:'CD14',source:'partner',dropId:'PD12',title:'Pottery Barn New Arrivals',    type:'launch',  ownerId:'P04', partnerStatus:'approved',  cap:80, res:71, ci:61},
+      {id:'CD15',source:'partner',dropId:'PD13',title:'CFA Spring Promo Drop',        type:'offer',   ownerId:'P05', partnerStatus:'expired',   cap:150,res:0,  ci:0},
+    ],
+  },
+  {
+    id:'C03',
+    name:'New Member Welcome Bundle',
+    desc:'First-time mall visitors get access to a curated intro bundle across key stores and amenities.',
+    status:'draft',
+    enrolled:0,
+    icon:'👋',
+    drops:[
+      {id:'CD21',source:'own',   dropId:'OD02',title:'Mall Walker Early Entry',       type:'event',   ownerId:null,  partnerStatus:null,       cap:150,res:0,  ci:0},
+      {id:'CD22',source:'own',   dropId:'OD05',title:'Gift Card Bonus Weekend',       type:'offer',   ownerId:null,  partnerStatus:null,       cap:100,res:0,  ci:0},
+      {id:'CD23',source:'partner',dropId:'PD21',title:'Nike Welcome Drop',             type:'offer',   ownerId:'P01', partnerStatus:'pending',   cap:100,res:0,  ci:0},
+    ],
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const S={
+  view:'list',          // 'list' | 'detail' | 'new'
+  collId:null,
+  addDropOpen:false,
+  addTab:'own',         // 'own' | 'partner'
+  partnerSearch:'',
+  selectedOwnDrops:[],
+  selectedPartner:null,
+  partnerDropTitle:'',
+  newCollStep:1,
+  inviteSent:false,
+};
+function ss(p){Object.assign(S,p);render();}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function pct(a,b){return b>0?Math.round(a/b*100):0;}
+function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
+function bar(p,color,h){h=h||6;return `<div style="background:#f1f5f9;border-radius:4px;height:${h}px;overflow:hidden;"><div style="background:${color};height:100%;width:${Math.min(p,100)}%;border-radius:4px;"></div></div>`;}
+function infoRow(l,v){return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${l}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${v}</span></div>`;}
+
+function partnerLogo(pid, sz){
+  sz=sz||22;
+  const p=partner(pid);
+  if(!p) return '';
+  return `<div style="width:${sz}px;height:${sz}px;border-radius:5px;background:${p.color};color:#fff;font-size:${Math.round(sz*0.45)}px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px;">${p.logo}</div>`;
+}
+
+// Partner drop status badge
+function partnerBadge(status){
+  if(!status) return '';
+  const m={
+    approved:`<span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#15803d;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10003; Approved</span>`,
+    pending: `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef9c3;color:#854d0e;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#8987; Pending</span>`,
+    declined:`<span style="display:inline-flex;align-items:center;gap:4px;background:#fee2e2;color:#b91c1c;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10005; Declined</span>`,
+    expired: `<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#94a3b8;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#9203; Expired</span>`,
+  };
+  return m[status]||'';
+}
+
+function collBadge(status){
+  const m={active:'#dcfce7:#16a34a:Active',draft:'#f1f5f9:#64748b:Draft',paused:'#fef9c3:#854d0e:Paused'};
+  const [bg,c,l]=(m[status]||'#f1f5f9:#64748b:—').split(':');
+  return `<span style="background:${bg};color:${c};font-size:0.65rem;font-weight:800;padding:3px 9px;border-radius:20px;">${l}</span>`;
+}
+
+// Small stacked partner logos for a collection
+function partnerStackFor(coll){
+  const partnerIds=[...new Set(coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='approved').map(d=>d.ownerId))];
+  if(!partnerIds.length) return '';
+  return `<div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap;">
+    ${partnerIds.slice(0,4).map(pid=>partnerLogo(pid,18)).join('')}
+    ${partnerIds.length>4?`<span style="font-size:0.65rem;color:#94a3b8;font-weight:700;">+${partnerIds.length-4}</span>`:''}
+  </div>`;
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────────────────
+function nighBug(sz){return `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="50" rx="46" ry="46" fill="#0E4EF5"/><ellipse cx="50" cy="50" rx="30" ry="38" fill="#fff"/><circle cx="50" cy="36" r="10" fill="#0E4EF5"/><ellipse cx="35" cy="52" rx="8" ry="6" fill="#0E4EF5"/><ellipse cx="65" cy="52" rx="8" ry="6" fill="#0E4EF5"/><ellipse cx="50" cy="62" rx="14" ry="12" fill="#0E4EF5"/><line x1="24" y1="44" x2="8" y2="34" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="24" y1="54" x2="6" y2="54" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="24" y1="64" x2="8" y2="72" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="44" x2="92" y2="34" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="54" x2="94" y2="54" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="64" x2="92" y2="72" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/></svg>`;}
+function sidebar(){
+  const navItems=[
+    {id:'dashboard',label:'Dashboard',   icon:'▦',  active:false},
+    {id:'locations', label:'Locations',   icon:'⊙',  active:false},
+    {id:'drops',     label:'Drops',       icon:'★',  active:false},
+    {id:'collections',label:'Collections',icon:'⊞', active:true},
+    {id:'analytics', label:'Analytics',   icon:'▮',  active:false},
+    {id:'team',      label:'Team',        icon:'◎',  active:false},
+    {id:'billing',   label:'Billing',     icon:'▭',  active:false},
+  ];
+  return `<div style="width:210px;min-width:210px;background:${ORG.grad};display:flex;flex-direction:column;padding:18px 0;overflow-y:auto;flex-shrink:0;">
+    <div style="padding:0 16px 18px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+      ${nighBug(26)}
+      <div>
+        <div style="color:#fff;font-weight:900;font-size:0.88rem;">${ORG.name}</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:0.6rem;margin-top:2px;">${ORG.plan}</div>
+      </div>
+    </div>
+    ${navItems.map(n=>`<button style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${n.active?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${n.active?'#fff':'transparent'};color:${n.active?'#fff':'rgba(255,255,255,0.5)'};font-size:0.77rem;font-weight:${n.active?'700':'400'};cursor:pointer;text-align:left;">
+      <span style="font-size:0.75rem;opacity:0.8;">${n.icon}</span>${n.label}
+    </button>`).join('')}
+  </div>`;
+}
+
+// ── TOPBAR ────────────────────────────────────────────────────────────────────
+function topbar(title, sub){
+  return `<div style="padding:12px 28px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      ${S.view!=='list'?`<button onclick="ss({view:'list',collId:null,addDropOpen:false})" style="display:flex;align-items:center;gap:5px;color:${ORG.color};font-size:0.75rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:4px;">&larr; All Collections</button>`:''}
+      <div style="font-size:1rem;font-weight:900;color:#0f172a;">${title}</div>
+      ${sub?`<div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">${sub}</div>`:''}
+    </div>
+    ${S.view==='list'?`<button onclick="ss({view:'new',newCollStep:1})" style="background:${ORG.color};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ New Collection</button>`:''}
+  </div>`;
+}
+
+// ── LIST VIEW ─────────────────────────────────────────────────────────────────
+function listView(){
+  return `<div style="padding:22px 28px;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      ${COLLECTIONS.map(coll=>{
+        const totalDrops=coll.drops.length;
+        const ownDrops=coll.drops.filter(d=>d.source==='own').length;
+        const partnerApproved=coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='approved').length;
+        const partnerPending=coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='pending').length;
+        const totalCi=coll.drops.reduce((s,d)=>s+(d.ci||0),0);
+        const totalRes=coll.drops.filter(d=>d.partnerStatus!=='pending'&&d.partnerStatus!=='declined').reduce((s,d)=>s+(d.res||0),0);
+        const sr=pct(totalCi,totalRes);
+
+        return `<div onclick="ss({view:'detail',collId:'${coll.id}',addDropOpen:false})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;cursor:pointer;transition:all 0.12s;display:flex;flex-direction:column;gap:10px;" onmouseover="this.style.borderColor='${ORG.color}60';this.style.boxShadow='0 4px 18px rgba(0,0,0,0.09)'" onmouseout="this.style.borderColor='#e5e7eb';this.style.boxShadow=''">
+          <!-- Header row -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <div style="font-size:1.8rem;line-height:1;">${coll.icon}</div>
+            ${collBadge(coll.status)}
+          </div>
+          <!-- Name & desc -->
+          <div>
+            <div style="font-size:0.92rem;font-weight:800;color:#0f172a;margin-bottom:4px;">${coll.name}</div>
+            <div style="font-size:0.72rem;color:#64748b;line-height:1.45;">${coll.desc}</div>
+          </div>
+          <!-- Drop breakdown -->
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:0.68rem;font-weight:700;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:20px;">${ownDrops} own</span>
+            <span style="font-size:0.68rem;font-weight:700;background:#f0fdf4;color:#15803d;padding:2px 8px;border-radius:20px;">${partnerApproved} partner</span>
+            ${partnerPending?`<span style="font-size:0.68rem;font-weight:700;background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:20px;">${partnerPending} pending</span>`:''}
+          </div>
+          <!-- Partner logos -->
+          ${partnerStackFor(coll)}
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-top:8px;border-top:1px solid #f1f5f9;">
+            <div style="text-align:center;">
+              <div style="font-size:0.95rem;font-weight:900;color:${ORG.color};">${fmtNum(coll.enrolled)}</div>
+              <div style="font-size:0.58rem;color:#94a3b8;margin-top:1px;">enrolled</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:0.95rem;font-weight:900;color:#0f172a;">${totalDrops}</div>
+              <div style="font-size:0.58rem;color:#94a3b8;margin-top:1px;">drops</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:0.95rem;font-weight:900;color:${coll.enrolled?showColor(sr):'#94a3b8'};">${coll.enrolled?sr+'%':'—'}</div>
+              <div style="font-size:0.58rem;color:#94a3b8;margin-top:1px;">show rate</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+      <!-- Empty new card -->
+      <div onclick="ss({view:'new',newCollStep:1})" style="background:transparent;border:2px dashed #e5e7eb;border-radius:14px;padding:20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:200px;transition:all 0.12s;" onmouseover="this.style.borderColor='${ORG.color}';this.style.background='${ORG.color}06'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='transparent'">
+        <div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#94a3b8;">+</div>
+        <div style="font-size:0.78rem;font-weight:700;color:#94a3b8;">New Collection</div>
+        <div style="font-size:0.68rem;color:#cbd5e1;text-align:center;line-height:1.4;">Bundle your own drops with partner drops into a single guest pass</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── DETAIL VIEW ───────────────────────────────────────────────────────────────
+function detailView(){
+  const coll=COLLECTIONS.find(c=>c.id===S.collId);
+  if(!coll) return listView();
+
+  const ownDrops=coll.drops.filter(d=>d.source==='own');
+  const partnerDrops=coll.drops.filter(d=>d.source==='partner');
+  const approved=partnerDrops.filter(d=>d.partnerStatus==='approved');
+  const pending=partnerDrops.filter(d=>d.partnerStatus==='pending');
+  const declined=partnerDrops.filter(d=>d.partnerStatus==='declined');
+  const expired=partnerDrops.filter(d=>d.partnerStatus==='expired');
+  const totalCi=coll.drops.reduce((s,d)=>s+(d.ci||0),0);
+  const totalRes=coll.drops.filter(d=>d.partnerStatus!=='pending'&&d.partnerStatus!=='declined').reduce((s,d)=>s+(d.res||0),0);
+  const sr=pct(totalCi,totalRes);
+
+  return `<div style="padding:20px 28px;display:flex;gap:20px;height:100%;overflow:hidden;">
+    <!-- Main panel -->
+    <div style="flex:1;overflow-y:auto;min-width:0;">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <div style="font-size:2.4rem;line-height:1;">${coll.icon}</div>
+        <div style="flex:1;">
+          <div style="font-size:1.2rem;font-weight:900;color:#0f172a;">${coll.name}</div>
+          <div style="font-size:0.75rem;color:#64748b;margin-top:3px;">${coll.desc}</div>
+        </div>
+        ${collBadge(coll.status)}
+      </div>
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+        ${[
+          {l:'Enrolled',   v:fmtNum(coll.enrolled), c:ORG.color},
+          {l:'Total Drops',v:coll.drops.length,       c:'#0f172a'},
+          {l:'Check-ins',  v:fmtNum(totalCi),         c:'#0f172a'},
+          {l:'Show Rate',  v:coll.enrolled?sr+'%':'—',c:coll.enrolled?showColor(sr):'#94a3b8'},
+        ].map(k=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;text-align:center;">
+          <div style="font-size:1.5rem;font-weight:900;color:${k.c};">${k.v}</div>
+          <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${k.l}</div>
+        </div>`).join('')}
+      </div>
+
+      <!-- Pending partner alert -->
+      ${pending.length?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1rem;">⏳</span>
+        <div style="flex:1;">
+          <div style="font-size:0.78rem;font-weight:700;color:#92400e;">${pending.length} partner invitation${pending.length>1?'s':''} awaiting approval</div>
+          <div style="font-size:0.7rem;color:#b45309;margin-top:2px;">These drops won't be visible to guests until the partner approves.</div>
+        </div>
+      </div>`:''}
+
+      <!-- Declined alert -->
+      ${declined.length?`<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1rem;">⚠️</span>
+        <div style="flex:1;">
+          <div style="font-size:0.78rem;font-weight:700;color:#b91c1c;">${declined.length} partner drop${declined.length>1?'s':''} declined — you may want to replace ${declined.length>1?'them':'it'}</div>
+          <div style="font-size:0.7rem;color:#ef4444;margin-top:2px;">This slot appears empty to guests until you add a replacement drop.</div>
+        </div>
+        <button onclick="ss({addDropOpen:true,addTab:'partner'})" style="background:#b91c1c;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Drop</button>
+      </div>`:''}
+
+      <!-- Drop bundle grid -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">Bundle Drops <span style="font-size:0.72rem;font-weight:500;color:#94a3b8;">${coll.drops.length} total</span></div>
+        <button onclick="ss({addDropOpen:true,addTab:'own'})" style="display:flex;align-items:center;gap:6px;background:${ORG.color};color:#fff;border:none;padding:7px 14px;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;">+ Add Drop</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${coll.drops.map(d=>{
+          const isPartner=d.source==='partner';
+          const p=isPartner?partner(d.ownerId):null;
+          const sr=pct(d.ci,d.res);
+          const isLive=d.partnerStatus==='approved'||d.source==='own';
+          const isDimmed=d.partnerStatus==='pending'||d.partnerStatus==='declined'||d.partnerStatus==='expired';
+          return `<div style="background:#fff;border-radius:12px;border:1px solid ${d.partnerStatus==='declined'?'#fecaca':d.partnerStatus==='pending'?'#fde68a':'#e5e7eb'};padding:13px 16px;display:flex;align-items:center;gap:14px;opacity:${isDimmed?'0.75':'1'};">
+            <!-- Source indicator -->
+            <div style="width:3px;height:40px;border-radius:2px;background:${isPartner?(d.partnerStatus==='approved'?'#16a34a':d.partnerStatus==='pending'?'#ca8a04':d.partnerStatus==='declined'?'#dc2626':'#94a3b8'):'#1d4ed8'};flex-shrink:0;"></div>
+            <!-- Partner logo or own badge -->
+            ${isPartner&&p?partnerLogo(p.id,30):`<div style="width:30px;height:30px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#1d4ed8;flex-shrink:0;">OWN</div>`}
+            <!-- Content -->
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
+                ${isPartner&&p?`<span style="font-size:0.68rem;font-weight:700;color:${p.color};background:${p.color}15;padding:2px 7px;border-radius:20px;">${p.name}</span>`:`<span style="font-size:0.68rem;font-weight:700;color:#1d4ed8;background:#eff6ff;padding:2px 7px;border-radius:20px;">${ORG.name}</span>`}
+                ${isPartner?partnerBadge(d.partnerStatus):''}
+              </div>
+            </div>
+            <!-- Stats (only for live drops) -->
+            ${isLive&&d.res>0?`<div style="display:grid;grid-template-columns:52px 52px 52px;gap:6px;text-align:center;flex-shrink:0;">
+              <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.res}</div><div style="font-size:0.58rem;color:#94a3b8;">reserv.</div></div>
+              <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.ci}</div><div style="font-size:0.58rem;color:#94a3b8;">check-ins</div></div>
+              <div><div style="font-size:0.82rem;font-weight:800;color:${showColor(sr)};">${sr}%</div><div style="font-size:0.58rem;color:#94a3b8;">show rate</div></div>
+            </div>`:`<div style="width:174px;text-align:center;font-size:0.7rem;color:#94a3b8;">${d.partnerStatus==='pending'?'Awaiting approval…':d.partnerStatus==='declined'?'Partner declined':'No activity yet'}</div>`}
+            <!-- Remove button -->
+            <button onclick="event.stopPropagation()" style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;border:none;color:#94a3b8;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.1s;" onmouseover="this.style.background='#fee2e2';this.style.color='#b91c1c'" onmouseout="this.style.background='#f1f5f9';this.style.color='#94a3b8'">✕</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Right panel: summary + actions -->
+    <div style="width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;overflow-y:auto;">
+      <!-- Drop breakdown card -->
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.8rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Drop Sources</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#1d4ed8;"></div><span style="font-size:0.75rem;color:#475569;">Your drops</span></div>
+            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${ownDrops.length}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#16a34a;"></div><span style="font-size:0.75rem;color:#475569;">Partner · approved</span></div>
+            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${approved.length}</span>
+          </div>
+          ${pending.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#ca8a04;"></div><span style="font-size:0.75rem;color:#475569;">Partner · pending</span></div>
+            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${pending.length}</span>
+          </div>`:''}
+          ${declined.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#dc2626;"></div><span style="font-size:0.75rem;color:#475569;">Partner · declined</span></div>
+            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${declined.length}</span>
+          </div>`:''}
+          ${expired.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#94a3b8;"></div><span style="font-size:0.75rem;color:#475569;">Partner · expired</span></div>
+            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${expired.length}</span>
+          </div>`:''}
+        </div>
+      </div>
+
+      <!-- Partner logos card -->
+      ${approved.length?`<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.8rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Partner Orgs</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${[...new Set([...approved,...pending].map(d=>d.ownerId))].map(pid=>{
+            const p=partner(pid);
+            const pDrops=coll.drops.filter(d=>d.ownerId===pid);
+            const st=pDrops[0].partnerStatus;
+            return `<div style="display:flex;align-items:center;gap:9px;">
+              ${partnerLogo(pid,28)}
+              <div style="flex:1;"><div style="font-size:0.75rem;font-weight:700;color:#0f172a;">${p.name}</div><div style="font-size:0.63rem;color:#94a3b8;">${pDrops.length} drop${pDrops.length>1?'s':''}</div></div>
+              ${partnerBadge(st)}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`:''}
+
+      <!-- Actions -->
+      <div style="background:${ORG.color}10;border-radius:14px;border:1px solid ${ORG.color}30;padding:16px 18px;">
+        <div style="font-size:0.8rem;font-weight:800;color:${ORG.color};margin-bottom:10px;">Actions</div>
+        <button onclick="ss({addDropOpen:true,addTab:'own'})" style="width:100%;padding:8px;background:${ORG.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Add Your Drop</button>
+        <button onclick="ss({addDropOpen:true,addTab:'partner'})" style="width:100%;padding:8px;background:#fff;color:${ORG.color};border:1px solid ${ORG.color}60;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Invite Partner Drop</button>
+        <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:9px;font-weight:600;font-size:0.75rem;cursor:pointer;">Edit Details</button>
+      </div>
+    </div>
+
+    <!-- Add Drop side panel -->
+    ${S.addDropOpen?addDropPanel(coll):''}
+  </div>`;
+}
+
+// ── ADD DROP PANEL ────────────────────────────────────────────────────────────
+function addDropPanel(coll){
+  const filteredPartners=S.partnerSearch
+    ? PARTNERS.filter(p=>p.name.toLowerCase().includes(S.partnerSearch.toLowerCase()))
+    : PARTNERS;
+
+  return `<div style="width:320px;flex-shrink:0;background:#fff;border-radius:14px;border:1px solid #e5e7eb;display:flex;flex-direction:column;overflow:hidden;max-height:100%;">
+    <!-- Panel header -->
+    <div style="padding:16px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">Add Drop to Bundle</div>
+      <button onclick="ss({addDropOpen:false})" style="background:#f1f5f9;border:none;border-radius:8px;padding:4px 9px;cursor:pointer;font-size:0.78rem;color:#64748b;">✕</button>
+    </div>
+
+    <!-- Tab switcher -->
+    <div style="display:flex;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
+      <button onclick="ss({addTab:'own'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='own'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='own'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='own'?'700':'500'};cursor:pointer;">
+        Your Drops
+      </button>
+      <button onclick="ss({addTab:'partner'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='partner'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='partner'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='partner'?'700':'500'};cursor:pointer;">
+        Invite Partner
+      </button>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:14px 16px;">
+      ${S.addTab==='own' ? ownDropsPanel() : partnerInvitePanel(filteredPartners)}
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:12px 16px;border-top:1px solid #f1f5f9;flex-shrink:0;">
+      ${(()=>{
+        if(S.addTab==='own'){
+          const n=S.selectedOwnDrops.length;
+          const bg=n?ORG.color:'#e5e7eb';
+          const fg=n?'#fff':'#94a3b8';
+          const cur=n?'pointer':'default';
+          const lbl=n?('Add '+n+' Drop'+(n>1?'s':'')):'Select a drop';
+          return `<button onclick="ss({addDropOpen:false})" style="width:100%;padding:9px;background:${bg};color:${fg};border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:${cur};">${lbl}</button>`;
+        }
+        if(S.inviteSent) return `<div style="text-align:center;background:#dcfce7;border-radius:9px;padding:9px;font-size:0.78rem;font-weight:700;color:#15803d;">&#10003; Invitation sent!</div>`;
+        const ready=S.selectedPartner&&S.partnerDropTitle;
+        const bg=ready?ORG.color:'#e5e7eb';
+        const fg=ready?'#fff':'#94a3b8';
+        const cur=ready?'pointer':'default';
+        return `<button onclick="ss({inviteSent:true})" style="width:100%;padding:9px;background:${bg};color:${fg};border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:${cur};">Send Invitation</button>`;
+      })()}
+    </div>
+  </div>`;
+}
+
+function ownDropsPanel(){
+  return `<div>
+    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;">Select one or more of your active drops to add to this bundle.</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${OWN_DROPS.map(d=>{
+        const selected=S.selectedOwnDrops.includes(d.id);
+        return `<div onclick="ss({selectedOwnDrops:selected?S.selectedOwnDrops.filter(x=>x!=='${d.id}'):[...S.selectedOwnDrops,'${d.id}']})" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid ${selected?ORG.color:'#e5e7eb'};background:${selected?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
+          <div style="width:18px;height:18px;border-radius:5px;border:2px solid ${selected?ORG.color:'#e5e7eb'};background:${selected?ORG.color:'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            ${selected?`<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.75rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
+            <div style="font-size:0.65rem;color:#94a3b8;margin-top:1px;">${d.loc} &middot; <span style="color:${d.status==='live'?'#16a34a':'#ca8a04'};font-weight:600;">${d.status}</span></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function partnerInvitePanel(filteredPartners){
+  return `<div>
+    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;line-height:1.5;">Select a partner org on Nigh and specify which drop you'd like them to include. They'll receive an invitation to approve.</div>
+
+    <!-- Search -->
+    <input oninput="ss({partnerSearch:this.value,selectedPartner:null})" value="${S.partnerSearch}" placeholder="Search partner orgs…" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;margin-bottom:10px;outline:none;" />
+
+    <!-- Partner list -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+      ${filteredPartners.map(p=>`<div onclick="ss({selectedPartner:'${p.id}',partnerDropTitle:''})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${S.selectedPartner===p.id?ORG.color:'#e5e7eb'};background:${S.selectedPartner===p.id?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
+        ${partnerLogo(p.id,26)}
+        <div style="flex:1;">
+          <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${p.name}</div>
+          <div style="font-size:0.62rem;color:#94a3b8;">On Nigh</div>
+        </div>
+        ${S.selectedPartner===p.id?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`:''}
+      </div>`).join('')}
+    </div>
+
+    <!-- Drop title input (shown once partner selected) -->
+    ${S.selectedPartner?`<div style="border-top:1px solid #f1f5f9;padding-top:12px;">
+      <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Drop to request from ${partner(S.selectedPartner).name}</label>
+      <input oninput="ss({partnerDropTitle:this.value})" value="${S.partnerDropTitle}" placeholder="e.g. Nike Summer Early Access Drop" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;outline:none;margin-bottom:8px;" />
+      <div style="background:#f8fafc;border-radius:9px;padding:10px 12px;font-size:0.7rem;color:#64748b;line-height:1.5;">
+        <strong style="color:#0f172a;">How it works:</strong> ${partner(S.selectedPartner).name} will receive an email and in-app notification. Once they approve, this drop will appear live in your bundle.
+      </div>
+    </div>`:''}
+  </div>`;
+}
+
+// ── NEW COLLECTION WIZARD ─────────────────────────────────────────────────────
+function newCollView(){
+  const step=S.newCollStep||1;
+  const steps=['Name it','Add Drops','Review'];
+  const progressBar=`<div style="display:flex;align-items:center;max-width:400px;margin:0 auto 28px;">
+    ${steps.map((s,i)=>`<div style="display:flex;align-items:center;flex:1;">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+        <div style="width:28px;height:28px;border-radius:50%;background:${i<step?ORG.color:i===step-1?ORG.color:'#e5e7eb'};color:${i<=step-1?'#fff':'#94a3b8'};font-size:0.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;">${i<step-1?'✓':i+1}</div>
+        <div style="font-size:0.62rem;color:${i===step-1?ORG.color:'#94a3b8'};font-weight:${i===step-1?'700':'500'};margin-top:4px;white-space:nowrap;">${s}</div>
+      </div>
+      ${i<steps.length-1?`<div style="height:2px;background:${i<step-1?ORG.color:'#e5e7eb'};flex:1;margin-bottom:16px;"></div>`:''}
+    </div>`).join('')}
+  </div>`;
+
+  let body='';
+  if(step===1){
+    body=`<div style="max-width:460px;margin:0 auto;">
+      <div style="margin-bottom:14px;"><label style="font-size:0.75rem;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Collection Name</label>
+      <input placeholder="e.g. Holiday Shopping Pass" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.9rem;color:#0f172a;outline:none;" /></div>
+      <div style="margin-bottom:14px;"><label style="font-size:0.75rem;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Description <span style="font-weight:400;color:#94a3b8;">(optional)</span></label>
+      <textarea placeholder="What will guests get from this bundle?" rows="3" style="width:100%;padding:10px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.82rem;color:#0f172a;resize:none;outline:none;"></textarea></div>
+      <div><label style="font-size:0.75rem;font-weight:700;color:#475569;display:block;margin-bottom:8px;">Icon</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${['🎁','🌸','👋','🎉','⚡','🏆','🎭','🌟'].map((e,i)=>`<button style="width:40px;height:40px;border-radius:10px;border:1.5px solid ${i===0?ORG.color:'#e5e7eb'};background:${i===0?ORG.color+'15':'#fff'};font-size:1.3rem;cursor:pointer;">${e}</button>`).join('')}
+      </div></div>
+    </div>`;
+  } else if(step===2){
+    body=`<div style="max-width:600px;margin:0 auto;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- Own drops -->
+        <div>
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:10px;">Your Drops</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${OWN_DROPS.map((d,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;border:1.5px solid ${i<2?ORG.color:'#e5e7eb'};background:${i<2?ORG.color+'0d':'#fff'};cursor:pointer;">
+              <div style="width:16px;height:16px;border-radius:4px;border:2px solid ${i<2?ORG.color:'#e5e7eb'};background:${i<2?ORG.color:'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${i<2?`<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}
+              </div>
+              <div style="flex:1;min-width:0;"><div style="font-size:0.72rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div></div>
+            </div>`).join('')}
+          </div>
+        </div>
+        <!-- Partner invites -->
+        <div>
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:10px;">Partner Invites</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${PARTNERS.slice(0,4).map((p,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:10px;border:1.5px solid ${i<2?'#fde68a':'#e5e7eb'};background:${i<2?'#fffbeb':'#fff'};cursor:pointer;">
+              ${partnerLogo(p.id,22)}
+              <div style="flex:1;min-width:0;"><div style="font-size:0.72rem;font-weight:700;color:#0f172a;">${p.name}</div><div style="font-size:0.62rem;color:#94a3b8;">${i<2?'Invitation pending':'+ Invite'}</div></div>
+              ${i<2?`<span style="font-size:0.6rem;font-weight:800;background:#fef9c3;color:#854d0e;padding:2px 6px;border-radius:20px;">Pending</span>`:''}
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    body=`<div style="max-width:460px;margin:0 auto;">
+      <div style="background:#f8fafc;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+        ${infoRow('Collection Name','Holiday Shopping Pass')}
+        ${infoRow('Your Drops','2 selected')}
+        ${infoRow('Partner Invites','2 invitations will be sent')}
+        ${infoRow('Status','Draft until partners approve')}
+      </div>
+      <div style="background:${ORG.color}12;border-radius:12px;padding:14px 16px;display:flex;gap:10px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:0.75rem;color:${ORG.color};font-weight:600;line-height:1.5;">Your 2 own drops will be live immediately. Partner invitations will be sent to Nike and Nordstrom — their drops will appear in the bundle once approved.</span>
+      </div>
+    </div>`;
+  }
+
+  return `<div style="padding:28px;display:flex;flex-direction:column;height:100%;overflow-y:auto;">
+    <div style="font-size:1.2rem;font-weight:900;color:#0f172a;margin-bottom:20px;text-align:center;">New Collection</div>
+    ${progressBar}
+    ${body}
+    <div style="display:flex;justify-content:space-between;margin-top:28px;max-width:${step===2?600:460}px;margin-left:auto;margin-right:auto;width:100%;">
+      ${step>1?`<button onclick="ss({newCollStep:${step-1}})" style="padding:10px 22px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#475569;font-weight:700;font-size:0.8rem;cursor:pointer;">&larr; Back</button>`:'<div></div>'}
+      ${step<3
+        ?`<button onclick="ss({newCollStep:${step+1}})" style="padding:10px 24px;border-radius:10px;background:${ORG.color};color:#fff;border:none;font-weight:700;font-size:0.8rem;cursor:pointer;">Next &rarr;</button>`
+        :`<button onclick="ss({view:'list'})" style="padding:10px 24px;border-radius:10px;background:${ORG.color};color:#fff;border:none;font-weight:700;font-size:0.8rem;cursor:pointer;">🚀 Create Collection</button>`}
+    </div>
+  </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  const coll=S.collId?COLLECTIONS.find(c=>c.id===S.collId):null;
+  const titleMap={
+    list:   ['Collections', `${COLLECTIONS.length} bundles · ${COLLECTIONS.reduce((s,c)=>s+c.drops.length,0)} total drops`],
+    detail: [coll?coll.name:'Collection', coll?`${coll.drops.length} drops in bundle`:''],
+    new:    ['New Collection', 'Create a drop bundle'],
+  };
+  const [title, sub]=titleMap[S.view]||['Collections',''];
+
+  document.getElementById('app').innerHTML=`
+    <div style="display:flex;height:100vh;overflow:hidden;">
+      ${sidebar()}
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        ${topbar(title,sub)}
+        <div style="flex:1;overflow-y:auto;">
+          ${S.view==='list'?listView():S.view==='detail'?detailView():newCollView()}
+        </div>
+      </div>
+    </div>
+  `;
+}
+render();
+</script>
+</body>
+</html>
