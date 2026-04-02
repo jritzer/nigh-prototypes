@@ -2051,7 +2051,27 @@ function rSettings() {
     return `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:16px;"><div style="font-weight:800;font-size:0.92rem;margin-bottom:2px;">${title}</div><div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">${sub}</div>${rows}</div>`;
   }
   return `<div style="max-width:640px;">
-    ${sCard('Brand Settings','Enterprise account configuration',
+    <!-- YOUR ACCOUNT -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:24px;margin-bottom:16px;">
+      <div style="font-weight:800;font-size:0.92rem;margin-bottom:2px;">Your Account</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:20px;">Personal profile &amp; security settings</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #f1f5f9;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;">AT</div>
+        <div>
+          <div style="font-weight:800;font-size:1rem;margin-bottom:2px;">Alex Torres</div>
+          <div style="font-size:0.78rem;color:#64748b;">alex.torres@patagonia.com</div>
+          <div style="display:inline-block;margin-top:5px;font-size:0.7rem;font-weight:700;background:#EFF6FF;color:#1D4ED8;padding:2px 9px;border-radius:5px;">Corporate Admin</div>
+        </div>
+        <button style="margin-left:auto;padding:7px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
+      </div>
+      ${sRow('First Name','Alex')+sRow('Last Name','Torres')+sRow('Role','Corporate Admin')+sRow('Organization','Patagonia Enterprise')+sRow('Email','alex.torres@patagonia.com')+sRow('Mobile','(720) 555-0180')}
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button style="flex:1;padding:9px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.8rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Change Password</button>
+        <button style="flex:1;padding:9px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.8rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Two-Factor Auth</button>
+        <button style="flex:1;padding:9px;border:1px solid #FCA5A5;border-radius:9px;font-size:0.8rem;font-weight:700;background:#fff;cursor:pointer;color:#EF4444;">Sign Out</button>
+      </div>
+    </div>
+    ${sCard('Enterprise Settings','Patagonia account configuration',
       sRow('Brand Name','Patagonia')+sRow('Account Tier','Enterprise')+sRow('Total Locations','20')+sRow('Active Regions','5')+sRow('Primary Contact','alex.torres@patagonia.com')+sRow('Nigh Enterprise ID','ENT-PAT-001')
     )}
     ${sCard('Drop Policies','Corporate rules applied to all locations',

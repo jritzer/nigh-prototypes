@@ -1061,12 +1061,15 @@ function renderMenu(){
   const userRole=team.find(t=>t.name==='Josh Ritzer')?.role||'Team Member';
   const canManagePartners=['Owner','Manager'].includes(userRole);
   const canViewLog=['Owner','Admin','Manager'].includes(userRole);
+  const a=acct();
+  const billingLabel=a.enterprise?'Billing':'Subscription';
+  const billingDesc=a.enterprise?`Managed by ${a.parentOrg}`:'Plan, billing & usage';
   const items=[
     {ic:'users',l:'Team Management',d:'Manage staff & roles',act:"S.menuSub='team';render()"},
     {ic:'chart',l:'Analytics',d:'Performance & metrics',act:"S.menuSub='analytics';render()"},
     {ic:'dollar',l:'Payout',d:'Revenue & transactions',act:"S.menuSub='payout';render()"},
-    {ic:'shield',l:'Pro Account',d:'Business profile',act:"S.menuSub='profile';render()"},
-    {ic:'star',l:'Subscription',d:'Plan, billing & usage',act:"S.menuSub='subscription';render()"},
+    {ic:'shield',l:'Pro Account',d:'Location profile & public identity',act:"S.menuSub='profile';render()"},
+    {ic:'star',l:billingLabel,d:billingDesc,act:"S.menuSub='subscription';render()"},
     ...(canManagePartners?[{ic:'link',l:'Partners',d:'Manage & invite partners',act:"S.menuSub='partners';render()"}]:[]),
     {ic:'user',l:'Customers',d:`${customerList.length} contacts · Import & manage`,act:"S.menuSub='customers';render()"},
   ];
@@ -1074,7 +1077,7 @@ function renderMenu(){
   <div style="padding:14px 16px">
     ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
     ${canViewLog?`<button onclick="S.menuSub='activitylog';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('history',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Activity Log</div><div style="font-size:11px;color:#6B7280">History across account</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`:''}
-    <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">Account & preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
+    <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">Your account &amp; app preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
   </div>`;
 }
 function renderTeam(){
@@ -1186,12 +1189,49 @@ function renderPartners(){
 }
 function renderSubscription(){
   const a=acct();
-  const plan={name:'Growth',price:'$149',cycle:'/ month',renewDate:'Apr 28, 2026',status:'Active'};
+  const smbPlan={name:'Growth',price:'$149',cycle:'/ month',renewDate:'Apr 28, 2026',status:'Active'};
   const tiers=[
     {name:'Starter',price:'$49',drops:'5 drops/mo',current:false},
     {name:'Growth',price:'$149',drops:'20 drops/mo',current:true},
     {name:'Scale',price:'$299',drops:'Unlimited drops',current:false},
   ];
+  if(a.enterprise){
+    return`${hdr('Billing','Plan & Usage',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px 32px">
+    <div style="background:linear-gradient(135deg,#1B2A4A,#0F4C81);border-radius:16px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase">Plan</div>
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.12);padding:2px 9px;border-radius:20px;border:1px solid rgba(255,255,255,0.18)">Enterprise</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
+        <div style="font-size:24px;font-weight:800;color:#fff">Unlimited</div>
+        <div style="font-size:14px;font-weight:500;color:rgba(255,255,255,0.65)">drops &amp; locations</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="background:rgba(34,197,94,0.2);color:#4ADE80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid rgba(74,222,128,0.3)">Active</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.55)">${a.parentOrg} Enterprise Account</span>
+      </div>
+    </div>
+    <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start">
+      <div style="font-size:20px;flex-shrink:0">🏢</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#0369A1;margin-bottom:4px">Billing managed by ${a.parentOrg}</div>
+        <div style="font-size:12px;color:#0c4a6e;line-height:1.5">This location's subscription is included in the <strong>${a.parentOrg}</strong> enterprise account. To make changes to the plan or billing, contact your enterprise administrator.</div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Usage — ${a.name}</div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;color:#374151">Drops This Month</div><div style="font-size:13px;font-weight:600;color:#111827">18 / Unlimited</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;color:#374151">Active Collections</div><div style="font-size:13px;font-weight:600;color:#111827">3</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;color:#374151">Guest Reach</div><div style="font-size:13px;font-weight:600;color:#111827">4,820 guests</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px"><div style="font-size:13px;color:#374151">Location</div><div style="font-size:13px;font-weight:600;color:#111827">${a.location||'—'}</div></div>
+    </div>
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:12px;color:#9CA3AF">Need billing help? Contact <span style="color:#3B82F6;font-weight:600">enterprise@nigh.com</span></div>
+    </div>
+  </div>`;
+  }
   return`${hdr('Subscription','Plan, Billing & Usage',"S.menuSub=null;render()")}
   <div style="padding:14px 16px 32px">
     <div style="background:linear-gradient(135deg,#1B2A4A,#3B82F6);border-radius:16px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden">
@@ -1201,12 +1241,12 @@ function renderSubscription(){
         <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.12);padding:2px 9px;border-radius:20px;border:1px solid rgba(255,255,255,0.18)">${a.cat}</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
-        <div style="font-size:24px;font-weight:800;color:#fff">${plan.name}</div>
-        <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85)">${plan.price}<span style="font-size:12px;font-weight:400">${plan.cycle}</span></div>
+        <div style="font-size:24px;font-weight:800;color:#fff">${smbPlan.name}</div>
+        <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85)">${smbPlan.price}<span style="font-size:12px;font-weight:400">${smbPlan.cycle}</span></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span style="background:rgba(34,197,94,0.2);color:#4ADE80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid rgba(74,222,128,0.3)">${plan.status}</span>
-        <span style="font-size:11px;color:rgba(255,255,255,0.55)">Renews ${plan.renewDate}</span>
+        <span style="background:rgba(34,197,94,0.2);color:#4ADE80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid rgba(74,222,128,0.3)">${smbPlan.status}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.55)">Renews ${smbPlan.renewDate}</span>
       </div>
     </div>
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Billing</div>
@@ -1499,7 +1539,7 @@ function renderUserAccount(){
         <div style="font-size:11px;color:#3B82F6;font-weight:600">@joshr</div>
       </div>
       ${[['First Name','Josh'],['Last Name','Ritzer'],['Username','@joshr'],['Mobile Phone','(303) 555-0192'],['Email','josh@centro.com']].map(r=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">${r[0]}</label><input type="text" value="${r[1]}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box"/></div>`).join('')}
-      <div style="margin-bottom:0"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Pro Account Name</label><input type="text" value="Centro Mexican Kitchen" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box" placeholder="How your name appears on this Pro Account"/></div>
+      <div style="margin-bottom:0"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Pro Account Name</label><input type="text" value="${acct().brandName||acct().name}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box" placeholder="How your name appears on this Pro Account"/></div>
     </div></div>
     <button style="width:100%;background:#3B82F6;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600;margin-bottom:10px">Save Changes</button>
     <button style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#374151">Change Password</button>
