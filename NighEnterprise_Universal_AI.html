@@ -2113,10 +2113,17 @@ function pushModal(){
       </button>`).join('')}
     </div>`;
   } else if(step===2){
-    const selLoc=S.pushLoc?locs.find(l=>l.id===S.pushLoc):null;
-    body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Select ${c.locLabel}</div>
+    const regions=[...new Set(locs.map(l=>l.t1))];
+    const showFilter=locs.length>6;
+    const filterRegion=S.pushRegionFilter||null;
+    const filteredLocs=filterRegion?locs.filter(l=>l.t1===filterRegion):locs;
+    body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:10px;">Select ${c.locLabel}</div>
+    ${showFilter?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+      <button onclick="ss({pushRegionFilter:null})" style="padding:4px 12px;border-radius:20px;border:1.5px solid ${!filterRegion?c.color:'#e5e7eb'};background:${!filterRegion?c.color+'18':'#fff'};color:${!filterRegion?c.color:'#64748b'};font-size:0.68rem;font-weight:700;cursor:pointer;">All</button>
+      ${regions.map(r=>`<button onclick="ss({pushRegionFilter:'${r}'})" style="padding:4px 12px;border-radius:20px;border:1.5px solid ${filterRegion===r?c.color:'#e5e7eb'};background:${filterRegion===r?c.color+'18':'#fff'};color:${filterRegion===r?c.color:'#64748b'};font-size:0.68rem;font-weight:700;cursor:pointer;">${r}</button>`).join('')}
+    </div>`:''}
     <div style="max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
-      ${locs.map(l=>`<button onclick="ss({pushLoc:'${l.id}'})" style="padding:10px 14px;border-radius:10px;border:2px solid ${S.pushLoc===l.id?c.color:'#e5e7eb'};background:${S.pushLoc===l.id?c.color+'10':'#fff'};cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;">
+      ${filteredLocs.map(l=>`<button onclick="ss({pushLoc:'${l.id}'})" style="padding:10px 14px;border-radius:10px;border:2px solid ${S.pushLoc===l.id?c.color:'#e5e7eb'};background:${S.pushLoc===l.id?c.color+'10':'#fff'};cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;">
         <div>
           <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${l.name}</div>
           <div style="font-size:0.65rem;color:#94a3b8;">${l.t1}${l.t2?' · '+l.t2:''} · ${l.city}</div>
@@ -2126,6 +2133,11 @@ function pushModal(){
     </div>`;
   } else if(step===3){
     const selType=types.find(t=>t.id===S.pushType)||types[0];
+    const eventSel=c.special==='gameday'&&c.timings
+      ?`<div><label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Timing</label><select style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;">${c.timings.map(t=>`<option value="${t}">${t.replace(/-/g,' ').replace(/\b\w/g,x=>x.toUpperCase())}</option>`).join('')}</select></div>`
+      :c.special==='festival'&&c.days
+      ?`<div><label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Day</label><select style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;">${c.days.map(d=>`<option value="${d.id}">${d.label} — ${d.date}</option>`).join('')}</select></div>`
+      :'';
     body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Drop Details</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div>
@@ -2134,13 +2146,24 @@ function pushModal(){
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Date</label>
+          <input type="date" style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;" />
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Time</label>
+          <input type="time" style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;" />
+        </div>
+      </div>
+      ${eventSel}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
           <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Capacity</label>
           <input type="number" placeholder="100" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.8rem;" />
         </div>
         <div>
           <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Booking Window</label>
           <select style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;">
-            ${[1,2,3,4,6,12,24].map(h=>`<option value="${h}" ${h===d.bh?'selected':''}>${h} hr</option>`).join('')}
+            ${[1,2,3,4,6,12,24].map(h=>`<option value="${h}" ${h===4?'selected':''}>${h} hr</option>`).join('')}
           </select>
         </div>
       </div>
@@ -2150,17 +2173,27 @@ function pushModal(){
           ${Object.entries(c.geoTiers).map(([k,gt])=>`<option value="${k}">${gt.label}</option>`).join('')}
         </select>
       </div>
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Description <span style="font-weight:400;color:#94a3b8;">(optional)</span></label>
+        <textarea placeholder="What should guests expect from this drop?" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;resize:none;height:68px;font-family:inherit;line-height:1.5;box-sizing:border-box;"></textarea>
+      </div>
     </div>`;
   } else {
     const selType=types.find(t=>t.id===S.pushType)||types[0];
     const selLoc=locs.find(l=>l.id===S.pushLoc);
-    body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:14px;">Confirm &amp; Push</div>
-    <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+    const locMgr=c.hier&&c.hier.length>1?c.hier[c.hier.length-1]+' manager':'location manager';
+    body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:14px;">Confirm &amp; Create</div>
+    <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
       ${infoRow('Type',`${selType.icon} ${selType.label}`)}
       ${infoRow(c.locLabel,selLoc?selLoc.name:'—')}
+      ${infoRow('Booking Window','Up to 4 hrs in advance')}
       ${infoRow('Status','Goes live immediately')}
     </div>
-    <div style="background:${c.color}12;border-radius:12px;padding:12px 16px;font-size:0.78rem;color:${c.color};font-weight:600;">Guests within the geo-fence will receive a push notification.</div>`;
+    <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:0.7rem;font-weight:800;color:#92400e;margin-bottom:5px;">&#128161; What happens when you create this drop</div>
+      <div style="font-size:0.73rem;color:#78350f;line-height:1.6;">Guests within the geo-fence will receive a push notification. Your ${locMgr} will be notified and can track redemptions in real time. The drop appears in your ${c.locsLabel.toLowerCase()}'s activity feed immediately.</div>
+    </div>
+    <div style="background:${c.color}12;border-radius:10px;padding:9px 14px;font-size:0.73rem;color:${c.color};font-weight:600;">&#128204; Targeting ${selLoc?selLoc.name:'selected '+c.locLabel.toLowerCase()} · ${selType.label}</div>`;
   }
 
   return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showPush:false})">
@@ -2182,8 +2215,7 @@ function pushModal(){
 function newCollModal(){
   const c=cfg();
   const step=S.collStep||1;
-  const triggers=['First visit','After check-in','After reservation','Manual enrollment'];
-  const steps=['Trigger','Sequence','Launch'];
+  const steps=['Name','Add Drops','Confirm'];
   const progressBar=`<div style="display:flex;align-items:center;gap:0;margin-bottom:20px;">
     ${steps.map((s,i)=>`<div style="display:flex;align-items:center;flex:1;">
       <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
@@ -2194,45 +2226,85 @@ function newCollModal(){
     </div>`).join('')}
   </div>`;
 
+  const bundleTypes=[
+    {id:'bundle',icon:'📦',label:'Drop Bundle',desc:'Curated group of drops guests browse at their own pace'},
+    {id:'flash',icon:'⚡',label:'Flash Pack',desc:'Limited-time themed grouping with urgency'},
+    {id:'loyalty',icon:'⭐',label:'Loyalty Set',desc:'Exclusive drops for returning or VIP guests'},
+    {id:'partner',icon:'🤝',label:'Partner Bundle',desc:'Co-branded drops with partner organizations'},
+  ];
+
   let body='';
   if(step===1){
-    body=`<div>
-      <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Collection Name</label>
-      <input placeholder="e.g. VIP Loyalty Track" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.8rem;margin-bottom:14px;" />
-      <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:6px;">Enrollment Trigger</label>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        ${triggers.map((t,i)=>`<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;cursor:pointer;">
-          <input type="radio" name="coll-trigger" ${i===0?'checked':''} style="accent-color:${c.color};">
-          <span style="font-size:0.78rem;font-weight:600;color:#0f172a;">${t}</span>
-        </label>`).join('')}
+    const selBundle=S.collBundleType||'bundle';
+    body=`<div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Collection Name</label>
+        <input placeholder="e.g. Game Day Bundle, VIP Access Pack…" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.8rem;box-sizing:border-box;" />
+      </div>
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Description <span style="font-weight:400;color:#94a3b8;">(optional)</span></label>
+        <textarea placeholder="What is this collection for? Who is it targeting?" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;resize:none;height:64px;font-family:inherit;line-height:1.5;box-sizing:border-box;"></textarea>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:7px;">Collection Type</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${bundleTypes.map(bt=>`<button onclick="ss({collBundleType:'${bt.id}'})" style="padding:10px 12px;border-radius:10px;border:2px solid ${selBundle===bt.id?c.color:'#e5e7eb'};background:${selBundle===bt.id?c.color+'10':'#fff'};cursor:pointer;text-align:left;">
+            <div style="font-size:1.1rem;margin-bottom:4px;">${bt.icon}</div>
+            <div style="font-size:0.74rem;font-weight:700;color:${selBundle===bt.id?c.color:'#0f172a'};">${bt.label}</div>
+            <div style="font-size:0.66rem;color:#94a3b8;margin-top:2px;line-height:1.4;">${bt.desc}</div>
+          </button>`).join('')}
+        </div>
       </div>
     </div>`;
   } else if(step===2){
+    const drops=c.drops||[];
+    const selDrops=S.collDrops||[];
     body=`<div>
-      <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Drop Sequence (up to 5)</div>
-      ${[1,2,3].map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f8fafc;border-radius:10px;margin-bottom:8px;">
-        <div style="width:22px;height:22px;border-radius:50%;background:${c.color};color:#fff;font-size:0.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${i}</div>
-        <input placeholder="Drop ${i} title…" style="flex:1;padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;" />
-        <select style="padding:6px 8px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.72rem;background:#fff;">
-          ${c.dropTypes.map(t=>`<option>${t.icon} ${t.label}</option>`).join('')}
-        </select>
-      </div>`).join('')}
-      <button style="width:100%;padding:8px;border:1px dashed #e5e7eb;border-radius:10px;background:transparent;color:#94a3b8;font-size:0.75rem;font-weight:600;cursor:pointer;">+ Add Drop</button>
+      <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:4px;">Select Drops to Include</div>
+      <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:12px;">Choose existing drops or drafts to bundle into this collection.</div>
+      <div style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+        ${drops.length?drops.map(d=>{
+          const dt=c.dropTypes.find(t=>t.id===d.type)||c.dropTypes[0];
+          const loc=c.locations.find(l=>l.id===d.locId);
+          const isSel=selDrops.includes(d.id);
+          return `<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:2px solid ${isSel?c.color:'#e5e7eb'};border-radius:10px;background:${isSel?c.color+'08':'#fff'};cursor:pointer;">
+            <input type="checkbox" ${isSel?'checked':''} onchange="(function(id){var a=S.collDrops||[];a=a.includes(id)?a.filter(x=>x!==id):[...a,id];ss({collDrops:a})})('${d.id}')" style="accent-color:${c.color};width:14px;height:14px;flex-shrink:0;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${dt.icon} ${d.title}</div>
+              <div style="font-size:0.65rem;color:#94a3b8;margin-top:1px;">${loc?loc.name:'—'} · <span style="color:${d.status==='live'?'#16a34a':d.status==='upcoming'?'#d97706':'#94a3b8'};font-weight:700;">${d.status}</span></div>
+            </div>
+            ${isSel?`<span style="color:${c.color};font-size:0.85rem;flex-shrink:0;">&#10003;</span>`:''}
+          </label>`;
+        }).join(''):`<div style="text-align:center;padding:32px 20px;color:#94a3b8;">
+          <div style="font-size:2rem;margin-bottom:8px;">📭</div>
+          <div style="font-size:0.78rem;font-weight:600;">No drops yet</div>
+          <div style="font-size:0.72rem;margin-top:4px;">Create some drops first, then bundle them into a collection.</div>
+        </div>`}
+      </div>
+      ${drops.length?`<div style="margin-top:10px;padding:8px 12px;background:#f8fafc;border-radius:8px;font-size:0.72rem;color:#64748b;">${selDrops.length} drop${selDrops.length!==1?'s':''} selected</div>`:''}
     </div>`;
   } else {
+    const selBundle=S.collBundleType||'bundle';
+    const bt=bundleTypes.find(b=>b.id===selBundle)||bundleTypes[0];
+    const selDrops=S.collDrops||[];
     body=`<div>
-      <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Ready to Launch</div>
+      <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Ready to Publish</div>
       <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-        ${infoRow('Drops in Sequence','3')}
-        ${infoRow('Trigger','First visit')}
-        ${infoRow('Status','Activate now')}
+        ${infoRow('Type',`${bt.icon} ${bt.label}`)}
+        ${infoRow('Drops',selDrops.length?`${selDrops.length} selected`:'None selected')}
+        ${infoRow('Visibility','All guests · App & Web')}
+        ${infoRow('Status','Active on publish')}
       </div>
-      <div style="background:${c.color}12;border-radius:12px;padding:12px 16px;font-size:0.78rem;color:${c.color};font-weight:600;">Guests will automatically enroll on their first visit to any ${c.locLabel.toLowerCase()}.</div>
+      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:12px;">
+        <div style="font-size:0.7rem;font-weight:800;color:#92400e;margin-bottom:5px;">&#128161; What happens when you publish this collection</div>
+        <div style="font-size:0.73rem;color:#78350f;line-height:1.6;">Guests browsing the Nigh app will see this collection on your brand page. They can browse all drops in the bundle and claim any available ones. Partners tagged on drops will also see engagement via shared analytics.</div>
+      </div>
+      <div style="background:${c.color}12;border-radius:10px;padding:9px 14px;font-size:0.73rem;color:${c.color};font-weight:600;">&#128204; ${bt.icon} ${bt.label} · ${selDrops.length} drop${selDrops.length!==1?'s':''} · Ready to go live</div>
     </div>`;
   }
 
   return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false})">
-    <div style="background:#fff;border-radius:18px;width:460px;max-height:82vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+    <div style="background:#fff;border-radius:18px;width:480px;max-height:85vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="font-size:1rem;font-weight:900;color:#0f172a;">New Collection</div>
         <button onclick="ss({showNewColl:false})" style="background:#f1f5f9;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;color:#64748b;">✕</button>
@@ -2241,7 +2313,7 @@ function newCollModal(){
       ${body}
       <div style="display:flex;justify-content:space-between;margin-top:20px;">
         ${step>1?`<button onclick="ss({collStep:${step-1}})" style="padding:9px 20px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#475569;font-weight:700;font-size:0.78rem;cursor:pointer;">&larr; Back</button>`:'<div></div>'}
-        ${step<3?`<button onclick="ss({collStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`:`<button onclick="ss({showNewColl:false})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Launch</button>`}
+        ${step<3?`<button onclick="ss({collStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`:`<button onclick="ss({showNewColl:false,collStep:1,collDrops:[],collBundleType:null})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Publish Collection</button>`}
       </div>
     </div>
   </div>`;
