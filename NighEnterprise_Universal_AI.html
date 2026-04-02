@@ -16,7 +16,7 @@ select,button,input{font-family:inherit;}
 'use strict';
 
 // ── ICONS ─────────────────────────────────────────────────────────────────────
-function nighBug(sz){sz=sz||32;return `<svg viewBox="0 0 100 100" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;"><ellipse cx="50" cy="50" rx="46" ry="46" fill="#0E4EF5"/><ellipse cx="50" cy="50" rx="30" ry="38" fill="#fff"/><circle cx="50" cy="36" r="10" fill="#0E4EF5"/><ellipse cx="35" cy="52" rx="8" ry="6" fill="#0E4EF5"/><ellipse cx="65" cy="52" rx="8" ry="6" fill="#0E4EF5"/><ellipse cx="50" cy="62" rx="14" ry="12" fill="#0E4EF5"/><line x1="24" y1="44" x2="8" y2="34" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="24" y1="54" x2="6" y2="54" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="24" y1="64" x2="8" y2="72" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="44" x2="92" y2="34" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="54" x2="94" y2="54" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/><line x1="76" y1="64" x2="92" y2="72" stroke="#0E4EF5" stroke-width="4" stroke-linecap="round"/></svg>`;}
+function nighBug(sz){sz=sz||32;return `<svg viewBox="0 0 360 360" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="flex-shrink:0;display:inline-block;vertical-align:middle;"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>`;}
 function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
@@ -83,6 +83,14 @@ const CONFIGS={
       {id:'C03',name:'Back to School Push',   desc:'Student-targeted drops across all store locations',            drops:3,enrolled:628, ci:571, status:'active',icon:'&#127979;'},
       {id:'C04',name:'Clearance Event',       desc:'End-of-season flash sale drops to liquidate inventory',        drops:2,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
     ],
+    partners:[
+      {id:'P01',name:'Samsung Electronics',  type:'Brand',    status:'Active',  since:'Jan 2026',drops:3},
+      {id:'P02',name:'Sony',                 type:'Brand',    status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P03',name:'Apple Inc.',           type:'Brand',    status:'Active',  since:'Mar 2026',drops:2},
+      {id:'P04',name:'Microsoft',            type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'LG Electronics',       type:'Brand',    status:'Invited', since:'Mar 2026',drops:0},
+      {id:'P06',name:'Bose',                 type:'Brand',    status:'Declined',since:'Feb 2026',drops:0},
+    ],
   },
 
   chipotle:{
@@ -136,6 +144,13 @@ const CONFIGS={
       {id:'C02',name:'New Item Launch Week',  desc:'First-look drops for new menu items across all markets',      drops:2,enrolled:840, ci:762, status:'active',icon:'&#127381;'},
       {id:'C03',name:'Community Meal Drive',  desc:'Charity and community drops across neighborhood locations',   drops:3,enrolled:420, ci:381, status:'active',icon:'&#127881;'},
       {id:'C04',name:'Catering Promo Bundle', desc:'Special catering offer drops for group and office orders',    drops:2,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Tabasco Brand',        type:'Brand',    status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P02',name:'Oatly',               type:'Brand',    status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'Impossible Foods',     type:'Brand',    status:'Active',  since:'Mar 2026',drops:1},
+      {id:'P04',name:'DoorDash',            type:'Partner',  status:'Invited', since:'Mar 2026',drops:0},
+      {id:'P05',name:'Visit Denver',         type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
     ],
   },
 
@@ -193,6 +208,13 @@ const CONFIGS={
       {id:'C02',name:'Sponsor Partner Pack',  desc:'Co-branded drops from Bud Light, AT&T and Miller Lite',      drops:3,enrolled:480, ci:434, status:'active',icon:'&#11088;'},
       {id:'C03',name:'VIP Suite Experience',  desc:'Exclusive premium drops for suite and club ticket holders',   drops:2,enrolled:68,  ci:62,  status:'active',icon:'&#127885;'},
       {id:'C04',name:'Post-Game Deals',       desc:'End-of-game merch and concession liquidation bundle',         drops:3,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Bud Light',           type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P02',name:'Miller Lite',         type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'AT&T',               type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P04',name:'Empower Retirement', type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'Nationwide Insurance',type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
     ],
   },
 
@@ -259,6 +281,14 @@ const CONFIGS={
       {id:'C03',name:'Vendor Village Bundle', desc:'Food, merch and artisan vendor drops at end of each day',     drops:3,enrolled:1840,ci:1672,status:'active',icon:'&#127880;'},
       {id:'C04',name:'Weekend 2 Headliners',  desc:'Exclusive drops for W2 headliner experiences',               drops:3,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
     ],
+    partners:[
+      {id:'P01',name:'Heineken',            type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P02',name:'H&M',                type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P03',name:'YouTube',            type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P04',name:'American Express',   type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P05',name:'Absolut Vodka',      type:'Brand',    status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P06',name:'Marriott Bonvoy',    type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
+    ],
   },
 
   disney:{
@@ -312,6 +342,13 @@ const CONFIGS={
       {id:'C02',name:'Galaxy\'s Edge Bundle', desc:'Lightsaber, Cantina and Millennium Falcon experience drops',  drops:3,enrolled:120, ci:112, status:'active',icon:'&#127885;'},
       {id:'C03',name:'Park Hopper Deals',     desc:'Sponsor and dining drops valid across all 4 parks',           drops:4,enrolled:1240,ci:1128,status:'active',icon:'&#127884;'},
       {id:'C04',name:'Fantasmic! VIP Night',  desc:'Evening bundle with dining, viewing deck and character meet', drops:3,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Coca-Cola',          type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:3},
+      {id:'P02',name:'Chase Bank',         type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'HP Inc.',            type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P04',name:'Marriott Hotels',    type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'Hertz',             type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
     ],
   },
 
@@ -368,6 +405,14 @@ const CONFIGS={
       {id:'C02',name:'Sponsor Activation',   desc:'Co-branded drops from Bud Light, Monster & partners',  drops:3,enrolled:380,ci:341,status:'active',icon:'&#11088;'},
       {id:'C03',name:'VIP Fight Experience', desc:'Exclusive backstage and premium access bundle',         drops:2,enrolled:28, ci:26, status:'active',icon:'&#127885;'},
       {id:'C04',name:'Late Night Liquidation',desc:'End-of-event concession and merch clearance drops',   drops:3,enrolled:0,  ci:0,  status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Bud Light',          type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P02',name:'Monster Energy',     type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'DraftKings',         type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P04',name:'Model Whiskey',      type:'Brand',    status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'BMW',               type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
+      {id:'P06',name:'Panini America',     type:'Brand',    status:'Declined',since:'Feb 2026',drops:0},
     ],
   },
 
@@ -429,6 +474,14 @@ const CONFIGS={
       {id:'C03',name:'Fan Village Weekend',    desc:'General fan experience drops across the full weekend',     drops:3,enrolled:22000,ci:20100,status:'active',icon:'&#127881;'},
       {id:'C04',name:'End-of-Night Deals',     desc:'Late evening vendor and merch liquidation bundle',         drops:2,enrolled:0,ci:0,status:'draft',icon:'&#128640;'},
     ],
+    partners:[
+      {id:'P01',name:'Heineken',           type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P02',name:'Rolex',             type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'DHL',               type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P04',name:'Pirelli',           type:'Partner',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'Aramco',            type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P06',name:'LVMH',             type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
+    ],
   },
 
   bigRedf:{
@@ -480,6 +533,13 @@ const CONFIGS={
       {id:'C02',name:'Chef\'s Week Specials',   desc:'Limited seasonal chef drops across all brands this week',drops:4,enrolled:148,ci:131,status:'active',icon:'&#127869;'},
       {id:'C03',name:'Loyalty Member Bundle',   desc:'Exclusive drops for Big Red F loyalty members',          drops:3,enrolled:96, ci:84, status:'active',icon:'&#129351;'},
       {id:'C04',name:'Weekend Dining Pass',     desc:'Bundle of drops valid Fri\u2013Sun across all locations', drops:5,enrolled:0,  ci:0,  status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Avery Brewing Co',   type:'Brand',    status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P02',name:'New Belgium Brewing',type:'Brand',    status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P03',name:'Odell Brewing',      type:'Brand',    status:'Active',  since:'Mar 2026',drops:1},
+      {id:'P04',name:'Visit Boulder',      type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P05',name:'Topo Chico',         type:'Brand',    status:'Invited', since:'Mar 2026',drops:0},
     ],
   },
 
@@ -571,11 +631,12 @@ function sidebar(){
   const c=cfg();
   const nav=[
     {id:'dashboard',  label:'Dashboard',  icon:'dashboard'},
-    {id:'locations',  label:c.locsLabel,  icon:'locations'},
-    {id:'drops',      label:'Drops',       icon:'drops'},
+    {id:'locations',  label:'Locations',  icon:'locations'},
+    {id:'drops',      label:'Drops',       icon:'nighBug'},
     {id:'customers',  label:'Guests',      icon:'customers'},
     {id:'collections',label:'Collections',icon:'collections'},
     {id:'analytics',  label:'Analytics',  icon:'analytics'},
+    {id:'partners',   label:'Partners',    icon:'users'},
     {id:'users',      label:'Team',        icon:'users'},
     {id:'billing',    label:'Billing',     icon:'billing'},
     {id:'settings',   label:'Settings',   icon:'settings'},
@@ -587,7 +648,7 @@ function sidebar(){
       <div style="color:rgba(255,255,255,0.45);font-size:0.6rem;margin-top:2px;">${cfg().locations.length} ${c.locsLabel}</div>
     </div>
     ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.58)'};font-size:0.77rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;transition:all 0.1s;">
-      <span style="opacity:0.9;flex-shrink:0;">${ic(n.icon,14)}</span>${n.label}
+      <span style="opacity:0.9;flex-shrink:0;">${n.icon==='nighBug'?nighBug(16):ic(n.icon,14)}</span>${n.label}
     </button>`).join('')}
     <div style="flex:1;"></div>
     <div style="padding:16px;border-top:1px solid rgba(255,255,255,0.12);margin-top:8px;">
@@ -662,6 +723,7 @@ function renderPage(){
   if(p==='collections') return rCollections();
   if(p==='analytics')   return rAnalytics();
   if(p==='users')       return rUsers();
+  if(p==='partners')    return rPartners();
   if(p==='billing')     return rBilling();
   if(p==='settings')    return rSettings();
   return '<div style="padding:32px;">Not found</div>';
@@ -1469,6 +1531,72 @@ function rSettings(){
         ])}
       </div>
     </div>
+  </div>`;
+}
+
+// ── PARTNERS ───────────────────────────────────────────────────────────────────
+function rPartners(){
+  const c=cfg();
+  const partners=c.partners||[];
+  const active=partners.filter(p=>p.status==='Active');
+  const invited=partners.filter(p=>p.status==='Invited');
+  const declined=partners.filter(p=>p.status==='Declined');
+  const typeColors={Brand:'#1d4ed8',Sponsor:'#7c3aed',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  const typeBgs={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
+  const statusColor={Active:'#16a34a',Invited:'#ca8a04',Declined:'#dc2626'};
+  const statusBg={Active:'#dcfce7',Invited:'#fef9c3',Declined:'#fee2e2'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Partners</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">Brands &amp; sponsors co-promoting drops with ${c.short}</div>
+      </div>
+      <button style="background:${c.color};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Invite Partner</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+      ${kpi('Active Partners',String(active.length),'co-promoting drops',c.color)}
+      ${kpi('Pending Invites',String(invited.length),'awaiting response','#ca8a04')}
+      ${kpi('Drops with Partners',String(partners.filter(p=>p.drops>0).reduce((s,p)=>s+p.drops,0)),'total co-branded drops','#0f172a')}
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:18px;">
+      <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.85rem;font-weight:800;color:#0f172a;">Partner Directory</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 100px;padding:8px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
+        ${['Partner','Type','Status','Co-Drops','Since'].map(h=>`<span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">${h}</span>`).join('')}
+      </div>
+      ${partners.map(p=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 100px;padding:12px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:${c.color}15;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:${c.color};flex-shrink:0;">${p.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+          <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${p.name}</div>
+        </div>
+        <span style="display:inline-block;background:${typeBgs[p.type]||'#f1f5f9'};color:${typeColors[p.type]||'#475569'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${p.type}</span>
+        <span style="display:inline-block;background:${statusBg[p.status]};color:${statusColor[p.status]};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${p.status}</span>
+        <div style="font-size:0.82rem;font-weight:700;color:${p.drops>0?c.color:'#94a3b8'};">${p.drops>0?p.drops+' drops':'—'}</div>
+        <div style="font-size:0.72rem;color:#94a3b8;">${p.since}</div>
+      </div>`).join('')}
+    </div>
+
+    ${active.length?`<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+      <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:14px;">How Partners Work on Nigh</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">🤝</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Tag on Drops</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Co-promote any drop by tagging a partner brand. Their audience sees it too.</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">📦</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Include in Collections</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Partners can contribute drops to your Collections bundles as 3rd-party orgs.</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">📊</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Shared Analytics</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Partners see engagement on co-branded drops. You own the guest data.</div>
+        </div>
+      </div>
+    </div>`:''}
   </div>`;
 }
 

@@ -406,9 +406,10 @@ function sidebar() {
     { id:'locations',  label:'Locations',     icon:'store'      },
     { id:'drops',      label:'Drops',         icon:'nighBug'    },
     { id:'collections',label:'Collections',   icon:'layers'     },
-    { id:'customers',  label:'Customers',     icon:'user'       },
+    { id:'guests',     label:'Guests',        icon:'user'       },
     { id:'analytics',  label:'Analytics',     icon:'chart'      },
-    { id:'users',      label:'Users & Access',icon:'users'      },
+    { id:'partners',   label:'Partners',      icon:'users'      },
+    { id:'users',      label:'Team',          icon:'users'      },
     { id:'billing',    label:'Billing',       icon:'creditCard' },
     { id:'settings',   label:'Settings',      icon:'settings'   },
   ];
@@ -468,7 +469,7 @@ function sidebar() {
 // TOPBAR
 // ─────────────────────────────────────────────────────────────
 function topbar() {
-  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', customers:'Customers', analytics:'Analytics', users:'Users & Access', billing:'Billing & Subscription', settings:'Settings' };
+  const titles = { dashboard:'Enterprise Dashboard', locations:'Locations', drops:'Drops', collections:'Collections', guests:'Guests', analytics:'Analytics', partners:'Partners', users:'Team', billing:'Billing & Subscription', settings:'Settings' };
   return `
     <header style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 32px;height:58px;display:flex;align-items:center;gap:14px;flex-shrink:0;">
       <div style="flex:1;">
@@ -500,8 +501,10 @@ function renderPage() {
     case 'locations': return rLocations();
     case 'drops':     return rDrops();
     case 'collections': return rCollections();
+    case 'guests':    return rCustomers();
     case 'customers': return rCustomers();
     case 'analytics': return rAnalytics();
+    case 'partners':  return rPartners();
     case 'users':     return rUsers();
     case 'billing':   return rBilling();
     case 'settings':  return rSettings();
@@ -1368,7 +1371,7 @@ function rCustomers() {
         <!-- Regional breakdown -->
         <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;">
           <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">By Region</div>
-          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Customers per region</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-bottom:14px;">Guests per region</div>
           ${regBreakdown.map(r=>`
             <div onclick="ss({custRegion:custRegion===r.id?'all':r.id})" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f8f9fb;cursor:pointer;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='transparent'">
               <div style="width:8px;height:8px;border-radius:50%;background:${r.color};flex-shrink:0;"></div>
@@ -1625,6 +1628,105 @@ function rUsers() {
       </div>
     </div>
   `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// PARTNERS
+// ─────────────────────────────────────────────────────────────
+function rPartners() {
+  const BRAND_COLOR = '#1B3A5C';
+  const ACCENT = '#5BA4CF';
+  const partners = [
+    {id:'P001', name:"Patagonia Provisions",  handle:'@patagoniaprovis', type:'Brand',      status:'Active',  since:'Jan 2026', drops:3},
+    {id:'P002', name:'REI Co-op',             handle:'@rei',             type:'Brand',      status:'Active',  since:'Feb 2026', drops:2},
+    {id:'P003', name:'Icebreaker',            handle:'@icebreaker',      type:'Brand',      status:'Active',  since:'Jan 2026', drops:1},
+    {id:'P004', name:'Cotopaxi',              handle:'@cotopaxi',        type:'Brand',      status:'Active',  since:'Feb 2026', drops:2},
+    {id:'P005', name:'Surfrider Foundation',  handle:'@surfrider',       type:'Non-Profit', status:'Active',  since:'Jan 2026', drops:2},
+    {id:'P006', name:'Black Diamond Equipment',handle:'@blackdiamond',   type:'Brand',      status:'Invited', since:'Mar 2026', drops:0},
+    {id:'P007', name:'New Belgium Brewing',   handle:'@newbelgium',      type:'Brand',      status:'Active',  since:'Jan 2026', drops:1},
+    {id:'P008', name:'Hydro Flask',           handle:'@hydroflask',      type:'Brand',      status:'Declined',since:'Feb 2026', drops:0},
+  ];
+  const typeColors  = {Brand:'#1d4ed8','Non-Profit':'#15803d',Influencer:'#b45309',Sponsor:'#7c3aed',Venue:'#0e7490'};
+  const typeBgs     = {Brand:'#eff6ff','Non-Profit':'#f0fdf4',Influencer:'#fef3c7',Sponsor:'#f5f3ff',Venue:'#ecfeff'};
+  const statusColor = {Active:'#16a34a',Invited:'#ca8a04',Declined:'#dc2626'};
+  const statusBg    = {Active:'#dcfce7',Invited:'#fef9c3',Declined:'#fee2e2'};
+  const active  = partners.filter(p=>p.status==='Active');
+  const invited = partners.filter(p=>p.status==='Invited');
+  const totalDrops = partners.reduce((s,p)=>s+p.drops,0);
+
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Partners</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">Brands &amp; organizations co-promoting drops with Patagonia</div>
+      </div>
+      <button style="background:${BRAND_COLOR};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Invite Partner</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:6px;">Active Partners</div>
+        <div style="font-size:1.9rem;font-weight:900;color:${BRAND_COLOR};">${active.length}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:4px;">co-promoting drops</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:6px;">Pending Invites</div>
+        <div style="font-size:1.9rem;font-weight:900;color:#ca8a04;">${invited.length}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:4px;">awaiting response</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:6px;">Co-Branded Drops</div>
+        <div style="font-size:1.9rem;font-weight:900;color:#0f172a;">${totalDrops}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:4px;">total partner drops</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:6px;">Partner Types</div>
+        <div style="font-size:1.9rem;font-weight:900;color:#0f172a;">${[...new Set(partners.map(p=>p.type))].length}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:4px;">categories</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:18px;">
+      <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.85rem;font-weight:800;color:#0f172a;">Partner Directory</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:8px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
+        ${['Partner','Handle','Type','Status','Co-Drops'].map(h=>`<span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">${h}</span>`).join('')}
+      </div>
+      ${partners.map(p=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:12px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:8px;background:${BRAND_COLOR}15;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:${BRAND_COLOR};flex-shrink:0;">${p.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+          <div>
+            <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${p.name}</div>
+            <div style="font-size:0.68rem;color:#94a3b8;">since ${p.since}</div>
+          </div>
+        </div>
+        <div style="font-size:0.75rem;color:#64748b;">${p.handle}</div>
+        <span style="display:inline-block;background:${typeBgs[p.type]||'#f1f5f9'};color:${typeColors[p.type]||'#475569'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${p.type}</span>
+        <span style="display:inline-block;background:${statusBg[p.status]};color:${statusColor[p.status]};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${p.status}</span>
+        <div style="font-size:0.82rem;font-weight:700;color:${p.drops>0?BRAND_COLOR:'#94a3b8'};">${p.drops>0?p.drops+' drops':'—'}</div>
+      </div>`).join('')}
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+      <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:14px;">How Partners Work on Nigh</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">🤝</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Tag on Drops</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Co-promote any drop by tagging a partner. Their audience sees it on Nigh too.</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">📦</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Collections Bundles</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Partners can contribute their own drops to your Collections as 3rd-party orgs.</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;">
+          <div style="font-size:1.2rem;margin-bottom:6px;">📊</div>
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Shared Analytics</div>
+          <div style="font-size:0.72rem;color:#64748b;line-height:1.5;">Partners see engagement on co-branded drops. You always own the guest data.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
 // ─────────────────────────────────────────────────────────────
