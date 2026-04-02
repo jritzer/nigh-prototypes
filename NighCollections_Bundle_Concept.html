@@ -32,9 +32,11 @@ const PARTNERS=[
 
 function partner(id){return PARTNERS.find(p=>p.id===id);}
 
-// ── OWN DROPS ─────────────────────────────────────────────────────────────────
-const OWN_DROPS=[
-  {id:'OD01',title:'Food Court Happy Hour',      type:'event',   status:'live',     loc:'Food Court',    cap:300,res:241},
+// hostOrgId:null means this org (Flatirons Mall). inviteStatus only applies
+// when hostOrgId is set — null=n/a, 'invited'=waiting, 'live'=drop added,
+// 'declined'=org declined, 'ended'=drop was ended by host org.
+const MY_DROPS=[
+  {id:'OD01',title:'Food Court Happy Hour',      type:'event',   status:'live',     loc:'Food Court',     cap:300,res:241},
   {id:'OD02',title:'Mall Walker Early Entry',    type:'event',   status:'live',     loc:'Main Entrance',  cap:150,res:98},
   {id:'OD03',title:'Free Parking Validation',    type:'offer',   status:'live',     loc:'Parking Garage', cap:500,res:389},
   {id:'OD04',title:'Kids Zone Weekend Drop',     type:'event',   status:'scheduled',loc:'Kids Zone',      cap:200,res:0},
@@ -52,14 +54,14 @@ const COLLECTIONS=[
     enrolled:1840,
     icon:'🎁',
     drops:[
-      {id:'CD01',source:'own',   dropId:'OD03',title:'Free Parking Validation',      type:'offer',   ownerId:null,      partnerStatus:null, cap:500,res:389,ci:312},
-      {id:'CD02',source:'own',   dropId:'OD06',title:'VIP Shopper Lounge Access',     type:'vip',     ownerId:null,      partnerStatus:null, cap:50, res:48, ci:41},
-      {id:'CD03',source:'partner',dropId:'PD01',title:'Nike Holiday Early Access',    type:'launch',  ownerId:'P01',     partnerStatus:'approved',  cap:200,res:183,ci:164},
-      {id:'CD04',source:'partner',dropId:'PD02',title:'Nordstrom 20% Off Drop',       type:'offer',   ownerId:'P02',     partnerStatus:'approved',  cap:300,res:271,ci:240},
-      {id:'CD05',source:'partner',dropId:'PD03',title:'Apple Holiday Bundle Reveal',  type:'launch',  ownerId:'P03',     partnerStatus:'pending',   cap:150,res:0,  ci:0},
-      {id:'CD06',source:'partner',dropId:'PD04',title:"Macy's VIP Friends & Family",  type:'vip',     ownerId:'P08',     partnerStatus:'pending',   cap:200,res:0,  ci:0},
-      {id:'CD07',source:'partner',dropId:'PD05',title:'Sephora Beauty Drop',          type:'offer',   ownerId:'P07',     partnerStatus:'declined',  cap:100,res:0,  ci:0},
-      {id:'CD08',source:'own',   dropId:'OD01',title:'Food Court Happy Hour',         type:'event',   ownerId:null,      partnerStatus:null, cap:300,res:241,ci:198},
+      {id:'CD01',dropId:'OD03',title:'Free Parking Validation',     type:'offer',  hostOrgId:null, inviteStatus:null,      cap:500,res:389,ci:312},
+      {id:'CD02',dropId:'OD06',title:'VIP Shopper Lounge Access',   type:'vip',    hostOrgId:null, inviteStatus:null,      cap:50, res:48, ci:41},
+      {id:'CD03',dropId:'PD01',title:'Nike Holiday Early Access',   type:'launch', hostOrgId:'P01',inviteStatus:'live',     cap:200,res:183,ci:164},
+      {id:'CD04',dropId:'PD02',title:'Nordstrom 20% Off Drop',      type:'offer',  hostOrgId:'P02',inviteStatus:'live',     cap:300,res:271,ci:240},
+      {id:'CD05',dropId:'PD03',title:'Apple Holiday Bundle Reveal', type:'launch', hostOrgId:'P03',inviteStatus:'invited',  cap:0,  res:0,  ci:0},
+      {id:'CD06',dropId:'PD04',title:"Macy's VIP Friends & Family", type:'vip',    hostOrgId:'P08',inviteStatus:'invited',  cap:0,  res:0,  ci:0},
+      {id:'CD07',dropId:'PD05',title:'Sephora Beauty Drop',         type:'offer',  hostOrgId:'P07',inviteStatus:'declined', cap:0,  res:0,  ci:0},
+      {id:'CD08',dropId:'OD01',title:'Food Court Happy Hour',       type:'event',  hostOrgId:null, inviteStatus:null,      cap:300,res:241,ci:198},
     ],
   },
   {
@@ -70,11 +72,11 @@ const COLLECTIONS=[
     enrolled:612,
     icon:'🌸',
     drops:[
-      {id:'CD11',source:'own',   dropId:'OD01',title:'Food Court Happy Hour',         type:'event',   ownerId:null,  partnerStatus:null,       cap:300,res:241,ci:198},
-      {id:'CD12',source:'own',   dropId:'OD04',title:'Kids Zone Weekend Drop',        type:'event',   ownerId:null,  partnerStatus:null,       cap:200,res:0,  ci:0},
-      {id:'CD13',source:'partner',dropId:'PD11',title:'REI Spring Gear Early Access', type:'launch',  ownerId:'P06', partnerStatus:'approved',  cap:120,res:108,ci:94},
-      {id:'CD14',source:'partner',dropId:'PD12',title:'Pottery Barn New Arrivals',    type:'launch',  ownerId:'P04', partnerStatus:'approved',  cap:80, res:71, ci:61},
-      {id:'CD15',source:'partner',dropId:'PD13',title:'CFA Spring Promo Drop',        type:'offer',   ownerId:'P05', partnerStatus:'expired',   cap:150,res:0,  ci:0},
+      {id:'CD11',dropId:'OD01',title:'Food Court Happy Hour',        type:'event',  hostOrgId:null, inviteStatus:null,    cap:300,res:241,ci:198},
+      {id:'CD12',dropId:'OD04',title:'Kids Zone Weekend Drop',       type:'event',  hostOrgId:null, inviteStatus:null,    cap:200,res:0,  ci:0},
+      {id:'CD13',dropId:'PD11',title:'REI Spring Gear Early Access', type:'launch', hostOrgId:'P06',inviteStatus:'live',  cap:120,res:108,ci:94},
+      {id:'CD14',dropId:'PD12',title:'Pottery Barn New Arrivals',    type:'launch', hostOrgId:'P04',inviteStatus:'live',  cap:80, res:71, ci:61},
+      {id:'CD15',dropId:'PD13',title:'CFA Spring Promo Drop',        type:'offer',  hostOrgId:'P05',inviteStatus:'ended', cap:0,  res:0,  ci:0},
     ],
   },
   {
@@ -85,22 +87,22 @@ const COLLECTIONS=[
     enrolled:0,
     icon:'👋',
     drops:[
-      {id:'CD21',source:'own',   dropId:'OD02',title:'Mall Walker Early Entry',       type:'event',   ownerId:null,  partnerStatus:null,       cap:150,res:0,  ci:0},
-      {id:'CD22',source:'own',   dropId:'OD05',title:'Gift Card Bonus Weekend',       type:'offer',   ownerId:null,  partnerStatus:null,       cap:100,res:0,  ci:0},
-      {id:'CD23',source:'partner',dropId:'PD21',title:'Nike Welcome Drop',             type:'offer',   ownerId:'P01', partnerStatus:'pending',   cap:100,res:0,  ci:0},
+      {id:'CD21',dropId:'OD02',title:'Mall Walker Early Entry',  type:'event', hostOrgId:null, inviteStatus:null,     cap:150,res:0,ci:0},
+      {id:'CD22',dropId:'OD05',title:'Gift Card Bonus Weekend',  type:'offer', hostOrgId:null, inviteStatus:null,     cap:100,res:0,ci:0},
+      {id:'CD23',dropId:'PD21',title:'Nike Welcome Drop',        type:'offer', hostOrgId:'P01',inviteStatus:'invited',cap:0,  res:0,ci:0},
     ],
   },
 ];
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const S={
-  view:'list',          // 'list' | 'detail' | 'new'
+  view:'list',           // 'list' | 'detail' | 'new'
   collId:null,
   addDropOpen:false,
-  addTab:'own',         // 'own' | 'partner'
-  partnerSearch:'',
-  selectedOwnDrops:[],
-  selectedPartner:null,
+  addTab:'self',         // 'self' | 'other'
+  orgSearch:'',
+  selectedMyDrops:[],
+  selectedOrg:null,
   newCollStep:1,
   inviteSent:false,
 };
@@ -113,21 +115,39 @@ function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
 function bar(p,color,h){h=h||6;return `<div style="background:#f1f5f9;border-radius:4px;height:${h}px;overflow:hidden;"><div style="background:${color};height:100%;width:${Math.min(p,100)}%;border-radius:4px;"></div></div>`;}
 function infoRow(l,v){return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${l}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${v}</span></div>`;}
 
-function partnerLogo(pid, sz){
+// Org logo pill — works for any org (self or 3rd party)
+function orgLogo(hostOrgId, sz){
   sz=sz||22;
-  const p=partner(pid);
+  if(!hostOrgId){
+    // This org (Flatirons Mall)
+    const abbr=ORG.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    return `<div style="width:${sz}px;height:${sz}px;border-radius:5px;background:${ORG.color};color:#fff;font-size:${Math.round(sz*0.42)}px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${abbr}</div>`;
+  }
+  const p=partner(hostOrgId);
   if(!p) return '';
   return `<div style="width:${sz}px;height:${sz}px;border-radius:5px;background:${p.color};color:#fff;font-size:${Math.round(sz*0.45)}px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-0.5px;">${p.logo}</div>`;
 }
 
-// Partner drop status badge
-function partnerBadge(status){
+function orgName(hostOrgId){
+  if(!hostOrgId) return ORG.name;
+  const p=partner(hostOrgId);
+  return p?p.name:'Unknown Org';
+}
+
+function orgColor(hostOrgId){
+  if(!hostOrgId) return ORG.color;
+  const p=partner(hostOrgId);
+  return p?p.color:'#64748b';
+}
+
+// Invite status badge (only shown for 3rd-party drops)
+function inviteBadge(status){
   if(!status) return '';
   const m={
-    approved:`<span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#15803d;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10003; Approved</span>`,
-    pending: `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef9c3;color:#854d0e;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#8987; Pending</span>`,
+    live:    `<span style="display:inline-flex;align-items:center;gap:4px;background:#dcfce7;color:#15803d;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10003; Live</span>`,
+    invited: `<span style="display:inline-flex;align-items:center;gap:4px;background:#fef9c3;color:#854d0e;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#8987; Invited</span>`,
     declined:`<span style="display:inline-flex;align-items:center;gap:4px;background:#fee2e2;color:#b91c1c;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10005; Declined</span>`,
-    expired: `<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#94a3b8;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#9203; Expired</span>`,
+    ended:   `<span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#94a3b8;font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#9203; Ended</span>`,
   };
   return m[status]||'';
 }
@@ -138,13 +158,15 @@ function collBadge(status){
   return `<span style="background:${bg};color:${c};font-size:0.65rem;font-weight:800;padding:3px 9px;border-radius:20px;">${l}</span>`;
 }
 
-// Small stacked partner logos for a collection
-function partnerStackFor(coll){
-  const partnerIds=[...new Set(coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='approved').map(d=>d.ownerId))];
-  if(!partnerIds.length) return '';
+// Stacked org logos for all live drops in a collection
+function orgStackFor(coll){
+  const orgIds=[...new Set(coll.drops
+    .filter(d=>!d.inviteStatus||d.inviteStatus==='live')
+    .map(d=>d.hostOrgId))];
+  if(!orgIds.length) return '';
   return `<div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap;">
-    ${partnerIds.slice(0,4).map(pid=>partnerLogo(pid,18)).join('')}
-    ${partnerIds.length>4?`<span style="font-size:0.65rem;color:#94a3b8;font-weight:700;">+${partnerIds.length-4}</span>`:''}
+    ${orgIds.slice(0,5).map(id=>orgLogo(id,18)).join('')}
+    ${orgIds.length>5?`<span style="font-size:0.65rem;color:#94a3b8;font-weight:700;">+${orgIds.length-5}</span>`:''}
   </div>`;
 }
 
@@ -192,11 +214,10 @@ function listView(){
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
       ${COLLECTIONS.map(coll=>{
         const totalDrops=coll.drops.length;
-        const ownDrops=coll.drops.filter(d=>d.source==='own').length;
-        const partnerApproved=coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='approved').length;
-        const partnerPending=coll.drops.filter(d=>d.source==='partner'&&d.partnerStatus==='pending').length;
+        const liveDrops=coll.drops.filter(d=>!d.inviteStatus||d.inviteStatus==='live').length;
+        const invitedCount=coll.drops.filter(d=>d.inviteStatus==='invited').length;
         const totalCi=coll.drops.reduce((s,d)=>s+(d.ci||0),0);
-        const totalRes=coll.drops.filter(d=>d.partnerStatus!=='pending'&&d.partnerStatus!=='declined').reduce((s,d)=>s+(d.res||0),0);
+        const totalRes=coll.drops.filter(d=>!d.inviteStatus||d.inviteStatus==='live').reduce((s,d)=>s+(d.res||0),0);
         const sr=pct(totalCi,totalRes);
 
         return `<div onclick="ss({view:'detail',collId:'${coll.id}',addDropOpen:false})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;cursor:pointer;transition:all 0.12s;display:flex;flex-direction:column;gap:10px;" onmouseover="this.style.borderColor='${ORG.color}60';this.style.boxShadow='0 4px 18px rgba(0,0,0,0.09)'" onmouseout="this.style.borderColor='#e5e7eb';this.style.boxShadow=''">
@@ -210,14 +231,13 @@ function listView(){
             <div style="font-size:0.92rem;font-weight:800;color:#0f172a;margin-bottom:4px;">${coll.name}</div>
             <div style="font-size:0.72rem;color:#64748b;line-height:1.45;">${coll.desc}</div>
           </div>
-          <!-- Drop breakdown -->
+          <!-- Drop count + pending flag -->
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:0.68rem;font-weight:700;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:20px;">${ownDrops} own</span>
-            <span style="font-size:0.68rem;font-weight:700;background:#f0fdf4;color:#15803d;padding:2px 8px;border-radius:20px;">${partnerApproved} partner</span>
-            ${partnerPending?`<span style="font-size:0.68rem;font-weight:700;background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:20px;">${partnerPending} pending</span>`:''}
+            <span style="font-size:0.68rem;font-weight:700;background:#f1f5f9;color:#475569;padding:2px 8px;border-radius:20px;">${liveDrops} live drop${liveDrops!==1?'s':''}</span>
+            ${invitedCount?`<span style="font-size:0.68rem;font-weight:700;background:#fef9c3;color:#854d0e;padding:2px 8px;border-radius:20px;">${invitedCount} invite${invitedCount>1?'s':''} pending</span>`:''}
           </div>
-          <!-- Partner logos -->
-          ${partnerStackFor(coll)}
+          <!-- All host org logos -->
+          ${orgStackFor(coll)}
           <!-- Stats -->
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-top:8px;border-top:1px solid #f1f5f9;">
             <div style="text-align:center;">
@@ -250,14 +270,12 @@ function detailView(){
   const coll=COLLECTIONS.find(c=>c.id===S.collId);
   if(!coll) return listView();
 
-  const ownDrops=coll.drops.filter(d=>d.source==='own');
-  const partnerDrops=coll.drops.filter(d=>d.source==='partner');
-  const approved=partnerDrops.filter(d=>d.partnerStatus==='approved');
-  const pending=partnerDrops.filter(d=>d.partnerStatus==='pending');
-  const declined=partnerDrops.filter(d=>d.partnerStatus==='declined');
-  const expired=partnerDrops.filter(d=>d.partnerStatus==='expired');
+  const liveDrops=coll.drops.filter(d=>!d.inviteStatus||d.inviteStatus==='live');
+  const invited=coll.drops.filter(d=>d.inviteStatus==='invited');
+  const declined=coll.drops.filter(d=>d.inviteStatus==='declined');
+  const ended=coll.drops.filter(d=>d.inviteStatus==='ended');
   const totalCi=coll.drops.reduce((s,d)=>s+(d.ci||0),0);
-  const totalRes=coll.drops.filter(d=>d.partnerStatus!=='pending'&&d.partnerStatus!=='declined').reduce((s,d)=>s+(d.res||0),0);
+  const totalRes=liveDrops.reduce((s,d)=>s+(d.res||0),0);
   const sr=pct(totalCi,totalRes);
 
   return `<div style="padding:20px 28px;display:flex;gap:20px;height:100%;overflow:hidden;">
@@ -286,12 +304,12 @@ function detailView(){
         </div>`).join('')}
       </div>
 
-      <!-- Pending partner alert -->
-      ${pending.length?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <!-- Invited alert -->
+      ${invited.length?`<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
         <span style="font-size:1rem;">⏳</span>
         <div style="flex:1;">
-          <div style="font-size:0.78rem;font-weight:700;color:#92400e;">${pending.length} partner invitation${pending.length>1?'s':''} awaiting approval</div>
-          <div style="font-size:0.7rem;color:#b45309;margin-top:2px;">These drops won't be visible to guests until the partner approves.</div>
+          <div style="font-size:0.78rem;font-weight:700;color:#92400e;">${invited.length} org${invited.length>1?'s':''} invited — waiting to add their drop${invited.length>1?'s':''}</div>
+          <div style="font-size:0.7rem;color:#b45309;margin-top:2px;">These slots won't appear to guests until each org contributes their drop.</div>
         </div>
       </div>`:''}
 
@@ -299,56 +317,57 @@ function detailView(){
       ${declined.length?`<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
         <span style="font-size:1rem;">⚠️</span>
         <div style="flex:1;">
-          <div style="font-size:0.78rem;font-weight:700;color:#b91c1c;">${declined.length} partner drop${declined.length>1?'s':''} declined — you may want to replace ${declined.length>1?'them':'it'}</div>
-          <div style="font-size:0.7rem;color:#ef4444;margin-top:2px;">This slot appears empty to guests until you add a replacement drop.</div>
+          <div style="font-size:0.78rem;font-weight:700;color:#b91c1c;">${declined.length} org${declined.length>1?'s':''} declined — you may want to invite a replacement</div>
+          <div style="font-size:0.7rem;color:#ef4444;margin-top:2px;">This slot is empty in the bundle until you invite another org or add one of your own drops.</div>
         </div>
-        <button onclick="ss({addDropOpen:true,addTab:'partner'})" style="background:#b91c1c;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Drop</button>
+        <button onclick="ss({addDropOpen:true,addTab:'other'})" style="background:#b91c1c;color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Drop</button>
       </div>`:''}
 
-      <!-- Drop bundle grid -->
+      <!-- Drop bundle list -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">Bundle Drops <span style="font-size:0.72rem;font-weight:500;color:#94a3b8;">${coll.drops.length} total</span></div>
-        <button onclick="ss({addDropOpen:true,addTab:'own'})" style="display:flex;align-items:center;gap:6px;background:${ORG.color};color:#fff;border:none;padding:7px 14px;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;">+ Add Drop</button>
+        <button onclick="ss({addDropOpen:true,addTab:'self'})" style="display:flex;align-items:center;gap:6px;background:${ORG.color};color:#fff;border:none;padding:7px 14px;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;">+ Add Drop</button>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${coll.drops.map(d=>{
-          const isPartner=d.source==='partner';
-          const p=isPartner?partner(d.ownerId):null;
+          const isOther=!!d.hostOrgId;
           const sr=pct(d.ci,d.res);
-          const isLive=d.partnerStatus==='approved'||d.source==='own';
-          const isDimmed=d.partnerStatus==='pending'||d.partnerStatus==='declined'||d.partnerStatus==='expired';
-          const stripeColor=isPartner?(d.partnerStatus==='approved'?'#16a34a':d.partnerStatus==='pending'?'#ca8a04':d.partnerStatus==='declined'?'#dc2626':'#94a3b8'):'#1d4ed8';
-          return `<div style="background:#fff;border-radius:12px;border:1px solid ${d.partnerStatus==='declined'?'#fecaca':d.partnerStatus==='pending'?'#fde68a':'#e5e7eb'};padding:13px 16px;display:flex;align-items:center;gap:14px;opacity:${isDimmed?'0.78':'1'};">
-            <!-- Source stripe -->
+          const isLive=!d.inviteStatus||d.inviteStatus==='live';
+          const isDimmed=d.inviteStatus==='invited'||d.inviteStatus==='declined'||d.inviteStatus==='ended';
+          const oColor=orgColor(d.hostOrgId);
+          const oName=orgName(d.hostOrgId);
+          const stripeColor=isOther
+            ?(d.inviteStatus==='live'?'#16a34a':d.inviteStatus==='invited'?'#ca8a04':d.inviteStatus==='declined'?'#dc2626':'#94a3b8')
+            :ORG.color;
+          const borderColor=d.inviteStatus==='declined'?'#fecaca':d.inviteStatus==='invited'?'#fde68a':'#e5e7eb';
+          return `<div style="background:#fff;border-radius:12px;border:1px solid ${borderColor};padding:13px 16px;display:flex;align-items:center;gap:14px;opacity:${isDimmed?'0.78':'1'};">
+            <!-- Host org stripe -->
             <div style="width:3px;height:44px;border-radius:2px;background:${stripeColor};flex-shrink:0;"></div>
-            <!-- Logo -->
-            ${isPartner&&p?partnerLogo(p.id,30):`<div style="width:30px;height:30px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:800;color:#1d4ed8;flex-shrink:0;">OWN</div>`}
+            <!-- Host org logo (same treatment for all) -->
+            ${orgLogo(d.hostOrgId,30)}
             <!-- Content -->
             <div style="flex:1;min-width:0;">
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
                 <span style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</span>
-                ${isPartner?`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`:''}
+                ${isOther?`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2.5" title="Hosted by ${oName}"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`:''}
               </div>
               <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-                ${isPartner&&p
-                  ?`<span style="font-size:0.68rem;font-weight:700;color:${p.color};background:${p.color}18;padding:2px 7px;border-radius:20px;">${p.name}</span>
-                    <span style="font-size:0.65rem;color:#94a3b8;">Managed by ${p.name}</span>
-                    ${partnerBadge(d.partnerStatus)}`
-                  :`<span style="font-size:0.68rem;font-weight:700;color:#1d4ed8;background:#eff6ff;padding:2px 7px;border-radius:20px;">${ORG.name}</span>`}
+                <span style="font-size:0.68rem;font-weight:700;color:${oColor};background:${oColor}18;padding:2px 7px;border-radius:20px;">${oName}</span>
+                ${isOther?inviteBadge(d.inviteStatus):''}
               </div>
             </div>
-            <!-- Stats -->
+            <!-- Stats (only for live drops with activity) -->
             ${isLive&&d.res>0
               ?`<div style="display:grid;grid-template-columns:52px 52px 52px;gap:6px;text-align:center;flex-shrink:0;">
                   <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.res}</div><div style="font-size:0.58rem;color:#94a3b8;">reserv.</div></div>
                   <div><div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${d.ci}</div><div style="font-size:0.58rem;color:#94a3b8;">check-ins</div></div>
                   <div><div style="font-size:0.82rem;font-weight:800;color:${showColor(sr)};">${sr}%</div><div style="font-size:0.58rem;color:#94a3b8;">show rate</div></div>
                 </div>`
-              :`<div style="width:174px;text-align:center;font-size:0.7rem;color:#94a3b8;font-style:italic;">${d.partnerStatus==='pending'?'Waiting for partner to add drop…':d.partnerStatus==='declined'?'Partner declined':'No activity yet'}</div>`}
-            <!-- Actions: own drops get Edit, partner drops are read-only -->
+              :`<div style="width:174px;text-align:center;font-size:0.7rem;color:#94a3b8;font-style:italic;">${d.inviteStatus==='invited'?'Waiting for org to add their drop…':d.inviteStatus==='declined'?'Org declined invitation':d.inviteStatus==='ended'?'Drop ended by host org':'No activity yet'}</div>`}
+            <!-- Actions: only editable by this org's own drops -->
             <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
-              ${!isPartner?`<button onclick="event.stopPropagation()" style="font-size:0.65rem;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid #e5e7eb;background:#fff;color:#475569;cursor:pointer;">Edit</button>`:''}
+              ${!isOther?`<button onclick="event.stopPropagation()" style="font-size:0.65rem;font-weight:700;padding:4px 9px;border-radius:7px;border:1px solid #e5e7eb;background:#fff;color:#475569;cursor:pointer;">Edit</button>`:''}
               <button onclick="event.stopPropagation()" style="width:22px;height:22px;border-radius:50%;background:#f1f5f9;border:none;color:#94a3b8;font-size:0.68rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.1s;" onmouseover="this.style.background='#fee2e2';this.style.color='#b91c1c'" onmouseout="this.style.background='#f1f5f9';this.style.color='#94a3b8'">✕</button>
             </div>
           </div>`;
@@ -358,55 +377,32 @@ function detailView(){
 
     <!-- Right panel: summary + actions -->
     <div style="width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;overflow-y:auto;">
-      <!-- Drop breakdown card -->
+      <!-- Drops by org card -->
       <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 18px;">
-        <div style="font-size:0.8rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Drop Sources</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#1d4ed8;"></div><span style="font-size:0.75rem;color:#475569;">Your drops</span></div>
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${ownDrops.length}</span>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#16a34a;"></div><span style="font-size:0.75rem;color:#475569;">Partner · approved</span></div>
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${approved.length}</span>
-          </div>
-          ${pending.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#ca8a04;"></div><span style="font-size:0.75rem;color:#475569;">Partner · pending</span></div>
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${pending.length}</span>
-          </div>`:''}
-          ${declined.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#dc2626;"></div><span style="font-size:0.75rem;color:#475569;">Partner · declined</span></div>
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${declined.length}</span>
-          </div>`:''}
-          ${expired.length?`<div style="display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:7px;"><div style="width:8px;height:8px;border-radius:2px;background:#94a3b8;"></div><span style="font-size:0.75rem;color:#475569;">Partner · expired</span></div>
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">${expired.length}</span>
-          </div>`:''}
-        </div>
-      </div>
-
-      <!-- Partner logos card -->
-      ${approved.length?`<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 18px;">
-        <div style="font-size:0.8rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Partner Orgs</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${[...new Set([...approved,...pending].map(d=>d.ownerId))].map(pid=>{
-            const p=partner(pid);
-            const pDrops=coll.drops.filter(d=>d.ownerId===pid);
-            const st=pDrops[0].partnerStatus;
+        <div style="font-size:0.8rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Drops by Host Org</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          ${[...new Set(coll.drops.map(d=>d.hostOrgId))].map(hid=>{
+            const orgDrops=coll.drops.filter(d=>d.hostOrgId===hid);
+            const liveCount=orgDrops.filter(d=>!d.inviteStatus||d.inviteStatus==='live').length;
+            const invCount=orgDrops.filter(d=>d.inviteStatus==='invited').length;
+            const st=orgDrops[0].inviteStatus;
             return `<div style="display:flex;align-items:center;gap:9px;">
-              ${partnerLogo(pid,28)}
-              <div style="flex:1;"><div style="font-size:0.75rem;font-weight:700;color:#0f172a;">${p.name}</div><div style="font-size:0.63rem;color:#94a3b8;">${pDrops.length} drop${pDrops.length>1?'s':''}</div></div>
-              ${partnerBadge(st)}
+              ${orgLogo(hid,28)}
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:0.75rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${orgName(hid)}</div>
+                <div style="font-size:0.63rem;color:#94a3b8;">${orgDrops.length} drop${orgDrops.length>1?'s':''}</div>
+              </div>
+              ${hid?inviteBadge(st):''}
             </div>`;
           }).join('')}
         </div>
-      </div>`:''}
+      </div>
 
       <!-- Actions -->
       <div style="background:${ORG.color}10;border-radius:14px;border:1px solid ${ORG.color}30;padding:16px 18px;">
         <div style="font-size:0.8rem;font-weight:800;color:${ORG.color};margin-bottom:10px;">Actions</div>
-        <button onclick="ss({addDropOpen:true,addTab:'own'})" style="width:100%;padding:8px;background:${ORG.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Add Your Drop</button>
-        <button onclick="ss({addDropOpen:true,addTab:'partner'})" style="width:100%;padding:8px;background:#fff;color:${ORG.color};border:1px solid ${ORG.color}60;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Invite Partner Drop</button>
+        <button onclick="ss({addDropOpen:true,addTab:'self'})" style="width:100%;padding:8px;background:${ORG.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Add Your Drop</button>
+        <button onclick="ss({addDropOpen:true,addTab:'other'})" style="width:100%;padding:8px;background:#fff;color:${ORG.color};border:1px solid ${ORG.color}60;border-radius:9px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">+ Invite Another Org</button>
         <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:9px;font-weight:600;font-size:0.75rem;cursor:pointer;">Edit Details</button>
       </div>
     </div>
@@ -418,8 +414,8 @@ function detailView(){
 
 // ── ADD DROP PANEL ────────────────────────────────────────────────────────────
 function addDropPanel(coll){
-  const filteredPartners=S.partnerSearch
-    ? PARTNERS.filter(p=>p.name.toLowerCase().includes(S.partnerSearch.toLowerCase()))
+  const filteredPartners=S.orgSearch
+    ? PARTNERS.filter(p=>p.name.toLowerCase().includes(S.orgSearch.toLowerCase()))
     : PARTNERS;
 
   return `<div style="width:320px;flex-shrink:0;background:#fff;border-radius:14px;border:1px solid #e5e7eb;display:flex;flex-direction:column;overflow:hidden;max-height:100%;">
@@ -431,23 +427,23 @@ function addDropPanel(coll){
 
     <!-- Tab switcher -->
     <div style="display:flex;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
-      <button onclick="ss({addTab:'own'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='own'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='own'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='own'?'700':'500'};cursor:pointer;">
+      <button onclick="ss({addTab:'self'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='self'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='self'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='self'?'700':'500'};cursor:pointer;">
         Your Drops
       </button>
-      <button onclick="ss({addTab:'partner'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='partner'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='partner'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='partner'?'700':'500'};cursor:pointer;">
-        Invite Partner
+      <button onclick="ss({addTab:'other'})" style="flex:1;padding:11px;border:none;border-bottom:2px solid ${S.addTab==='other'?ORG.color:'transparent'};background:transparent;color:${S.addTab==='other'?ORG.color:'#94a3b8'};font-size:0.78rem;font-weight:${S.addTab==='other'?'700':'500'};cursor:pointer;">
+        Invite Org
       </button>
     </div>
 
     <div style="flex:1;overflow-y:auto;padding:14px 16px;">
-      ${S.addTab==='own' ? ownDropsPanel() : partnerInvitePanel(filteredPartners)}
+      ${S.addTab==='self' ? ownDropsPanel() : partnerInvitePanel(filteredPartners)}
     </div>
 
     <!-- Footer -->
     <div style="padding:12px 16px;border-top:1px solid #f1f5f9;flex-shrink:0;">
       ${(()=>{
-        if(S.addTab==='own'){
-          const n=S.selectedOwnDrops.length;
+        if(S.addTab==='self'){
+          const n=S.selectedMyDrops.length;
           const bg=n?ORG.color:'#e5e7eb';
           const fg=n?'#fff':'#94a3b8';
           const cur=n?'pointer':'default';
@@ -467,11 +463,11 @@ function addDropPanel(coll){
 
 function ownDropsPanel(){
   return `<div>
-    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;">Select one or more of your active drops to add to this bundle.</div>
+    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;">Select one or more of your drops to add to this bundle.</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
-      ${OWN_DROPS.map(d=>{
-        const selected=S.selectedOwnDrops.includes(d.id);
-        return `<div onclick="ss({selectedOwnDrops:selected?S.selectedOwnDrops.filter(x=>x!=='${d.id}'):[...S.selectedOwnDrops,'${d.id}']})" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid ${selected?ORG.color:'#e5e7eb'};background:${selected?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
+      ${MY_DROPS.map(d=>{
+        const selected=S.selectedMyDrops.includes(d.id);
+        return `<div onclick="ss({selectedMyDrops:selected?S.selectedMyDrops.filter(x=>x!=='${d.id}'):[...S.selectedMyDrops,'${d.id}']})" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid ${selected?ORG.color:'#e5e7eb'};background:${selected?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
           <div style="width:18px;height:18px;border-radius:5px;border:2px solid ${selected?ORG.color:'#e5e7eb'};background:${selected?ORG.color:'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             ${selected?`<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}
           </div>
@@ -486,37 +482,37 @@ function ownDropsPanel(){
 }
 
 function partnerInvitePanel(filteredPartners){
-  const sel=S.selectedPartner?partner(S.selectedPartner):null;
+  const sel=S.selectedOrg?partner(S.selectedOrg):null;
   return `<div>
-    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;line-height:1.6;">Select a partner org to invite. They'll choose which of their drops to contribute — they own and control all drop details.</div>
+    <div style="font-size:0.72rem;color:#64748b;margin-bottom:10px;line-height:1.6;">Select an org on Nigh to invite. They'll choose which of their drops to contribute — they own and control all details.</div>
 
     <!-- Search -->
-    <input oninput="ss({partnerSearch:this.value,selectedPartner:null})" value="${S.partnerSearch}" placeholder="Search partner orgs…" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;margin-bottom:10px;outline:none;" />
+    <input oninput="ss({orgSearch:this.value,selectedOrg:null})" value="${S.orgSearch}" placeholder="Search orgs on Nigh…" style="width:100%;padding:8px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.78rem;margin-bottom:10px;outline:none;" />
 
-    <!-- Partner list -->
-    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:${S.selectedPartner?'14px':'0'};">
-      ${filteredPartners.map(p=>`<div onclick="ss({selectedPartner:'${p.id}'})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${S.selectedPartner===p.id?ORG.color:'#e5e7eb'};background:${S.selectedPartner===p.id?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
-        ${partnerLogo(p.id,26)}
+    <!-- Org list -->
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:${S.selectedOrg?'14px':'0'};">
+      ${filteredPartners.map(p=>`<div onclick="ss({selectedOrg:'${p.id}'})" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;border:1.5px solid ${S.selectedOrg===p.id?ORG.color:'#e5e7eb'};background:${S.selectedOrg===p.id?ORG.color+'0d':'#fff'};cursor:pointer;transition:all 0.1s;">
+        ${orgLogo(p.id,26)}
         <div style="flex:1;">
           <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${p.name}</div>
           <div style="font-size:0.62rem;color:#94a3b8;">On Nigh</div>
         </div>
-        ${S.selectedPartner===p.id?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`:''}
+        ${S.selectedOrg===p.id?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`:''}
       </div>`).join('')}
     </div>
 
-    <!-- Confirmation block (shown once partner selected) -->
+    <!-- Confirmation block -->
     ${sel?`<div style="border-top:1px solid #f1f5f9;padding-top:12px;">
       <div style="display:flex;align-items:center;gap:10px;background:#f8fafc;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
-        ${partnerLogo(sel.id,32)}
+        ${orgLogo(sel.id,32)}
         <div>
           <div style="font-size:0.8rem;font-weight:800;color:#0f172a;">${sel.name}</div>
-          <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">Will choose & control their own drop</div>
+          <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">Chooses &amp; fully controls their drop</div>
         </div>
       </div>
       <div style="background:${ORG.color}10;border-radius:9px;padding:10px 12px;display:flex;gap:8px;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${ORG.color}" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style="font-size:0.69rem;color:${ORG.color};font-weight:600;line-height:1.55;">${sel.name} will receive an invitation, then select or create the drop they want to contribute. They set all details — capacity, geo-fence, and timing.</span>
+        <span style="font-size:0.69rem;color:${ORG.color};font-weight:600;line-height:1.55;">${sel.name} will receive an invitation and select or create the drop they want to contribute. They set all details — capacity, geo-fence, and timing.</span>
       </div>
     </div>`:''}
   </div>`;
