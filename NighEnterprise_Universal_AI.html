@@ -1594,59 +1594,148 @@ function rAnalytics(){
 // ── USERS ─────────────────────────────────────────────────────────────────────
 function rUsers(){
   const c=cfg();
-  const roles=[
-    {name:'Admin',          desc:'Full access to all features and settings',color:'#5b21b6',bg:'#f5f3ff'},
-    {name:'Manager',        desc:'Manage drops, locations, and view analytics',color:'#1d4ed8',bg:'#eff6ff'},
-    {name:'Staff',          desc:'Check-in guests and view assigned locations',color:'#15803d',bg:'#f0fdf4'},
-    {name:'Analyst',        desc:'View-only access to analytics and reports',  color:'#b45309',bg:'#fef3c7'},
+  const domain=c.short.toLowerCase().replace(/[^a-z0-9]/g,'')+'.com';
+  const t1s=[...new Set(c.locations.map(l=>l.t1))];
+  const hasEvents=c.special==='gameday'||c.special==='festival';
+  const hasPartners=c.partners&&c.partners.length>0;
+
+  const ROLES=[
+    {id:'owner',     name:'Account Owner',    short:'Owner',    color:'#7c3aed',bg:'#f5f3ff',
+     desc:'Full access including billing and team management. Typically 1–2 people.',
+     scope:'All locations',
+     perms:{create:true,approve:true,analytics:true,team:true,billing:true}},
+    {id:'admin',     name:'Enterprise Admin',  short:'Admin',    color:'#1d4ed8',bg:'#eff6ff',
+     desc:'Full operational access across all locations — no billing controls.',
+     scope:'All locations',
+     perms:{create:true,approve:true,analytics:true,team:true,billing:false}},
+    {id:'regional',  name:'Regional Manager',  short:'Regional', color:'#0369a1',bg:'#f0f9ff',
+     desc:'Create, approve, and view analytics within their assigned region only.',
+     scope:'Assigned region',
+     perms:{create:true,approve:true,analytics:'scoped',team:false,billing:false}},
+    {id:'location',  name:'Location Manager',  short:'Location', color:'#15803d',bg:'#f0fdf4',
+     desc:'Manage drops and view analytics at their assigned location(s).',
+     scope:'Assigned location',
+     perms:{create:true,approve:false,analytics:'scoped',team:false,billing:false}},
+    {id:'staff',     name:'Staff',             short:'Staff',    color:'#475569',bg:'#f8fafc',
+     desc:'Day-of check-in and activation of pre-approved drops only.',
+     scope:'Assigned location',
+     perms:{create:false,approve:false,analytics:false,team:false,billing:false}},
+    {id:'partner',   name:'Partner',           short:'Partner',  color:'#b45309',bg:'#fffbeb',
+     desc:'External brand access — submit drops pending approval, view own performance only.',
+     scope:'Own drops only',
+     perms:{create:'pending',approve:false,analytics:'own',team:false,billing:false},external:true},
+    ...(hasEvents?[{id:'eventstaff',name:'Event Staff',short:'Event',color:'#be185d',bg:'#fdf2f8',
+     desc:'Time-bounded check-in access that auto-expires when the event ends.',
+     scope:'Event only',
+     perms:{create:false,approve:false,analytics:false,team:false,billing:false},
+     timed:true,external:true}]:[]),
   ];
-  const users=[
-    {name:'Sarah Mitchell',   email:'sarah.m@'+c.short.toLowerCase().replace(/\s/g,'')+'.com', role:'Admin',   t1:'All',           active:true, last:'2m ago'},
-    {name:'David Park',       email:'david.p@'+c.short.toLowerCase().replace(/\s/g,'')+'.com', role:'Manager', t1:c.locations[0].t1, active:true, last:'1h ago'},
-    {name:'Priya Sharma',     email:'priya.s@'+c.short.toLowerCase().replace(/\s/g,'')+'.com', role:'Manager', t1:c.locations[Math.floor(c.locations.length/2)].t1, active:true, last:'3h ago'},
-    {name:'Marcus Johnson',   email:'marcus.j@'+c.short.toLowerCase().replace(/\s/g,'')+'.com',role:'Staff',   t1:c.locations[0].t1, active:true, last:'Just now'},
-    {name:'Emma Davis',       email:'emma.d@'+c.short.toLowerCase().replace(/\s/g,'')+'.com',  role:'Staff',   t1:c.locations[1].t1, active:true, last:'20m ago'},
-    {name:'Kevin Torres',     email:'kevin.t@'+c.short.toLowerCase().replace(/\s/g,'')+'.com', role:'Analyst', t1:'All',           active:false,last:'2d ago'},
+  const roleMap=Object.fromEntries(ROLES.map(r=>[r.id,r]));
+
+  const partnerDomain=(hasPartners&&c.partners[0])?c.partners[0].name.toLowerCase().replace(/[^a-z0-9]/g,'')+'hq.com':'partnerhq.com';
+  const members=[
+    {name:'Alex Chen',      email:'alex.chen@'+domain,       role:'owner',     scope:'All locations',       active:true,  last:'Just now',  since:'Jan 2024'},
+    {name:'Sarah Mitchell', email:'sarah.m@'+domain,         role:'admin',     scope:'All locations',       active:true,  last:'14m ago',   since:'Mar 2024'},
+    {name:'David Park',     email:'david.p@'+domain,         role:'regional',  scope:t1s[0]||'Region 1',   active:true,  last:'1h ago',    since:'Jun 2024'},
+    ...(t1s.length>1?[{name:'Priya Sharma',email:'priya.s@'+domain,role:'regional',scope:t1s[Math.min(1,t1s.length-1)],active:true,last:'3h ago',since:'Aug 2024'}]:[]),
+    {name:'Marcus Johnson', email:'marcus.j@'+domain,        role:'location',  scope:c.locations[0].name,  active:true,  last:'20m ago',   since:'Sep 2024'},
+    {name:'Emma Davis',     email:'emma.d@'+domain,          role:'staff',     scope:c.locations[0].name,  active:true,  last:'Just now',  since:'Nov 2024'},
+    {name:'Kevin Torres',   email:'kevin.t@'+domain,         role:'staff',     scope:c.locations[Math.min(1,c.locations.length-1)].name, active:false,last:'2d ago',since:'Dec 2024'},
+    ...(hasPartners?[{name:'Jordan Lee',email:'jordan.lee@'+partnerDomain,role:'partner',scope:'Own drops only',active:true,last:'Yesterday',since:'Feb 2025',external:true}]:[]),
+    ...(hasEvents?[{name:'Taylor Reyes',email:'taylor.r@eventstaffing.com',role:'eventstaff',scope:'Event only',active:true,last:'Just now',since:'This event',external:true,timed:true}]:[]),
   ];
-  const roleColors={Admin:'#5b21b6',Manager:'#1d4ed8',Staff:'#15803d',Analyst:'#b45309'};
-  const roleBgs  ={Admin:'#f5f3ff',Manager:'#eff6ff',Staff:'#f0fdf4',Analyst:'#fef3c7'};
-  return `<div style="padding:28px 32px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+
+  function permCell(val){
+    if(val===true)     return `<span style="color:#16a34a;font-weight:900;">&#10003;</span>`;
+    if(val===false)    return `<span style="color:#e2e8f0;font-weight:700;">&mdash;</span>`;
+    if(val==='scoped') return `<span style="font-size:0.6rem;font-weight:700;background:#dbeafe;color:#1d4ed8;padding:1px 6px;border-radius:10px;">Scoped</span>`;
+    if(val==='own')    return `<span style="font-size:0.6rem;font-weight:700;background:#fef3c7;color:#b45309;padding:1px 6px;border-radius:10px;">Own only</span>`;
+    if(val==='pending')return `<span style="font-size:0.6rem;font-weight:700;background:#fef3c7;color:#b45309;padding:1px 6px;border-radius:10px;">Req. approval</span>`;
+    return `<span style="color:#e2e8f0;">&mdash;</span>`;
+  }
+
+  const PERM_KEYS   =['create','approve','analytics','team','billing'];
+  const PERM_LABELS =['Create Drops','Approve Drops','Analytics','Manage Team','Billing'];
+
+  return `<div style="padding:28px 32px;max-width:1060px;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
       <div>
         <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Team</div>
-        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${users.length} team members</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${members.length} members &nbsp;&middot;&nbsp; ${ROLES.length} roles defined</div>
       </div>
       <button style="background:${c.color};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Invite Member</button>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
-      ${roles.map(r=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;">
-        <div style="font-size:0.7rem;font-weight:800;color:${r.color};background:${r.bg};padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:8px;">${r.name}</div>
-        <div style="font-size:0.73rem;color:#64748b;line-height:1.4;">${r.desc}</div>
-        <div style="font-size:0.78rem;font-weight:700;color:#0f172a;margin-top:8px;">${users.filter(u=>u.role===r.name).length} members</div>
-      </div>`).join('')}
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;">
+      ${ROLES.map(r=>`
+        <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;flex:1;min-width:128px;max-width:170px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;margin-bottom:7px;">
+            <span style="font-size:0.65rem;font-weight:800;background:${r.bg};color:${r.color};padding:2px 8px;border-radius:20px;">${r.name}</span>
+            ${r.timed?`<span style="font-size:0.58rem;font-weight:700;background:#fce7f3;color:#be185d;padding:2px 5px;border-radius:8px;white-space:nowrap;">&#9201; Timed</span>`:''}
+          </div>
+          <div style="font-size:0.69rem;color:#64748b;line-height:1.45;margin-bottom:9px;">${r.desc}</div>
+          <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:5px;">Scope &rarr; <span style="color:#475569;font-weight:600;">${r.scope}</span></div>
+          <div style="font-size:0.75rem;font-weight:800;color:#0f172a;">${members.filter(m=>m.role===r.id).length} member${members.filter(m=>m.role===r.id).length!==1?'s':''}</div>
+        </div>`).join('')}
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:22px;">
+      <div style="padding:14px 20px 10px;border-bottom:1px solid #f1f5f9;">
+        <div style="font-size:0.82rem;font-weight:800;color:#0f172a;">Permissions Matrix</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">What each role can do across the platform</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.73rem;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="text-align:left;padding:10px 20px;color:#94a3b8;font-size:0.62rem;font-weight:700;text-transform:uppercase;min-width:150px;border-bottom:1px solid #f1f5f9;">Role</th>
+              ${PERM_LABELS.map(l=>`<th style="text-align:center;padding:10px 14px;color:#94a3b8;font-size:0.62rem;font-weight:700;text-transform:uppercase;border-bottom:1px solid #f1f5f9;white-space:nowrap;">${l}</th>`).join('')}
+              <th style="text-align:center;padding:10px 14px;color:#94a3b8;font-size:0.62rem;font-weight:700;text-transform:uppercase;border-bottom:1px solid #f1f5f9;white-space:nowrap;">Scope</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ROLES.map((r,i)=>`<tr style="border-bottom:1px solid #f8fafc;background:${i%2===0?'#fff':'#fafbfc'};">
+              <td style="padding:10px 20px;"><span style="font-size:0.65rem;font-weight:800;background:${r.bg};color:${r.color};padding:2px 8px;border-radius:20px;">${r.name}</span></td>
+              ${PERM_KEYS.map(k=>`<td style="text-align:center;padding:10px 14px;">${permCell(r.perms[k])}</td>`).join('')}
+              <td style="text-align:center;padding:10px 14px;font-size:0.68rem;color:#475569;font-weight:600;">${r.scope}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:9px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
-        ${['Member','Role','Access','Last Active'].map(h=>`<span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">${h}</span>`).join('')}
+      <div style="display:grid;grid-template-columns:2.2fr 1fr 1.5fr 1.2fr 0.9fr;padding:9px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
+        ${['Member','Role','Scope','Permissions','Last Active'].map(h=>`<span style="font-size:0.62rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">${h}</span>`).join('')}
       </div>
-      ${users.map(u=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:${c.color}20;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;color:${c.color};flex-shrink:0;">${u.name.split(' ').map(n=>n[0]).join('')}</div>
-          <div>
-            <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${u.name}</div>
-            <div style="font-size:0.68rem;color:#94a3b8;">${u.email}</div>
+      ${members.map(u=>{
+        const r=roleMap[u.role]||{color:'#64748b',bg:'#f8fafc',short:u.role,name:u.role,perms:{}};
+        const activePerms=PERM_KEYS.filter(k=>r.perms[k]===true||r.perms[k]==='scoped'||r.perms[k]==='pending'||r.perms[k]==='own');
+        const permLabels={create:'Create',approve:'Approve',analytics:'Analytics',team:'Team',billing:'Billing'};
+        return `<div style="display:grid;grid-template-columns:2.2fr 1fr 1.5fr 1.2fr 0.9fr;padding:12px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:${r.bg};display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:${r.color};flex-shrink:0;border:1.5px solid ${r.color}40;">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+            <div>
+              <div style="font-size:0.79rem;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:5px;">${u.name}${u.external?` <span style="font-size:0.58rem;background:#fef3c7;color:#b45309;padding:1px 5px;border-radius:8px;font-weight:700;">External</span>`:''}${u.timed?` <span style="font-size:0.58rem;background:#fce7f3;color:#be185d;padding:1px 5px;border-radius:8px;font-weight:700;">&#9201;</span>`:''}</div>
+              <div style="font-size:0.65rem;color:#94a3b8;">${u.email}</div>
+            </div>
           </div>
-        </div>
-        <span style="display:inline-block;background:${roleBgs[u.role]};color:${roleColors[u.role]};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${u.role}</span>
-        <span style="font-size:0.75rem;color:#64748b;">${u.t1}</span>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:6px;height:6px;border-radius:50%;background:${u.active?'#16a34a':'#94a3b8'};flex-shrink:0;"></div>
-          <span style="font-size:0.72rem;color:#94a3b8;">${u.last}</span>
-        </div>
-      </div>`).join('')}
+          <span style="font-size:0.63rem;font-weight:800;background:${r.bg};color:${r.color};padding:2px 8px;border-radius:20px;display:inline-block;">${r.short}</span>
+          <span style="font-size:0.71rem;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:8px;">${u.scope}</span>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;">
+            ${activePerms.length===0
+              ?`<span style="font-size:0.62rem;color:#94a3b8;font-style:italic;">Check-in only</span>`
+              :activePerms.map(k=>`<span style="font-size:0.6rem;background:#f1f5f9;color:#475569;padding:1px 6px;border-radius:8px;font-weight:600;">${permLabels[k]}</span>`).join('')}
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:${u.active?'#16a34a':'#d1d5db'};flex-shrink:0;"></div>
+            <span style="font-size:0.67rem;color:#94a3b8;">${u.last}</span>
+          </div>
+        </div>`;
+      }).join('')}
     </div>
+
   </div>`;
 }
 
