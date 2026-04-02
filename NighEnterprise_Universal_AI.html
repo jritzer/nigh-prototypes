@@ -20,9 +20,9 @@ function nighBug(sz){sz=sz||32;return `<svg viewBox="80 44 200 280" width="${sz}
 function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,showNewColl:false,collStep:1,collGeo:null};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false};
 function ss(p){Object.assign(S,p);render();}
-function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false});}
+function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,locationEdit:false,addLocModal:false});}
 function cfg(){return CONFIGS[S.config];}
 
 // ── CONFIGS ───────────────────────────────────────────────────────────────────
@@ -811,7 +811,7 @@ function getFilteredDrops(){
 
 // ── CONFIG SWITCHER ───────────────────────────────────────────────────────────
 function switchConfig(key){
-  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1});
+  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,locationEdit:false,addLocModal:false});
   render();
 }
 function switcherBar(){
@@ -843,7 +843,8 @@ function layout(){
     </div>
   </div>
   ${S.showPush?pushModal():''}
-  ${S.showNewColl?newCollModal():''}`;
+  ${S.showNewColl?newCollModal():''}
+  ${S.addLocModal?addLocationModal():''}`;
 }
 
 function sidebar(){
@@ -1104,6 +1105,10 @@ function rLocations(){
         <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">${c.locsLabel}</div>
         <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${locs.length} of ${c.locations.length} ${c.locsLabel.toLowerCase()} shown</div>
       </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({addLocModal:true})" style="padding:8px 16px;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;font-size:0.78rem;background:#fff;cursor:pointer;color:#374151;">+ Add ${c.locLabel}</button>
+        <button onclick="ss({showPush:true,pushStep:1})" style="background:${c.color};color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Create Drop</button>
+      </div>
     </div>
     ${groups.map(g=>{
       const glocs=locs.filter(l=>l.t1===g);
@@ -1149,14 +1154,80 @@ function rLocations(){
   </div>`;
 }
 
+// ── Shared location form fields ───────────────────────────────────────────────
+function locFormFields(l){
+  const c=cfg();
+  const inp=(label,key,ph,req)=>`
+    <div>
+      <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">${label}${req?` <span style="color:#ef4444;">*</span>`:''}</label>
+      <input value="${l&&l[key]?l[key]:''}" placeholder="${ph}" style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'">
+    </div>`;
+  const t1vals=[...new Set(c.locations.map(x=>x.t1))];
+  const t2vals=[...new Set(c.locations.map(x=>x.t2).filter(Boolean))];
+  const selField=(label,key,opts,req)=>`
+    <div>
+      <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">${label}${req?` <span style="color:#ef4444;">*</span>`:''}</label>
+      <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+        ${opts.map(o=>`<option value="${o}" ${l&&l[key]===o?'selected':''}>${o}</option>`).join('')}
+      </select>
+    </div>`;
+  return `
+    <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin:0 0 10px;">Identity &amp; Contact</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      ${inp(c.locLabel+' Name','name','e.g. Denver Flagship',true)}
+      ${inp('Handle','handle','@'+c.key+'-denver',true)}
+    </div>
+    <div style="margin-bottom:12px;">${inp('Street Address','address','123 Main St',false)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:12px;margin-bottom:12px;">
+      ${inp('City','city','Denver',true)}
+      ${inp('State','state','CO',true)}
+      ${inp('Zip','zip','80202',false)}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      ${inp('Phone','phone','(303) 555-0100',false)}
+      ${inp('Email','email','location@'+c.key+'.com',false)}
+    </div>
+    <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Organization</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      ${selField(c.hier[0]||'Group','t1',t1vals,true)}
+      ${t2vals.length?selField(c.hier[1]||'Sub-group','t2',['',...t2vals],false):''}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      ${inp('Location Manager','manager','Full name',false)}
+      ${inp('Manager Email','managerEmail','manager@'+c.key+'.com',false)}
+    </div>
+    <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Account Config</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      ${inp('Guest Capacity','cap','200',false)}
+      ${selField('Status','status',['active','inactive','pending'],true)}
+    </div>`;
+}
+
 function locationDetail(l){
   const c=cfg();
   const lDrops=c.drops.filter(d=>d.locId===l.id);
   const lci=lDrops.reduce((s,d)=>s+(d.ci||0),0);
   const lres=lDrops.reduce((s,d)=>s+(d.res||0),0);
   const lsr=pct(lci,lres);
+  if(S.locationEdit){
+    return `<div style="padding:28px 32px;">
+      <button onclick="ss({locationEdit:false})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${l.name}</button>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:24px 28px;max-width:680px;">
+        <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:4px;">Edit ${c.locLabel} Profile</div>
+        <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:22px;">Changes apply to this ${c.locLabel}'s Nigh account and public profile.</div>
+        ${locFormFields(l)}
+        <div style="display:flex;gap:10px;margin-top:24px;">
+          <button onclick="ss({locationEdit:false})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Cancel</button>
+          <button onclick="ss({locationEdit:false})" style="flex:2;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Save Changes</button>
+        </div>
+      </div>
+    </div>`;
+  }
   return `<div style="padding:28px 32px;">
-    <button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${c.locsLabel}</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;">&larr; Back to ${c.locsLabel}</button>
+      <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
       <div>
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:16px;">
@@ -1182,9 +1253,15 @@ function locationDetail(l){
               <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">Drops</div>
             </div>
           </div>
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:8px;">Profile</div>
+          ${infoRow('Handle',l.handle?'@'+l.handle:'— not set')}
+          ${infoRow('Address',l.address?l.address+', '+l.city+', '+l.state:l.city+', '+l.state)}
+          ${infoRow('Phone',l.phone||'— not set')}
+          ${infoRow('Email',l.email||'— not set')}
+          ${l.manager?infoRow('Manager',l.manager):''}
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin:12px 0 8px;">Organization</div>
           ${infoRow(c.hier[0],l.t1)}
           ${l.t2?infoRow(c.hier[1]||'District',l.t2):''}
-          ${infoRow('City',l.city+', '+l.state)}
           ${infoRow('Capacity',l.cap+' guests')}
           ${infoRow('Est.',l.yr)}
         </div>
@@ -1227,6 +1304,34 @@ function locationDetail(l){
       </div>
     </div>
   </div>`;
+}
+
+// ── Add new location modal ─────────────────────────────────────────────────────
+function addLocationModal(){
+  if(!S.addLocModal) return '';
+  const c=cfg();
+  return `
+    <div onclick="ss({addLocModal:false})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:620px;max-height:90vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:2px;">${c.name}</div>
+            <div style="font-weight:900;font-size:1.15rem;">Add New ${c.locLabel}</div>
+          </div>
+          <button onclick="ss({addLocModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="font-size:0.8rem;color:#64748b;margin-bottom:22px;">Creates a new Nigh account for this ${c.locLabel.toLowerCase()} and invites the manager to complete onboarding.</div>
+        ${locFormFields(null)}
+        <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-top:20px;font-size:0.78rem;color:#78350f;line-height:1.5;">
+          📋 <strong>What happens next:</strong> An invitation email is sent to the manager. The ${c.locLabel.toLowerCase()} appears as <strong>Pending Setup</strong> until they complete onboarding. You can push drops to this ${c.locLabel.toLowerCase()} once it's active.
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button onclick="ss({addLocModal:false})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">Cancel</button>
+          <button onclick="ss({addLocModal:false})" style="flex:2;background:${c.color};color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Create ${c.locLabel}</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // ── DROPS ─────────────────────────────────────────────────────────────────────
@@ -1987,6 +2092,28 @@ function rSettings(){
     <div style="margin-bottom:20px;">
       <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Settings</div>
       <div style="font-size:0.73rem;color:#94a3b8;margin-top:3px;">Operational preferences, notifications &amp; integrations &mdash; for structural setup (hierarchy, geo tiers, drop types) see <span onclick="go('setup')" style="color:${c.color};cursor:pointer;font-weight:700;">Configure</span></div>
+    </div>
+    <!-- YOUR ACCOUNT -->
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:14px;">
+      <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:2px;">Your Account</div>
+      <div style="font-size:0.7rem;color:#94a3b8;margin-bottom:18px;">Personal profile &amp; security settings</div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #f1f5f9;">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${c.dark||c.color},${c.color});display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;flex-shrink:0;">EA</div>
+        <div>
+          <div style="font-weight:800;font-size:0.95rem;margin-bottom:2px;">Enterprise Admin</div>
+          <div style="font-size:0.75rem;color:#64748b;">admin@${c.key}.com</div>
+          <div style="display:inline-block;margin-top:5px;font-size:0.68rem;font-weight:700;background:${c.color}15;color:${c.color};padding:2px 9px;border-radius:5px;">Corporate Admin</div>
+        </div>
+        <button style="margin-left:auto;padding:7px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;">
+        ${[['Role','Corporate Admin'],['Organization',c.name],['Email','admin@'+c.key+'.com'],['Mobile','—']].map(r=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f8fafc;font-size:0.78rem;"><span style="color:#64748b;">${r[0]}</span><span style="font-weight:700;">${r[1]}</span></div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button style="flex:1;padding:8px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Change Password</button>
+        <button style="flex:1;padding:8px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Two-Factor Auth</button>
+        <button style="flex:1;padding:8px;border:1px solid #fca5a5;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#ef4444;">Sign Out</button>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
       <div>
