@@ -867,6 +867,20 @@ function sidebar(){
       <div style="color:rgba(255,255,255,0.55);font-size:0.62rem;margin-top:3px;">${c.plan}</div>
       <div style="color:rgba(255,255,255,0.45);font-size:0.6rem;margin-top:2px;">${cfg().locations.length} locations</div>
     </div>
+    <!-- Location context row -->
+    ${(()=>{
+  const firstT1=c.locations[0]?.t1||'';
+  const firstLoc=c.locations[0];
+  const isMultiBrand=c.hier&&c.hier[0]&&['Brand','Park','Resort','Concept'].includes(c.hier[0]);
+  return `<div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;">
+    <div style="font-size:0.58rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px;">Location</div>
+    ${isMultiBrand?`<div style="font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.65);margin-bottom:3px;">${c.hier[0]}: <span style="color:rgba(255,255,255,1)">${firstT1}</span></div>`:''}
+    <div style="display:flex;align-items:center;gap:7px;">
+      <div style="width:22px;height:22px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:900;color:rgba(255,255,255,0.7);flex-shrink:0;">${(firstLoc?.name||'').charAt(0)}</div>
+      <div style="font-size:0.74rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${firstLoc?.name||'—'}</div>
+    </div>
+  </div>`;
+})()}
     ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.58)'};font-size:0.77rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;transition:all 0.1s;">
       <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}</span>${n.label}
     </button>`).join('')}
@@ -2118,10 +2132,12 @@ function pushModal(){
     const filterRegion=S.pushRegionFilter||null;
     const filteredLocs=filterRegion?locs.filter(l=>l.t1===filterRegion):locs;
     body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:10px;">Select ${c.locLabel}</div>
-    ${showFilter?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+    ${showFilter?`<div style="margin-bottom:10px;">
+    <div style="font-size:0.62rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Filter by ${c.hier[0]||'Group'}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
       <button onclick="ss({pushRegionFilter:null})" style="padding:4px 12px;border-radius:20px;border:1.5px solid ${!filterRegion?c.color:'#e5e7eb'};background:${!filterRegion?c.color+'18':'#fff'};color:${!filterRegion?c.color:'#64748b'};font-size:0.68rem;font-weight:700;cursor:pointer;">All</button>
       ${regions.map(r=>`<button onclick="ss({pushRegionFilter:'${r}'})" style="padding:4px 12px;border-radius:20px;border:1.5px solid ${filterRegion===r?c.color:'#e5e7eb'};background:${filterRegion===r?c.color+'18':'#fff'};color:${filterRegion===r?c.color:'#64748b'};font-size:0.68rem;font-weight:700;cursor:pointer;">${r}</button>`).join('')}
-    </div>`:''}
+    </div></div>`:''}
     <div style="max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
       ${filteredLocs.map(l=>`<button onclick="ss({pushLoc:'${l.id}'})" style="padding:10px 14px;border-radius:10px;border:2px solid ${S.pushLoc===l.id?c.color:'#e5e7eb'};background:${S.pushLoc===l.id?c.color+'10':'#fff'};cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;">
         <div>

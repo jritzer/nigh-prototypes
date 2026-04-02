@@ -444,6 +444,37 @@ const orgs=[
   {id:'O033',name:'Cured Boulder',handle:'curedboulder',cat:'Food & Drink',sub:'Specialty Food Shop',tagline:'Artisanal cured meats, cheeses, and charcuterie',website:'https://curedboulder.com',address:'1455 Pearl St',city:'Boulder',state:'CO',zip:'80302',contactName:'Michael Gayle',email:'hello@curedboulder.com',phone:'(303) 555-0162',status:'Active',plan:'Standard',billingStatus:'Current',billingCycle:'Monthly',renewalDate:'Apr 2, 2026',planOverride:null,maxDropsPerMonth:8,advSchedulingDays:2,noShowPolicy:'moderate',drops:3,revenue:380,joined:'Feb 22, 2026',riskScore:8,flags:[],internalNotes:[],bio:'Cured specialty shop featuring imported and local charcuterie, cheeses, and gourmet foods.',orgType:'Independent',parentOrgId:null,joinSource:'Website Signup',assignedTo:'NT004',accountHealth:'Good Standing',checkInDate:'',changeLog:[],pipelineStage:'Signed Up',outreachLog:[]},
   {id:'O034',name:'Illegal Pete\'s',handle:'illegalpetes',cat:'Food & Drink',sub:'Restaurant',tagline:'Fresh Mexican food with a Boulder vibe',website:'https://illegalpetes.com',address:'1447 Pearl St',city:'Boulder',state:'CO',zip:'80302',contactName:'Pete Sprague',email:'hello@illegalpetes.com',phone:'(720) 555-0191',status:'Suspended',plan:'Standard',billingStatus:'Overdue',billingCycle:'Monthly',renewalDate:'Mar 20, 2026',planOverride:null,maxDropsPerMonth:12,advSchedulingDays:2,noShowPolicy:'moderate',drops:6,revenue:1240,joined:'Jan 30, 2026',riskScore:58,flags:['Refund Dispute','Overdue Payment'],internalNotes:['Suspended due to high dispute rate on drop from Mar 18.'],bio:'Illegal Pete\'s serves bold, fresh Mexican food on Pearl Street.',orgType:'Independent',parentOrgId:null,joinSource:'Website Signup',assignedTo:'NT003',accountHealth:'Suspended',checkInDate:'',changeLog:[{ts:'Mar 22, 2026 · 10:30 AM',actorType:'nigh',actorName:'Marcus Webb',tab:'Account',field:'Status',from:'Active',to:'Suspended'},{ts:'Mar 22, 2026 · 10:31 AM',actorType:'nigh',actorName:'Marcus Webb',tab:'Account',field:'Flags',from:'',to:'Refund Dispute, Overdue Payment'}],pipelineStage:'Signed Up',outreachLog:[]},
 
+  // Big Red F Restaurant Group (3-level: Enterprise → Brand → Location)
+  {id:'O015',name:'Big Red F Restaurant Group',handle:'bigredf',cat:'Food & Drink',sub:'Restaurant Group',
+   city:'Boulder',state:'CO',address:'1234 Pearl St',joined:'2024-09-01',status:'Active',plan:'Enterprise',
+   drops:0,revenue:0,followers:0,rating:4.7,
+   orgType:'Parent',parentOrgId:null,tierModel:'3-level',
+   contact:'admin@bigredf.com',phone:'(303) 555-0210'},
+  {id:'O015A',name:'Centro Mexican Kitchen — Boulder',handle:'centroboulder',cat:'Food & Drink',sub:'Restaurant',
+   city:'Boulder',state:'CO',address:'950 Pearl St',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:12,revenue:4200,followers:890,rating:4.8,
+   orgType:'Child',parentOrgId:'O015',brand:'Centro Mexican Kitchen',brandShort:'Centro'},
+  {id:'O015B',name:'Centro Mexican Kitchen — Louisville',handle:'centrolouisville',cat:'Food & Drink',sub:'Restaurant',
+   city:'Louisville',state:'CO',address:'488 McCaslin Blvd',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:8,revenue:2800,followers:620,rating:4.7,
+   orgType:'Child',parentOrgId:'O015',brand:'Centro Mexican Kitchen',brandShort:'Centro'},
+  {id:'O015C',name:'Jax Fish House — Boulder',handle:'jaxboulder',cat:'Food & Drink',sub:'Restaurant',
+   city:'Boulder',state:'CO',address:'928 Pearl St',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:15,revenue:5600,followers:1240,rating:4.9,
+   orgType:'Child',parentOrgId:'O015',brand:'Jax Fish House',brandShort:'Jax'},
+  {id:'O015D',name:'Jax Fish House — Denver LoDo',handle:'jaxdenver',cat:'Food & Drink',sub:'Restaurant',
+   city:'Denver',state:'CO',address:'1539 17th St',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:14,revenue:5100,followers:1180,rating:4.8,
+   orgType:'Child',parentOrgId:'O015',brand:'Jax Fish House',brandShort:'Jax'},
+  {id:'O015E',name:'The Post Brewing — Lafayette',handle:'postlafayette',cat:'Food & Drink',sub:'Restaurant',
+   city:'Lafayette',state:'CO',address:'105 W Emma St',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:10,revenue:3400,followers:780,rating:4.6,
+   orgType:'Child',parentOrgId:'O015',brand:'The Post Brewing',brandShort:'The Post'},
+  {id:'O015F',name:'West End Tavern',handle:'westendtavern',cat:'Food & Drink',sub:'Restaurant',
+   city:'Boulder',state:'CO',address:'926 Pearl St',joined:'2024-09-15',status:'Active',plan:'Enterprise',
+   drops:9,revenue:3100,followers:710,rating:4.7,
+   orgType:'Child',parentOrgId:'O015',brand:'West End Tavern',brandShort:'West End'},
+
 ];
 const currentNighUserId='NT004'; // mock: Jordan Lee (Support)
 const nighTeam=[
@@ -2256,7 +2287,7 @@ return `
 ${activeOrgs.map(o=>`<tr data-name="${o.name.toLowerCase()}" data-handle="${o.handle}" data-city="${(o.city||'').toLowerCase()}" data-cat="${o.cat||''}" data-type="${o.orgType||''}">
   <td><div style="font-weight:600">${o.name}</div><div style="font-size:11px;color:#9CA3AF">@${o.handle}</div></td>
   <td><div style="font-size:12px;font-weight:600;color:#374151">${o.cat||'—'}</div><div style="font-size:11px;color:#9CA3AF">${o.sub||''}</div></td>
-  <td><span style="font-size:11px;font-weight:600;color:${o.orgType==='Parent'?'#0369A1':o.orgType==='Child'?'#6B7280':'#374151'};background:${o.orgType==='Parent'?'#E0F2FE':o.orgType==='Child'?'#F3F4F6':'#F9FAFB'};padding:2px 8px;border-radius:6px">${o.orgType||'—'}</span></td>
+  <td><span style="font-size:11px;font-weight:600;color:${o.orgType==='Parent'?'#0369A1':o.orgType==='Child'?'#6B7280':'#374151'};background:${o.orgType==='Parent'?'#E0F2FE':o.orgType==='Child'?'#F3F4F6':'#F9FAFB'};padding:2px 8px;border-radius:6px">${o.orgType||'—'}</span>${o.tierModel==='3-level'?'<span style="font-size:10px;font-weight:700;color:#7c3aed;background:#ede9fe;padding:2px 6px;border-radius:4px;margin-left:4px;">3-tier</span>':''}</td>
   <td style="font-size:12px;color:#6B7280">${o.city?o.city+', '+o.state:'—'}</td>
   <td>${bg(statusBg(o.status),'',o.status)}</td>
   <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">View</button></td>
@@ -2613,26 +2644,51 @@ ${(()=>{
     <div style="font-size:13px;color:#6B7280">${children.length} location${children.length!==1?'s':''} under this parent account</div>
     <button class="btn btn-primary btn-sm">${svgI('plus',13)} Add Location</button>
   </div>
-  <div class="card">
-  <table class="tbl">
-    <thead><tr><th>Organization</th><th>Handle</th><th>Status</th><th>Plan</th><th>Drops</th><th>Revenue</th><th>Joined</th><th></th></tr></thead>
-    <tbody>
-    ${children.map(c=>`<tr>
-      <td>
-        <div style="font-weight:600;font-size:13px">${c.name}</div>
-        <div style="font-size:11px;color:#9CA3AF">${c.address}, ${c.city}</div>
-      </td>
-      <td style="font-family:monospace;font-size:12px;color:#6B7280">@${c.handle}</td>
-      <td>${bg(statusBg(c.status),'',c.status)}</td>
-      <td style="font-size:12px">${c.plan}</td>
-      <td style="font-size:13px;font-weight:600">${c.drops}</td>
-      <td style="font-size:13px;font-weight:600">$${c.revenue.toLocaleString()}</td>
-      <td style="font-size:12px;color:#6B7280">${c.joined}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')">View →</button></td>
-    </tr>`).join('')}
-    </tbody>
-  </table>
-  </div>
+  ${(()=>{
+    const hasBrands=children.some(c=>c.brand);
+    if(hasBrands){
+      const brands=[...new Set(children.map(c=>c.brand).filter(Boolean))];
+      return `<div style="display:flex;flex-direction:column;gap:12px;">${brands.map(brand=>{
+        const brandLocs=children.filter(c=>c.brand===brand);
+        const brandRevenue=brandLocs.reduce((s,c)=>s+c.revenue,0);
+        const brandDrops=brandLocs.reduce((s,c)=>s+c.drops,0);
+        return `<div class="card">
+          <div style="padding:12px 16px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-weight:700;font-size:13px;color:#1B2A4A;">${brand}</div>
+            <div style="display:flex;gap:16px;">
+              <span style="font-size:11px;color:#6B7280;">${brandLocs.length} location${brandLocs.length!==1?'s':''}</span>
+              <span style="font-size:11px;color:#6B7280;">${brandDrops} drops</span>
+              <span style="font-size:11px;color:#6B7280;">$${brandRevenue.toLocaleString()} rev</span>
+            </div>
+          </div>
+          <table class="tbl"><thead><tr><th>Location</th><th>City</th><th>Status</th><th>Drops</th><th>Revenue</th><th></th></tr></thead>
+          <tbody>${brandLocs.map(c=>`<tr>
+            <td><div style="font-weight:600;font-size:13px">${c.name.replace(brand+' — ','').replace(brand,'')}</div><div style="font-size:11px;color:#9CA3AF">@${c.handle}</div></td>
+            <td style="font-size:12px;color:#6B7280">${c.city}, ${c.state}</td>
+            <td>${bg(statusBg(c.status),'',c.status)}</td>
+            <td style="font-size:13px;font-weight:600">${c.drops}</td>
+            <td style="font-size:13px;font-weight:600">$${c.revenue.toLocaleString()}</td>
+            <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')">View →</button></td>
+          </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+      }).join('')}</div>`;
+    } else {
+      return `<div class="card"><table class="tbl">
+        <thead><tr><th>Organization</th><th>Handle</th><th>Status</th><th>Plan</th><th>Drops</th><th>Revenue</th><th>Joined</th><th></th></tr></thead>
+        <tbody>${children.map(c=>`<tr>
+          <td><div style="font-weight:600;font-size:13px">${c.name}</div><div style="font-size:11px;color:#9CA3AF">${c.address}, ${c.city}</div></td>
+          <td style="font-family:monospace;font-size:12px;color:#6B7280">@${c.handle}</td>
+          <td>${bg(statusBg(c.status),'',c.status)}</td>
+          <td style="font-size:12px">${c.plan}</td>
+          <td style="font-size:13px;font-weight:600">${c.drops}</td>
+          <td style="font-size:13px;font-weight:600">$${c.revenue.toLocaleString()}</td>
+          <td style="font-size:12px;color:#6B7280">${c.joined}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')">View →</button></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+    }
+  })()}
   <div style="margin-top:16px;padding:14px;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px">
     <div style="font-size:12px;font-weight:600;color:#0369A1;margin-bottom:6px">Combined Stats</div>
     <div style="display:flex;gap:24px;flex-wrap:wrap">

@@ -74,6 +74,9 @@ const S = {
   pushModal: false,
   pushStep: 1,
   pushTarget: 'all',
+  pushLocId: null,
+  currentLocId: 'L01',
+  showLocPicker: false,
   userRoleFilter: 'all',
   collectionDetail: null,
   collectionFilter: 'all',
@@ -435,6 +438,26 @@ function sidebar() {
           </div>
         </div>
       </div>
+      <!-- Location Context -->
+      ${(()=>{
+        const curLoc=LOCATIONS.find(l=>l.id===S.currentLocId)||LOCATIONS[0];
+        const curReg=REGIONS.find(r=>r.id===curLoc.region);
+        const curDist=DISTRICTS.find(d=>d.id===curLoc.district);
+        return `<div style="padding:10px 14px;border-bottom:1px solid #f1f5f9;position:relative;">
+          <button onclick="ss({showLocPicker:!S.showLocPicker})" style="width:100%;background:${S.showLocPicker?'#f8f9fb':'transparent'};border:1px solid ${S.showLocPicker?'#e5e7eb':'transparent'};border-radius:9px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:9px;text-align:left;">
+            <div style="width:28px;height:28px;background:#f1f5f9;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${ic('store',15)}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#0f172a;">${curLoc.name}</div>
+              <div style="font-size:0.62rem;color:${curReg?.color||'#64748b'};font-weight:600;margin-top:1px;">${curReg?.name||''}</div>
+            </div>
+            <span style="color:#94a3b8;font-size:0.72rem;flex-shrink:0;">▾</span>
+          </button>
+          ${S.showLocPicker?`<div style="position:absolute;left:8px;right:8px;top:calc(100% - 2px);background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:500;max-height:280px;overflow-y:auto;">
+            <div style="padding:8px 14px;font-size:0.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid #f1f5f9;">Switch Location</div>
+            ${REGIONS.map(r=>{const rLocs=LOCATIONS.filter(l=>l.region===r.id);return `<div style="padding:5px 14px 2px;font-size:0.58rem;font-weight:800;color:${r.color};text-transform:uppercase;letter-spacing:0.08em;">${r.name}</div>${rLocs.map(l=>`<button onclick="ss({currentLocId:'${l.id}',showLocPicker:false})" style="width:100%;padding:6px 14px;background:${S.currentLocId===l.id?r.color+'12':'transparent'};border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;"><span style="font-size:0.75rem;font-weight:${S.currentLocId===l.id?'700':'500'};color:${S.currentLocId===l.id?r.color:'#374151'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${l.name}</span>${S.currentLocId===l.id?`<span style="color:${r.color};font-size:0.8rem;flex-shrink:0;">✓</span>`:''}</button>`).join('')}`;}).join('')}
+          </div>`:''}
+        </div>`;
+      })()}
       <!-- Nav items -->
       <div style="flex:1;padding:10px;overflow-y:auto;">
         ${nav.map(n=>`
@@ -2361,72 +2384,54 @@ function pushStep1() {
 }
 
 function pushStep2() {
-  const scopes = [
-    { id:'all',      label:'All Locations',    sub:'All 20 locations across 5 regions', count:20 },
-    { id:'region',   label:'By Region',        sub:'Push to one or more regions',       count:null },
-    { id:'district', label:'By District',      sub:'Target specific districts',          count:null },
-    { id:'custom',   label:'Custom Selection', sub:'Hand-pick individual locations',     count:null },
-  ];
+  const dropLocId=S.pushLocId||S.currentLocId||'L01';
+  const dropLoc=LOCATIONS.find(l=>l.id===dropLocId)||LOCATIONS[0];
+  const dropReg=regionById(dropLoc.region);
+  const dropDist=DISTRICTS.find(d=>d.id===dropLoc.district);
   return `
     <div style="margin-bottom:24px;">
       <div style="font-size:0.65rem;font-weight:800;color:#94a3b8;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Step 2 of 3</div>
-      <div style="font-weight:900;font-size:1.2rem;">Select Scope</div>
-      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Where should this drop run?</div>
+      <div style="font-weight:900;font-size:1.2rem;">Confirm Location</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Which location is this drop for?</div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-      ${scopes.map(o=>`
-        <div onclick="ss({pushTarget:'${o.id}'})" style="border:2px solid ${S.pushTarget===o.id?'#0f172a':'#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;background:${S.pushTarget===o.id?'#f8f9fb':'#fff'};transition:all 0.12s;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${S.pushTarget===o.id?'#0f172a':'#cbd5e1'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${S.pushTarget===o.id?`<div style="width:8px;height:8px;border-radius:50%;background:#0f172a;"></div>`:''}</div>
-            <div style="flex:1;">
-              <div style="font-weight:700;font-size:0.88rem;">${o.label} ${o.count?`<span style="color:#6366f1;">(${o.count})</span>`:''}</div>
-              <div style="font-size:0.75rem;color:#64748b;">${o.sub}</div>
-            </div>
-          </div>
+    <div style="border:2px solid #0f172a;border-radius:12px;padding:16px;margin-bottom:16px;background:#f8f9fb;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:38px;height:38px;background:#fff;border-radius:10px;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${ic('store',20)}</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;font-size:0.95rem;color:#0f172a;">${dropLoc.name}</div>
+          <div style="font-size:0.75rem;color:#64748b;margin-top:2px;">${dropReg?.name||''}${dropDist?' · '+dropDist.name:''} · ${dropLoc.city}, ${dropLoc.state}</div>
         </div>
-      `).join('')}
+        <span style="background:#dcfce7;color:#166534;font-size:0.65rem;font-weight:800;padding:3px 9px;border-radius:20px;">Selected</span>
+      </div>
     </div>
-    ${S.pushTarget==='region'?`
-      <div style="margin-bottom:18px;">
-        <div style="font-size:0.75rem;font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Select Regions</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${REGIONS.map(r=>`<div style="border:2px solid ${r.color};border-radius:8px;padding:7px 14px;cursor:pointer;font-size:0.8rem;font-weight:700;color:${r.color};background:${r.color}10;">${r.name}</div>`).join('')}
-        </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.72rem;font-weight:700;color:#475569;margin-bottom:8px;">Change to a different location:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:200px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;padding:10px;">
+        ${LOCATIONS.map(l=>{const r=regionById(l.region);return `<label style="display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;cursor:pointer;font-size:0.76rem;" onmouseover="this.style.background='#f8f9fb'" onmouseout="this.style.background='transparent'"><input type="radio" name="dropLoc" value="${l.id}" ${l.id===dropLocId?'checked':''} onchange="ss({pushLocId:'${l.id}'})" style="accent-color:#0f172a;flex-shrink:0;"><span style="font-weight:600;color:#0f172a;">${l.name}</span><span style="color:${r?.color};font-size:0.62rem;font-weight:700;flex-shrink:0;">${r?.abbr}</span></label>`;}).join('')}
       </div>
-    `:''}
-    ${S.pushTarget==='district'?`
-      <div style="margin-bottom:18px;">
-        <div style="font-size:0.75rem;font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Select Districts</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${DISTRICTS.map(d=>{const r=regionById(d.region);return `<div style="border:2px solid ${r?.color};border-radius:8px;padding:6px 12px;cursor:pointer;font-size:0.75rem;font-weight:700;color:${r?.color};background:${r?.color}10;">${d.name}<span style="opacity:0.6;margin-left:4px;">${r?.abbr}</span></div>`;}).join('')}
-        </div>
-      </div>
-    `:''}
-    ${S.pushTarget==='custom'?`
-      <div style="margin-bottom:18px;">
-        <div style="font-size:0.75rem;font-weight:800;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Select Locations</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:180px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;padding:10px;">
-          ${LOCATIONS.map(l=>{const r=regionById(l.region);return `<label style="display:flex;align-items:center;gap:8px;padding:5px;border-radius:7px;cursor:pointer;font-size:0.78rem;" onmouseover="this.style.background='#f8f9fb'" onmouseout="this.style.background='transparent'"><input type="checkbox"/><span style="font-weight:600;">${l.name}</span><span style="color:${r?.color};font-size:0.65rem;">${r?.abbr}</span></label>`;}).join('')}
-        </div>
-      </div>
-    `:''}
+    </div>
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:13px;margin-bottom:18px;font-size:0.82rem;">
-      <span style="font-weight:700;">Estimated reach: </span>
-      <span style="color:#1d4ed8;font-weight:800;">${S.pushTarget==='all'?'20 locations · ~600 total cap (30/location)':'Select your scope above to see the reach estimate'}</span>
+      <span style="font-weight:700;">Creating for: </span>
+      <span style="color:#1d4ed8;font-weight:800;">${dropLoc.name} · ${dropLoc.city}, ${dropLoc.state}</span>
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="ss({pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
-      <button onclick="ss({pushStep:3})" style="flex:2;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review & Push →</button>
+      <button onclick="ss({pushStep:3})" style="flex:2;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;">Next: Review & Confirm →</button>
     </div>
   `;
 }
 
 function pushStep3() {
+  const dropLocId=S.pushLocId||S.currentLocId||'L01';
+  const dropLoc=LOCATIONS.find(l=>l.id===dropLocId)||LOCATIONS[0];
+  const dropReg=regionById(dropLoc.region);
+  const dropDist=DISTRICTS.find(d=>d.id===dropLoc.district);
+  const locDisplay=dropLoc.name+' · '+dropLoc.city+', '+dropLoc.state;
   return `
     <div style="margin-bottom:24px;">
       <div style="font-size:0.65rem;font-weight:800;color:#94a3b8;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Step 3 of 3</div>
-      <div style="font-weight:900;font-size:1.2rem;">Review & Push</div>
-      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Confirm details before sending to your locations.</div>
+      <div style="font-weight:900;font-size:1.2rem;">Review & Create</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Confirm details before creating this drop.</div>
     </div>
     <div style="background:#f8f9fb;border-radius:14px;padding:18px;margin-bottom:18px;">
       <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:12px;">Drop Summary</div>
@@ -2436,17 +2441,17 @@ function pushStep3() {
       ${infoRow('Start Time','10:00 AM local time (each location)')}
       ${infoRow('Cap per Location','30 spots')}
       ${infoRow('Price','Free')}
-      ${infoRow('Scope','All Locations — 20 locations')}
-      ${infoRow('Estimated Total Cap','600 spots')}
+      ${infoRow('Location',locDisplay)}
+      ${infoRow('Region',dropReg?.name||'')}
       ${infoRow('Location Customization','Allowed within template')}
     </div>
     <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-bottom:18px;">
-      <div style="font-weight:800;font-size:0.82rem;color:#92400e;margin-bottom:5px;">⚡ What happens when you push</div>
-      <div style="font-size:0.78rem;color:#78350f;line-height:1.65;">Each location manager receives a notification and can confirm or customize within the parameters you set. Drops go live at each location only after the manager confirms. You'll see real-time confirmation status in your Drops dashboard.</div>
+      <div style="font-weight:800;font-size:0.82rem;color:#92400e;margin-bottom:5px;">⚡ What happens when you create</div>
+      <div style="font-size:0.78rem;color:#78350f;line-height:1.65;">This drop will be created for ${dropLoc.name}. The location manager will receive a notification and can customize it within the parameters you set. The drop goes live only after the manager confirms. You'll see real-time status in your Drops dashboard.</div>
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="ss({pushStep:2})" style="flex:1;background:#f1f5f9;border:none;padding:12px;border-radius:10px;font-weight:700;cursor:pointer;color:#475569;">← Back</button>
-      <button onclick="ss({pushModal:false,page:'drops'})" style="flex:2;background:#10b981;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">⚡ Push to All 20 Locations</button>
+      <button onclick="ss({pushModal:false,page:'drops'})" style="flex:2;background:#10b981;color:#fff;border:none;padding:12px;border-radius:10px;font-weight:800;cursor:pointer;font-size:0.9rem;">⚡ Create Drop for ${dropLoc.name}</button>
     </div>
   `;
 }

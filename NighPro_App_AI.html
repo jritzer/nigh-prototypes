@@ -141,8 +141,8 @@ function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 
 
 // Data
 const accts=[
-  {name:'Centro Mexican Kitchen',short:'Centro',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3},
-  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3},
+  {name:'Centro Mexican Kitchen',short:'Centro',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder'},
+  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder'},
   {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Food & Drink',subCat:'Brewery',addr:'4910 Nautilus Ct, Boulder, CO 80301',handle:'averybrewing',phone:'(303) 555-0192',email:'events@averybrewing.com',maxPartners:5}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
@@ -486,11 +486,11 @@ function renderHome(){
     <div style="display:flex;justify-content:space-between;align-items:center">
       <button onclick="S.showAcct=!S.showAcct;render()" style="background:none;border:none;color:#111827;display:flex;align-items:center;gap:8px">
         <div style="width:32px;height:32px;border-radius:8px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151">${acct().short.charAt(0)}</div>
-        <div style="text-align:left"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;color:#111827">${acct().short} ${ic('down',14)}</div><div style="font-size:10px;color:#6B7280">${acct().role}</div></div>
+        <div style="text-align:left"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;color:#111827">${acct().short} ${ic('down',14)}</div><div style="font-size:10px;color:#6B7280">${acct().enterprise?acct().parentOrg+' Enterprise · ':''} ${acct().role}${acct().location?' · '+acct().location:''}</div></div>
       </button>
       <button onclick="S.niyaFabContext='home';S.scr='niya';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;render()" style="background:none;border:none;padding:0;cursor:pointer;width:36px;height:36px;border-radius:50%;overflow:hidden;"><img src="niya_icon.svg" style="width:36px;height:36px;object-fit:cover;display:block"/></button>
     </div>
-    ${S.showAcct?`<div class="fi" style="margin-top:10px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB">${accts.map((a,i)=>`<button onclick="acctIdx=${i};S.showAcct=false;render()" style="width:100%;padding:10px 14px;background:${i===acctIdx?'#F9FAFB':'transparent'};border:none;color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid #E5E7EB':'none'}"><div style="width:28px;height:28px;border-radius:6px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151">${a.short.charAt(0)}</div><div><div style="font-size:12px;font-weight:600;color:#111827">${a.name}</div><div style="font-size:10px;color:#6B7280">${a.role}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</button>`).join('')}</div>`:''}
+    ${S.showAcct?`<div class="fi" style="margin-top:10px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB">${accts.map((a,i)=>`<button onclick="acctIdx=${i};S.showAcct=false;render()" style="width:100%;padding:10px 14px;background:${i===acctIdx?'#F9FAFB':'transparent'};border:none;color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid #E5E7EB':'none'}"><div style="width:28px;height:28px;border-radius:6px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#374151">${a.short.charAt(0)}</div><div><div style="font-size:12px;font-weight:600;color:#111827">${a.name}</div><div style="font-size:10px;color:#6B7280">${a.enterprise?a.parentOrg+' · ':''}${a.role}${a.location?' · '+a.location:''}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</button>`).join('')}</div>`:''}
   </div>
 
 
