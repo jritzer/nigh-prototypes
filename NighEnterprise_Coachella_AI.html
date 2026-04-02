@@ -233,7 +233,7 @@ function topbar(){
       <div style="display:flex;gap:3px;background:#f1f5f9;border-radius:8px;padding:3px;">
         ${[{v:'stage',l:'By Stage'},{v:'location',l:'By Location'}].map(h=>`<button onclick="ss({hierarchyView:'${h.v}'})" style="padding:4px 10px;border-radius:5px;border:none;font-size:0.7rem;font-weight:700;cursor:pointer;background:${S.hierarchyView===h.v?'#E8502A':'transparent'};color:${S.hierarchyView===h.v?'#fff':'#64748b'};">${h.l}</button>`).join('')}
       </div>
-      <button onclick="ss({showPush:true,pushStep:1})" style="background:#E8502A;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('drops',13)} Push Drop</button>
+      <button onclick="ss({showPush:true,pushStep:1})" style="background:#E8502A;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('drops',13)} Create Drop</button>
     </div>
   </div>`;
 }
@@ -1050,7 +1050,7 @@ function pushModal(){
     <div style="background:#fff;border-radius:18px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
       <div style="background:#E8502A;padding:20px 24px;border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Push Drop</div>
+          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Create Drop</div>
           <div style="color:rgba(255,255,255,0.8);font-size:0.78rem;margin-top:2px;">Step ${step} of 3</div>
         </div>
         <button onclick="ss({showPush:false,pushStep:1})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;">X</button>

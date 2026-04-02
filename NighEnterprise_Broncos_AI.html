@@ -285,7 +285,7 @@ function topbar(){
       </div>
 
       <button onclick="ss({pushModal:true,pushStep:1})" style="background:#FB4F14;color:#fff;border:none;padding:8px 16px;border-radius:9px;font-weight:700;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-        ${ic('zap',14)} Push Drop
+        ${ic('zap',14)} Create Drop
       </button>
       <div style="width:34px;height:34px;background:#002244;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FB4F14;">${nighBug(22)}</div>
     </div>
@@ -501,7 +501,7 @@ function filterBar(){
         ${ZONES.map(z=>`<option value="${z.id}" ${S.zoneFilter===z.id?'selected':''}>${z.name} (${LOCATIONS.filter(l=>l.zone===z.id).length})</option>`).join('')}
       </select>
       <div style="font-size:0.78rem;color:#94a3b8;">${filteredLocations().length} location${filteredLocations().length!==1?'s':''} shown</div>
-      <button onclick="ss({pushModal:true,pushStep:1})" style="margin-left:auto;background:#FB4F14;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">⚡ Push Drop</button>
+      <button onclick="ss({pushModal:true,pushStep:1})" style="margin-left:auto;background:#FB4F14;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">⚡ Create Drop</button>
     </div>
   `;
 }
@@ -588,7 +588,7 @@ function locationDetail(id){
           ${miniStat('Show Rate',l.showRate+'%',showColor(l.showRate))}
         </div>
         <div style="display:flex;gap:10px;">
-          <button onclick="ss({pushModal:true,pushStep:1,locationDetail:null})" style="flex:1;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Push Drop Here</button>
+          <button onclick="ss({pushModal:true,pushStep:1,locationDetail:null})" style="flex:1;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Create Drop Here</button>
           <button onclick="ss({locationDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
         </div>
       </div>
@@ -1310,7 +1310,7 @@ function pushModal(){
     <div style="background:#fff;border-radius:18px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
       <div style="background:#FB4F14;padding:20px 24px;border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Push Drop</div>
+          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Create Drop</div>
           <div style="color:rgba(255,255,255,0.8);font-size:0.78rem;margin-top:2px;">Step ${step} of 3</div>
         </div>
         <button onclick="ss({showPush:false,pushStep:1})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;">X</button>
