@@ -892,7 +892,6 @@ function topbar(){
       ${days.map(d=>`<button onclick="ss({day:S.day==='${d.id}'?null:'${d.id}'})" style="padding:4px 11px;border-radius:20px;border:1px solid ${S.day===d.id?'#E8502A':'#e5e7eb'};background:${S.day===d.id?'#E8502A18':'transparent'};color:${S.day===d.id?'#E8502A':'#64748b'};font-size:0.72rem;font-weight:${S.day===d.id?'700':'500'};cursor:pointer;">${d.short} ${d.date}</button>`).join('')}
       <div style="flex:1;"></div>
       <span style="background:#dcfce7;color:#15803d;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:20px;">${liveDrops} Live</span>
-      <button onclick="ss({showPush:true,pushStep:1})" style="background:${c.color};color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Create Drop</button>
     </div>`;
   }
 
@@ -914,7 +913,6 @@ function topbar(){
       </div>
       <div style="flex:1;"></div>
       <span style="background:#dcfce7;color:#15803d;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:20px;">${liveDrops} Live</span>
-      <button onclick="ss({showPush:true,pushStep:1})" style="background:${c.color};color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Create Drop</button>
     </div>`;
   }
 
@@ -930,7 +928,6 @@ function topbar(){
     ${S.t1||S.t2||S.timing||S.weekend||S.day?`<button onclick="ss({t1:null,t2:null,timing:null,weekend:null,day:null})" style="padding:5px 12px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;color:#64748b;font-size:0.72rem;font-weight:600;cursor:pointer;">Clear Filters</button>`:''}
     <div style="flex:1;"></div>
     <span style="background:#dcfce7;color:#15803d;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:20px;">${liveDrops} Live</span>
-    <button onclick="ss({showPush:true,pushStep:1})" style="background:${c.color};color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Create Drop</button>
   </div>`;
 }
 
@@ -1105,10 +1102,7 @@ function rLocations(){
         <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">${c.locsLabel}</div>
         <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${locs.length} of ${c.locations.length} ${c.locsLabel.toLowerCase()} shown</div>
       </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="ss({addLocModal:true})" style="padding:8px 16px;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;font-size:0.78rem;background:#fff;cursor:pointer;color:#374151;">+ Add ${c.locLabel}</button>
-        <button onclick="ss({showPush:true,pushStep:1})" style="background:${c.color};color:#fff;border:none;padding:8px 18px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Create Drop</button>
-      </div>
+      <button onclick="ss({addLocModal:true})" style="padding:8px 16px;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;font-size:0.78rem;background:#fff;cursor:pointer;color:#374151;">+ Add ${c.locLabel}</button>
     </div>
     ${groups.map(g=>{
       const glocs=locs.filter(l=>l.t1===g);
@@ -1298,8 +1292,7 @@ function locationDetail(l){
         </div>
         <div style="background:${c.color}10;border-radius:14px;border:1px solid ${c.color}30;padding:16px 18px;">
           <div style="font-size:0.8rem;font-weight:800;color:${c.color};margin-bottom:10px;">Quick Actions</div>
-          <button onclick="ss({showPush:true,pushLoc:'${l.id}',pushStep:1})" style="width:100%;padding:9px;background:${c.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;margin-bottom:6px;">+ Create Drop Here</button>
-          <button onclick="ss({showNewColl:true,collStep:1})" style="width:100%;padding:9px;background:#fff;color:${c.color};border:1px solid ${c.color}60;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ New Collection</button>
+          <button onclick="ss({showNewColl:true,collStep:1})" style="width:100%;padding:9px;background:${c.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ New Collection</button>
         </div>
       </div>
     </div>
