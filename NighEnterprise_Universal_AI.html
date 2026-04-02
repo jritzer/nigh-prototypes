@@ -484,6 +484,94 @@ const CONFIGS={
     ],
   },
 
+  vailresorts:{
+    key:'vailresorts',short:'Vail Resorts',name:'Vail Resorts \u2014 Epic Pass Network',
+    color:'#1B4FA8',accent:'#A8C8FF',dark:'#0D2459',
+    grad:'linear-gradient(180deg,#0D2459 0%,#1B4FA8 100%)',
+    plan:'Enterprise Multi-Venue Pro',ppl:299,
+    hier:['Region','Property Type'],locLabel:'Location',locsLabel:'Locations',
+    dropTypes:[
+      {id:'lift',    label:'Lift Access',     icon:'&#9975;', bg:'#eff6ff',c:'#1d4ed8'},
+      {id:'fnb',     label:'On-Mountain F&B', icon:'&#9832;', bg:'#f0fdf4',c:'#15803d'},
+      {id:'retail',  label:'Gear & Retail',   icon:'&#128722;',bg:'#f3e8ff',c:'#5b21b6'},
+      {id:'event',   label:'Snow Event',      icon:'&#10052;', bg:'#f1f5f9',c:'#475569'},
+      {id:'vip',     label:'Epic VIP',        icon:'&#11088;', bg:'#fef9c3',c:'#713f12'},
+    ],
+    geoTiers:{
+      base:      {label:'Base Lodge / Village (~200 ft)',   short:'~200 ft'},
+      midmtn:    {label:'Mid-Mountain (~1,000 ft)',         short:'~1,000 ft'},
+      summit:    {label:'Summit Area (~2,500 ft)',          short:'~2,500 ft'},
+      resort:    {label:'Full Resort (~5,000 ft)',          short:'~5,000 ft'},
+    },
+    special:null,
+    locations:[
+      // Colorado
+      {id:'L01',name:'Vail Mountain',                  t1:'Colorado',    t2:'Ski Resort',     city:'Vail',          state:'CO',status:'active',cap:5000,yr:1962},
+      {id:'L02',name:'Breckenridge Ski Resort',         t1:'Colorado',    t2:'Ski Resort',     city:'Breckenridge',  state:'CO',status:'active',cap:4500,yr:1961},
+      {id:'L03',name:'Keystone Resort',                 t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:3200,yr:1970},
+      {id:'L04',name:'Beaver Creek Resort',             t1:'Colorado',    t2:'Ski Resort',     city:'Avon',          state:'CO',status:'active',cap:3500,yr:1980},
+      {id:'L05',name:'Crested Butte Mountain Resort',   t1:'Colorado',    t2:'Ski Resort',     city:'Crested Butte', state:'CO',status:'active',cap:2200,yr:1961},
+      {id:'L06',name:'Telluride Ski Resort',            t1:'Colorado',    t2:'Ski Resort',     city:'Telluride',     state:'CO',status:'active',cap:2800,yr:1972},
+      {id:'L07',name:'Arapahoe Basin',                  t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:2000,yr:1946},
+      // Epic Mountain Gear — Colorado
+      {id:'L08',name:'Epic Mountain Gear \u2014 Vail',         t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Vail',          state:'CO',status:'active',cap:300,yr:2018},
+      {id:'L09',name:'Epic Mountain Gear \u2014 Breck',        t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Breckenridge',  state:'CO',status:'active',cap:280,yr:2018},
+      {id:'L10',name:'Epic Mountain Gear \u2014 Keystone',     t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Keystone',      state:'CO',status:'active',cap:220,yr:2018},
+      {id:'L11',name:'Epic Mountain Gear \u2014 Beaver Creek', t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Avon',          state:'CO',status:'active',cap:240,yr:2018},
+      // Utah
+      {id:'L12',name:'Park City Mountain Resort',       t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:4800,yr:1963},
+      {id:'L13',name:'Canyons Village',                 t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:3600,yr:1968},
+      {id:'L14',name:'Epic Mountain Gear \u2014 Park City',    t1:'Utah',        t2:'Epic Mtn Gear',  city:'Park City',     state:'UT',status:'active',cap:260,yr:2019},
+      // Lake Tahoe
+      {id:'L15',name:'Heavenly Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'South Lake Tahoe',state:'CA',status:'active',cap:3800,yr:1955},
+      {id:'L16',name:'Northstar California',            t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Truckee',       state:'CA',status:'active',cap:3000,yr:1972},
+      {id:'L17',name:'Kirkwood Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Kirkwood',      state:'CA',status:'active',cap:2400,yr:1972},
+      {id:'L18',name:'Epic Mountain Gear \u2014 Heavenly',     t1:'Lake Tahoe',  t2:'Epic Mtn Gear',  city:'South Lake Tahoe',state:'CA',status:'active',cap:230,yr:2019},
+      // Pacific Northwest
+      {id:'L19',name:'Stevens Pass',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Skykomish',     state:'WA',status:'active',cap:2600,yr:1937},
+      {id:'L20',name:'Mt. Bachelor',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Bend',          state:'OR',status:'active',cap:3100,yr:1958},
+      // Northeast
+      {id:'L21',name:'Stowe Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Stowe',         state:'VT',status:'active',cap:3200,yr:1937},
+      {id:'L22',name:'Okemo Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Ludlow',        state:'VT',status:'active',cap:2400,yr:1956},
+      {id:'L23',name:'Mount Snow',                      t1:'Northeast',   t2:'Ski Resort',     city:'West Dover',    state:'VT',status:'active',cap:2200,yr:1954},
+      {id:'L24',name:'Hunter Mountain',                 t1:'Northeast',   t2:'Ski Resort',     city:'Hunter',        state:'NY',status:'active',cap:2000,yr:1960},
+      {id:'L25',name:'Attitash Mountain Resort',        t1:'Northeast',   t2:'Ski Resort',     city:'Bartlett',      state:'NH',status:'active',cap:1800,yr:1965},
+      {id:'L26',name:'Epic Mountain Gear \u2014 Stowe',        t1:'Northeast',   t2:'Epic Mtn Gear',  city:'Stowe',         state:'VT',status:'active',cap:210,yr:2020},
+      // Midwest
+      {id:'L27',name:'Wilmot Mountain',                 t1:'Midwest',     t2:'Ski Resort',     city:'Wilmot',        state:'WI',status:'active',cap:1200,yr:1937},
+      {id:'L28',name:'Afton Alps',                      t1:'Midwest',     t2:'Ski Resort',     city:'Hastings',      state:'MN',status:'active',cap:1400,yr:1959},
+      {id:'L29',name:'Mt. Brighton',                    t1:'Midwest',     t2:'Ski Resort',     city:'Brighton',      state:'MI',status:'active',cap:1300,yr:1964},
+      // Canada
+      {id:'L30',name:'Whistler Blackcomb',              t1:'Canada',      t2:'Ski Resort',     city:'Whistler',      state:'BC',status:'active',cap:8000,yr:1966},
+      {id:'L31',name:'Nakiska Ski Area',                t1:'Canada',      t2:'Ski Resort',     city:'Kananaskis',    state:'AB',status:'active',cap:2000,yr:1985},
+      {id:'L32',name:'Epic Mountain Gear \u2014 Whistler',     t1:'Canada',      t2:'Epic Mtn Gear',  city:'Whistler',      state:'BC',status:'active',cap:320,yr:2019},
+    ],
+    drops:[
+      {id:'D01',title:'Epic Pass Holder \u2014 First Tracks Access',     type:'vip',   status:'live',      locId:'L01',cap:200,res:192,ci:178,sr:93,price:0,bh:2},
+      {id:'D02',title:'Breckenridge \u2014 Terrain Park Early Open Drop', type:'lift',  status:'live',      locId:'L02',cap:300,res:274,ci:252,sr:92,price:0,bh:3},
+      {id:'D03',title:'10th Mountain Lodge \u2014 Lunch Special',        type:'fnb',   status:'live',      locId:'L01',cap:120,res:108,ci:99, sr:92,price:0,bh:3},
+      {id:'D04',title:'Epic Gear Breck \u2014 Demo Ski Upgrade',         type:'retail', status:'live',      locId:'L09',cap:80, res:72, ci:66, sr:92,price:0,bh:4},
+      {id:'D05',title:'Whistler \u2014 Peak-to-Peak Gondola VIP Access', type:'vip',   status:'live',      locId:'L30',cap:50, res:50, ci:46, sr:92,price:0,bh:2},
+      {id:'D06',title:'Park City \u2014 Night Skiing Drop',               type:'lift',  status:'live',      locId:'L12',cap:400,res:364,ci:335,sr:92,price:0,bh:5},
+      {id:'D07',title:'Stowe \u2014 Snowfall Powder Day Alert Drop',     type:'event', status:'scheduled', locId:'L21',cap:500,res:312,ci:0,  sr:0, price:0,bh:4},
+      {id:'D08',title:'Epic Gear Vail \u2014 Season-End Clearance',      type:'retail', status:'live',      locId:'L08',cap:200,res:181,ci:165,sr:91,price:0,bh:6},
+    ],
+    collections:[
+      {id:'C01',name:'Powder Day Bundle',      desc:'First tracks + F&B + terrain park drops triggered by fresh snowfall',          drops:3,enrolled:2840,ci:2591,status:'active',icon:'&#10052;'},
+      {id:'C02',name:'Epic Pass VIP Week',     desc:'Exclusive early access and summit drops for Epic Pass holders',                drops:4,enrolled:18200,ci:16562,status:'active',icon:'&#11088;'},
+      {id:'C03',name:'Gear Up &amp; Go',       desc:'Demo gear, lift access and F&B drops bundled for new guests',                  drops:3,enrolled:960, ci:872, status:'active',icon:'&#128722;'},
+      {id:'C04',name:'Spring Ski Festival',    desc:'End-of-season event drops across all Colorado resorts',                       drops:5,enrolled:0,   ci:0,   status:'draft', icon:'&#128640;'},
+    ],
+    partners:[
+      {id:'P01',name:'Epic Pass (owned)',     type:'Platform', status:'Active',  since:'Jan 2026',drops:4},
+      {id:'P02',name:'GoPro',               type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P03',name:'Columbia Sportswear', type:'Brand',    status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P04',name:'Audi',               type:'Sponsor',  status:'Active',  since:'Jan 2026',drops:1},
+      {id:'P05',name:'Levi\u2019s',         type:'Brand',    status:'Active',  since:'Mar 2026',drops:1},
+      {id:'P06',name:'Marriott Bonvoy',     type:'Sponsor',  status:'Invited', since:'Mar 2026',drops:0},
+    ],
+  },
+
   topgolf:{
     key:'topgolf',short:'Topgolf',name:'Topgolf \u2014 Multi-Venue',
     color:'#218B44',accent:'#FFB800',dark:'#0F4220',
