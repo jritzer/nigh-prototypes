@@ -20,7 +20,7 @@ function nighBug(sz){sz=sz||32;return `<svg viewBox="80 44 200 280" width="${sz}
 function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1};
 function ss(p){Object.assign(S,p);render();}
 function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,locationEdit:false,addLocModal:false});}
 function cfg(){return CONFIGS[S.config];}
@@ -811,7 +811,7 @@ function getFilteredDrops(){
 
 // ── CONFIG SWITCHER ───────────────────────────────────────────────────────────
 function switchConfig(key){
-  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,locationEdit:false,addLocModal:false});
+  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1});
   render();
 }
 function switcherBar(){
@@ -1459,44 +1459,88 @@ function rCustomers(){
   const drops=c.drops;
   const totalCi=drops.reduce((s,d)=>s+(d.ci||0),0);
   const totalRes=drops.reduce((s,d)=>s+(d.res||0),0);
-  const guests=[
-    {name:'Avery Thompson',   email:'avery.t@email.com',  visits:12,ci:9, last:'2h ago', tier:'Gold'},
-    {name:'Jordan Kim',       email:'jordan.k@email.com', visits:8, ci:7, last:'4h ago', tier:'Silver'},
-    {name:'Morgan Rivera',    email:'morgan.r@email.com', visits:15,ci:13,last:'1h ago', tier:'Gold'},
-    {name:'Casey Patel',      email:'casey.p@email.com',  visits:5, ci:4, last:'6h ago', tier:'Silver'},
-    {name:'Riley Johnson',    email:'riley.j@email.com',  visits:22,ci:19,last:'30m ago',tier:'Platinum'},
-    {name:'Taylor Martinez',  email:'taylor.m@email.com', visits:3, ci:2, last:'1d ago', tier:'Bronze'},
-    {name:'Alex Chen',        email:'alex.c@email.com',   visits:18,ci:16,last:'2h ago', tier:'Platinum'},
-    {name:'Sam Williams',     email:'sam.w@email.com',    visits:7, ci:6, last:'3h ago', tier:'Silver'},
-    {name:'Jamie Davis',      email:'jamie.d@email.com',  visits:10,ci:8, last:'5h ago', tier:'Gold'},
-    {name:'Drew Wilson',      email:'drew.w@email.com',   visits:2, ci:1, last:'2d ago', tier:'Bronze'},
+
+  // Drop guests — have engaged with at least one drop
+  const dropGuests=[
+    {name:'Avery Thompson', email:'avery.t@email.com', visits:12,ci:9,  last:'2h ago',  tier:'Gold',    source:'drop'},
+    {name:'Jordan Kim',     email:'jordan.k@email.com',visits:8, ci:7,  last:'4h ago',  tier:'Silver',  source:'drop'},
+    {name:'Morgan Rivera',  email:'morgan.r@email.com',visits:15,ci:13, last:'1h ago',  tier:'Gold',    source:'drop'},
+    {name:'Casey Patel',    email:'casey.p@email.com', visits:5, ci:4,  last:'6h ago',  tier:'Silver',  source:'drop'},
+    {name:'Riley Johnson',  email:'riley.j@email.com', visits:22,ci:19, last:'30m ago', tier:'Platinum',source:'drop'},
+    {name:'Taylor Martinez',email:'taylor.m@email.com',visits:3, ci:2,  last:'1d ago',  tier:'Bronze',  source:'drop'},
+    {name:'Alex Chen',      email:'alex.c@email.com',  visits:18,ci:16, last:'2h ago',  tier:'Platinum',source:'drop'},
+    {name:'Sam Williams',   email:'sam.w@email.com',   visits:7, ci:6,  last:'3h ago',  tier:'Silver',  source:'drop'},
+    {name:'Jamie Davis',    email:'jamie.d@email.com', visits:10,ci:8,  last:'5h ago',  tier:'Gold',    source:'drop'},
+    {name:'Drew Wilson',    email:'drew.w@email.com',  visits:2, ci:1,  last:'2d ago',  tier:'Bronze',  source:'drop'},
   ];
+
+  // CRM contacts — imported but never attended a drop
+  const crmContacts=[
+    {name:'Blake Anderson',  email:'b.anderson@email.com', imported:'Mar 28',crmSource:'Salesforce', tags:['loyalty','vip']},
+    {name:'Quinn Foster',    email:'q.foster@email.com',   imported:'Mar 28',crmSource:'Salesforce', tags:['loyalty']},
+    {name:'Harper Lee',      email:'h.lee@email.com',      imported:'Mar 28',crmSource:'HubSpot',    tags:['newsletter']},
+    {name:'Sage Mitchell',   email:'s.mitchell@email.com', imported:'Mar 29',crmSource:'HubSpot',    tags:['newsletter']},
+    {name:'River Nguyen',    email:'r.nguyen@email.com',   imported:'Mar 29',crmSource:'Klaviyo',    tags:['email-list']},
+    {name:'Finley Roberts',  email:'f.roberts@email.com',  imported:'Mar 29',crmSource:'Klaviyo',    tags:['email-list']},
+    {name:'Rowan Scott',     email:'r.scott@email.com',    imported:'Mar 30',crmSource:'CSV Upload', tags:['loyalty','newsletter']},
+    {name:'Skyler Thompson', email:'s.thompson@email.com', imported:'Mar 30',crmSource:'CSV Upload', tags:['loyalty']},
+    {name:'Dakota White',    email:'d.white@email.com',    imported:'Mar 31',crmSource:'Salesforce', tags:['vip']},
+    {name:'Emery Young',     email:'e.young@email.com',    imported:'Mar 31',crmSource:'Salesforce', tags:['newsletter']},
+    {name:'Marlowe Cruz',    email:'m.cruz@email.com',     imported:'Apr 1', crmSource:'HubSpot',    tags:['email-list']},
+    {name:'Indigo Hall',     email:'i.hall@email.com',     imported:'Apr 1', crmSource:'CSV Upload', tags:['loyalty']},
+  ];
+
   const tierColors={Platinum:'#7c3aed',Gold:'#b45309',Silver:'#475569',Bronze:'#92400e'};
   const tierBgs  ={Platinum:'#f5f3ff',Gold:'#fef3c7',Silver:'#f1f5f9',Bronze:'#fff7ed'};
-  return `<div style="padding:28px 32px;">
-    <div style="font-size:1.3rem;font-weight:900;color:#0f172a;margin-bottom:6px;">Guests</div>
-    <div style="font-size:0.78rem;color:#64748b;margin-bottom:20px;">Customers who have reserved or checked in to at least one drop</div>
+  const srcColors={'Salesforce':'#00A1E0','HubSpot':'#FF7A59','Klaviyo':'#15B79E','CSV Upload':'#6B7280'};
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
-      ${kpi('Total Guests',fmtNum(totalRes),'unique reservations',c.color)}
-      ${kpi('Checked In',fmtNum(totalCi),'across all drops','#0f172a')}
-      ${kpi('Avg Show Rate',pct(totalCi,totalRes)+'%','guests who showed up','#0f172a')}
-      ${kpi('Repeat Visitors','68%','visited 2+ drops','#0f172a')}
+  const tab=S.guestTab||'all';
+  const tabs=[
+    {id:'all',     label:'All Contacts',   count:dropGuests.length+crmContacts.length},
+    {id:'drop',    label:'Drop Guests',     count:dropGuests.length},
+    {id:'crm',     label:'Never Attended',  count:crmContacts.length},
+  ];
+
+  const showDrop = tab==='all'||tab==='drop';
+  const showCrm  = tab==='all'||tab==='crm';
+
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:900;color:#0f172a;margin-bottom:4px;">Guests</div>
+        <div style="font-size:0.78rem;color:#64748b;">Drop guests &amp; CRM contacts across all ${c.locsLabel.toLowerCase()}</div>
+      </div>
+      <button onclick="ss({crmModal:true,crmStep:1})" style="padding:9px 18px;background:${c.color};color:#fff;border:none;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Import / Sync CRM</button>
     </div>
 
-    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
-      <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:16px;">
-        <div style="font-size:0.85rem;font-weight:800;color:#0f172a;flex:1;">Guest List</div>
-        <div style="font-size:0.72rem;color:#94a3b8;">Sorted by visits</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;">
+      ${kpi('Total Contacts',dropGuests.length+crmContacts.length,'across all sources',c.color)}
+      ${kpi('Drop Guests',dropGuests.length,'reserved or checked in','#0f172a')}
+      ${kpi('Never Attended',crmContacts.length,'imported · not yet engaged','#f59e0b')}
+      ${kpi('Avg Show Rate',pct(totalCi,totalRes)+'%','of reservations','#0f172a')}
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:16px;align-items:center;">
+      ${tabs.map(t=>`<button onclick="ss({guestTab:'${t.id}'})" style="padding:7px 16px;border-radius:8px;border:1px solid ${tab===t.id?c.color:'#e5e7eb'};background:${tab===t.id?c.color+'12':'#fff'};color:${tab===t.id?c.color:'#475569'};font-weight:700;font-size:0.78rem;cursor:pointer;">${t.label} <span style="font-size:0.68rem;opacity:0.75;">(${t.count})</span></button>`).join('')}
+    </div>
+
+    <!-- Drop Guests section -->
+    ${showDrop?`
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:${showCrm?'16px':'0'};">
+      <div style="padding:12px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;flex-shrink:0;"></span>
+        <div style="font-size:0.82rem;font-weight:800;color:#0f172a;flex:1;">Drop Guests</div>
+        <div style="font-size:0.7rem;color:#94a3b8;">Have reserved or checked in to at least one drop</div>
       </div>
       <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:8px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
-        <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Guest</span>
-        <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Tier</span>
-        <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:center;">Drops</span>
-        <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:center;">Check-ins</span>
-        <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:right;">Last Visit</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Guest</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Tier</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:center;">Drops</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:center;">Check-ins</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;text-align:right;">Last Visit</span>
       </div>
-      ${guests.map(g=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:11px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
+      ${dropGuests.map(g=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;padding:11px 20px;border-bottom:1px solid #f8fafc;align-items:center;">
         <div>
           <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${g.name}</div>
           <div style="font-size:0.68rem;color:#94a3b8;">${g.email}</div>
@@ -1506,8 +1550,119 @@ function rCustomers(){
         <div style="text-align:center;font-size:0.82rem;font-weight:700;color:${c.color};">${g.ci}</div>
         <div style="text-align:right;font-size:0.72rem;color:#94a3b8;">${g.last}</div>
       </div>`).join('')}
-    </div>
+    </div>`:''}
+
+    <!-- CRM Contacts / Never Attended section -->
+    ${showCrm?`
+    <div style="background:#fff;border-radius:14px;border:1px solid #fde68a;overflow:hidden;">
+      <div style="padding:12px 20px;border-bottom:1px solid #fef3c7;display:flex;align-items:center;gap:10px;background:#fffbeb;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0;"></span>
+        <div style="font-size:0.82rem;font-weight:800;color:#92400e;flex:1;">Never Attended a Drop</div>
+        <div style="font-size:0.7rem;color:#b45309;">Imported from CRM · Haven't reserved or checked in yet</div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:8px 20px;border-bottom:1px solid #f1f5f9;background:#f8fafc;">
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Contact</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Source</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Tags</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">Imported</span>
+        <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;"></span>
+      </div>
+      ${crmContacts.map(g=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;padding:11px 20px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
+        <div>
+          <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${g.name}</div>
+          <div style="font-size:0.68rem;color:#94a3b8;">${g.email}</div>
+        </div>
+        <span style="display:inline-block;background:${srcColors[g.crmSource]||'#e5e7eb'}15;color:${srcColors[g.crmSource]||'#475569'};border:1px solid ${srcColors[g.crmSource]||'#e5e7eb'}40;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;">${g.crmSource}</span>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">${g.tags.map(t=>`<span style="background:#f1f5f9;color:#64748b;font-size:0.6rem;font-weight:600;padding:2px 6px;border-radius:4px;">${t}</span>`).join('')}</div>
+        <div style="font-size:0.72rem;color:#94a3b8;">${g.imported}</div>
+        <button style="padding:4px 12px;background:${c.color};color:#fff;border:none;border-radius:6px;font-size:0.68rem;font-weight:700;cursor:pointer;white-space:nowrap;">Invite to Drop</button>
+      </div>`).join('')}
+    </div>`:''}
   </div>`;
+}
+
+// ── CRM IMPORT MODAL ──────────────────────────────────────────────────────────
+function crmModal(){
+  if(!S.crmModal) return '';
+  const c=cfg();
+  const step=S.crmStep||1;
+  const crms=[
+    {id:'salesforce',label:'Salesforce',color:'#00A1E0',logo:'☁️'},
+    {id:'hubspot',   label:'HubSpot',   color:'#FF7A59',logo:'🟠'},
+    {id:'klaviyo',   label:'Klaviyo',   color:'#15B79E',logo:'📧'},
+    {id:'mailchimp', label:'Mailchimp', color:'#FFE01B',logo:'🐵'},
+    {id:'csv',       label:'CSV Upload',color:'#6B7280',logo:'📄'},
+  ];
+  const sel=S.crmSelected||'salesforce';
+  return `
+    <div onclick="ss({crmModal:false})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:560px;max-height:88vh;overflow-y:auto;padding:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div>
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:2px;">Step ${step} of 3</div>
+            <div style="font-weight:900;font-size:1.1rem;">${step===1?'Choose Source':step===2?'Map Fields':'Sync Settings'}</div>
+          </div>
+          <button onclick="ss({crmModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="display:flex;gap:5px;margin:14px 0 24px;">
+          ${[1,2,3].map(n=>`<div style="flex:1;height:4px;border-radius:4px;background:${n<=step?c.color:'#e5e7eb'};"></div>`).join('')}
+        </div>
+
+        ${step===1?`
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+            ${crms.map(crm=>`<div onclick="ss({crmSelected:'${crm.id}'})" style="border:2px solid ${sel===crm.id?crm.color:'#e5e7eb'};border-radius:12px;padding:14px 16px;cursor:pointer;background:${sel===crm.id?crm.color+'0d':'#fff'};display:flex;align-items:center;gap:10px;">
+              <span style="font-size:1.4rem;">${crm.logo}</span>
+              <div style="font-size:0.85rem;font-weight:700;color:#0f172a;">${crm.label}</div>
+              ${sel===crm.id?`<div style="margin-left:auto;width:18px;height:18px;border-radius:50%;background:${crm.color};display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#fff;flex-shrink:0;">✓</div>`:''}
+            </div>`).join('')}
+          </div>
+          ${sel==='csv'?`<div style="border:2px dashed #e5e7eb;border-radius:12px;padding:24px;text-align:center;margin-bottom:20px;cursor:pointer;" onmouseover="this.style.borderColor='${c.color}'" onmouseout="this.style.borderColor='#e5e7eb'">
+            <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+            <div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:4px;">Drop a CSV file here</div>
+            <div style="font-size:0.72rem;color:#94a3b8;">or click to browse — name, email, phone, tags supported</div>
+          </div>`:`<div style="background:#f8fafc;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+            <div style="font-size:0.72rem;font-weight:700;color:#0f172a;margin-bottom:4px;">Connect via OAuth</div>
+            <div style="font-size:0.7rem;color:#64748b;line-height:1.5;">You'll be redirected to ${crms.find(x=>x.id===sel)?.label} to authorize read access to your contact lists. Nigh never stores your CRM credentials.</div>
+          </div>`}
+        `:''}
+
+        ${step===2?`
+          <div style="margin-bottom:18px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Map your CRM fields to Nigh</div>
+            ${[['First Name','first_name'],['Last Name','last_name'],['Email','email'],['Phone','phone'],['Tags / Segments','tags'],['Loyalty Tier','tier']].map(([label,field])=>`
+              <div style="display:grid;grid-template-columns:1fr 16px 1fr;align-items:center;gap:8px;margin-bottom:8px;">
+                <div style="background:#f1f5f9;border-radius:8px;padding:8px 12px;font-size:0.75rem;font-weight:600;color:#0f172a;">${label}</div>
+                <div style="color:#94a3b8;font-size:0.7rem;text-align:center;">→</div>
+                <select style="border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;font-size:0.75rem;background:#fff;font-family:inherit;outline:none;">
+                  <option>— select field —</option>
+                  <option selected>${field}</option>
+                  <option>contact_${field}</option>
+                </select>
+              </div>`).join('')}
+          </div>
+        `:''}
+
+        ${step===3?`
+          <div style="margin-bottom:20px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Sync settings</div>
+            ${[
+              ['Sync frequency','<select style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 10px;font-size:0.75rem;background:#fff;font-family:inherit;"><option>Daily at midnight</option><option>Every 6 hours</option><option>Real-time webhook</option><option>Manual only</option></select>'],
+              ['Apply to','<select style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 10px;font-size:0.75rem;background:#fff;font-family:inherit;"><option>All ${c.locsLabel}</option><option>West Region only</option><option>Select locations…</option></select>'],
+              ['Duplicate handling','<select style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 10px;font-size:0.75rem;background:#fff;font-family:inherit;"><option>Skip duplicates</option><option>Update existing</option></select>'],
+            ].map(([label,ctrl])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;gap:16px;"><span style="font-size:0.78rem;color:#374151;font-weight:500;">${label}</span>${ctrl}</div>`).join('')}
+          </div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 14px;font-size:0.75rem;color:#15803d;line-height:1.5;margin-bottom:20px;">
+            ✓ <strong>Ready to sync.</strong> 100 contacts found in your CRM. They'll appear in the Never Attended tab until they reserve or check in to a drop.
+          </div>
+        `:''}
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="ss({${step>1?'crmStep:'+(step-1):'crmModal:false'}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">${step>1?'← Back':'Cancel'}</button>
+          <button onclick="ss({${step<3?'crmStep:'+(step+1):'crmModal:false'}})" style="flex:2;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">${step===1?'Next: Map Fields →':step===2?'Next: Sync Settings →':'✓ Start Sync'}</button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 // ── COLLECTIONS ───────────────────────────────────────────────────────────────
