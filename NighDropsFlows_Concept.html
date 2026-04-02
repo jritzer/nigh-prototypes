@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Nigh · Drops &amp; Flows Concept</title>
+<title>Nigh · Drops &amp; Collections Concept</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;overflow:hidden;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;overcollection:hidden;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
 select,button,input{font-family:inherit;}
 </style>
@@ -45,14 +45,14 @@ const FLOWS=[
   {id:'F05',name:'Weekend Flash Series',  icon:'&#9889;',  desc:'Friday–Sunday flash sale cadence across West region',         drops:3,enrolled:318,ci:287,status:'paused', trigger:'Friday check-in at West store',lastEdit:'3d ago'},
 ];
 
-const S={tab:'drops',dropType:null,dropStatus:null,dropDetail:null,flowDetail:null,showPushModal:false,pushStep:1,pushType:null,pushLoc:null,showFlowModal:false,flowStep:1};
+const S={tab:'drops',dropType:null,dropStatus:null,dropDetail:null,collectionDetail:null,showPushModal:false,pushStep:1,pushType:null,pushLoc:null,showCollectionModal:false,collectionStep:1};
 function ss(p){Object.assign(S,p);render();}
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function pct(a,b){return b>0?Math.round(a/b*100):0;}
 function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
 function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
-function bar(p,color,h){h=h||6;return `<div style="background:#f1f5f9;border-radius:4px;height:${h}px;overflow:hidden;"><div style="background:${color};height:100%;width:${Math.min(p,100)}%;border-radius:4px;"></div></div>`;}
+function bar(p,color,h){h=h||6;return `<div style="background:#f1f5f9;border-radius:4px;height:${h}px;overcollection:hidden;"><div style="background:${color};height:100%;width:${Math.min(p,100)}%;border-radius:4px;"></div></div>`;}
 function infoRow(l,v){return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${l}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${v}</span></div>`;}
 
 function badge(status){
@@ -79,7 +79,7 @@ function sidebar(){
     {id:'billing',   label:'Billing',    icon:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`},
     {id:'settings',  label:'Settings',   icon:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`},
   ];
-  return `<div style="width:210px;min-width:210px;background:${GRAD};display:flex;flex-direction:column;padding:18px 0;overflow-y:auto;flex-shrink:0;">
+  return `<div style="width:210px;min-width:210px;background:${GRAD};display:flex;flex-direction:column;padding:18px 0;overcollection-y:auto;flex-shrink:0;">
     <div style="padding:0 16px 18px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;display:flex;align-items:center;gap:10px;">
       ${nighBug(26)}
       <div>
@@ -117,13 +117,13 @@ function topbar(){
 // ── SUB-NAV TABS ─────────────────────────────────────────────────────────────
 function subNav(){
   const liveDrops=DROPS.filter(d=>d.status==='live').length;
-  const activeFlows=FLOWS.filter(f=>f.status==='active').length;
+  const activeCollections=FLOWS.filter(f=>f.status==='active').length;
   const tabs=[
     {id:'drops', label:'Drops', count:liveDrops,  countLabel:'live'},
-    {id:'flows', label:'Flows', count:activeFlows, countLabel:'active'},
+    {id:'collections', label:'Collections', count:activeCollections, countLabel:'active'},
   ];
   return `<div style="display:flex;align-items:center;gap:0;padding:0 28px;background:#fff;border-bottom:1px solid #e5e7eb;">
-    ${tabs.map(t=>`<button onclick="ss({tab:'${t.id}',dropDetail:null,flowDetail:null})" style="display:flex;align-items:center;gap:7px;padding:13px 18px;border:none;border-bottom:2px solid ${S.tab===t.id?COLOR:'transparent'};background:transparent;color:${S.tab===t.id?COLOR:'#64748b'};font-size:0.82rem;font-weight:${S.tab===t.id?'800':'500'};cursor:pointer;transition:all 0.1s;margin-bottom:-1px;">
+    ${tabs.map(t=>`<button onclick="ss({tab:'${t.id}',dropDetail:null,collectionDetail:null})" style="display:flex;align-items:center;gap:7px;padding:13px 18px;border:none;border-bottom:2px solid ${S.tab===t.id?COLOR:'transparent'};background:transparent;color:${S.tab===t.id?COLOR:'#64748b'};font-size:0.82rem;font-weight:${S.tab===t.id?'800':'500'};cursor:pointer;transition:all 0.1s;margin-bottom:-1px;">
       ${t.label}
       <span style="background:${S.tab===t.id?COLOR+'18':'#f1f5f9'};color:${S.tab===t.id?COLOR:'#94a3b8'};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${t.count} ${t.countLabel}</span>
     </button>`).join('')}
@@ -168,7 +168,7 @@ function dropsTab(){
           <!-- Main content -->
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;">
-              <span style="font-size:0.85rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;">${d.title}</span>
+              <span style="font-size:0.85rem;font-weight:700;color:#0f172a;white-space:nowrap;overcollection:hidden;text-overcollection:ellipsis;max-width:340px;">${d.title}</span>
               ${badge(d.status)}
             </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -248,10 +248,10 @@ function dropDetail(d){
 }
 
 // ── FLOWS TAB ────────────────────────────────────────────────────────────────
-function flowsTab(){
-  if(S.flowDetail){
-    const f=FLOWS.find(x=>x.id===S.flowDetail);
-    if(f) return flowDetail(f);
+function collectionsTab(){
+  if(S.collectionDetail){
+    const f=FLOWS.find(x=>x.id===S.collectionDetail);
+    if(f) return collectionDetail(f);
   }
   const totalEnrolled=FLOWS.reduce((s,f)=>s+f.enrolled,0);
   const totalCi=FLOWS.reduce((s,f)=>s+f.ci,0);
@@ -261,9 +261,9 @@ function flowsTab(){
     <!-- Summary row -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;">
       ${[
-        {label:'Active Flows',     val:activeCount,        sub:`of ${FLOWS.length} total`,     color:COLOR},
-        {label:'Guests Enrolled',  val:fmtNum(totalEnrolled),sub:'across all flows',           color:'#0f172a'},
-        {label:'Avg Show Rate',    val:pct(totalCi,totalEnrolled)+'%',sub:'across active flows',color:'#0f172a'},
+        {label:'Active Collections',     val:activeCount,        sub:`of ${FLOWS.length} total`,     color:COLOR},
+        {label:'Guests Enrolled',  val:fmtNum(totalEnrolled),sub:'across all collections',           color:'#0f172a'},
+        {label:'Avg Show Rate',    val:pct(totalCi,totalEnrolled)+'%',sub:'across active collections',color:'#0f172a'},
       ].map(k=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 20px;">
         <div style="font-size:0.7rem;color:#64748b;font-weight:600;margin-bottom:5px;">${k.label}</div>
         <div style="font-size:1.8rem;font-weight:900;color:${k.color};">${k.val}</div>
@@ -271,13 +271,13 @@ function flowsTab(){
       </div>`).join('')}
     </div>
 
-    <!-- Flow cards -->
+    <!-- Collection cards -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
       ${FLOWS.map(f=>{
         const sr=pct(f.ci,f.enrolled);
         const statusColor=f.status==='active'?'#16a34a':f.status==='paused'?'#ca8a04':'#94a3b8';
         const statusBg  =f.status==='active'?'#dcfce7':f.status==='paused'?'#fef9c3':'#f1f5f9';
-        return `<div onclick="ss({flowDetail:'${f.id}'})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;cursor:pointer;transition:all 0.12s;display:flex;flex-direction:column;" onmouseover="this.style.boxShadow='0 4px 18px rgba(0,0,0,0.09)';this.style.borderColor='${COLOR}60'" onmouseout="this.style.boxShadow='';this.style.borderColor='#e5e7eb'">
+        return `<div onclick="ss({collectionDetail:'${f.id}'})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;cursor:pointer;transition:all 0.12s;display:flex;flex-direction:column;" onmouseover="this.style.boxShadow='0 4px 18px rgba(0,0,0,0.09)';this.style.borderColor='${COLOR}60'" onmouseout="this.style.boxShadow='';this.style.borderColor='#e5e7eb'">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
             <div style="font-size:1.5rem;line-height:1;">${f.icon}</div>
             <span style="background:${statusBg};color:${statusColor};font-size:0.62rem;font-weight:800;padding:3px 8px;border-radius:20px;text-transform:capitalize;">${f.status}</span>
@@ -311,21 +311,21 @@ function flowsTab(){
         </div>`;
       }).join('')}
 
-      <!-- New Flow card -->
-      <div onclick="ss({showFlowModal:true,flowStep:1})" style="background:transparent;border-radius:14px;border:2px dashed #e5e7eb;padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:220px;transition:all 0.12s;" onmouseover="this.style.borderColor='${COLOR}';this.style.background='${COLOR}08'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='transparent'">
+      <!-- New Collection card -->
+      <div onclick="ss({showCollectionModal:true,collectionStep:1})" style="background:transparent;border-radius:14px;border:2px dashed #e5e7eb;padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:220px;transition:all 0.12s;" onmouseover="this.style.borderColor='${COLOR}';this.style.background='${COLOR}08'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='transparent'">
         <div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#94a3b8;">+</div>
-        <div style="font-size:0.78rem;font-weight:700;color:#94a3b8;">New Flow</div>
+        <div style="font-size:0.78rem;font-weight:700;color:#94a3b8;">New Collection</div>
         <div style="font-size:0.68rem;color:#cbd5e1;text-align:center;line-height:1.4;">Automate drop sequences based on guest behavior</div>
       </div>
     </div>
   </div>`;
 }
 
-function flowDetail(f){
+function collectionDetail(f){
   const sr=pct(f.ci,f.enrolled);
   const dropLabels=['Welcome Drop','Early Access Reward','VIP Unlock','Loyalty Milestone','Final Reward'];
   return `<div style="padding:22px 28px;">
-    <button onclick="ss({flowDetail:null})" style="display:flex;align-items:center;gap:5px;color:${COLOR};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:18px;">&larr; Back to Flows</button>
+    <button onclick="ss({collectionDetail:null})" style="display:flex;align-items:center;gap:5px;color:${COLOR};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:18px;">&larr; Back to Collections</button>
     <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
       <div>
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:14px;">
@@ -377,10 +377,10 @@ function flowDetail(f){
         </div>
         <div style="background:${COLOR}10;border-radius:14px;border:1px solid ${COLOR}30;padding:16px 18px;">
           <div style="font-size:0.8rem;font-weight:800;color:${COLOR};margin-bottom:10px;">Actions</div>
-          ${f.status==='active'?`<button style="width:100%;padding:8px;background:#fef9c3;color:#92400e;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">⏸ Pause Flow</button>`:''}
-          ${f.status==='paused'?`<button style="width:100%;padding:8px;background:#dcfce7;color:#15803d;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">▶ Resume Flow</button>`:''}
-          ${f.status==='draft'?`<button style="width:100%;padding:8px;background:#dcfce7;color:#15803d;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">▶ Activate Flow</button>`:''}
-          <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:8px;font-weight:600;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">Edit Flow</button>
+          ${f.status==='active'?`<button style="width:100%;padding:8px;background:#fef9c3;color:#92400e;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">⏸ Pause Collection</button>`:''}
+          ${f.status==='paused'?`<button style="width:100%;padding:8px;background:#dcfce7;color:#15803d;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">▶ Resume Collection</button>`:''}
+          ${f.status==='draft'?`<button style="width:100%;padding:8px;background:#dcfce7;color:#15803d;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">▶ Activate Collection</button>`:''}
+          <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:8px;font-weight:600;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">Edit Collection</button>
           <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:8px;font-weight:600;font-size:0.75rem;cursor:pointer;">Duplicate</button>
         </div>
       </div>
@@ -389,14 +389,14 @@ function flowDetail(f){
 }
 
 // ── NEW FLOW MODAL ────────────────────────────────────────────────────────────
-function flowModal(){
-  const step=S.flowStep||1;
+function collectionModal(){
+  const step=S.collectionStep||1;
   const steps=['Trigger','Sequence','Launch'];
   const triggers=[
     {id:'first-visit',  label:'First Visit',      desc:'Guest checks in to any store for the first time',       icon:'&#127381;'},
     {id:'post-checkin', label:'After Check-in',    desc:'Guest completes a check-in on any drop',                icon:'&#10003;'},
     {id:'vip-scan',     label:'VIP Member Scan',   desc:'Totaltech member scans their membership badge',         icon:'&#11088;'},
-    {id:'manual',       label:'Manual Enrollment', desc:'Add guests to this flow manually from the Guests page', icon:'&#128100;'},
+    {id:'manual',       label:'Manual Enrollment', desc:'Add guests to this collection manually from the Guests page', icon:'&#128100;'},
   ];
   const progressBar=`<div style="display:flex;align-items:center;margin-bottom:22px;">
     ${steps.map((s,i)=>`<div style="display:flex;align-items:center;flex:1;">
@@ -411,12 +411,12 @@ function flowModal(){
   let body='';
   if(step===1){
     body=`<div>
-      <div style="margin-bottom:12px;"><label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Flow Name</label>
+      <div style="margin-bottom:12px;"><label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Collection Name</label>
       <input placeholder="e.g. Weekend VIP Track" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:9px;font-size:0.8rem;color:#0f172a;" /></div>
       <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:8px;">Enrollment Trigger</label>
       <div style="display:flex;flex-direction:column;gap:7px;">
         ${triggers.map((t,i)=>`<label style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid ${i===0?COLOR:'#e5e7eb'};border-radius:11px;cursor:pointer;background:${i===0?COLOR+'08':'#fff'};">
-          <input type="radio" name="flow-trigger" ${i===0?'checked':''} style="accent-color:${COLOR};flex-shrink:0;" />
+          <input type="radio" name="collection-trigger" ${i===0?'checked':''} style="accent-color:${COLOR};flex-shrink:0;" />
           <div style="font-size:1.1rem;">${t.icon}</div>
           <div><div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${t.label}</div><div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">${t.desc}</div></div>
         </label>`).join('')}
@@ -443,31 +443,31 @@ function flowModal(){
     body=`<div>
       <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:12px;">Ready to Activate</div>
       <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-        ${infoRow('Flow Name','New Member Welcome')}
+        ${infoRow('Collection Name','New Member Welcome')}
         ${infoRow('Trigger','First Visit')}
         ${infoRow('Drops in Sequence','3')}
         ${infoRow('Status','Activate on launch')}
       </div>
       <div style="background:${COLOR}12;border-radius:12px;padding:12px 16px;display:flex;align-items:flex-start;gap:10px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${COLOR}" stroke-width="2.5" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span style="font-size:0.75rem;color:${COLOR};font-weight:600;line-height:1.5;">Guests will automatically enroll when they trigger the condition. You can pause or edit this flow at any time.</span>
+        <span style="font-size:0.75rem;color:${COLOR};font-weight:600;line-height:1.5;">Guests will automatically enroll when they trigger the condition. You can pause or edit this collection at any time.</span>
       </div>
     </div>`;
   }
 
-  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showFlowModal:false})">
-    <div style="background:#fff;border-radius:18px;width:460px;max-height:86vh;overflow-y:auto;padding:24px 26px;box-shadow:0 20px 60px rgba(0,0,0,0.22);" onclick="event.stopPropagation()">
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showCollectionModal:false})">
+    <div style="background:#fff;border-radius:18px;width:460px;max-height:86vh;overcollection-y:auto;padding:24px 26px;box-shadow:0 20px 60px rgba(0,0,0,0.22);" onclick="event.stopPropagation()">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-        <div style="font-size:1rem;font-weight:900;color:#0f172a;">New Flow</div>
-        <button onclick="ss({showFlowModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:0.78rem;color:#64748b;">✕</button>
+        <div style="font-size:1rem;font-weight:900;color:#0f172a;">New Collection</div>
+        <button onclick="ss({showCollectionModal:false})" style="background:#f1f5f9;border:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-size:0.78rem;color:#64748b;">✕</button>
       </div>
       ${progressBar}
       ${body}
       <div style="display:flex;justify-content:space-between;margin-top:20px;">
-        ${step>1?`<button onclick="ss({flowStep:${step-1}})" style="padding:9px 20px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#475569;font-weight:700;font-size:0.78rem;cursor:pointer;">&larr; Back</button>`:'<div></div>'}
+        ${step>1?`<button onclick="ss({collectionStep:${step-1}})" style="padding:9px 20px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#475569;font-weight:700;font-size:0.78rem;cursor:pointer;">&larr; Back</button>`:'<div></div>'}
         ${step<3
-          ?`<button onclick="ss({flowStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${COLOR};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`
-          :`<button onclick="ss({showFlowModal:false})" style="padding:9px 22px;border-radius:10px;background:${COLOR};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Activate Flow</button>`}
+          ?`<button onclick="ss({collectionStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${COLOR};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`
+          :`<button onclick="ss({showCollectionModal:false})" style="padding:9px 22px;border-radius:10px;background:${COLOR};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Activate Collection</button>`}
       </div>
     </div>
   </div>`;
@@ -499,7 +499,7 @@ function pushModal(){
   } else if(step===2){
     const locs=['Denver Tech Center','Chicago Michigan','NYC Fifth Ave','Minneapolis Lake St','Boston Fenway'];
     body=`<div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:10px;">Select Store</div>
-    <div style="display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;">
+    <div style="display:flex;flex-direction:column;gap:6px;max-height:240px;overcollection-y:auto;">
       ${locs.map((l,i)=>`<button onclick="ss({pushLoc:'${i}'})" style="padding:10px 14px;border-radius:10px;border:2px solid ${S.pushLoc==i?COLOR:'#e5e7eb'};background:${S.pushLoc==i?COLOR+'10':'#fff'};cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;">
         <span style="font-size:0.78rem;font-weight:600;color:#0f172a;">${l}</span>
         ${S.pushLoc==i?`<span style="color:${COLOR};">&#10003;</span>`:''}
@@ -536,18 +536,18 @@ function pushModal(){
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function render(){
-  const mainContent=S.tab==='drops'?dropsTab():flowsTab();
+  const mainContent=S.tab==='drops'?dropsTab():collectionsTab();
   document.getElementById('app').innerHTML=`
-    <div style="display:flex;height:100vh;overflow:hidden;">
+    <div style="display:flex;height:100vh;overcollection:hidden;">
       ${sidebar()}
-      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div style="flex:1;display:flex;flex-direction:column;overcollection:hidden;">
         ${topbar()}
         ${subNav()}
-        <div style="flex:1;overflow-y:auto;">${mainContent}</div>
+        <div style="flex:1;overcollection-y:auto;">${mainContent}</div>
       </div>
     </div>
     ${S.showPushModal?pushModal():''}
-    ${S.showFlowModal?flowModal():''}
+    ${S.showCollectionModal?collectionModal():''}
   `;
 }
 render();
