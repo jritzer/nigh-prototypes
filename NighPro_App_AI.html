@@ -141,7 +141,7 @@ function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 
 
 // Data
 const accts=[
-  {name:'Centro Mexican Kitchen',short:'Centro',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder'},
+  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder'},
   {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder'},
   {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Food & Drink',subCat:'Brewery',addr:'4910 Nautilus Ct, Boulder, CO 80301',handle:'averybrewing',phone:'(303) 555-0192',email:'events@averybrewing.com',maxPartners:5}
 ];
@@ -175,7 +175,7 @@ const drops=[
     desc:'Hands-on pasta making with Chef Maria.',slug:'williamsonoma/PQ56TY'},
   {id:'D005',title:'Friday Night Jazz & Tapas',timing:'Arrival Window',
     start:'7:00 - 10:00 PM',bcastStart:'4:00 PM',bcastEnd:'6:45 PM',date:'2026-02-28',cap:30,res:28,ci:26,ns:2,
-    price:25,status:'Ended',venue:'Centro Mexican Kitchen, 950 Pearl St, Boulder, CO 80302',
+    price:25,status:'Ended',venue:'Centro Boulder, 950 Pearl St, Boulder, CO 80302',
     hosts:['Josh Ritzer'],partners:[{handle:'@titosvodka',name:"Tito's Vodka",status:'Accepted'},{handle:'@kendallj',name:'Kendall Jenner',status:'Accepted'}],media:'video',
     desc:'Live jazz trio with curated tapas menu.',slug:'centroboulder/JZ73AB'},
   {id:'D006',title:'Rooftop Yoga Session',timing:'',
@@ -1257,8 +1257,26 @@ function renderProfile(){
       <!-- Read-only fields -->
       <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Identity</div>
-        ${[['Business Name',a.name],['Brand Handle','@'+a.handle],['Address / Drop Location',a.addr]].map(r=>`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:3px">${r[0]}</div><div style="font-size:13px;color:#111827;font-weight:500">${r[1]}</div></div>`).join('')}
+        ${[['Location Name',a.name],['Brand Handle','@'+a.handle],['Address / Drop Location',a.addr]].map(r=>`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:3px">${r[0]}</div><div style="font-size:13px;color:#111827;font-weight:500">${r[1]}</div></div>`).join('')}
         <div style="font-size:10px;color:#9CA3AF;margin-top:4px;display:flex;align-items:center;gap:3px">${ic('alert',10)} To update these fields, contact Nigh support.</div>
+        ${a.enterprise?`<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:12px;margin-top:12px;">
+          <div style="font-size:10px;font-weight:800;color:#0369A1;margin-bottom:9px;text-transform:uppercase;letter-spacing:0.06em;">Enterprise Account</div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
+              <span style="color:#6B7280;font-weight:500;">This Location</span>
+              <span style="color:#0f172a;font-weight:700;">${a.name}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
+              <span style="color:#6B7280;font-weight:500;">Brand</span>
+              <span style="color:#0f172a;font-weight:700;">${a.brandName||a.name}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
+              <span style="color:#6B7280;font-weight:500;">Enterprise</span>
+              <span style="color:#0f172a;font-weight:700;">${a.parentOrg}</span>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:9px;padding-top:8px;border-top:1px solid #BAE6FD;display:flex;align-items:center;gap:4px;">${ic('alert',10)} Internal account info — not visible to guests</div>
+        </div>`:''}
       </div>
       <!-- Editable fields -->
       <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
