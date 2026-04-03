@@ -2342,14 +2342,6 @@ function rSettings(){
         </div>
       </div>
 
-      <!-- NOTIFICATION PREFERENCES -->
-      ${settingsSection('My Notification Preferences',[
-        {label:'Drop goes live',desc:'Alert when a drop at any of your locations starts',toggle:true},
-        {label:'Capacity threshold',desc:'Alert at 80% capacity',toggle:true},
-        {label:'Low show rate',desc:'Alert when show rate drops below 75%',toggle:true},
-        {label:'Weekly summary',desc:'Sent every Monday at 8am',toggle:true},
-        {label:'Billing alerts',desc:'Payment failures, renewal reminders',toggle:true},
-      ])}
     </div>`;
   }
 
@@ -2385,12 +2377,6 @@ function rSettings(){
         ])}
       </div>
       <div>
-        ${settingsSection('Notifications',[
-          {label:'Drop goes live',desc:'Alert when a scheduled drop starts',toggle:true},
-          {label:'Capacity threshold',desc:'Alert at 80% capacity',toggle:true},
-          {label:'Low show rate alert',desc:'Alert when show rate drops below 75%',toggle:true},
-          {label:'Weekly summary email',desc:'Sent every Monday at 8am',toggle:true},
-        ])}
         ${settingsSection('Integrations',[
           {label:'POS Integration',desc:'Sync with point-of-sale system',action:'Connect'},
           {label:'CRM Sync',desc:'Push guest data to your CRM',action:'Connect'},
