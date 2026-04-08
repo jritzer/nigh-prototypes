@@ -762,6 +762,76 @@ const CONFIGS={
     ],
   },
 
+  landrys:{
+    key:'landrys',short:"Landry's",name:"Landry's, Inc.",
+    color:'#0D2F5E',accent:'#C9932A',dark:'#071829',
+    grad:'linear-gradient(180deg,#071829 0%,#0D2F5E 100%)',
+    plan:'Enterprise Hospitality Pro',ppl:449,
+    hier:['Division','Brand'],locLabel:'Property',locsLabel:'Properties',
+    dropTypes:[
+      {id:'chefs-table',   label:"Chef's Table",    icon:'&#127869;',bg:'#fdf4e7',c:'#7A4F00'},
+      {id:'happy-hour',    label:'Happy Hour',       icon:'&#127867;',bg:'#fff7ed',c:'#c2410c'},
+      {id:'member-access', label:'Select Club Drop', icon:'&#11088;', bg:'#fef9c3',c:'#713f12'},
+      {id:'seasonal-event',label:'Seasonal Event',   icon:'&#127881;',bg:'#f3e8ff',c:'#5b21b6'},
+      {id:'vip-dining',    label:'VIP Experience',   icon:'&#128081;',bg:'#eff6ff',c:'#1d4ed8'},
+    ],
+    geoTiers:{
+      bar:       {label:'Bar / Table Area (~30 ft)',   short:'~30 ft'},
+      dining:    {label:'Full Dining Room (~150 ft)',  short:'~150 ft'},
+      property:  {label:'Full Property (~500 ft)',     short:'~500 ft'},
+      block:     {label:'City Block (~1,500 ft)',      short:'~1,500 ft'},
+    },
+    special:null,
+    locations:[
+      // Fine Dining
+      {id:'L01',name:"Mastro's Ocean Club",                t1:'Fine Dining',        t2:"Mastro's",       city:'Newport Beach',state:'CA',status:'active',cap:90, yr:2003,handle:'@mastros-oc',    manager:'Dana Holt'},
+      {id:'L02',name:"Mastro's Steakhouse \u2014 Beverly Hills",t1:'Fine Dining',   t2:"Mastro's",       city:'Beverly Hills',state:'CA',status:'active',cap:110,yr:2001,handle:'@mastros-bh',    manager:'Dana Holt'},
+      {id:'L03',name:"Mastro's City Hall \u2014 Scottsdale", t1:'Fine Dining',      t2:"Mastro's",       city:'Scottsdale',   state:'AZ',status:'active',cap:100,yr:2005,handle:'@mastros-scottsdale',manager:'Tony Reyes'},
+      {id:'L04',name:"Del Frisco's Double Eagle \u2014 New York",t1:'Fine Dining',  t2:"Del Frisco's",   city:'New York',     state:'NY',status:'active',cap:130,yr:1998,handle:'@delfrisco-nyc', manager:'Claire Nguyen'},
+      {id:'L05',name:"Del Frisco's Double Eagle \u2014 Chicago",t1:'Fine Dining',   t2:"Del Frisco's",   city:'Chicago',      state:'IL',status:'active',cap:120,yr:2000,handle:'@delfrisco-chi', manager:'Marcus Webb'},
+      {id:'L06',name:"Vic & Anthony's Steakhouse",           t1:'Fine Dining',      t2:"Vic & Anthony's",city:'Houston',      state:'TX',status:'active',cap:95, yr:1998,handle:'@vicanthonys',   manager:'Rita Salazar'},
+      // Casual & Seafood
+      {id:'L07',name:'Bubba Gump \u2014 Times Square',       t1:'Casual & Seafood', t2:'Bubba Gump',     city:'New York',     state:'NY',status:'active',cap:240,yr:2000,handle:'@bubbagump-nyc', manager:'Steve Park'},
+      {id:'L08',name:'Bubba Gump \u2014 Hollywood',          t1:'Casual & Seafood', t2:'Bubba Gump',     city:'Los Angeles',  state:'CA',status:'active',cap:210,yr:1999,handle:'@bubbagump-la',  manager:'Luis Mendez'},
+      {id:'L09',name:'Chart House \u2014 Weehawken',         t1:'Casual & Seafood', t2:'Chart House',    city:'Weehawken',    state:'NJ',status:'active',cap:160,yr:1992,handle:'@charthouse-weehawken',manager:'Ann Kowalski'},
+      {id:'L10',name:"Landry's Seafood \u2014 San Antonio",  t1:'Casual & Seafood', t2:"Landry's Seafood",city:'San Antonio', state:'TX',status:'active',cap:185,yr:2001,handle:'@landrys-sa',    manager:'Joe Trevino'},
+      {id:'L11',name:"Landry's Seafood \u2014 Houston",      t1:'Casual & Seafood', t2:"Landry's Seafood",city:'Houston',     state:'TX',status:'active',cap:200,yr:1994,handle:'@landrys-htx',   manager:'Joe Trevino'},
+      // Themed Entertainment
+      {id:'L12',name:'Rainforest Cafe \u2014 Navy Pier',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Chicago',   state:'IL',status:'active',cap:300,yr:1997,handle:'@rainforest-navypier',manager:'Pam Douglas'},
+      {id:'L13',name:'Rainforest Cafe \u2014 Las Vegas',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Las Vegas', state:'NV',status:'active',cap:350,yr:2000,handle:'@rainforest-lv',  manager:'Pam Douglas'},
+      {id:'L14',name:'Downtown Aquarium \u2014 Houston',     t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Houston',state:'TX',status:'active',cap:260,yr:2003,handle:'@aquarium-htx',manager:'Brad Ellison'},
+      {id:'L15',name:'Downtown Aquarium \u2014 Denver',      t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Denver', state:'CO',status:'active',cap:220,yr:1999,handle:'@aquarium-den',manager:'Brad Ellison'},
+      // Gaming & Hotels
+      {id:'L16',name:'Golden Nugget \u2014 Las Vegas',       t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Las Vegas',    state:'NV',status:'active',cap:400,yr:1946,handle:'@goldennugget-lv', manager:'Frank Carlotti'},
+      {id:'L17',name:'Golden Nugget \u2014 Atlantic City',   t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Atlantic City',state:'NJ',status:'active',cap:320,yr:2011,handle:'@goldennugget-ac', manager:'Lisa Beaumont'},
+      {id:'L18',name:'Golden Nugget \u2014 Biloxi',          t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Biloxi',       state:'MS',status:'active',cap:280,yr:2005,handle:'@goldennugget-biloxi',manager:'Frank Carlotti'},
+    ],
+    drops:[
+      {id:'D01',title:"Chef's Table \u2014 A5 Wagyu Tasting Menu",  type:'chefs-table',   status:'live',      locId:'L02',cap:14, res:14, ci:12, sr:86,price:0,bh:6},
+      {id:'D02',title:'Happy Hour at the Shrimp Bar',               type:'happy-hour',    status:'live',      locId:'L07',cap:120,res:108,ci:99, sr:92,price:0,bh:4},
+      {id:'D03',title:'Select Club \u2014 Priority Table Drop',      type:'member-access', status:'live',      locId:'L04',cap:40, res:38, ci:35, sr:92,price:0,bh:3},
+      {id:'D04',title:"Rainforest Cafe Kids' Adventure Night",       type:'seasonal-event',status:'live',      locId:'L12',cap:180,res:162,ci:149,sr:92,price:0,bh:5},
+      {id:'D05',title:'Golden Nugget \u2014 High Roller Dining Experience',type:'vip-dining',status:'live',   locId:'L16',cap:30, res:28, ci:25, sr:89,price:0,bh:4},
+      {id:'D06',title:'Chart House Sunday Brunch on the Hudson',    type:'seasonal-event',status:'scheduled', locId:'L09',cap:90, res:61, ci:0,  sr:0, price:0,bh:24},
+      {id:'D07',title:"Select Club \u2014 Oyster & Champagne Drop",  type:'member-access', status:'live',      locId:'L11',cap:60, res:55, ci:50, sr:91,price:0,bh:3},
+      {id:'D08',title:"Del Frisco's \u2014 Sommelier Wine Pairing Dinner",type:'chefs-table',status:'scheduled',locId:'L05',cap:20,res:14, ci:0,  sr:0, price:0,bh:72},
+    ],
+    collections:[
+      {id:'C01',name:"Select Club Member Week",    desc:"Exclusive drops across all brands for Landry's Select Club members",drops:4,enrolled:1240,ci:1118,status:'active',icon:'&#11088;'},
+      {id:'C02',name:'Summer Chef Series',          desc:"Chef's table and special tasting drops across fine dining properties",drops:3,enrolled:86,  ci:76,  status:'active',icon:'&#127869;'},
+      {id:'C03',name:'Family Fun Bundle',           desc:'Rainforest Cafe and Aquarium Restaurant experience drops',           drops:2,enrolled:542, ci:492, status:'active',icon:'&#127774;'},
+      {id:'C04',name:"New Year's Eve Gala Package", desc:"Premium NYE table and experience drops across flagship properties",  drops:5,enrolled:0,   ci:0,   status:'draft', icon:'&#127775;'},
+    ],
+    partners:[
+      {id:'P01',name:'American Express',     type:'Partner',  status:'Active',  since:'Jan 2026',drops:3},
+      {id:'P02',name:"Rémy Martin",          type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:2},
+      {id:'P03',name:'LVMH Moët Hennessy',   type:'Brand',    status:'Active',  since:'Jan 2026',drops:2},
+      {id:'P04',name:'Marriott Bonvoy',      type:'Partner',  status:'Invited', since:'Mar 2026',drops:0},
+      {id:'P05',name:'Ferrari North America',type:'Sponsor',  status:'Active',  since:'Feb 2026',drops:1},
+      {id:'P06',name:'Four Seasons Hotels',  type:'Partner',  status:'Invited', since:'Mar 2026',drops:0},
+    ],
+  },
+
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
