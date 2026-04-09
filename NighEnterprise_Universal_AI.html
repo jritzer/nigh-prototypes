@@ -2198,6 +2198,39 @@ function rBilling(){
         <span style="background:#dcfce7;color:#16a34a;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">Paid</span>
       </div>`).join('')}
     </div>
+
+    <!-- REVENUE & PAYOUTS -->
+    <div style="margin-top:20px;font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Revenue &amp; Payouts</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+      ${[['Total Revenue (MTD)','$'+(locs.length*3200).toLocaleString(),'This month'],['Pending Payout','$'+(locs.length*1100).toLocaleString(),'Transfers in 2–3 days'],['Last Payout','$'+(locs.length*2900).toLocaleString(),'Apr 1, 2026']].map(([label,val,sub])=>`
+      <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.7rem;font-weight:700;color:#64748b;margin-bottom:4px;">${label}</div>
+        <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${val}</div>
+        <div style="font-size:0.68rem;color:#94a3b8;margin-top:2px;">${sub}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:14px;">
+      <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:0.85rem;font-weight:800;color:#0f172a;">Payout History</span>
+        <button style="padding:6px 14px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;">Request Payout</button>
+      </div>
+      ${[
+        {date:'Apr 1, 2026', amount:locs.length*2900, method:'ACH — ···· 4242', status:'Paid'},
+        {date:'Mar 1, 2026', amount:locs.length*3100, method:'ACH — ···· 4242', status:'Paid'},
+        {date:'Feb 1, 2026', amount:locs.length*2750, method:'ACH — ···· 4242', status:'Paid'},
+        {date:'Jan 1, 2026', amount:locs.length*2600, method:'ACH — ···· 4242', status:'Paid'},
+      ].map(p=>`<div style="display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #f8fafc;">
+        <div style="flex:1;">
+          <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${p.date}</div>
+          <div style="font-size:0.7rem;color:#94a3b8;">${p.method}</div>
+        </div>
+        <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-right:16px;">${fmtMoney(p.amount)}</div>
+        <span style="background:#dcfce7;color:#16a34a;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${p.status}</span>
+      </div>`).join('')}
+    </div>
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px 16px;font-size:0.73rem;color:#0369a1;line-height:1.5;">
+      💳 <strong>Payout settings:</strong> Payouts are processed automatically on the 1st of each month to your connected bank account. To update your bank account or payout schedule, contact <span style="font-weight:700;">enterprise@nigh.com</span>
+    </div>
   </div>`;
 }
 
@@ -2540,6 +2573,14 @@ function rSettings(){
         ])}
       </div>
     </div>
+
+    <!-- LEGAL & SUPPORT links -->
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:14px;border-top:1px solid #f1f5f9;">
+      ${[['Send Feedback','mailto:feedback@nigh.com'],['Terms of Service','#tos'],['Privacy Policy','#privacy']].map(([label,href])=>`
+        <a href="${href}" style="font-size:0.72rem;font-weight:600;color:#94a3b8;text-decoration:none;padding:5px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:20px;">${label}</a>
+      `).join('')}
+      <span style="font-size:0.72rem;color:#e2e8f0;padding:5px 0;margin-left:auto;">Nigh Enterprise v1.0</span>
+    </div>
   </div>`;
 }
 
@@ -2612,7 +2653,7 @@ function rPartners(){
   const active=partners.filter(p=>p.status==='Active');
   const invited=partners.filter(p=>p.status==='Invited');
   const declined=partners.filter(p=>p.status==='Declined');
-  const typeColors={Brand:'#1d4ed8',Sponsor:'#7c3aed',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  const typeColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
   const typeBgs={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
   const statusColor={Active:'#16a34a',Invited:'#ca8a04',Declined:'#dc2626'};
   const statusBg={Active:'#dcfce7',Invited:'#fef9c3',Declined:'#fee2e2'};

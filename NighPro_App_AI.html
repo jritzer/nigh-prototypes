@@ -129,6 +129,7 @@ radio:'<path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14
 share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
 edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',
 history:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M2 12a10 10 0 0110-10"/>',
+activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
 target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
 today:'<path d="M4 3 L20 3 Q21 3 21 4 L21 17 L18 21 L4 21 Q3 21 3 20 L3 4 Q3 3 4 3 Z"/>',
 gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
@@ -1120,12 +1121,12 @@ function renderMenu(){
     {ic:'shield',l:'Pro Account',d:'Location profile & public identity',act:"S.menuSub='profile';render()"},
     {ic:'star',l:billingLabel,d:billingDesc,act:"S.menuSub='subscription';render()"},
     ...(canManagePartners?[{ic:'link',l:'Partners',d:'Manage & invite partners',act:"S.menuSub='partners';render()"}]:[]),
-    {ic:'user',l:'Customers',d:`${customerList.length} contacts · Import & manage`,act:"S.menuSub='customers';render()"},
+    {ic:'users',l:'Guests',d:`${customerList.length} contacts · Import & manage`,act:"S.menuSub='customers';render()"},
   ];
   return `${hdr('Menu',acct().name)}
   <div style="padding:14px 16px">
     ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
-    ${canViewLog?`<button onclick="S.menuSub='activitylog';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('history',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Activity Log</div><div style="font-size:11px;color:#6B7280">History across account</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`:''}
+    ${canViewLog?`<button onclick="S.menuSub='activitylog';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('activity',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Activity Log</div><div style="font-size:11px;color:#6B7280">History across account</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`:''}
     <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">Your account &amp; app preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
   </div>`;
 }
@@ -1213,7 +1214,7 @@ function renderAnalytics(){
 function renderPartners(){
   const statusColor={Active:'#16A34A',Invited:'#3B82F6',Declined:'#9CA3AF',Suspended:'#F97316'};
   const statusBg={Active:'#DCFCE7',Invited:'#EFF6FF',Declined:'#F3F4F6',Suspended:'#FFF7ED'};
-  const typeColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  const typeColors={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
   const typeTextColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
   return `${hdr('Partners','Manage your partners',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
@@ -1411,7 +1412,7 @@ function renderCustomers(){
 
   const activeDrop=drops.find(d=>d.id===custDrop);
 
-  return `${hdr('Customers',`${customerList.length} contacts`,"S.menuSub=null;render()")}
+  return `${hdr('Guests',`${customerList.length} contacts`,"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <!-- Import banner -->
     <button onclick="S.modal='csv-import';S.importStep=1;render()" style="width:100%;background:linear-gradient(135deg,#1B2A4A,#3B82F6);border:none;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer">
@@ -1423,7 +1424,7 @@ function renderCustomers(){
     <!-- Search -->
     <div style="position:relative;margin-bottom:10px">
       <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9CA3AF">${ic('search',15)}</div>
-      <input type="text" placeholder="Search customers..." value="${S.custSearch}" oninput="S.custSearch=this.value;render()" style="width:100%;padding:9px 10px 9px 32px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box"/>
+      <input type="text" placeholder="Search guests..." value="${S.custSearch}" oninput="S.custSearch=this.value;render()" style="width:100%;padding:9px 10px 9px 32px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box"/>
     </div>
 
     <!-- Filter by engagement -->
@@ -1443,7 +1444,7 @@ function renderCustomers(){
 
     <!-- Active filter summary -->
     ${custDrop!=='all'&&activeDrop?`<div style="background:#EFF6FF;border-radius:10px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:12px;color:#1D4ED8;font-weight:500">${ic('users',13)} ${filtered.length} customer${filtered.length!==1?'s':''} attended <strong>${activeDrop.title}</strong></div>
+      <div style="font-size:12px;color:#1D4ED8;font-weight:500">${ic('users',13)} ${filtered.length} guest${filtered.length!==1?'s':''} attended <strong>${activeDrop.title}</strong></div>
       <button onclick="S.custDropFilter='all';render()" style="background:none;border:none;color:#9CA3AF;cursor:pointer">${ic('x',14)}</button>
     </div>`:''}
 
@@ -1454,7 +1455,7 @@ function renderCustomers(){
     </div>
 
     <!-- List -->
-    ${filtered.length===0?`<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No customers match this filter</div>`
+    ${filtered.length===0?`<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No guests match this filter</div>`
     :filtered.map(c=>`
     <div onclick="S.modal='customer-${c.id}';render()" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
       <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${c.av}</div>
@@ -1468,7 +1469,7 @@ function renderCustomers(){
         <div style="color:#D1D5DB;margin-top:4px">${ic('right',14)}</div>
       </div>
     </div>`).join('')}
-    <button style="width:100%;background:none;border:1px dashed #D1D5DB;border-radius:10px;padding:12px;margin-top:4px;font-size:13px;font-weight:500;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px">${ic('plus',15)} Add Customer Manually</button>
+    <button style="width:100%;background:none;border:1px dashed #D1D5DB;border-radius:10px;padding:12px;margin-top:4px;font-size:13px;font-weight:500;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px">${ic('plus',15)} Add Guest Manually</button>
   </div>`;
 }
 function renderCustomerDetail(cid){
@@ -1567,8 +1568,8 @@ function renderCsvImport(){
         <div style="font-size:12px;color:#374151">${r[1]}</div>
       </div>`).join('')}
     </div>
-    <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-bottom:16px;line-height:1.6">Imported customers will appear in your Customers list.<br>They will not be notified or added to Nigh automatically.</div>
-    <button onclick="S.modal=null;S.menuSub='customers';render()" style="width:100%;background:#16A34A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;margin-bottom:8px">Import 47 Customers</button>
+    <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-bottom:16px;line-height:1.6">Imported contacts will appear in your Guests list.<br>They will not be notified or added to Nigh automatically.</div>
+    <button onclick="S.modal=null;S.menuSub='customers';render()" style="width:100%;background:#16A34A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;margin-bottom:8px">Import 47 Contacts</button>
     <button onclick="S.importStep=2;render()" style="width:100%;background:none;border:1px solid #E5E7EB;border-radius:10px;padding:12px;font-size:13px;font-weight:500;color:#374151">Back</button>
     `:''}
   </div>`;
