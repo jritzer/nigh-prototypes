@@ -58,7 +58,7 @@ button{cursor:pointer}
 let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,
   formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,
-  niyaMode:null,niyaStep:0,niyaListening:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false};
+  niyaMode:null,niyaStep:0,niyaListening:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false,multiVenue:false};
 const TODAY=new Date('2026-03-05T12:00:00');
 function draftDeleteAsk(idx){
   const card=document.getElementById('dcard-'+idx);
@@ -143,9 +143,9 @@ function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 
 
 // Data
 const accts=[
-  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder'},
-  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder'},
-  {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Food & Drink',subCat:'Brewery',addr:'4910 Nautilus Ct, Boulder, CO 80301',handle:'averybrewing',phone:'(303) 555-0192',email:'events@averybrewing.com',maxPartners:5}
+  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder',multiVenue:false},
+  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false},
+  {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Food & Drink',subCat:'Brewery',addr:'4910 Nautilus Ct, Boulder, CO 80301',handle:'averybrewing',phone:'(303) 555-0192',email:'events@averybrewing.com',maxPartners:5,multiVenue:false}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
 const team=[
@@ -801,6 +801,7 @@ function renderCreate(){
   }
 
   if(S.cStep===1){
+    const venueField=S.multiVenue?`<div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Venue for this drop <span style="color:#EF4444">*</span></label><div style="display:flex;gap:8px;align-items:center;margin-bottom:5px"><span style="color:#9CA3AF">${ic('map',16)}</span><input type="text" placeholder="${acct().addr}" value="${acct().addr}" style="flex:1;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#E5E7EB'"/></div><div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;font-size:10px;color:#78350F;line-height:1.45">This venue will appear on the drop — make sure it's accurate for guests to find you</div></div>`:`<div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Location</label><div style="padding:10px 12px;border-radius:10px;font-size:13px;color:#374151;background:#F3F4F6;display:flex;align-items:center;gap:8px"><div style="flex:1"><div style="font-weight:600">${acct().name}</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px">${acct().addr}</div></div><div style="color:#6B7280">${ic('lock',16)}</div></div><div style="font-size:10px;color:#9CA3AF;margin-top:6px">Venue is fixed to your location address — enable Multi-venue drops in Settings to change per drop</div></div>`;
     c=`${clone?`<div style="background:#EDE9FE;border-radius:10px;padding:10px 14px;display:flex;gap:8px;margin-bottom:14px;align-items:center"><span style="color:#7C3AED">${ic('copy',16)}</span><div style="font-size:12px;color:#5B21B6;font-weight:500">Cloning: <strong>${clone.title}</strong></div></div>`:''}
     ${inp('Date','','date',true,clone?clone.date:'')}
     <div style="font-size:10px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px;display:flex;align-items:center;gap:4px">${ic('alert',11)} Limit: 1 Drop per day per account</div>
@@ -809,8 +810,7 @@ function renderCreate(){
     ${S.formTiming==='start'?inp('Start Time','','time',true):`<div style="display:flex;gap:10px"><div style="flex:1">${inp('Window Open','','time',true)}</div><div style="flex:1">${inp('Window Close','','time',true)}</div></div>`}
     ${inp('Broadcast Start','When the Drop becomes visible','time',true,clone?'':'')}
     <div style="font-size:10px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Broadcast ends 15 min before ${S.formTiming==='start'?'start time':'window close'} (purchase cutoff)</div>
-    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Location</label>
-    <div style="padding:10px 12px;border-radius:10px;font-size:13px;color:#374151;background:#F9FAFB"><div style="font-weight:600">${acct().name}</div><div style="font-size:12px;color:#6B7280;margin-top:2px">${acct().addr}</div></div></div>`;
+    ${venueField}`;
   }
   if(S.cStep===2){
     c=`${inp('Drop Title','e.g. Friday Night Jazz & Tapas','text',true,clone?clone.title:'')}
@@ -1594,6 +1594,16 @@ function renderCsvImport(){
 function renderSettings(){
   return `${hdr('Settings','Account & Preferences',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;margin-top:4px">Location</div>
+    <div style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500;color:#374151">Multi-venue drops</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Allow venue address to be changed per drop</div>
+      </div>
+      <button onclick="S.multiVenue=!S.multiVenue;render()" style="width:44px;height:26px;border-radius:13px;border:none;background:${S.multiVenue?'#22C55E':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0;transition:background 0.2s"><div style="position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:2px;left:${S.multiVenue?'20px':'2px'};transition:left 0.2s"></div></button>
+    </div>
+    ${S.multiVenue?`<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:11px;color:#78350F;line-height:1.45;display:flex;gap:6px"><span style="flex-shrink:0">${ic('alert',14)}</span><span>Venue will be required for each drop you create — for food trucks, popups & offsite events</span></div>`:''}
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;margin-top:16px">Account</div>
     <button onclick="S.menuSub='userAccount';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('user',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">User Account</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
     <button onclick="S.menuSub='feedback';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('msgCircle',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Send Feedback</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
     <button onclick="S.menuSub='tos';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('file',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Terms of Service</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>

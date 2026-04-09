@@ -32,7 +32,7 @@ const CONFIGS={
     key:'bestbuy',short:'Best Buy',name:'Best Buy Co., Inc.',
     color:'#003082',accent:'#FFE000',dark:'#001040',
     grad:'linear-gradient(180deg,#001040 0%,#003082 100%)',
-    plan:'Enterprise Retail Pro',ppl:199,
+    plan:'Enterprise Retail Pro',ppl:199,allowMultiVenue:false,
     hier:['Region','District','Store'],locLabel:'Store',locsLabel:'Stores',
     dropTypes:[
       {id:'flash-sale',    label:'Flash Sale',      icon:'&#9889;', bg:'#fef3c7',c:'#92400e'},
@@ -48,24 +48,24 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Best Buy \u2014 Denver Tech Center',t1:'West',t2:'Colorado',city:'Denver',     state:'CO',status:'active',cap:210,yr:2001,followers:145,followersGrowth:12},
-      {id:'L02',name:'Best Buy \u2014 Boulder',           t1:'West',t2:'Colorado',city:'Boulder',    state:'CO',status:'active',cap:185,yr:2005},
-      {id:'L03',name:'Best Buy \u2014 Colorado Springs',  t1:'West',t2:'Colorado',city:'Colo Springs',state:'CO',status:'active',cap:190,yr:2009,followers:120,followersGrowth:10},
-      {id:'L04',name:'Best Buy \u2014 Scottsdale',        t1:'West',t2:'Southwest',city:'Scottsdale', state:'AZ',status:'active',cap:200,yr:2003,followers:135,followersGrowth:11},
-      {id:'L05',name:'Best Buy \u2014 Phoenix Mesa',      t1:'West',t2:'Southwest',city:'Mesa',       state:'AZ',status:'active',cap:220,yr:2007,followers:130,followersGrowth:15},
-      {id:'L06',name:'Best Buy \u2014 Las Vegas Blvd',    t1:'West',t2:'Southwest',city:'Las Vegas',  state:'NV',status:'active',cap:240,yr:2000,followers:155,followersGrowth:18},
-      {id:'L07',name:'Best Buy \u2014 Chicago Michigan',  t1:'Central',t2:'Illinois',city:'Chicago',  state:'IL',status:'active',cap:230,yr:2002,followers:165,followersGrowth:22},
-      {id:'L08',name:'Best Buy \u2014 Chicago Wicker Park',t1:'Central',t2:'Illinois',city:'Chicago', state:'IL',status:'active',cap:195,yr:2011,followers:150,followersGrowth:16},
-      {id:'L09',name:'Best Buy \u2014 Minneapolis Lake St',t1:'Central',t2:'Minnesota',city:'Minneapolis',state:'MN',status:'active',cap:210,yr:1999,followers:165,followersGrowth:20},
-      {id:'L10',name:'Best Buy \u2014 Richfield HQ Store', t1:'Central',t2:'Minnesota',city:'Richfield',state:'MN',status:'active',cap:260,yr:1994},
-      {id:'L11',name:'Best Buy \u2014 Dallas Mockingbird', t1:'Central',t2:'Texas',city:'Dallas',     state:'TX',status:'active',cap:215,yr:2004,followers:210,followersGrowth:28},
-      {id:'L12',name:'Best Buy \u2014 Houston Galleria',   t1:'Central',t2:'Texas',city:'Houston',    state:'TX',status:'active',cap:225,yr:2006,followers:175,followersGrowth:18},
-      {id:'L13',name:'Best Buy \u2014 NYC Fifth Ave',      t1:'East',t2:'New York',city:'New York',   state:'NY',status:'active',cap:280,yr:2005,followers:160,followersGrowth:16},
-      {id:'L14',name:'Best Buy \u2014 NYC Brooklyn',       t1:'East',t2:'New York',city:'Brooklyn',   state:'NY',status:'active',cap:220,yr:2014,followers:200,followersGrowth:25},
-      {id:'L15',name:'Best Buy \u2014 Boston Fenway',      t1:'East',t2:'New England',city:'Boston',  state:'MA',status:'active',cap:195,yr:2008,followers:145,followersGrowth:18},
-      {id:'L16',name:'Best Buy \u2014 Boston Cambridge',   t1:'East',t2:'New England',city:'Cambridge',state:'MA',status:'active',cap:180,yr:2012,followers:130,followersGrowth:14},
-      {id:'L17',name:'Best Buy \u2014 Miami Brickell',     t1:'East',t2:'Florida',city:'Miami',       state:'FL',status:'active',cap:210,yr:2010,followers:115,followersGrowth:12},
-      {id:'L18',name:'Best Buy \u2014 Orlando Lake Buena', t1:'East',t2:'Florida',city:'Orlando',     state:'FL',status:'active',cap:235,yr:2003,followers:140,followersGrowth:16},
+      {id:'L01',name:'Best Buy \u2014 Denver Tech Center',t1:'West',t2:'Colorado',city:'Denver',     state:'CO',status:'active',cap:210,yr:2001,followers:145,followersGrowth:12,multiVenue:false},
+      {id:'L02',name:'Best Buy \u2014 Boulder',           t1:'West',t2:'Colorado',city:'Boulder',    state:'CO',status:'active',cap:185,yr:2005,multiVenue:false},
+      {id:'L03',name:'Best Buy \u2014 Colorado Springs',  t1:'West',t2:'Colorado',city:'Colo Springs',state:'CO',status:'active',cap:190,yr:2009,followers:120,followersGrowth:10,multiVenue:false},
+      {id:'L04',name:'Best Buy \u2014 Scottsdale',        t1:'West',t2:'Southwest',city:'Scottsdale', state:'AZ',status:'active',cap:200,yr:2003,followers:135,followersGrowth:11,multiVenue:false},
+      {id:'L05',name:'Best Buy \u2014 Phoenix Mesa',      t1:'West',t2:'Southwest',city:'Mesa',       state:'AZ',status:'active',cap:220,yr:2007,followers:130,followersGrowth:15,multiVenue:false},
+      {id:'L06',name:'Best Buy \u2014 Las Vegas Blvd',    t1:'West',t2:'Southwest',city:'Las Vegas',  state:'NV',status:'active',cap:240,yr:2000,followers:155,followersGrowth:18,multiVenue:false},
+      {id:'L07',name:'Best Buy \u2014 Chicago Michigan',  t1:'Central',t2:'Illinois',city:'Chicago',  state:'IL',status:'active',cap:230,yr:2002,followers:165,followersGrowth:22,multiVenue:false},
+      {id:'L08',name:'Best Buy \u2014 Chicago Wicker Park',t1:'Central',t2:'Illinois',city:'Chicago', state:'IL',status:'active',cap:195,yr:2011,followers:150,followersGrowth:16,multiVenue:false},
+      {id:'L09',name:'Best Buy \u2014 Minneapolis Lake St',t1:'Central',t2:'Minnesota',city:'Minneapolis',state:'MN',status:'active',cap:210,yr:1999,followers:165,followersGrowth:20,multiVenue:false},
+      {id:'L10',name:'Best Buy \u2014 Richfield HQ Store', t1:'Central',t2:'Minnesota',city:'Richfield',state:'MN',status:'active',cap:260,yr:1994,multiVenue:false},
+      {id:'L11',name:'Best Buy \u2014 Dallas Mockingbird', t1:'Central',t2:'Texas',city:'Dallas',     state:'TX',status:'active',cap:215,yr:2004,followers:210,followersGrowth:28,multiVenue:false},
+      {id:'L12',name:'Best Buy \u2014 Houston Galleria',   t1:'Central',t2:'Texas',city:'Houston',    state:'TX',status:'active',cap:225,yr:2006,followers:175,followersGrowth:18,multiVenue:false},
+      {id:'L13',name:'Best Buy \u2014 NYC Fifth Ave',      t1:'East',t2:'New York',city:'New York',   state:'NY',status:'active',cap:280,yr:2005,followers:160,followersGrowth:16,multiVenue:false},
+      {id:'L14',name:'Best Buy \u2014 NYC Brooklyn',       t1:'East',t2:'New York',city:'Brooklyn',   state:'NY',status:'active',cap:220,yr:2014,followers:200,followersGrowth:25,multiVenue:false},
+      {id:'L15',name:'Best Buy \u2014 Boston Fenway',      t1:'East',t2:'New England',city:'Boston',  state:'MA',status:'active',cap:195,yr:2008,followers:145,followersGrowth:18,multiVenue:false},
+      {id:'L16',name:'Best Buy \u2014 Boston Cambridge',   t1:'East',t2:'New England',city:'Cambridge',state:'MA',status:'active',cap:180,yr:2012,followers:130,followersGrowth:14,multiVenue:false},
+      {id:'L17',name:'Best Buy \u2014 Miami Brickell',     t1:'East',t2:'Florida',city:'Miami',       state:'FL',status:'active',cap:210,yr:2010,followers:115,followersGrowth:12,multiVenue:false},
+      {id:'L18',name:'Best Buy \u2014 Orlando Lake Buena', t1:'East',t2:'Florida',city:'Orlando',     state:'FL',status:'active',cap:235,yr:2003,followers:140,followersGrowth:16,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Flash Sale \u2014 Apple Products 30% Off',type:'flash-sale',    status:'live',      locId:'L01',cap:200,res:183,ci:165,sr:90,price:0,bh:4},
@@ -97,7 +97,7 @@ const CONFIGS={
     key:'chipotle',short:'Chipotle',name:'Chipotle Mexican Grill',
     color:'#A81612',accent:'#F5CB5C',dark:'#5D0E0B',
     grad:'linear-gradient(180deg,#5D0E0B 0%,#A81612 100%)',
-    plan:'Enterprise QSR Pro',ppl:149,
+    plan:'Enterprise QSR Pro',ppl:149,allowMultiVenue:false,
     hier:['Region','Market','Restaurant'],locLabel:'Restaurant',locsLabel:'Restaurants',
     dropTypes:[
       {id:'limited-time',label:'Limited-Time Offer',icon:'&#9201;', bg:'#fff7ed',c:'#c2410c'},
@@ -113,21 +113,21 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Chipotle \u2014 Denver LoDo',        t1:'Mountain West',t2:'Denver Metro',city:'Denver',       state:'CO',status:'active',cap:80,yr:2008,followers:520,followersGrowth:38},
-      {id:'L02',name:'Chipotle \u2014 Denver Capitol Hill', t1:'Mountain West',t2:'Denver Metro',city:'Denver',       state:'CO',status:'active',cap:75,yr:2012,followers:480,followersGrowth:35},
-      {id:'L03',name:'Chipotle \u2014 Boulder Pearl St',    t1:'Mountain West',t2:'Denver Metro',city:'Boulder',      state:'CO',status:'active',cap:70,yr:2010,followers:450,followersGrowth:32},
-      {id:'L04',name:'Chipotle \u2014 Salt Lake City',      t1:'Mountain West',t2:'Salt Lake',   city:'Salt Lake City',state:'UT',status:'active',cap:85,yr:2007,followers:510,followersGrowth:36},
-      {id:'L05',name:'Chipotle \u2014 Provo Center St',     t1:'Mountain West',t2:'Salt Lake',   city:'Provo',        state:'UT',status:'active',cap:78,yr:2015,followers:490,followersGrowth:35},
-      {id:'L06',name:'Chipotle \u2014 Chicago Loop',        t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:90,yr:2005,followers:620,followersGrowth:45},
-      {id:'L07',name:'Chipotle \u2014 Chicago Wicker Park', t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:80,yr:2011,followers:580,followersGrowth:42},
-      {id:'L08',name:'Chipotle \u2014 Chicago Lincoln Park',t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:85,yr:2014,followers:560,followersGrowth:40},
-      {id:'L09',name:'Chipotle \u2014 Columbus OSU',        t1:'Midwest',t2:'Ohio',              city:'Columbus',     state:'OH',status:'active',cap:95,yr:2009,followers:530,followersGrowth:38},
-      {id:'L10',name:'Chipotle \u2014 Columbus Downtown',   t1:'Midwest',t2:'Ohio',              city:'Columbus',     state:'OH',status:'active',cap:80,yr:2013,followers:510,followersGrowth:36},
-      {id:'L11',name:'Chipotle \u2014 NYC Midtown East',    t1:'East Coast',t2:'New York City',  city:'New York',     state:'NY',status:'active',cap:100,yr:2004,followers:780,followersGrowth:56},
-      {id:'L12',name:'Chipotle \u2014 NYC Brooklyn Heights',t1:'East Coast',t2:'New York City',  city:'Brooklyn',     state:'NY',status:'active',cap:85,yr:2016,followers:650,followersGrowth:47},
-      {id:'L13',name:'Chipotle \u2014 NYC Upper West Side', t1:'East Coast',t2:'New York City',  city:'New York',     state:'NY',status:'active',cap:80,yr:2018,followers:620,followersGrowth:44},
-      {id:'L14',name:'Chipotle \u2014 Boston Back Bay',     t1:'East Coast',t2:'Boston',         city:'Boston',       state:'MA',status:'active',cap:90,yr:2006,followers:690,followersGrowth:50},
-      {id:'L15',name:'Chipotle \u2014 Boston Fenway',       t1:'East Coast',t2:'Boston',         city:'Boston',       state:'MA',status:'active',cap:85,yr:2019,followers:660,followersGrowth:48},
+      {id:'L01',name:'Chipotle \u2014 Denver LoDo',        t1:'Mountain West',t2:'Denver Metro',city:'Denver',       state:'CO',status:'active',cap:80,yr:2008,followers:520,followersGrowth:38,multiVenue:false},
+      {id:'L02',name:'Chipotle \u2014 Denver Capitol Hill', t1:'Mountain West',t2:'Denver Metro',city:'Denver',       state:'CO',status:'active',cap:75,yr:2012,followers:480,followersGrowth:35,multiVenue:false},
+      {id:'L03',name:'Chipotle \u2014 Boulder Pearl St',    t1:'Mountain West',t2:'Denver Metro',city:'Boulder',      state:'CO',status:'active',cap:70,yr:2010,followers:450,followersGrowth:32,multiVenue:false},
+      {id:'L04',name:'Chipotle \u2014 Salt Lake City',      t1:'Mountain West',t2:'Salt Lake',   city:'Salt Lake City',state:'UT',status:'active',cap:85,yr:2007,followers:510,followersGrowth:36,multiVenue:false},
+      {id:'L05',name:'Chipotle \u2014 Provo Center St',     t1:'Mountain West',t2:'Salt Lake',   city:'Provo',        state:'UT',status:'active',cap:78,yr:2015,followers:490,followersGrowth:35,multiVenue:false},
+      {id:'L06',name:'Chipotle \u2014 Chicago Loop',        t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:90,yr:2005,followers:620,followersGrowth:45,multiVenue:false},
+      {id:'L07',name:'Chipotle \u2014 Chicago Wicker Park', t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:80,yr:2011,followers:580,followersGrowth:42,multiVenue:false},
+      {id:'L08',name:'Chipotle \u2014 Chicago Lincoln Park',t1:'Midwest',t2:'Chicago',           city:'Chicago',      state:'IL',status:'active',cap:85,yr:2014,followers:560,followersGrowth:40,multiVenue:false},
+      {id:'L09',name:'Chipotle \u2014 Columbus OSU',        t1:'Midwest',t2:'Ohio',              city:'Columbus',     state:'OH',status:'active',cap:95,yr:2009,followers:530,followersGrowth:38,multiVenue:false},
+      {id:'L10',name:'Chipotle \u2014 Columbus Downtown',   t1:'Midwest',t2:'Ohio',              city:'Columbus',     state:'OH',status:'active',cap:80,yr:2013,followers:510,followersGrowth:36,multiVenue:false},
+      {id:'L11',name:'Chipotle \u2014 NYC Midtown East',    t1:'East Coast',t2:'New York City',  city:'New York',     state:'NY',status:'active',cap:100,yr:2004,followers:780,followersGrowth:56,multiVenue:false},
+      {id:'L12',name:'Chipotle \u2014 NYC Brooklyn Heights',t1:'East Coast',t2:'New York City',  city:'Brooklyn',     state:'NY',status:'active',cap:85,yr:2016,followers:650,followersGrowth:47,multiVenue:false},
+      {id:'L13',name:'Chipotle \u2014 NYC Upper West Side', t1:'East Coast',t2:'New York City',  city:'New York',     state:'NY',status:'active',cap:80,yr:2018,followers:620,followersGrowth:44,multiVenue:false},
+      {id:'L14',name:'Chipotle \u2014 Boston Back Bay',     t1:'East Coast',t2:'Boston',         city:'Boston',       state:'MA',status:'active',cap:90,yr:2006,followers:690,followersGrowth:50,multiVenue:false},
+      {id:'L15',name:'Chipotle \u2014 Boston Fenway',       t1:'East Coast',t2:'Boston',         city:'Boston',       state:'MA',status:'active',cap:85,yr:2019,followers:660,followersGrowth:48,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'New Smoked Brisket Burrito \u2014 First Look',type:'limited-time',status:'live',      locId:'L01',cap:100,res:89,ci:82,sr:92,price:0,bh:4},
@@ -159,7 +159,7 @@ const CONFIGS={
     color:'#FB4F14',accent:'#002244',dark:'#001229',
     grad:'linear-gradient(180deg,#002244 0%,#1a4a00 50%,#FB4F14 100%)',
     grad:'linear-gradient(180deg,#001229 0%,#002244 60%,#FB4F14 100%)',
-    plan:'Enterprise Venue Pro',ppl:299,
+    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:true,
     hier:['Zone','Location'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience', label:'Fan Experience',  icon:'&#127944;',bg:'#fff7ed',c:'#c2410c'},
@@ -177,21 +177,21 @@ const CONFIGS={
     game:{quarter:'3rd',timeLeft:'8:42',homeScore:17,awayScore:14,homeTeam:'Broncos',awayTeam:'Chiefs',homeColor:'#FB4F14',awayColor:'#E31837'},
     timings:['pre-game','in-game','post-game'],
     locations:[
-      {id:'L01',name:'Club Level Bar \u2014 East',      t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2001,followers:280,followersGrowth:20},
-      {id:'L02',name:'Club Level Lounge \u2014 West',   t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:110,yr:2001,followers:260,followersGrowth:18},
-      {id:'L03',name:'United Club Suite Lounge',         t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:80, yr:2001,followers:240,followersGrowth:17},
-      {id:'L04',name:'Bud Light Bar \u2014 Sec 108',    t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:200,yr:2001,followers:350,followersGrowth:25},
-      {id:'L05',name:'Coors Stand \u2014 Sec 118',      t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:180,yr:2001,followers:320,followersGrowth:22},
-      {id:'L06',name:'Main Concourse West Bar',          t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:160,yr:2001,followers:310,followersGrowth:22},
-      {id:'L07',name:'Pat\u2019s Tipton Grill',         t1:'Field Level',   t2:null,city:'Denver',state:'CO',status:'active',cap:90, yr:2001,followers:180,followersGrowth:13},
-      {id:'L08',name:'Field Club VIP Lounge',            t1:'Field Level',   t2:null,city:'Denver',state:'CO',status:'active',cap:75, yr:2001,followers:160,followersGrowth:11},
-      {id:'L09',name:'Pepsi Porch \u2014 North Endzone',t1:'Upper Deck',    t2:null,city:'Denver',state:'CO',status:'active',cap:140,yr:2001,followers:270,followersGrowth:19},
-      {id:'L10',name:'Mile High Terrace Bar',            t1:'Upper Deck',    t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2001,followers:250,followersGrowth:18},
-      {id:'L11',name:'Orange Rush Fan Zone',             t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:300,yr:2001,followers:480,followersGrowth:35},
-      {id:'L12',name:'Broncos Team Store \u2014 Main',  t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:200,yr:2001,followers:410,followersGrowth:30},
-      {id:'L13',name:'Sports Authority Plaza Stage',     t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:400,yr:2001,followers:620,followersGrowth:45},
-      {id:'L14',name:'Miller Lite Sponsor Tent',         t1:'Sponsor Zones',t2:null,city:'Denver',state:'CO',status:'active',cap:180,yr:2015,followers:360,followersGrowth:26},
-      {id:'L15',name:'AT&amp;T 5G Experience Zone',     t1:'Sponsor Zones',t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2019,followers:300,followersGrowth:21},
+      {id:'L01',name:'Club Level Bar \u2014 East',      t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2001,followers:280,followersGrowth:20,multiVenue:false},
+      {id:'L02',name:'Club Level Lounge \u2014 West',   t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:110,yr:2001,followers:260,followersGrowth:18,multiVenue:false},
+      {id:'L03',name:'United Club Suite Lounge',         t1:'Club Level',    t2:null,city:'Denver',state:'CO',status:'active',cap:80, yr:2001,followers:240,followersGrowth:17,multiVenue:false},
+      {id:'L04',name:'Bud Light Bar \u2014 Sec 108',    t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:200,yr:2001,followers:350,followersGrowth:25,multiVenue:false},
+      {id:'L05',name:'Coors Stand \u2014 Sec 118',      t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:180,yr:2001,followers:320,followersGrowth:22,multiVenue:false},
+      {id:'L06',name:'Main Concourse West Bar',          t1:'Main Concourse',t2:null,city:'Denver',state:'CO',status:'active',cap:160,yr:2001,followers:310,followersGrowth:22,multiVenue:false},
+      {id:'L07',name:'Pat\u2019s Tipton Grill',         t1:'Field Level',   t2:null,city:'Denver',state:'CO',status:'active',cap:90, yr:2001,followers:180,followersGrowth:13,multiVenue:false},
+      {id:'L08',name:'Field Club VIP Lounge',            t1:'Field Level',   t2:null,city:'Denver',state:'CO',status:'active',cap:75, yr:2001,followers:160,followersGrowth:11,multiVenue:false},
+      {id:'L09',name:'Pepsi Porch \u2014 North Endzone',t1:'Upper Deck',    t2:null,city:'Denver',state:'CO',status:'active',cap:140,yr:2001,followers:270,followersGrowth:19,multiVenue:false},
+      {id:'L10',name:'Mile High Terrace Bar',            t1:'Upper Deck',    t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2001,followers:250,followersGrowth:18,multiVenue:false},
+      {id:'L11',name:'Orange Rush Fan Zone',             t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:300,yr:2001,followers:480,followersGrowth:35,multiVenue:true},
+      {id:'L12',name:'Broncos Team Store \u2014 Main',  t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:200,yr:2001,followers:410,followersGrowth:30,multiVenue:true},
+      {id:'L13',name:'Sports Authority Plaza Stage',     t1:'Fan Plazas',   t2:null,city:'Denver',state:'CO',status:'active',cap:400,yr:2001,followers:620,followersGrowth:45,multiVenue:true},
+      {id:'L14',name:'Miller Lite Sponsor Tent',         t1:'Sponsor Zones',t2:null,city:'Denver',state:'CO',status:'active',cap:180,yr:2015,followers:360,followersGrowth:26,multiVenue:true},
+      {id:'L15',name:'AT&amp;T 5G Experience Zone',     t1:'Sponsor Zones',t2:null,city:'Denver',state:'CO',status:'active',cap:120,yr:2019,followers:300,followersGrowth:21,multiVenue:true},
     ],
     drops:[
       {id:'D01',title:'Pre-Game $5 Bud Light Special',         type:'concessions',status:'live',      locId:'L04',timing:'pre-game', cap:200,res:183,ci:168,sr:92,price:0,bh:2},
@@ -222,7 +222,7 @@ const CONFIGS={
     key:'coachella',short:'Coachella',name:'Coachella 2026 \u2014 Valley Music &amp; Arts',
     color:'#E8502A',accent:'#2D1B69',dark:'#1a0f3d',
     grad:'linear-gradient(180deg,#2D1B69 0%,#E8502A 100%)',
-    plan:'Festival Pro',ppl:199,
+    plan:'Festival Pro',ppl:199,allowMultiVenue:true,
     hier:['Weekend','Day','Stage'],locLabel:'Stage / Venue',locsLabel:'Stages & Venues',
     dropTypes:[
       {id:'artist',  label:'Artist Drop',   icon:'&#127926;',bg:'#f3e8ff',c:'#5b21b6'},
@@ -250,20 +250,20 @@ const CONFIGS={
       {id:'D6',label:'Sunday',  short:'Sun',weekend:'W2',date:'Apr 20'},
     ],
     locations:[
-      {id:'L01',name:'Coachella Stage',  t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:100000,yr:1999},
-      {id:'L02',name:'Sahara Tent',      t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:25000, yr:1999},
-      {id:'L03',name:'Outdoor Theatre',  t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:10000, yr:1999},
-      {id:'L04',name:'Gobi Tent',        t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:8000,  yr:1999},
-      {id:'L05',name:'Mojave Tent',      t1:'W1',t2:'D3',city:'Indio',state:'CA',status:'active',cap:7500,  yr:1999},
-      {id:'L06',name:'Sonora Stage',     t1:'W1',t2:'D3',city:'Indio',state:'CA',status:'active',cap:5000,  yr:2004},
-      {id:'L07',name:'Heineken House',   t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:3000,  yr:2010},
-      {id:'L08',name:'Do Lab\u0301 Stage',t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:4000, yr:2005},
-      {id:'L09',name:'Coachella Stage',  t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:100000,yr:1999},
-      {id:'L10',name:'Sahara Tent',      t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:25000, yr:1999},
-      {id:'L11',name:'Outdoor Theatre',  t1:'W2',t2:'D5',city:'Indio',state:'CA',status:'active',cap:10000, yr:1999},
-      {id:'L12',name:'Gobi Tent',        t1:'W2',t2:'D5',city:'Indio',state:'CA',status:'active',cap:8000,  yr:1999},
-      {id:'L13',name:'Mojave Tent',      t1:'W2',t2:'D6',city:'Indio',state:'CA',status:'active',cap:7500,  yr:1999},
-      {id:'L14',name:'Heineken House',   t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:3000,  yr:2010},
+      {id:'L01',name:'Coachella Stage',  t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:100000,yr:1999,multiVenue:true},
+      {id:'L02',name:'Sahara Tent',      t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:25000, yr:1999,multiVenue:true},
+      {id:'L03',name:'Outdoor Theatre',  t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:10000, yr:1999,multiVenue:true},
+      {id:'L04',name:'Gobi Tent',        t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:8000,  yr:1999,multiVenue:true},
+      {id:'L05',name:'Mojave Tent',      t1:'W1',t2:'D3',city:'Indio',state:'CA',status:'active',cap:7500,  yr:1999,multiVenue:true},
+      {id:'L06',name:'Sonora Stage',     t1:'W1',t2:'D3',city:'Indio',state:'CA',status:'active',cap:5000,  yr:2004,multiVenue:true},
+      {id:'L07',name:'Heineken House',   t1:'W1',t2:'D1',city:'Indio',state:'CA',status:'active',cap:3000,  yr:2010,multiVenue:true},
+      {id:'L08',name:'Do Lab\u0301 Stage',t1:'W1',t2:'D2',city:'Indio',state:'CA',status:'active',cap:4000, yr:2005,multiVenue:true},
+      {id:'L09',name:'Coachella Stage',  t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:100000,yr:1999,multiVenue:true},
+      {id:'L10',name:'Sahara Tent',      t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:25000, yr:1999,multiVenue:true},
+      {id:'L11',name:'Outdoor Theatre',  t1:'W2',t2:'D5',city:'Indio',state:'CA',status:'active',cap:10000, yr:1999,multiVenue:true},
+      {id:'L12',name:'Gobi Tent',        t1:'W2',t2:'D5',city:'Indio',state:'CA',status:'active',cap:8000,  yr:1999,multiVenue:true},
+      {id:'L13',name:'Mojave Tent',      t1:'W2',t2:'D6',city:'Indio',state:'CA',status:'active',cap:7500,  yr:1999,multiVenue:true},
+      {id:'L14',name:'Heineken House',   t1:'W2',t2:'D4',city:'Indio',state:'CA',status:'active',cap:3000,  yr:2010,multiVenue:true},
     ],
     drops:[
       {id:'D01',title:'Lady Gaga VIP Fan Experience',          type:'artist',  status:'live',      locId:'L01',day:'D2',cap:200,res:200,ci:185,sr:93,price:0,bh:2},
@@ -295,7 +295,7 @@ const CONFIGS={
     key:'disney',short:'Disney Parks',name:'Walt Disney World \u2014 Florida',
     color:'#003087',accent:'#E2002D',dark:'#001440',
     grad:'linear-gradient(180deg,#001440 0%,#003087 100%)',
-    plan:'Enterprise Parks Pro',ppl:299,
+    plan:'Enterprise Parks Pro',ppl:299,allowMultiVenue:false,
     hier:['Park','Area','Location'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'character',  label:'Character Meet',   icon:'&#127921;',bg:'#eff6ff',c:'#1d4ed8'},
@@ -311,21 +311,21 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Cinderella Castle Character Spot', t1:'Magic Kingdom',t2:'Fantasyland',    city:'Orlando',state:'FL',status:'active',cap:50, yr:1971},
-      {id:'L02',name:'Buzz Lightyear Character Spot',    t1:'Magic Kingdom',t2:'Tomorrowland',   city:'Orlando',state:'FL',status:'active',cap:80, yr:1971},
-      {id:'L03',name:'Be Our Guest Restaurant',          t1:'Magic Kingdom',t2:'Fantasyland',    city:'Orlando',state:'FL',status:'active',cap:120,yr:2012},
-      {id:'L04',name:'Main Street Confectionery',        t1:'Magic Kingdom',t2:'Main Street',    city:'Orlando',state:'FL',status:'active',cap:60, yr:1971},
-      {id:'L05',name:'EPCOT Character Spot',             t1:'EPCOT',t2:'World Discovery',       city:'Orlando',state:'FL',status:'active',cap:60, yr:1982},
-      {id:'L06',name:'R\u00e9my\u2019s Ratatouille Dining',t1:'EPCOT',t2:'World Showcase',     city:'Orlando',state:'FL',status:'active',cap:140,yr:2021},
-      {id:'L07',name:'Guardians VIP Experience',         t1:'EPCOT',t2:'World Discovery',       city:'Orlando',state:'FL',status:'active',cap:40, yr:2022},
-      {id:'L08',name:'Le Cellier Steakhouse',            t1:'EPCOT',t2:'World Showcase',        city:'Orlando',state:'FL',status:'active',cap:130,yr:1982},
-      {id:'L09',name:'Hollywood &amp; Vine Dining',      t1:'Hollywood Studios',t2:'Hollywood Blvd',city:'Orlando',state:'FL',status:'active',cap:160,yr:1989},
-      {id:'L10',name:'Savi\u2019s Workshop \u2014 Lightsabers',t1:'Hollywood Studios',t2:"Galaxy's Edge",city:'Orlando',state:'FL',status:'active',cap:30,yr:2019},
-      {id:'L11',name:'Oga\u2019s Cantina',              t1:'Hollywood Studios',t2:"Galaxy's Edge",city:'Orlando',state:'FL',status:'active',cap:45, yr:2019},
-      {id:'L12',name:'Fantasmic! VIP Viewing Deck',     t1:'Hollywood Studios',t2:'Hollywood Blvd',city:'Orlando',state:'FL',status:'active',cap:100,yr:1998},
-      {id:'L13',name:'Kilimanjaro Safaris VIP Jeep',    t1:'Animal Kingdom',t2:'Africa',        city:'Orlando',state:'FL',status:'active',cap:50, yr:1998},
-      {id:'L14',name:'Tiffins Fine Dining',              t1:'Animal Kingdom',t2:'Discovery Island',city:'Orlando',state:'FL',status:'active',cap:120,yr:2016},
-      {id:'L15',name:'Avatar Flight of Passage VIP',    t1:'Animal Kingdom',t2:'Pandora',       city:'Orlando',state:'FL',status:'active',cap:60, yr:2017},
+      {id:'L01',name:'Cinderella Castle Character Spot', t1:'Magic Kingdom',t2:'Fantasyland',    city:'Orlando',state:'FL',status:'active',cap:50, yr:1971,multiVenue:false},
+      {id:'L02',name:'Buzz Lightyear Character Spot',    t1:'Magic Kingdom',t2:'Tomorrowland',   city:'Orlando',state:'FL',status:'active',cap:80, yr:1971,multiVenue:false},
+      {id:'L03',name:'Be Our Guest Restaurant',          t1:'Magic Kingdom',t2:'Fantasyland',    city:'Orlando',state:'FL',status:'active',cap:120,yr:2012,multiVenue:false},
+      {id:'L04',name:'Main Street Confectionery',        t1:'Magic Kingdom',t2:'Main Street',    city:'Orlando',state:'FL',status:'active',cap:60, yr:1971,multiVenue:false},
+      {id:'L05',name:'EPCOT Character Spot',             t1:'EPCOT',t2:'World Discovery',       city:'Orlando',state:'FL',status:'active',cap:60, yr:1982,multiVenue:false},
+      {id:'L06',name:'R\u00e9my\u2019s Ratatouille Dining',t1:'EPCOT',t2:'World Showcase',     city:'Orlando',state:'FL',status:'active',cap:140,yr:2021,multiVenue:false},
+      {id:'L07',name:'Guardians VIP Experience',         t1:'EPCOT',t2:'World Discovery',       city:'Orlando',state:'FL',status:'active',cap:40, yr:2022,multiVenue:false},
+      {id:'L08',name:'Le Cellier Steakhouse',            t1:'EPCOT',t2:'World Showcase',        city:'Orlando',state:'FL',status:'active',cap:130,yr:1982,multiVenue:false},
+      {id:'L09',name:'Hollywood &amp; Vine Dining',      t1:'Hollywood Studios',t2:'Hollywood Blvd',city:'Orlando',state:'FL',status:'active',cap:160,yr:1989,multiVenue:false},
+      {id:'L10',name:'Savi\u2019s Workshop \u2014 Lightsabers',t1:'Hollywood Studios',t2:"Galaxy's Edge",city:'Orlando',state:'FL',status:'active',cap:30,yr:2019,multiVenue:false},
+      {id:'L11',name:'Oga\u2019s Cantina',              t1:'Hollywood Studios',t2:"Galaxy's Edge",city:'Orlando',state:'FL',status:'active',cap:45, yr:2019,multiVenue:false},
+      {id:'L12',name:'Fantasmic! VIP Viewing Deck',     t1:'Hollywood Studios',t2:'Hollywood Blvd',city:'Orlando',state:'FL',status:'active',cap:100,yr:1998,multiVenue:false},
+      {id:'L13',name:'Kilimanjaro Safaris VIP Jeep',    t1:'Animal Kingdom',t2:'Africa',        city:'Orlando',state:'FL',status:'active',cap:50, yr:1998,multiVenue:false},
+      {id:'L14',name:'Tiffins Fine Dining',              t1:'Animal Kingdom',t2:'Discovery Island',city:'Orlando',state:'FL',status:'active',cap:120,yr:2016,multiVenue:false},
+      {id:'L15',name:'Avatar Flight of Passage VIP',    t1:'Animal Kingdom',t2:'Pandora',       city:'Orlando',state:'FL',status:'active',cap:60, yr:2017,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Cinderella Castle Character Breakfast',           type:'dining',    status:'live',      locId:'L03',cap:120,res:117,ci:109,sr:93,price:0,bh:4},
@@ -356,7 +356,7 @@ const CONFIGS={
     key:'ufc',short:'UFC',name:'UFC \u2014 Fight Night at T-Mobile Arena',
     color:'#D20A0A',accent:'#000000',dark:'#1a0000',
     grad:'linear-gradient(180deg,#000000 0%,#1a0000 40%,#D20A0A 100%)',
-    plan:'Enterprise Venue Pro',ppl:299,
+    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:false,
     hier:['Zone','Section'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience',label:'Fan Experience', icon:'&#127944;',bg:'#fff7ed',c:'#c2410c'},
@@ -374,21 +374,21 @@ const CONFIGS={
     game:{quarter:'Round 3',timeLeft:'2:14',homeScore:null,awayScore:null,homeTeam:'Poirier',awayTeam:'Oliveira',homeColor:'#D20A0A',awayColor:'#1d4ed8'},
     timings:['pre-fight','fight-night','post-fight'],
     locations:[
-      {id:'L01',name:'Section 101 \u2014 Ringside Floor',    t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016},
-      {id:'L02',name:'Section 102 \u2014 Floor East',        t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016},
-      {id:'L03',name:'VIP Octagon Club',                      t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:80, yr:2016},
-      {id:'L04',name:'Section 201 \u2014 Lower Bowl',        t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:320,yr:2016},
-      {id:'L05',name:'Section 210 \u2014 Lower Bowl',        t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:310,yr:2016},
-      {id:'L06',name:'Bud Light Bar \u2014 Lower Concourse', t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:180,yr:2016},
-      {id:'L07',name:'Section 301 \u2014 Upper Bowl',        t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:400,yr:2016},
-      {id:'L08',name:'Section 315 \u2014 Upper Bowl',        t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:380,yr:2016},
-      {id:'L09',name:'Upper Concourse Bar',                   t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016},
-      {id:'L10',name:'Dana White VIP Lounge',                 t1:'VIP & Suites',    t2:null,city:'Las Vegas',state:'NV',status:'active',cap:60, yr:2016},
-      {id:'L11',name:'Fighter Sponsor Suite \u2014 East',    t1:'VIP & Suites',    t2:null,city:'Las Vegas',state:'NV',status:'active',cap:80, yr:2016},
-      {id:'L12',name:'Merch Store \u2014 Main Gate',         t1:'Fan Zones',       t2:null,city:'Las Vegas',state:'NV',status:'active',cap:250,yr:2016},
-      {id:'L13',name:'Pre-Fight Fan Activation Zone',         t1:'Fan Zones',       t2:null,city:'Las Vegas',state:'NV',status:'active',cap:500,yr:2016},
-      {id:'L14',name:'Pizza Vendor \u2014 East Concourse',   t1:'Concessions',     t2:null,city:'Las Vegas',state:'NV',status:'active',cap:300,yr:2016},
-      {id:'L15',name:'Souvenir & Poster Stand',               t1:'Concessions',     t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016},
+      {id:'L01',name:'Section 101 \u2014 Ringside Floor',    t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016,multiVenue:false},
+      {id:'L02',name:'Section 102 \u2014 Floor East',        t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016,multiVenue:false},
+      {id:'L03',name:'VIP Octagon Club',                      t1:'Floor & Ringside',t2:null,city:'Las Vegas',state:'NV',status:'active',cap:80, yr:2016,multiVenue:false},
+      {id:'L04',name:'Section 201 \u2014 Lower Bowl',        t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:320,yr:2016,multiVenue:false},
+      {id:'L05',name:'Section 210 \u2014 Lower Bowl',        t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:310,yr:2016,multiVenue:false},
+      {id:'L06',name:'Bud Light Bar \u2014 Lower Concourse', t1:'Lower Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:180,yr:2016,multiVenue:false},
+      {id:'L07',name:'Section 301 \u2014 Upper Bowl',        t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:400,yr:2016,multiVenue:false},
+      {id:'L08',name:'Section 315 \u2014 Upper Bowl',        t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:380,yr:2016,multiVenue:false},
+      {id:'L09',name:'Upper Concourse Bar',                   t1:'Upper Bowl',      t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016,multiVenue:false},
+      {id:'L10',name:'Dana White VIP Lounge',                 t1:'VIP & Suites',    t2:null,city:'Las Vegas',state:'NV',status:'active',cap:60, yr:2016,multiVenue:false},
+      {id:'L11',name:'Fighter Sponsor Suite \u2014 East',    t1:'VIP & Suites',    t2:null,city:'Las Vegas',state:'NV',status:'active',cap:80, yr:2016,multiVenue:false},
+      {id:'L12',name:'Merch Store \u2014 Main Gate',         t1:'Fan Zones',       t2:null,city:'Las Vegas',state:'NV',status:'active',cap:250,yr:2016,multiVenue:false},
+      {id:'L13',name:'Pre-Fight Fan Activation Zone',         t1:'Fan Zones',       t2:null,city:'Las Vegas',state:'NV',status:'active',cap:500,yr:2016,multiVenue:false},
+      {id:'L14',name:'Pizza Vendor \u2014 East Concourse',   t1:'Concessions',     t2:null,city:'Las Vegas',state:'NV',status:'active',cap:300,yr:2016,multiVenue:false},
+      {id:'L15',name:'Souvenir & Poster Stand',               t1:'Concessions',     t2:null,city:'Las Vegas',state:'NV',status:'active',cap:200,yr:2016,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Bud Light \u2014 100 Fans Win a Free Beer',          type:'sponsor',    status:'live',      locId:'L06',timing:'fight-night', cap:100,res:100,ci:94, sr:94,price:0,bh:1},
@@ -420,7 +420,7 @@ const CONFIGS={
     key:'formula1',short:'Formula 1',name:'Formula 1 \u2014 Las Vegas Grand Prix',
     color:'#E10600',accent:'#15151e',dark:'#0a0a0f',
     grad:'linear-gradient(180deg,#0a0a0f 0%,#15151e 50%,#E10600 100%)',
-    plan:'Enterprise Events Pro',ppl:249,
+    plan:'Enterprise Events Pro',ppl:249,allowMultiVenue:false,
     hier:['Area','Zone'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience',label:'Fan Experience', icon:'&#127937;',bg:'#fff7ed',c:'#c2410c'},
@@ -444,19 +444,19 @@ const CONFIGS={
       {id:'D3',label:'Race Day',   short:'Sun',weekend:'W1',date:'Nov 22'},
     ],
     locations:[
-      {id:'L01',name:'Pit Lane Walk \u2014 VIP',          t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:50,  yr:2023},
-      {id:'L02',name:'Grid Walk Access',                   t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:80,  yr:2023},
-      {id:'L03',name:'Heineken VIP Tent',                  t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:200, yr:2023},
-      {id:'L04',name:'Rolex Fan Experience Zone',          t1:'W1',t2:'D2',city:'Las Vegas',state:'NV',status:'active',cap:300, yr:2023},
-      {id:'L05',name:'Grandstand S \u2014 Turn 14',       t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:5000,yr:2023},
-      {id:'L06',name:'Grandstand B \u2014 Casino Strip',  t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:4000,yr:2023},
-      {id:'L07',name:'Fan Village Main Stage',             t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023},
-      {id:'L08',name:'Fan Village Main Stage',             t1:'W1',t2:'D2',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023},
-      {id:'L09',name:'Fan Village Main Stage',             t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023},
-      {id:'L10',name:'Paddock Club \u2014 East',          t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:400, yr:2023},
-      {id:'L11',name:'Merchandise Village \u2014 Main',   t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:2000,yr:2023},
-      {id:'L12',name:'Merchandise Village \u2014 Main',   t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:2000,yr:2023},
-      {id:'L13',name:'Food & Beverage Court',              t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:1500,yr:2023},
+      {id:'L01',name:'Pit Lane Walk \u2014 VIP',          t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:50,  yr:2023,multiVenue:false},
+      {id:'L02',name:'Grid Walk Access',                   t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:80,  yr:2023,multiVenue:false},
+      {id:'L03',name:'Heineken VIP Tent',                  t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:200, yr:2023,multiVenue:true},
+      {id:'L04',name:'Rolex Fan Experience Zone',          t1:'W1',t2:'D2',city:'Las Vegas',state:'NV',status:'active',cap:300, yr:2023,multiVenue:false},
+      {id:'L05',name:'Grandstand S \u2014 Turn 14',       t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:5000,yr:2023,multiVenue:false},
+      {id:'L06',name:'Grandstand B \u2014 Casino Strip',  t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:4000,yr:2023,multiVenue:false},
+      {id:'L07',name:'Fan Village Main Stage',             t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023,multiVenue:true},
+      {id:'L08',name:'Fan Village Main Stage',             t1:'W1',t2:'D2',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023,multiVenue:true},
+      {id:'L09',name:'Fan Village Main Stage',             t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:8000,yr:2023,multiVenue:true},
+      {id:'L10',name:'Paddock Club \u2014 East',          t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:400, yr:2023,multiVenue:false},
+      {id:'L11',name:'Merchandise Village \u2014 Main',   t1:'W1',t2:'D1',city:'Las Vegas',state:'NV',status:'active',cap:2000,yr:2023,multiVenue:false},
+      {id:'L12',name:'Merchandise Village \u2014 Main',   t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:2000,yr:2023,multiVenue:false},
+      {id:'L13',name:'Food & Beverage Court',              t1:'W1',t2:'D3',city:'Las Vegas',state:'NV',status:'active',cap:1500,yr:2023,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Heineken \u2014 50 Fans Enter VIP Tent',       type:'sponsor',    status:'live',      locId:'L03',day:'D1',cap:50,  res:50,  ci:47,  sr:94,price:0,bh:2},
@@ -488,7 +488,7 @@ const CONFIGS={
     key:'vailresorts',short:'Vail Resorts',name:'Vail Resorts \u2014 Epic Pass Network',
     color:'#1B4FA8',accent:'#A8C8FF',dark:'#0D2459',
     grad:'linear-gradient(180deg,#0D2459 0%,#1B4FA8 100%)',
-    plan:'Enterprise Multi-Venue Pro',ppl:299,
+    plan:'Enterprise Multi-Venue Pro',ppl:299,allowMultiVenue:false,
     hier:['Region','Property Type'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'lift',    label:'Lift Access',     icon:'&#9975;', bg:'#eff6ff',c:'#1d4ed8'},
@@ -506,53 +506,53 @@ const CONFIGS={
     special:null,
     locations:[
       // Colorado
-      {id:'L01',name:'Vail Mountain',                  t1:'Colorado',    t2:'Ski Resort',     city:'Vail',          state:'CO',status:'active',cap:5000,yr:1962},
-      {id:'L02',name:'Breckenridge Ski Resort',         t1:'Colorado',    t2:'Ski Resort',     city:'Breckenridge',  state:'CO',status:'active',cap:4500,yr:1961},
-      {id:'L03',name:'Keystone Resort',                 t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:3200,yr:1970},
-      {id:'L04',name:'Beaver Creek Resort',             t1:'Colorado',    t2:'Ski Resort',     city:'Avon',          state:'CO',status:'active',cap:3500,yr:1980},
-      {id:'L05',name:'Crested Butte Mountain Resort',   t1:'Colorado',    t2:'Ski Resort',     city:'Crested Butte', state:'CO',status:'active',cap:2200,yr:1961},
-      {id:'L06',name:'Telluride Ski Resort',            t1:'Colorado',    t2:'Ski Resort',     city:'Telluride',     state:'CO',status:'active',cap:2800,yr:1972},
-      {id:'L07',name:'Arapahoe Basin',                  t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:2000,yr:1946},
+      {id:'L01',name:'Vail Mountain',                  t1:'Colorado',    t2:'Ski Resort',     city:'Vail',          state:'CO',status:'active',cap:5000,yr:1962,multiVenue:false},
+      {id:'L02',name:'Breckenridge Ski Resort',         t1:'Colorado',    t2:'Ski Resort',     city:'Breckenridge',  state:'CO',status:'active',cap:4500,yr:1961,multiVenue:false},
+      {id:'L03',name:'Keystone Resort',                 t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:3200,yr:1970,multiVenue:false},
+      {id:'L04',name:'Beaver Creek Resort',             t1:'Colorado',    t2:'Ski Resort',     city:'Avon',          state:'CO',status:'active',cap:3500,yr:1980,multiVenue:false},
+      {id:'L05',name:'Crested Butte Mountain Resort',   t1:'Colorado',    t2:'Ski Resort',     city:'Crested Butte', state:'CO',status:'active',cap:2200,yr:1961,multiVenue:false},
+      {id:'L06',name:'Telluride Ski Resort',            t1:'Colorado',    t2:'Ski Resort',     city:'Telluride',     state:'CO',status:'active',cap:2800,yr:1972,multiVenue:false},
+      {id:'L07',name:'Arapahoe Basin',                  t1:'Colorado',    t2:'Ski Resort',     city:'Keystone',      state:'CO',status:'active',cap:2000,yr:1946,multiVenue:false},
       // Epic Mountain Gear — Colorado
-      {id:'L08',name:'Epic Mountain Gear \u2014 Vail',         t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Vail',          state:'CO',status:'active',cap:300,yr:2018},
-      {id:'L09',name:'Epic Mountain Gear \u2014 Breck',        t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Breckenridge',  state:'CO',status:'active',cap:280,yr:2018},
-      {id:'L10',name:'Epic Mountain Gear \u2014 Keystone',     t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Keystone',      state:'CO',status:'active',cap:220,yr:2018},
-      {id:'L11',name:'Epic Mountain Gear \u2014 Beaver Creek', t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Avon',          state:'CO',status:'active',cap:240,yr:2018},
+      {id:'L08',name:'Epic Mountain Gear \u2014 Vail',         t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Vail',          state:'CO',status:'active',cap:300,yr:2018,multiVenue:false},
+      {id:'L09',name:'Epic Mountain Gear \u2014 Breck',        t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Breckenridge',  state:'CO',status:'active',cap:280,yr:2018,multiVenue:false},
+      {id:'L10',name:'Epic Mountain Gear \u2014 Keystone',     t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Keystone',      state:'CO',status:'active',cap:220,yr:2018,multiVenue:false},
+      {id:'L11',name:'Epic Mountain Gear \u2014 Beaver Creek', t1:'Colorado',    t2:'Epic Mtn Gear',  city:'Avon',          state:'CO',status:'active',cap:240,yr:2018,multiVenue:false},
       // Utah
-      {id:'L12',name:'Park City Mountain Resort',       t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:4800,yr:1963},
-      {id:'L13',name:'Canyons Village',                 t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:3600,yr:1968},
-      {id:'L14',name:'Epic Mountain Gear \u2014 Park City',    t1:'Utah',        t2:'Epic Mtn Gear',  city:'Park City',     state:'UT',status:'active',cap:260,yr:2019},
+      {id:'L12',name:'Park City Mountain Resort',       t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:4800,yr:1963,multiVenue:false},
+      {id:'L13',name:'Canyons Village',                 t1:'Utah',        t2:'Ski Resort',     city:'Park City',     state:'UT',status:'active',cap:3600,yr:1968,multiVenue:false},
+      {id:'L14',name:'Epic Mountain Gear \u2014 Park City',    t1:'Utah',        t2:'Epic Mtn Gear',  city:'Park City',     state:'UT',status:'active',cap:260,yr:2019,multiVenue:false},
       // Lake Tahoe
-      {id:'L15',name:'Heavenly Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'South Lake Tahoe',state:'CA',status:'active',cap:3800,yr:1955},
-      {id:'L16',name:'Northstar California',            t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Truckee',       state:'CA',status:'active',cap:3000,yr:1972},
-      {id:'L17',name:'Kirkwood Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Kirkwood',      state:'CA',status:'active',cap:2400,yr:1972},
-      {id:'L18',name:'Epic Mountain Gear \u2014 Heavenly',     t1:'Lake Tahoe',  t2:'Epic Mtn Gear',  city:'South Lake Tahoe',state:'CA',status:'active',cap:230,yr:2019},
+      {id:'L15',name:'Heavenly Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'South Lake Tahoe',state:'CA',status:'active',cap:3800,yr:1955,multiVenue:false},
+      {id:'L16',name:'Northstar California',            t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Truckee',       state:'CA',status:'active',cap:3000,yr:1972,multiVenue:false},
+      {id:'L17',name:'Kirkwood Mountain Resort',        t1:'Lake Tahoe',  t2:'Ski Resort',     city:'Kirkwood',      state:'CA',status:'active',cap:2400,yr:1972,multiVenue:false},
+      {id:'L18',name:'Epic Mountain Gear \u2014 Heavenly',     t1:'Lake Tahoe',  t2:'Epic Mtn Gear',  city:'South Lake Tahoe',state:'CA',status:'active',cap:230,yr:2019,multiVenue:false},
       // Pacific Northwest
-      {id:'L19',name:'Stevens Pass',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Skykomish',     state:'WA',status:'active',cap:2600,yr:1937},
-      {id:'L20',name:'Mt. Bachelor',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Bend',          state:'OR',status:'active',cap:3100,yr:1958},
+      {id:'L19',name:'Stevens Pass',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Skykomish',     state:'WA',status:'active',cap:2600,yr:1937,multiVenue:false},
+      {id:'L20',name:'Mt. Bachelor',                    t1:'Pacific NW',  t2:'Ski Resort',     city:'Bend',          state:'OR',status:'active',cap:3100,yr:1958,multiVenue:false},
       // Northeast
-      {id:'L21',name:'Stowe Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Stowe',         state:'VT',status:'active',cap:3200,yr:1937},
-      {id:'L22',name:'Okemo Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Ludlow',        state:'VT',status:'active',cap:2400,yr:1956},
-      {id:'L23',name:'Mount Snow',                      t1:'Northeast',   t2:'Ski Resort',     city:'West Dover',    state:'VT',status:'active',cap:2200,yr:1954},
-      {id:'L24',name:'Hunter Mountain',                 t1:'Northeast',   t2:'Ski Resort',     city:'Hunter',        state:'NY',status:'active',cap:2000,yr:1960},
-      {id:'L25',name:'Attitash Mountain Resort',        t1:'Northeast',   t2:'Ski Resort',     city:'Bartlett',      state:'NH',status:'active',cap:1800,yr:1965},
-      {id:'L26',name:'Epic Mountain Gear \u2014 Stowe',        t1:'Northeast',   t2:'Epic Mtn Gear',  city:'Stowe',         state:'VT',status:'active',cap:210,yr:2020},
+      {id:'L21',name:'Stowe Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Stowe',         state:'VT',status:'active',cap:3200,yr:1937,multiVenue:false},
+      {id:'L22',name:'Okemo Mountain Resort',           t1:'Northeast',   t2:'Ski Resort',     city:'Ludlow',        state:'VT',status:'active',cap:2400,yr:1956,multiVenue:false},
+      {id:'L23',name:'Mount Snow',                      t1:'Northeast',   t2:'Ski Resort',     city:'West Dover',    state:'VT',status:'active',cap:2200,yr:1954,multiVenue:false},
+      {id:'L24',name:'Hunter Mountain',                 t1:'Northeast',   t2:'Ski Resort',     city:'Hunter',        state:'NY',status:'active',cap:2000,yr:1960,multiVenue:false},
+      {id:'L25',name:'Attitash Mountain Resort',        t1:'Northeast',   t2:'Ski Resort',     city:'Bartlett',      state:'NH',status:'active',cap:1800,yr:1965,multiVenue:false},
+      {id:'L26',name:'Epic Mountain Gear \u2014 Stowe',        t1:'Northeast',   t2:'Epic Mtn Gear',  city:'Stowe',         state:'VT',status:'active',cap:210,yr:2020,multiVenue:false},
       // Midwest
-      {id:'L27',name:'Wilmot Mountain',                 t1:'Midwest',     t2:'Ski Resort',     city:'Wilmot',        state:'WI',status:'active',cap:1200,yr:1937},
-      {id:'L28',name:'Afton Alps',                      t1:'Midwest',     t2:'Ski Resort',     city:'Hastings',      state:'MN',status:'active',cap:1400,yr:1959},
-      {id:'L29',name:'Mt. Brighton',                    t1:'Midwest',     t2:'Ski Resort',     city:'Brighton',      state:'MI',status:'active',cap:1300,yr:1964},
+      {id:'L27',name:'Wilmot Mountain',                 t1:'Midwest',     t2:'Ski Resort',     city:'Wilmot',        state:'WI',status:'active',cap:1200,yr:1937,multiVenue:false},
+      {id:'L28',name:'Afton Alps',                      t1:'Midwest',     t2:'Ski Resort',     city:'Hastings',      state:'MN',status:'active',cap:1400,yr:1959,multiVenue:false},
+      {id:'L29',name:'Mt. Brighton',                    t1:'Midwest',     t2:'Ski Resort',     city:'Brighton',      state:'MI',status:'active',cap:1300,yr:1964,multiVenue:false},
       // Canada
-      {id:'L30',name:'Whistler Blackcomb',              t1:'Canada',      t2:'Ski Resort',     city:'Whistler',      state:'BC',status:'active',cap:8000,yr:1966},
-      {id:'L31',name:'Nakiska Ski Area',                t1:'Canada',      t2:'Ski Resort',     city:'Kananaskis',    state:'AB',status:'active',cap:2000,yr:1985},
-      {id:'L32',name:'Epic Mountain Gear \u2014 Whistler',     t1:'Canada',      t2:'Epic Mtn Gear',  city:'Whistler',      state:'BC',status:'active',cap:320,yr:2019},
+      {id:'L30',name:'Whistler Blackcomb',              t1:'Canada',      t2:'Ski Resort',     city:'Whistler',      state:'BC',status:'active',cap:8000,yr:1966,multiVenue:false},
+      {id:'L31',name:'Nakiska Ski Area',                t1:'Canada',      t2:'Ski Resort',     city:'Kananaskis',    state:'AB',status:'active',cap:2000,yr:1985,multiVenue:false},
+      {id:'L32',name:'Epic Mountain Gear \u2014 Whistler',     t1:'Canada',      t2:'Epic Mtn Gear',  city:'Whistler',      state:'BC',status:'active',cap:320,yr:2019,multiVenue:false},
       // Epic Mountain Gear — Denver / Boulder Metro
-      {id:'L33',name:'Epic Mountain Gear \u2014 Boulder',      t1:'Front Range', t2:'Epic Mtn Gear',  city:'Boulder',       state:'CO',status:'active',cap:280,yr:2015},
-      {id:'L34',name:'Epic Mountain Gear \u2014 Aurora',       t1:'Front Range', t2:'Epic Mtn Gear',  city:'Aurora',        state:'CO',status:'active',cap:310,yr:2014},
-      {id:'L35',name:'Epic Mountain Gear \u2014 Littleton',    t1:'Front Range', t2:'Epic Mtn Gear',  city:'Littleton',     state:'CO',status:'active',cap:260,yr:2016},
-      {id:'L36',name:'Epic Mountain Gear \u2014 Lone Tree',    t1:'Front Range', t2:'Epic Mtn Gear',  city:'Lone Tree',     state:'CO',status:'active',cap:290,yr:2017},
-      {id:'L37',name:'Epic Mountain Gear \u2014 Westminster',  t1:'Front Range', t2:'Epic Mtn Gear',  city:'Westminster',   state:'CO',status:'active',cap:270,yr:2015},
-      {id:'L38',name:'Epic Mountain Gear \u2014 Frisco',       t1:'Front Range', t2:'Epic Mtn Gear',  city:'Frisco',        state:'CO',status:'active',cap:240,yr:2013},
-      {id:'L39',name:'Epic Mountain Gear \u2014 Colorado Springs',t1:'Front Range',t2:'Epic Mtn Gear',city:'Colorado Springs',state:'CO',status:'active',cap:250,yr:2018},
+      {id:'L33',name:'Epic Mountain Gear \u2014 Boulder',      t1:'Front Range', t2:'Epic Mtn Gear',  city:'Boulder',       state:'CO',status:'active',cap:280,yr:2015,multiVenue:false},
+      {id:'L34',name:'Epic Mountain Gear \u2014 Aurora',       t1:'Front Range', t2:'Epic Mtn Gear',  city:'Aurora',        state:'CO',status:'active',cap:310,yr:2014,multiVenue:false},
+      {id:'L35',name:'Epic Mountain Gear \u2014 Littleton',    t1:'Front Range', t2:'Epic Mtn Gear',  city:'Littleton',     state:'CO',status:'active',cap:260,yr:2016,multiVenue:false},
+      {id:'L36',name:'Epic Mountain Gear \u2014 Lone Tree',    t1:'Front Range', t2:'Epic Mtn Gear',  city:'Lone Tree',     state:'CO',status:'active',cap:290,yr:2017,multiVenue:false},
+      {id:'L37',name:'Epic Mountain Gear \u2014 Westminster',  t1:'Front Range', t2:'Epic Mtn Gear',  city:'Westminster',   state:'CO',status:'active',cap:270,yr:2015,multiVenue:false},
+      {id:'L38',name:'Epic Mountain Gear \u2014 Frisco',       t1:'Front Range', t2:'Epic Mtn Gear',  city:'Frisco',        state:'CO',status:'active',cap:240,yr:2013,multiVenue:false},
+      {id:'L39',name:'Epic Mountain Gear \u2014 Colorado Springs',t1:'Front Range',t2:'Epic Mtn Gear',city:'Colorado Springs',state:'CO',status:'active',cap:250,yr:2018,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Epic Pass Holder \u2014 First Tracks Access',     type:'vip',   status:'live',      locId:'L01',cap:200,res:192,ci:178,sr:93,price:0,bh:2},
@@ -584,7 +584,7 @@ const CONFIGS={
     key:'topgolf',short:'Topgolf',name:'Topgolf \u2014 Multi-Venue',
     color:'#218B44',accent:'#FFB800',dark:'#0F4220',
     grad:'linear-gradient(180deg,#0F4220 0%,#218B44 100%)',
-    plan:'Enterprise Venue Pro',ppl:249,
+    plan:'Enterprise Venue Pro',ppl:249,allowMultiVenue:false,
     hier:['Venue','Level'],locLabel:'Bay / Space',locsLabel:'Bays & Spaces',
     dropTypes:[
       {id:'bay',   label:'Bay Experience', icon:'&#9971;', bg:'#f0fdf4',c:'#15803d'},
@@ -600,20 +600,20 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Level 1 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 1',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018},
-      {id:'L02',name:'Level 2 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 2',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018},
-      {id:'L03',name:'Level 3 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 3',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018},
-      {id:'L04',name:'Event Terrace \u2014 Denver',      t1:'Denver',   t2:'Events', city:'Denver',   state:'CO',status:'active',cap:120,yr:2018},
-      {id:'L05',name:'Level 1 Bays \u2014 Dallas',       t1:'Dallas',   t2:'Level 1',city:'Dallas',   state:'TX',status:'active',cap:200,yr:2000},
-      {id:'L06',name:'Level 2 Bays \u2014 Dallas',       t1:'Dallas',   t2:'Level 2',city:'Dallas',   state:'TX',status:'active',cap:200,yr:2000},
-      {id:'L07',name:'The Terrace Bar \u2014 Dallas',    t1:'Dallas',   t2:'Level 3',city:'Dallas',   state:'TX',status:'active',cap:150,yr:2000},
-      {id:'L08',name:'Event Suite \u2014 Dallas',        t1:'Dallas',   t2:'Events', city:'Dallas',   state:'TX',status:'active',cap:100,yr:2000},
-      {id:'L09',name:'Level 1 Bays \u2014 Las Vegas',    t1:'Las Vegas',t2:'Level 1',city:'Las Vegas',state:'NV',status:'active',cap:220,yr:2016},
-      {id:'L10',name:'Level 2 Bays \u2014 Las Vegas',    t1:'Las Vegas',t2:'Level 2',city:'Las Vegas',state:'NV',status:'active',cap:220,yr:2016},
-      {id:'L11',name:'Sky Lounge \u2014 Las Vegas',      t1:'Las Vegas',t2:'Level 3',city:'Las Vegas',state:'NV',status:'active',cap:160,yr:2016},
-      {id:'L12',name:'Level 1 Bays \u2014 Chicago',      t1:'Chicago',  t2:'Level 1',city:'Chicago',  state:'IL',status:'active',cap:190,yr:2015},
-      {id:'L13',name:'Level 2 Bays \u2014 Chicago',      t1:'Chicago',  t2:'Level 2',city:'Chicago',  state:'IL',status:'active',cap:190,yr:2015},
-      {id:'L14',name:'Event Space \u2014 Chicago',       t1:'Chicago',  t2:'Events', city:'Chicago',  state:'IL',status:'active',cap:80, yr:2015},
+      {id:'L01',name:'Level 1 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 1',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018,multiVenue:false},
+      {id:'L02',name:'Level 2 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 2',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018,multiVenue:false},
+      {id:'L03',name:'Level 3 Bays \u2014 Denver',       t1:'Denver',   t2:'Level 3',city:'Denver',   state:'CO',status:'active',cap:180,yr:2018,multiVenue:false},
+      {id:'L04',name:'Event Terrace \u2014 Denver',      t1:'Denver',   t2:'Events', city:'Denver',   state:'CO',status:'active',cap:120,yr:2018,multiVenue:false},
+      {id:'L05',name:'Level 1 Bays \u2014 Dallas',       t1:'Dallas',   t2:'Level 1',city:'Dallas',   state:'TX',status:'active',cap:200,yr:2000,multiVenue:false},
+      {id:'L06',name:'Level 2 Bays \u2014 Dallas',       t1:'Dallas',   t2:'Level 2',city:'Dallas',   state:'TX',status:'active',cap:200,yr:2000,multiVenue:false},
+      {id:'L07',name:'The Terrace Bar \u2014 Dallas',    t1:'Dallas',   t2:'Level 3',city:'Dallas',   state:'TX',status:'active',cap:150,yr:2000,multiVenue:false},
+      {id:'L08',name:'Event Suite \u2014 Dallas',        t1:'Dallas',   t2:'Events', city:'Dallas',   state:'TX',status:'active',cap:100,yr:2000,multiVenue:false},
+      {id:'L09',name:'Level 1 Bays \u2014 Las Vegas',    t1:'Las Vegas',t2:'Level 1',city:'Las Vegas',state:'NV',status:'active',cap:220,yr:2016,multiVenue:false},
+      {id:'L10',name:'Level 2 Bays \u2014 Las Vegas',    t1:'Las Vegas',t2:'Level 2',city:'Las Vegas',state:'NV',status:'active',cap:220,yr:2016,multiVenue:false},
+      {id:'L11',name:'Sky Lounge \u2014 Las Vegas',      t1:'Las Vegas',t2:'Level 3',city:'Las Vegas',state:'NV',status:'active',cap:160,yr:2016,multiVenue:false},
+      {id:'L12',name:'Level 1 Bays \u2014 Chicago',      t1:'Chicago',  t2:'Level 1',city:'Chicago',  state:'IL',status:'active',cap:190,yr:2015,multiVenue:false},
+      {id:'L13',name:'Level 2 Bays \u2014 Chicago',      t1:'Chicago',  t2:'Level 2',city:'Chicago',  state:'IL',status:'active',cap:190,yr:2015,multiVenue:false},
+      {id:'L14',name:'Event Space \u2014 Chicago',       t1:'Chicago',  t2:'Events', city:'Chicago',  state:'IL',status:'active',cap:80, yr:2015,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Happy Hour Bay Rate \u2014 Denver Level 1',        type:'bay',   status:'live',      locId:'L01',cap:90, res:82, ci:75,sr:91,price:0,bh:3},
@@ -645,7 +645,7 @@ const CONFIGS={
     key:'flatirons',short:'Flatirons Mall',name:'Flatirons Mall \u2014 Broomfield, CO',
     color:'#1B5E8A',accent:'#E8A020',dark:'#0D2E44',
     grad:'linear-gradient(180deg,#0D2E44 0%,#1B5E8A 100%)',
-    plan:'Enterprise Retail Pro',ppl:149,
+    plan:'Enterprise Retail Pro',ppl:149,allowMultiVenue:false,
     hier:['Wing','Level'],locLabel:'Store / Venue',locsLabel:'Stores & Venues',
     dropTypes:[
       {id:'deal',    label:'Shopping Deal', icon:'&#128722;',bg:'#eff6ff',c:'#1d4ed8'},
@@ -661,21 +661,21 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Apple Store',                      t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:120,yr:2008},
-      {id:'L02',name:'Nike',                             t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:90, yr:2002},
-      {id:'L03',name:'Lululemon',                        t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:60, yr:2012},
-      {id:'L04',name:'Macy\u2019s',                     t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:300,yr:2000},
-      {id:'L05',name:'Dick\u2019s Sporting Goods',      t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:200,yr:2000},
-      {id:'L06',name:'Lush Cosmetics',                   t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:50, yr:2015},
-      {id:'L07',name:'H&amp;M',                         t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:120,yr:2010},
-      {id:'L08',name:'Urban Outfitters',                 t1:'East Wing',  t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:80, yr:2006},
-      {id:'L09',name:'Pottery Barn',                     t1:'East Wing',  t2:'Level 2',  city:'Broomfield',state:'CO',status:'active',cap:80, yr:2003},
-      {id:'L10',name:'Food Court \u2014 Main',          t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:500,yr:2000},
-      {id:'L11',name:'Yard House',                       t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:180,yr:2014},
-      {id:'L12',name:'The Cheesecake Factory',           t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:200,yr:2004},
-      {id:'L13',name:'Center Court Stage',               t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:800,yr:2000},
-      {id:'L14',name:'AMC Flatirons 14',                 t1:'East Wing',  t2:'Level 2',  city:'Broomfield',state:'CO',status:'active',cap:400,yr:2001},
-      {id:'L15',name:'North Entrance Plaza',             t1:'North Wing', t2:'Exterior', city:'Broomfield',state:'CO',status:'active',cap:600,yr:2000},
+      {id:'L01',name:'Apple Store',                      t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:120,yr:2008,multiVenue:false},
+      {id:'L02',name:'Nike',                             t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:90, yr:2002,multiVenue:false},
+      {id:'L03',name:'Lululemon',                        t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:60, yr:2012,multiVenue:false},
+      {id:'L04',name:'Macy\u2019s',                     t1:'North Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:300,yr:2000,multiVenue:false},
+      {id:'L05',name:'Dick\u2019s Sporting Goods',      t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:200,yr:2000,multiVenue:false},
+      {id:'L06',name:'Lush Cosmetics',                   t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:50, yr:2015,multiVenue:false},
+      {id:'L07',name:'H&amp;M',                         t1:'South Wing', t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:120,yr:2010,multiVenue:false},
+      {id:'L08',name:'Urban Outfitters',                 t1:'East Wing',  t2:'Level 1',  city:'Broomfield',state:'CO',status:'active',cap:80, yr:2006,multiVenue:false},
+      {id:'L09',name:'Pottery Barn',                     t1:'East Wing',  t2:'Level 2',  city:'Broomfield',state:'CO',status:'active',cap:80, yr:2003,multiVenue:false},
+      {id:'L10',name:'Food Court \u2014 Main',          t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:500,yr:2000,multiVenue:false},
+      {id:'L11',name:'Yard House',                       t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:180,yr:2014,multiVenue:false},
+      {id:'L12',name:'The Cheesecake Factory',           t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:200,yr:2004,multiVenue:false},
+      {id:'L13',name:'Center Court Stage',               t1:'Center Court',t2:'Level 1', city:'Broomfield',state:'CO',status:'active',cap:800,yr:2000,multiVenue:true},
+      {id:'L14',name:'AMC Flatirons 14',                 t1:'East Wing',  t2:'Level 2',  city:'Broomfield',state:'CO',status:'active',cap:400,yr:2001,multiVenue:false},
+      {id:'L15',name:'North Entrance Plaza',             t1:'North Wing', t2:'Exterior', city:'Broomfield',state:'CO',status:'active',cap:600,yr:2000,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Apple \u2014 iPhone Trade-In Event Drop',           type:'deal',   status:'live',      locId:'L01',cap:80, res:72, ci:66,sr:92,price:0,bh:3},
@@ -707,7 +707,7 @@ const CONFIGS={
     key:'bigRedf',short:'Big Red F',name:'Big Red F Restaurant Group',
     color:'#C62828',accent:'#FFA000',dark:'#7f0000',
     grad:'linear-gradient(180deg,#7f0000 0%,#C62828 100%)',
-    plan:'Enterprise Restaurant Pro',ppl:129,
+    plan:'Enterprise Restaurant Pro',ppl:129,allowMultiVenue:false,
     hier:['Brand','Market'],locLabel:'Restaurant',locsLabel:'Restaurants',
     dropTypes:[
       {id:'happy-hour',  label:'Happy Hour',   icon:'&#127867;',bg:'#fff7ed',c:'#c2410c'},
@@ -723,19 +723,19 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Jax Fish House \u2014 Boulder',          t1:'Jax Fish House',  t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:110,yr:1994},
-      {id:'L02',name:'Jax Fish House \u2014 Denver LoDo',      t1:'Jax Fish House',  t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:130,yr:2000},
-      {id:'L03',name:'Jax Fish House \u2014 Fort Collins',     t1:'Jax Fish House',  t2:'Fort Collins',city:'Fort Collins',state:'CO',status:'active',cap:100,yr:2018},
-      {id:'L04',name:'The Post Brewing \u2014 Lafayette',      t1:'The Post',        t2:'Boulder',  city:'Lafayette', state:'CO',status:'active',cap:150,yr:2014},
-      {id:'L05',name:'The Post Brewing \u2014 Erie',           t1:'The Post',        t2:'Boulder',  city:'Erie',      state:'CO',status:'active',cap:140,yr:2017},
-      {id:'L06',name:'West End Tavern',                         t1:'West End Tavern', t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:120,yr:1999},
-      {id:'L07',name:'Centro Mexican Kitchen',                  t1:'Centro',          t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:130,yr:2005},
-      {id:'L08',name:'Velvet Elk Lounge',                       t1:'Velvet Elk',      t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:90, yr:2019},
-      {id:'L09',name:'Wonder Press \u2014 Boulder',            t1:'Wonder Press',    t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:60, yr:2022},
-      {id:'L10',name:'Wonder Press \u2014 Denver',             t1:'Wonder Press',    t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:55, yr:2023},
-      {id:'L11',name:'Jax Fish House \u2014 Kansas City',      t1:'Jax Fish House',  t2:'Kansas City',city:'Kansas City',state:'MO',status:'active',cap:120,yr:2015},
-      {id:'L12',name:'The Post Brewing \u2014 Denver',         t1:'The Post',        t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:160,yr:2021},
-      {id:'L13',name:'Centro Mexican Kitchen \u2014 Louisville',t1:'Centro',         t2:'Boulder',  city:'Louisville',state:'CO',status:'active',cap:115,yr:2012},
+      {id:'L01',name:'Jax Fish House \u2014 Boulder',          t1:'Jax Fish House',  t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:110,yr:1994,multiVenue:false},
+      {id:'L02',name:'Jax Fish House \u2014 Denver LoDo',      t1:'Jax Fish House',  t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:130,yr:2000,multiVenue:false},
+      {id:'L03',name:'Jax Fish House \u2014 Fort Collins',     t1:'Jax Fish House',  t2:'Fort Collins',city:'Fort Collins',state:'CO',status:'active',cap:100,yr:2018,multiVenue:false},
+      {id:'L04',name:'The Post Brewing \u2014 Lafayette',      t1:'The Post',        t2:'Boulder',  city:'Lafayette', state:'CO',status:'active',cap:150,yr:2014,multiVenue:false},
+      {id:'L05',name:'The Post Brewing \u2014 Erie',           t1:'The Post',        t2:'Boulder',  city:'Erie',      state:'CO',status:'active',cap:140,yr:2017,multiVenue:false},
+      {id:'L06',name:'West End Tavern',                         t1:'West End Tavern', t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:120,yr:1999,multiVenue:false},
+      {id:'L07',name:'Centro Mexican Kitchen',                  t1:'Centro',          t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:130,yr:2005,multiVenue:false},
+      {id:'L08',name:'Velvet Elk Lounge',                       t1:'Velvet Elk',      t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:90, yr:2019,multiVenue:false},
+      {id:'L09',name:'Wonder Press \u2014 Boulder',            t1:'Wonder Press',    t2:'Boulder',  city:'Boulder',   state:'CO',status:'active',cap:60, yr:2022,multiVenue:false},
+      {id:'L10',name:'Wonder Press \u2014 Denver',             t1:'Wonder Press',    t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:55, yr:2023,multiVenue:false},
+      {id:'L11',name:'Jax Fish House \u2014 Kansas City',      t1:'Jax Fish House',  t2:'Kansas City',city:'Kansas City',state:'MO',status:'active',cap:120,yr:2015,multiVenue:false},
+      {id:'L12',name:'The Post Brewing \u2014 Denver',         t1:'The Post',        t2:'Denver',   city:'Denver',    state:'CO',status:'active',cap:160,yr:2021,multiVenue:false},
+      {id:'L13',name:'Centro Mexican Kitchen \u2014 Louisville',t1:'Centro',         t2:'Boulder',  city:'Louisville',state:'CO',status:'active',cap:115,yr:2012,multiVenue:false},
     ],
     drops:[
       {id:'D01',title:'Jax Happy Hour \u2014 Oysters &amp; Craft Beer',    type:'happy-hour',  status:'live',      locId:'L01',cap:60, res:52, ci:47,sr:90,price:0,bh:3},
@@ -766,7 +766,7 @@ const CONFIGS={
     key:'landrys',short:"Landry's",name:"Landry's, Inc.",
     color:'#0D2F5E',accent:'#C9932A',dark:'#071829',
     grad:'linear-gradient(180deg,#071829 0%,#0D2F5E 100%)',
-    plan:'Enterprise Hospitality Pro',ppl:449,
+    plan:'Enterprise Hospitality Pro',ppl:449,allowMultiVenue:true,
     hier:['Division','Brand'],locLabel:'Property',locsLabel:'Properties',
     dropTypes:[
       {id:'chefs-table',   label:"Chef's Table",    icon:'&#127869;',bg:'#fdf4e7',c:'#7A4F00'},
@@ -784,27 +784,27 @@ const CONFIGS={
     special:null,
     locations:[
       // Fine Dining
-      {id:'L01',name:"Mastro's Ocean Club",                t1:'Fine Dining',        t2:"Mastro's",       city:'Newport Beach',state:'CA',status:'active',cap:90, yr:2003,handle:'@mastros-oc',    manager:'Dana Holt'},
-      {id:'L02',name:"Mastro's Steakhouse \u2014 Beverly Hills",t1:'Fine Dining',   t2:"Mastro's",       city:'Beverly Hills',state:'CA',status:'active',cap:110,yr:2001,handle:'@mastros-bh',    manager:'Dana Holt'},
-      {id:'L03',name:"Mastro's City Hall \u2014 Scottsdale", t1:'Fine Dining',      t2:"Mastro's",       city:'Scottsdale',   state:'AZ',status:'active',cap:100,yr:2005,handle:'@mastros-scottsdale',manager:'Tony Reyes'},
-      {id:'L04',name:"Del Frisco's Double Eagle \u2014 New York",t1:'Fine Dining',  t2:"Del Frisco's",   city:'New York',     state:'NY',status:'active',cap:130,yr:1998,handle:'@delfrisco-nyc', manager:'Claire Nguyen'},
-      {id:'L05',name:"Del Frisco's Double Eagle \u2014 Chicago",t1:'Fine Dining',   t2:"Del Frisco's",   city:'Chicago',      state:'IL',status:'active',cap:120,yr:2000,handle:'@delfrisco-chi', manager:'Marcus Webb'},
-      {id:'L06',name:"Vic & Anthony's Steakhouse",           t1:'Fine Dining',      t2:"Vic & Anthony's",city:'Houston',      state:'TX',status:'active',cap:95, yr:1998,handle:'@vicanthonys',   manager:'Rita Salazar'},
+      {id:'L01',name:"Mastro's Ocean Club",                t1:'Fine Dining',        t2:"Mastro's",       city:'Newport Beach',state:'CA',status:'active',cap:90, yr:2003,handle:'@mastros-oc',    manager:'Dana Holt',multiVenue:false},
+      {id:'L02',name:"Mastro's Steakhouse \u2014 Beverly Hills",t1:'Fine Dining',   t2:"Mastro's",       city:'Beverly Hills',state:'CA',status:'active',cap:110,yr:2001,handle:'@mastros-bh',    manager:'Dana Holt',multiVenue:false},
+      {id:'L03',name:"Mastro's City Hall \u2014 Scottsdale", t1:'Fine Dining',      t2:"Mastro's",       city:'Scottsdale',   state:'AZ',status:'active',cap:100,yr:2005,handle:'@mastros-scottsdale',manager:'Tony Reyes',multiVenue:false},
+      {id:'L04',name:"Del Frisco's Double Eagle \u2014 New York",t1:'Fine Dining',  t2:"Del Frisco's",   city:'New York',     state:'NY',status:'active',cap:130,yr:1998,handle:'@delfrisco-nyc', manager:'Claire Nguyen',multiVenue:false},
+      {id:'L05',name:"Del Frisco's Double Eagle \u2014 Chicago",t1:'Fine Dining',   t2:"Del Frisco's",   city:'Chicago',      state:'IL',status:'active',cap:120,yr:2000,handle:'@delfrisco-chi', manager:'Marcus Webb',multiVenue:false},
+      {id:'L06',name:"Vic & Anthony's Steakhouse",           t1:'Fine Dining',      t2:"Vic & Anthony's",city:'Houston',      state:'TX',status:'active',cap:95, yr:1998,handle:'@vicanthonys',   manager:'Rita Salazar',multiVenue:false},
       // Casual & Seafood
-      {id:'L07',name:'Bubba Gump \u2014 Times Square',       t1:'Casual & Seafood', t2:'Bubba Gump',     city:'New York',     state:'NY',status:'active',cap:240,yr:2000,handle:'@bubbagump-nyc', manager:'Steve Park'},
-      {id:'L08',name:'Bubba Gump \u2014 Hollywood',          t1:'Casual & Seafood', t2:'Bubba Gump',     city:'Los Angeles',  state:'CA',status:'active',cap:210,yr:1999,handle:'@bubbagump-la',  manager:'Luis Mendez'},
-      {id:'L09',name:'Chart House \u2014 Weehawken',         t1:'Casual & Seafood', t2:'Chart House',    city:'Weehawken',    state:'NJ',status:'active',cap:160,yr:1992,handle:'@charthouse-weehawken',manager:'Ann Kowalski'},
-      {id:'L10',name:"Landry's Seafood \u2014 San Antonio",  t1:'Casual & Seafood', t2:"Landry's Seafood",city:'San Antonio', state:'TX',status:'active',cap:185,yr:2001,handle:'@landrys-sa',    manager:'Joe Trevino'},
-      {id:'L11',name:"Landry's Seafood \u2014 Houston",      t1:'Casual & Seafood', t2:"Landry's Seafood",city:'Houston',     state:'TX',status:'active',cap:200,yr:1994,handle:'@landrys-htx',   manager:'Joe Trevino'},
+      {id:'L07',name:'Bubba Gump \u2014 Times Square',       t1:'Casual & Seafood', t2:'Bubba Gump',     city:'New York',     state:'NY',status:'active',cap:240,yr:2000,handle:'@bubbagump-nyc', manager:'Steve Park',multiVenue:false},
+      {id:'L08',name:'Bubba Gump \u2014 Hollywood',          t1:'Casual & Seafood', t2:'Bubba Gump',     city:'Los Angeles',  state:'CA',status:'active',cap:210,yr:1999,handle:'@bubbagump-la',  manager:'Luis Mendez',multiVenue:false},
+      {id:'L09',name:'Chart House \u2014 Weehawken',         t1:'Casual & Seafood', t2:'Chart House',    city:'Weehawken',    state:'NJ',status:'active',cap:160,yr:1992,handle:'@charthouse-weehawken',manager:'Ann Kowalski',multiVenue:false},
+      {id:'L10',name:"Landry's Seafood \u2014 San Antonio",  t1:'Casual & Seafood', t2:"Landry's Seafood",city:'San Antonio', state:'TX',status:'active',cap:185,yr:2001,handle:'@landrys-sa',    manager:'Joe Trevino',multiVenue:false},
+      {id:'L11',name:"Landry's Seafood \u2014 Houston",      t1:'Casual & Seafood', t2:"Landry's Seafood",city:'Houston',     state:'TX',status:'active',cap:200,yr:1994,handle:'@landrys-htx',   manager:'Joe Trevino',multiVenue:false},
       // Themed Entertainment
-      {id:'L12',name:'Rainforest Cafe \u2014 Navy Pier',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Chicago',   state:'IL',status:'active',cap:300,yr:1997,handle:'@rainforest-navypier',manager:'Pam Douglas'},
-      {id:'L13',name:'Rainforest Cafe \u2014 Las Vegas',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Las Vegas', state:'NV',status:'active',cap:350,yr:2000,handle:'@rainforest-lv',  manager:'Pam Douglas'},
-      {id:'L14',name:'Downtown Aquarium \u2014 Houston',     t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Houston',state:'TX',status:'active',cap:260,yr:2003,handle:'@aquarium-htx',manager:'Brad Ellison'},
-      {id:'L15',name:'Downtown Aquarium \u2014 Denver',      t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Denver', state:'CO',status:'active',cap:220,yr:1999,handle:'@aquarium-den',manager:'Brad Ellison'},
+      {id:'L12',name:'Rainforest Cafe \u2014 Navy Pier',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Chicago',   state:'IL',status:'active',cap:300,yr:1997,handle:'@rainforest-navypier',manager:'Pam Douglas',multiVenue:true},
+      {id:'L13',name:'Rainforest Cafe \u2014 Las Vegas',     t1:'Themed Entertainment',t2:'Rainforest Cafe',city:'Las Vegas', state:'NV',status:'active',cap:350,yr:2000,handle:'@rainforest-lv',  manager:'Pam Douglas',multiVenue:true},
+      {id:'L14',name:'Downtown Aquarium \u2014 Houston',     t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Houston',state:'TX',status:'active',cap:260,yr:2003,handle:'@aquarium-htx',manager:'Brad Ellison',multiVenue:true},
+      {id:'L15',name:'Downtown Aquarium \u2014 Denver',      t1:'Themed Entertainment',t2:'Aquarium Restaurants',city:'Denver', state:'CO',status:'active',cap:220,yr:1999,handle:'@aquarium-den',manager:'Brad Ellison',multiVenue:true},
       // Gaming & Hotels
-      {id:'L16',name:'Golden Nugget \u2014 Las Vegas',       t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Las Vegas',    state:'NV',status:'active',cap:400,yr:1946,handle:'@goldennugget-lv', manager:'Frank Carlotti'},
-      {id:'L17',name:'Golden Nugget \u2014 Atlantic City',   t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Atlantic City',state:'NJ',status:'active',cap:320,yr:2011,handle:'@goldennugget-ac', manager:'Lisa Beaumont'},
-      {id:'L18',name:'Golden Nugget \u2014 Biloxi',          t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Biloxi',       state:'MS',status:'active',cap:280,yr:2005,handle:'@goldennugget-biloxi',manager:'Frank Carlotti'},
+      {id:'L16',name:'Golden Nugget \u2014 Las Vegas',       t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Las Vegas',    state:'NV',status:'active',cap:400,yr:1946,handle:'@goldennugget-lv', manager:'Frank Carlotti',multiVenue:false},
+      {id:'L17',name:'Golden Nugget \u2014 Atlantic City',   t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Atlantic City',state:'NJ',status:'active',cap:320,yr:2011,handle:'@goldennugget-ac', manager:'Lisa Beaumont',multiVenue:false},
+      {id:'L18',name:'Golden Nugget \u2014 Biloxi',          t1:'Gaming & Hotels',  t2:'Golden Nugget',  city:'Biloxi',       state:'MS',status:'active',cap:280,yr:2005,handle:'@goldennugget-biloxi',manager:'Frank Carlotti',multiVenue:false},
     ],
     drops:[
       {id:'D01',title:"Chef's Table \u2014 A5 Wagyu Tasting Menu",  type:'chefs-table',   status:'live',      locId:'L02',cap:14, res:14, ci:12, sr:86,price:0,bh:6},
@@ -1266,7 +1266,10 @@ function rLocations(){
                   <div style="font-size:0.8rem;font-weight:700;color:#0f172a;line-height:1.3;">${l.name}</div>
                   ${badge(l.status)}
                 </div>
-                <div style="font-size:0.7rem;color:#94a3b8;margin-bottom:10px;">${l.city}, ${l.state}</div>
+                <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+                  <div style="font-size:0.7rem;color:#94a3b8;">${l.city}, ${l.state}</div>
+                  ${l.multiVenue===true?`<span style="font-size:0.62rem;font-weight:700;background:#FEF3C7;color:#B45309;padding:3px 8px;border-radius:12px;">Multi-venue</span>`:''}
+                </div>
                 <div style="display:flex;gap:12px;margin-bottom:8px;">
                   <div><div style="font-size:1rem;font-weight:900;color:${c.color};">${lci}</div><div style="font-size:0.62rem;color:#94a3b8;">check-ins</div></div>
                   <div><div style="font-size:1rem;font-weight:900;color:#0f172a;">${liveCt}</div><div style="font-size:0.62rem;color:#94a3b8;">live drops</div></div>
@@ -1391,6 +1394,7 @@ function locationDetail(l){
           <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:8px;">Profile</div>
           ${infoRow('Handle',l.handle?'@'+l.handle:'— not set')}
           ${infoRow('Address',l.address?l.address+', '+l.city+', '+l.state:l.city+', '+l.state)}
+          ${l.multiVenue===true?infoRow('Venue',`<span style="color:${c.color};font-weight:700;">Flexible</span> — set per drop<span style="display:inline-block;margin-left:8px;font-size:0.6rem;font-weight:700;background:#FEF3C7;color:#B45309;padding:2px 6px;border-radius:10px;">Multi-venue</span>`):infoRow('Venue','Fixed to location address')}
           ${infoRow('Phone',l.phone||'— not set')}
           ${infoRow('Email',l.email||'— not set')}
           ${l.manager?infoRow('Manager',l.manager):''}
@@ -2450,6 +2454,23 @@ function rSetup(){
       &#128279; For continuous POS sync or API-driven location management, connect your systems under <span onclick="go('settings')" style="color:${c.color};cursor:pointer;font-weight:700;">Settings &rarr; Integrations</span>.
     </div>`);
 
+  // ── 5. Venue Settings (Multi-Venue) ──
+  const venueSettingsHTML=c.allowMultiVenue?card(`
+    ${sectionHd('Venue Settings','Multi-venue allows the drop venue address to be set per drop — useful for food trucks, popups, private events & offsite experiences')}
+    <div style="display:flex;flex-direction:column;gap:0;font-size:0.78rem;">
+      <div style="display:grid;grid-template-columns:160px 120px 50px;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;font-weight:700;color:#64748b;">
+        <div>${c.locLabel}</div>
+        <div>Type</div>
+        <div style="text-align:center;">Toggle</div>
+      </div>
+      ${c.locations.map((loc,i)=>`
+        <div style="display:grid;grid-template-columns:160px 120px 50px;gap:12px;padding:12px 0;${i<c.locations.length-1?'border-bottom:1px solid #f8fafc':''};align-items:center;">
+          <div style="font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${loc.name}</div>
+          <div style="color:#94a3b8;font-size:0.72rem;">${loc.multiVenue===true?'<span style="color:#B45309;font-weight:700;">Multi-venue</span>':'Fixed'}</div>
+          <div style="text-align:center;"><div onclick="this.dataset.on=this.dataset.on==='1'?'0':'1';this.style.background=this.dataset.on==='1'?'${c.color}':'#e5e7eb'" data-on="${loc.multiVenue===true?'1':'0'}" style="width:32px;height:18px;border-radius:9px;background:${loc.multiVenue===true?c.color:'#e5e7eb'};cursor:pointer;position:relative;transition:background 0.2s;"><div style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;${loc.multiVenue===true?'right:2px':'left:2px'};transition:all 0.2s;"></div></div></div>
+        </div>`).join('')}
+    </div>`):''
+
   return `<div style="padding:28px 32px;max-width:960px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
       <div>
@@ -2459,7 +2480,7 @@ function rSetup(){
       <button style="background:${c.color};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">Save Changes</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;">
-      <div>${hierHTML}${dtHTML}${importHTML}</div>
+      <div>${hierHTML}${dtHTML}${importHTML}${venueSettingsHTML}</div>
       <div>${geoHTML}${attrHTML}${approvalHTML}</div>
     </div>
   </div>`;
@@ -2950,6 +2971,25 @@ function pushModal(){
           </select>
         </div>
       </div>
+      ${(()=>{
+        const selLoc=c.locations.find(l=>l.id===S.pushLoc);
+        if(!selLoc) return '';
+        if(selLoc.multiVenue===true){
+          return `<div>
+            <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Venue for this drop</label>
+            <input id="push-venue" placeholder="${selLoc.name}" value="${selLoc.name}" style="width:100%;padding:9px 12px;border-left:3px solid #B45309;border-top:1px solid #e5e7eb;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;border-radius:8px;font-size:0.8rem;background:#FEF3C7;" />
+            <div style="margin-top:5px;font-size:0.65rem;color:#92400e;">This drop will happen at a different location — confirm the address before publishing</div>
+          </div>`;
+        } else {
+          return `<div>
+            <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Venue</label>
+            <div style="width:100%;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:0.8rem;background:#e2e8f0;color:#475569;display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.65rem;font-weight:700;color:#64748b;">🔒 Fixed venue</span>
+              <span>${selLoc.city}, ${selLoc.state}</span>
+            </div>
+          </div>`;
+        }
+      })()}
       <div>
         <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Geo-fence Tier</label>
         <select style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;">
