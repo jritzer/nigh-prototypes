@@ -1505,7 +1505,6 @@ function rDrops(){
               ${d.timing?timingBadge(d.timing):''}
               ${d.day?dayBadge(d.day):''}
               <span style="font-size:0.7rem;color:#94a3b8;">${loc?loc.name:'—'}</span>
-              ${loc?`<span style="font-size:0.68rem;color:#a0aec0;">📡 ${loc.followers||0} followers reached</span>`:''}
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,64px);gap:8px;flex-shrink:0;">
@@ -1563,6 +1562,13 @@ function dropDetail(d){
           ${loc&&loc.t2?infoRow(c.hier[1]||'District',loc.t2):''}
           ${infoRow('Booking Hours','Up to '+d.bh+' hrs in advance')}
           ${infoRow('Price',d.price?'$'+d.price:'Free')}
+          <div style="margin-top:12px;background:#EDE9FE;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.2rem;">📡</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:800;color:#5B21B6;">${loc&&loc.followers?loc.followers.toLocaleString():0} followers notified</div>
+              <div style="font-size:0.7rem;color:#7C3AED;margin-top:2px;">Drop broadcast to all ${loc?loc.name:''} followers when it went live</div>
+            </div>
+          </div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;">
