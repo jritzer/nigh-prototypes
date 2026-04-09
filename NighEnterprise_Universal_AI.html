@@ -990,8 +990,17 @@ function sidebar(){
       <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;position:relative;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}${n.unread&&S.page!==n.id?`<span style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid transparent;"></span>`:''}</span>${n.label}${n.unread&&S.page!==n.id?`<span style="margin-left:auto;background:#EF4444;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:20px;">${n.unread}</span>`:''}
     </button>`).join('')}
     <div style="flex:1;"></div>
-    <div style="padding:16px;border-top:1px solid rgba(255,255,255,0.12);margin-top:8px;">
-      <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);text-align:center;">Powered by ${nighBug(14)}</div>
+    <!-- Logged-in user profile -->
+    <div onclick="go('settings')" style="padding:12px 14px;border-top:1px solid rgba(255,255,255,0.12);margin-top:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,${c.dark||c.color},${c.color});display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.25);">JR</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.75rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Josh Ritzer</div>
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.5);margin-top:1px;">Corporate Admin</div>
+      </div>
+      <span style="font-size:0.65rem;color:rgba(255,255,255,0.3);">›</span>
+    </div>
+    <div style="padding:8px 16px 12px;text-align:center;">
+      <div style="font-size:0.58rem;color:rgba(255,255,255,0.25);">Powered by ${nighBug(11)}</div>
     </div>
   </div>`;
 }
