@@ -58,7 +58,7 @@ button{cursor:pointer}
 let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,
   formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,
-  niyaMode:null,niyaStep:0,niyaListening:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05'},draftDelete:null,alFilter:'All',inboxFilter:'All'};
+  niyaMode:null,niyaStep:0,niyaListening:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false};
 const TODAY=new Date('2026-03-05T12:00:00');
 function draftDeleteAsk(idx){
   const card=document.getElementById('dcard-'+idx);
@@ -824,14 +824,64 @@ function renderCreate(){
     <div style="font-size:10px;color:#9CA3AF;margin-top:5px">Partner must accept before they appear on the live Drop.</div></div>`;
   }
   if(S.cStep===3){
+    const dual=S.dualPrice||false;
     c=`${inp('Capacity','Max number of guests','number',true,clone?clone.cap:'')}
-    ${inp('Spot Price','$0.00 (leave blank or 0 for free)','number',false,clone&&clone.price>0?clone.price:'')}
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Pricing</label>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button onclick="S.dualPrice=false;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${!dual?'#3B82F6':'#E5E7EB'};background:${!dual?'#EFF6FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${!dual?'#3B82F6':'#6B7280'}">Single Price</div>
+          <div style="font-size:10px;color:${!dual?'#93C5FD':'#9CA3AF'};margin-top:1px">Same for all guests</div>
+        </button>
+        <button onclick="S.dualPrice=true;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${dual?'#3B82F6':'#E5E7EB'};background:${dual?'#EFF6FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${dual?'#3B82F6':'#6B7280'}">Dual Pricing</div>
+          <div style="font-size:10px;color:${dual?'#93C5FD':'#9CA3AF'};margin-top:1px">New vs. existing</div>
+        </button>
+      </div>
+      ${dual?`
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#15803d;line-height:1.5">
+        &#11088; <strong>Dual pricing on.</strong> Nigh checks your customer list at view time — each guest sees only their price.
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">New Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1.5px solid #3B82F6;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="margin-top:4px"><span style="font-size:10px;font-weight:700;background:#DCFCE7;color:#15803d;padding:2px 8px;border-radius:8px">First Visit Special</span></div>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">Existing Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:4px">In your customer list</div>
+        </div>
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;font-size:11px;color:#78350F;line-height:1.45">
+        &#128161; Guests only see their own price. A "First Visit Special" label explains any difference if friends compare.
+      </div>`:`
+      <div style="position:relative;margin-bottom:8px">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+        <input type="number" placeholder="0.00 (leave blank for free)" ${clone&&clone.price>0?`value="${clone.price}"`:''} style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+      </div>
+      <div onclick="S.dualPrice=true;render()" style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 10px;font-size:11px;color:#1D4ED8;line-height:1.45;cursor:pointer">
+        &#128161; <strong>Tip:</strong> Use <strong>Dual Pricing</strong> to offer a lower "First Visit Special" to new customers — most businesses discount more to win a first-time guest.
+      </div>`}
+    </div>
     <div class="card"><div class="cb"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#3B82F6">${ic('send',15)}<span style="font-size:13px;font-weight:600;color:#1F2937">Direct Offers</span></div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-bottom:8px">Reserve spots for VIPs via personal SMS links.</div>
     <div style="display:flex;gap:6px"><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #E5E7EB;background:#F9FAFB;color:#4B5563">Shared Pool</button><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #3B82F6;background:#EFF6FF;color:#3B82F6">Separate Pool</button></div></div></div>`;
   }
   if(S.cStep===4){
     const src=clone||{title:'Friday Night Jazz & Tapas',start:'7:00 PM',bcastStart:'4:00 PM',bcastEnd:'6:45 PM',date:'2026-03-07',cap:30,price:25,venue:acct().name+', '+acct().addr,hosts:['Josh Ritzer'],partners:["Tito's Vodka"],desc:'Live jazz trio with curated tapas.'};
-    const pl=src.price===0||!src.price?'Free':'$'+src.price;
+    const pl=S.dualPrice
+      ?'Dual — '+'New customer price · Existing customer price'
+      :(src.price===0||!src.price?'Free':'$'+src.price);
+    const pricingBadge=S.dualPrice
+      ?`<span style="font-size:10px;font-weight:700;background:#DCFCE7;color:#15803d;padding:2px 7px;border-radius:8px;margin-left:4px">First Visit Special</span>`
+      :'';
     return `${hdr('Review & Confirm','Step 4 of 4',"S.cStep--;render()")}
     <div style="padding:16px" class="fi">
       <div class="card" style="margin-bottom:14px">
@@ -839,7 +889,7 @@ function renderCreate(){
         <div class="cb">
           <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">${src.title}</div>
           <div style="font-size:12px;color:#6B7280;margin-bottom:10px;line-height:1.4">${src.desc}</div>
-          ${[['cal','Date',fmtD(src.date)],['clock','Time',src.start],['radio','Broadcasting',src.bcastStart+' — '+src.bcastEnd],['map','Location',(src.venue||acct().name+', '+acct().addr).split(',').slice(0,2).join(',')],['users','Capacity',''+src.cap],['dollar','Price',pl],['user','Host(s)',src.hosts.join(', ')],['link','Partners',src.partners&&src.partners.length?src.partners.filter(p=>p.status==='Accepted').map(p=>p.name).join(', ')||(src.partners.length+' awaiting'):'None']].map((r,i,a)=>`
+          ${[['cal','Date',fmtD(src.date)],['clock','Time',src.start],['radio','Broadcasting',src.bcastStart+' — '+src.bcastEnd],['map','Location',(src.venue||acct().name+', '+acct().addr).split(',').slice(0,2).join(',')],['users','Capacity',''+src.cap],['dollar','Pricing',pl+pricingBadge],['user','Host(s)',src.hosts.join(', ')],['link','Partners',src.partners&&src.partners.length?src.partners.filter(p=>p.status==='Accepted').map(p=>p.name).join(', ')||(src.partners.length+' awaiting'):'None']].map((r,i,a)=>`
             <div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<a.length-1?'border-bottom:1px solid #F3F4F6':''}"><span style="color:#9CA3AF">${ic(r[0],14)}</span><span style="font-size:11px;color:#6B7280;width:70px">${r[1]}</span><span style="font-size:12px;color:#111827;font-weight:500;flex:1">${r[2]}</span></div>
           `).join('')}
         </div>

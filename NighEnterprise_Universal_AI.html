@@ -20,9 +20,9 @@ function nighBug(sz){sz=sz||32;return `<svg viewBox="80 44 200 280" width="${sz}
 function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false};
 function ss(p){Object.assign(S,p);render();}
-function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,locationEdit:false,addLocModal:false,settingsTab:'main',accountEdit:false});}
+function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,settingsTab:'main',accountEdit:false});}
 function cfg(){return CONFIGS[S.config];}
 
 // ── CONFIGS ───────────────────────────────────────────────────────────────────
@@ -881,7 +881,7 @@ function getFilteredDrops(){
 
 // ── CONFIG SWITCHER ───────────────────────────────────────────────────────────
 function switchConfig(key){
-  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false});
+  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,pushDualPrice:false,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false});
   render();
 }
 function switcherBar(){
@@ -2530,7 +2530,7 @@ function pushModal(){
   const step=S.pushStep||1;
   const types=c.dropTypes;
   const locs=c.locations;
-  const steps=['Type','Location','Details','Confirm'];
+  const steps=['Type','Location','Details','Pricing','Confirm'];
   const progressBar=`<div style="display:flex;align-items:center;gap:0;margin-bottom:22px;">
     ${steps.map((s,i)=>`<div style="display:flex;align-items:center;flex:1;">
       <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
@@ -2618,14 +2618,75 @@ function pushModal(){
         <textarea placeholder="What should guests expect from this drop?" style="width:100%;padding:9px 12px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;resize:none;height:68px;font-family:inherit;line-height:1.5;box-sizing:border-box;"></textarea>
       </div>
     </div>`;
+  } else if(step===4){
+    const dual=S.pushDualPrice||false;
+    const priceBorder=`border:2px solid ${c.color};`;
+    const priceInput=(label,hint,highlight)=>`<div>
+      <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">${label}</label>
+      <div style="position:relative;">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.82rem;color:#94a3b8;">$</span>
+        <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 12px 9px 24px;${highlight?priceBorder:'border:1px solid #e5e7eb;'}border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;"/>
+      </div>
+      ${hint?`<div style="margin-top:4px;font-size:0.62rem;color:#94a3b8;">${hint}</div>`:''}
+    </div>`;
+    body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:14px;">Drop Pricing</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button onclick="ss({pushDualPrice:false})" style="flex:1;padding:11px 10px;border-radius:10px;border:2px solid ${!dual?c.color:'#e5e7eb'};background:${!dual?c.color+'12':'#fff'};cursor:pointer;text-align:center;">
+        <div style="font-size:0.78rem;font-weight:700;color:${!dual?c.color:'#475569'};">Single Price</div>
+        <div style="font-size:0.65rem;color:${!dual?c.color+'aa':'#94a3b8'};margin-top:2px;">Same for all guests</div>
+      </button>
+      <button onclick="ss({pushDualPrice:true})" style="flex:1;padding:11px 10px;border-radius:10px;border:2px solid ${dual?c.color:'#e5e7eb'};background:${dual?c.color+'12':'#fff'};cursor:pointer;text-align:center;">
+        <div style="font-size:0.78rem;font-weight:700;color:${dual?c.color:'#475569'};">Dual Pricing</div>
+        <div style="font-size:0.65rem;color:${dual?c.color+'aa':'#94a3b8'};margin-top:2px;">New vs. existing customers</div>
+      </button>
+    </div>
+    ${dual?`
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:0.72rem;color:#15803d;line-height:1.55;">
+      &#11088; <strong>Dual pricing on.</strong> When a guest views this drop, Nigh silently checks your imported customer list and shows them only the price that applies. New customers see a "First Visit Special" label.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">New Customer Price</label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.82rem;color:#94a3b8;">$</span>
+          <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 12px 9px 24px;border:2px solid ${c.color};border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;"/>
+        </div>
+        <div style="margin-top:5px;display:flex;align-items:center;gap:4px;">
+          <span style="font-size:0.62rem;font-weight:700;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;">First Visit Special</span>
+          <span style="font-size:0.62rem;color:#94a3b8;">shown to new guest</span>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:5px;">Existing Customer Price</label>
+        <div style="position:relative;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.82rem;color:#94a3b8;">$</span>
+          <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 12px 9px 24px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;"/>
+        </div>
+        <div style="margin-top:5px;font-size:0.62rem;color:#94a3b8;">For guests in your customer list</div>
+      </div>
+    </div>
+    <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;font-size:0.7rem;color:#78350f;line-height:1.5;">
+      &#128161; Each guest sees only their price — never both. The "First Visit Special" label explains any price difference if guests compare with friends.
+    </div>`:`
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      ${priceInput('Drop Price','Leave blank or enter 0 for free',false)}
+      <div onclick="ss({pushDualPrice:true})" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 14px;font-size:0.7rem;color:#1d4ed8;line-height:1.5;cursor:pointer;">
+        &#128161; <strong>Tip:</strong> Switch to <strong>Dual Pricing</strong> to offer a lower "First Visit Special" to new customers. Most businesses offer a bigger discount to earn a first-time guest.
+      </div>
+    </div>`}`;
   } else {
     const selType=types.find(t=>t.id===S.pushType)||types[0];
     const selLoc=locs.find(l=>l.id===S.pushLoc);
+    const dual=S.pushDualPrice||false;
     const locMgr=c.hier&&c.hier.length>1?c.hier[c.hier.length-1]+' manager':'location manager';
+    const pricingRow=dual
+      ?infoRow('Pricing','<span style="font-size:0.68rem;font-weight:700;background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;margin-right:6px;">First Visit Special</span>New price · Existing price')
+      :infoRow('Pricing','Single price for all guests');
     body=`<div style="font-size:0.85rem;font-weight:700;color:#0f172a;margin-bottom:14px;">Confirm &amp; Create</div>
     <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
       ${infoRow('Type',`${selType.icon} ${selType.label}`)}
       ${infoRow(c.locLabel,selLoc?selLoc.name:'—')}
+      ${pricingRow}
       ${infoRow('Booking Window','Up to 4 hrs in advance')}
       ${infoRow('Status','Goes live immediately')}
     </div>
@@ -2633,7 +2694,7 @@ function pushModal(){
       <div style="font-size:0.7rem;font-weight:800;color:#92400e;margin-bottom:5px;">&#128161; What happens when you create this drop</div>
       <div style="font-size:0.73rem;color:#78350f;line-height:1.6;">Guests within the geo-fence will receive a push notification. Your ${locMgr} will be notified and can track redemptions in real time. The drop appears in your ${c.locsLabel.toLowerCase()}'s activity feed immediately.</div>
     </div>
-    <div style="background:${c.color}12;border-radius:10px;padding:9px 14px;font-size:0.73rem;color:${c.color};font-weight:600;">&#128204; Targeting ${selLoc?selLoc.name:'selected '+c.locLabel.toLowerCase()} · ${selType.label}</div>`;
+    <div style="background:${c.color}12;border-radius:10px;padding:9px 14px;font-size:0.73rem;color:${c.color};font-weight:600;">&#128204; Targeting ${selLoc?selLoc.name:'selected '+c.locLabel.toLowerCase()} · ${selType.label}${dual?' · Dual Pricing ON':''}</div>`;
   }
 
   return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showPush:false})">
@@ -2646,7 +2707,7 @@ function pushModal(){
       ${body}
       <div style="display:flex;justify-content:space-between;margin-top:20px;">
         ${step>1?`<button onclick="ss({pushStep:${step-1}})" style="padding:9px 20px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#475569;font-weight:700;font-size:0.78rem;cursor:pointer;">&larr; Back</button>`:'<div></div>'}
-        ${step<4?`<button onclick="ss({pushStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`:`<button onclick="ss({showPush:false})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Create Drop</button>`}
+        ${step<5?`<button onclick="ss({pushStep:${step+1}})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">Next &rarr;</button>`:`<button onclick="ss({showPush:false})" style="padding:9px 22px;border-radius:10px;background:${c.color};color:#fff;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;">&#128640; Create Drop</button>`}
       </div>
     </div>
   </div>`;
