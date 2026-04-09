@@ -2458,17 +2458,19 @@ function rSetup(){
   const venueSettingsHTML=c.allowMultiVenue?card(`
     ${sectionHd('Venue Settings','Multi-venue allows the drop venue address to be set per drop — useful for food trucks, popups, private events & offsite experiences')}
     <div style="display:flex;flex-direction:column;gap:0;font-size:0.78rem;">
-      <div style="display:grid;grid-template-columns:160px 120px 50px;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;font-weight:700;color:#64748b;">
+      <div style="display:grid;grid-template-columns:1fr 140px;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;font-weight:700;color:#64748b;">
         <div>${c.locLabel}</div>
-        <div>Type</div>
-        <div style="text-align:center;">Toggle</div>
+        <div>Venue Type</div>
       </div>
       ${c.locations.map((loc,i)=>`
-        <div style="display:grid;grid-template-columns:160px 120px 50px;gap:12px;padding:12px 0;${i<c.locations.length-1?'border-bottom:1px solid #f8fafc':''};align-items:center;">
+        <div style="display:grid;grid-template-columns:1fr 140px;gap:12px;padding:12px 0;${i<c.locations.length-1?'border-bottom:1px solid #f8fafc':''};align-items:center;">
           <div style="font-weight:600;color:#0f172a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${loc.name}</div>
-          <div style="color:#94a3b8;font-size:0.72rem;">${loc.multiVenue===true?'<span style="color:#B45309;font-weight:700;">Multi-venue</span>':'Fixed'}</div>
-          <div style="text-align:center;"><div onclick="this.dataset.on=this.dataset.on==='1'?'0':'1';this.style.background=this.dataset.on==='1'?'${c.color}':'#e5e7eb'" data-on="${loc.multiVenue===true?'1':'0'}" style="width:32px;height:18px;border-radius:9px;background:${loc.multiVenue===true?c.color:'#e5e7eb'};cursor:pointer;position:relative;transition:background 0.2s;"><div style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;${loc.multiVenue===true?'right:2px':'left:2px'};transition:all 0.2s;"></div></div></div>
+          <div>${loc.multiVenue===true?'<span style="display:inline-flex;align-items:center;gap:4px;background:#FFFBEB;color:#B45309;border:1px solid #FDE68A;border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:700;">&#9654; Multi-venue</span>':'<span style="display:inline-flex;align-items:center;gap:4px;background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:600;">Fixed venue</span>'}</div>
         </div>`).join('')}
+    </div>
+    <div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:0.72rem;color:#075985;display:flex;gap:8px;align-items:flex-start;">
+      <span style="flex-shrink:0;margin-top:1px;">&#9432;</span>
+      <span>Venue type is configured by the <strong>Nigh team</strong> and is tied to your organization's plan. Contact <strong>Nigh Support</strong> to change multi-venue settings for any location.</span>
     </div>`):''
 
   return `<div style="padding:28px 32px;max-width:960px;">
