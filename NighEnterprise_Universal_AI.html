@@ -2217,6 +2217,27 @@ function rBilling(){
   const locs=c.locations;
   const monthly=locs.length*c.ppl;
   const tab=S.financeTab||'revenue';
+
+  // ── Monthly trend data (6 months) ──
+  const months=[
+    {label:'Oct',short:'Oct',mult:0.72},
+    {label:'Nov',short:'Nov',mult:0.78},
+    {label:'Dec',short:'Dec',mult:0.88},
+    {label:'Jan',short:'Jan',mult:0.81},
+    {label:'Feb',short:'Feb',mult:0.90},
+    {label:'Mar',short:'Mar',mult:1.00},
+  ];
+  const baseRev=locs.length*3200;
+  const monthlyRevs=months.map(m=>Math.round(baseRev*m.mult));
+  const maxRev=Math.max(...monthlyRevs);
+  const chartH=80;
+
+  // ── Per-location revenue (vary by index, seed consistent) ──
+  const locMultipliers=[1.18,0.82,0.95,1.10,0.88,1.22,0.76,1.05,0.91,1.14,0.85,1.08,0.93,1.17,0.79,1.02,0.87,1.12];
+  const locRevs=locs.map((l,i)=>Math.round((baseRev/locs.length)*(locMultipliers[i%locMultipliers.length]||1)));
+  const totalLocRev=locRevs.reduce((a,b)=>a+b,0);
+  const sortedLocs=[...locs.map((l,i)=>({...l,rev:locRevs[i]}))].sort((a,b)=>b.rev-a.rev);
+
   const invoices=[
     {date:'Mar 1, 2026', amount:monthly, status:'paid', id:'INV-0043'},
     {date:'Feb 1, 2026', amount:monthly, status:'paid', id:'INV-0042'},
@@ -2234,24 +2255,82 @@ function rBilling(){
 
   // ── Revenue tab ──
   const revenueTab=`
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;">
+    <!-- KPI cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
       ${[
-        ['Total Revenue (MTD)','$'+(locs.length*3200).toLocaleString(),'This month','#16a34a','#f0fdf4'],
+        ['Total Revenue (MTD)','$'+baseRev.toLocaleString(),'Apr 2026','#16a34a','#f0fdf4'],
+        ['Revenue (YTD)',      '$'+(Math.round(baseRev*4.31)).toLocaleString(),'Jan–Apr 2026','#7c3aed','#f5f3ff'],
         ['Pending Payout',    '$'+(locs.length*1100).toLocaleString(),'Transfers in 2–3 days','#d97706','#fffbeb'],
         ['Last Payout',       '$'+(locs.length*2900).toLocaleString(),'Apr 1, 2026','#0369a1','#f0f9ff'],
       ].map(([label,val,sub,col,bg])=>`
-      <div style="background:${bg};border-radius:14px;border:1px solid ${col}25;padding:20px 22px;">
-        <div style="font-size:0.72rem;font-weight:700;color:${col};margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;">${label}</div>
-        <div style="font-size:1.8rem;font-weight:900;color:#0f172a;line-height:1;">${val}</div>
-        <div style="font-size:0.7rem;color:#64748b;margin-top:6px;">${sub}</div>
+      <div style="background:${bg};border-radius:14px;border:1px solid ${col}22;padding:18px 20px;">
+        <div style="font-size:0.68rem;font-weight:700;color:${col};margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">${label}</div>
+        <div style="font-size:1.6rem;font-weight:900;color:#0f172a;line-height:1.1;">${val}</div>
+        <div style="font-size:0.68rem;color:#64748b;margin-top:5px;">${sub}</div>
       </div>`).join('')}
     </div>
+
+    <!-- Monthly Revenue Trend -->
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">Monthly Revenue</div>
+          <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">Oct 2025 – Mar 2026</div>
+        </div>
+        <div style="font-size:0.72rem;color:#94a3b8;">All ${c.locsLabel.toLowerCase()}</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:10px;height:${chartH+28}px;padding-bottom:22px;position:relative;border-bottom:1px solid #f1f5f9;">
+        ${monthlyRevs.map((rev,i)=>{
+          const barH=Math.round((rev/maxRev)*chartH);
+          const isLast=i===monthlyRevs.length-1;
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="font-size:0.62rem;font-weight:700;color:${isLast?c.color:'#94a3b8'};">$${(rev/1000).toFixed(0)}k</div>
+            <div style="width:100%;height:${barH}px;background:${isLast?c.color:c.color+'40'};border-radius:5px 5px 0 0;min-height:4px;"></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        ${months.map((m,i)=>`<div style="flex:1;text-align:center;font-size:0.65rem;font-weight:${i===months.length-1?'800':'500'};color:${i===months.length-1?c.color:'#94a3b8'};">${m.short}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Revenue by Location -->
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:16px;">
+      <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">Revenue by ${c.locLabel}</div>
+          <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">April 2026 (MTD) · All ${c.locsLabel.toLowerCase()}</div>
+        </div>
+        <div style="font-size:0.78rem;font-weight:800;color:#0f172a;">${fmtMoney(totalLocRev)} total</div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 110px 80px 160px;padding:9px 20px;border-bottom:1px solid #f1f5f9;font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">
+        <div>${c.locLabel}</div><div>Revenue</div><div>% of Total</div><div>Trend</div>
+      </div>
+      ${sortedLocs.slice(0,10).map((loc,i)=>{
+        const pct=Math.round((loc.rev/totalLocRev)*100);
+        const barW=Math.round((loc.rev/sortedLocs[0].rev)*120);
+        return `<div style="display:grid;grid-template-columns:2fr 110px 80px 160px;align-items:center;padding:10px 20px;border-bottom:1px solid #f8fafc;${i===0?'background:#fafafa':''};">
+          <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <div style="font-size:0.78rem;font-weight:${i<3?'700':'600'};color:#0f172a;">${loc.name}</div>
+            <div style="font-size:0.67rem;color:#94a3b8;">${loc.t1||''}${loc.t2?' · '+loc.t2:''}</div>
+          </div>
+          <div style="font-size:0.82rem;font-weight:800;color:${i===0?c.color:'#0f172a'};">${fmtMoney(loc.rev)}</div>
+          <div style="font-size:0.75rem;font-weight:600;color:#64748b;">${pct}%</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="height:6px;width:${barW}px;max-width:120px;background:${i===0?c.color:c.color+'50'};border-radius:3px;"></div>
+          </div>
+        </div>`;
+      }).join('')}
+      ${sortedLocs.length>10?`<div style="padding:10px 20px;font-size:0.72rem;color:#94a3b8;text-align:center;">+${sortedLocs.length-10} more ${c.locsLabel.toLowerCase()}</div>`:''}
+    </div>
+
+    <!-- Payout History -->
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:14px;">
       <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
         <span style="font-size:0.88rem;font-weight:800;color:#0f172a;">Payout History</span>
         <button style="padding:7px 16px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">Request Payout</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr auto auto;padding:10px 20px;border-bottom:1px solid #f1f5f9;font-size:0.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">
+      <div style="display:grid;grid-template-columns:1fr auto auto;padding:10px 20px;border-bottom:1px solid #f1f5f9;font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">
         <div>Date &amp; Method</div><div style="margin-right:24px;">Amount</div><div>Status</div>
       </div>
       ${payouts.map(p=>`<div style="display:grid;grid-template-columns:1fr auto auto;align-items:center;padding:12px 20px;border-bottom:1px solid #f8fafc;">
@@ -2267,8 +2346,8 @@ function rBilling(){
       &#128179; <strong>Payout settings:</strong> Payouts are processed automatically on the 1st of each month to your connected bank account. To update your bank account or payout schedule, contact <span style="font-weight:700;">enterprise@nigh.com</span>
     </div>`;
 
-  // ── Subscription tab ──
-  const subscriptionTab=`
+  // ── Billing tab ──
+  const billingTab=`
     <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-bottom:18px;">
       <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;">
         <div style="font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">${c.plan}</div>
@@ -2296,7 +2375,7 @@ function rBilling(){
     </div>
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
       <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.88rem;font-weight:800;color:#0f172a;">Invoice History</div>
-      <div style="display:grid;grid-template-columns:1fr auto auto;padding:10px 20px;border-bottom:1px solid #f1f5f9;font-size:0.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">
+      <div style="display:grid;grid-template-columns:1fr auto auto;padding:10px 20px;border-bottom:1px solid #f1f5f9;font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">
         <div>Invoice</div><div style="margin-right:24px;">Amount</div><div>Status</div>
       </div>
       ${invoices.map(inv=>`<div style="display:grid;grid-template-columns:1fr auto auto;align-items:center;padding:12px 20px;border-bottom:1px solid #f8fafc;">
@@ -2310,14 +2389,12 @@ function rBilling(){
     </div>`;
 
   return `<div style="padding:28px 32px;max-width:960px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-      <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Finance</div>
-    </div>
+    <div style="font-size:1.3rem;font-weight:900;color:#0f172a;margin-bottom:22px;">Finance</div>
     <div style="display:flex;gap:8px;margin-bottom:24px;">
       ${tabBtn('revenue','Revenue')}
-      ${tabBtn('subscription','Subscription')}
+      ${tabBtn('subscription','Billing')}
     </div>
-    ${tab==='revenue'?revenueTab:subscriptionTab}
+    ${tab==='revenue'?revenueTab:billingTab}
   </div>`;
 }
 
