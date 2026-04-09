@@ -870,9 +870,7 @@ function renderCreate(){
       <div onclick="S.dualPrice=true;render()" style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 10px;font-size:11px;color:#1D4ED8;line-height:1.45;cursor:pointer">
         &#128161; <strong>Tip:</strong> Use <strong>Dual Pricing</strong> to offer a lower "First Visit Special" to new customers — most businesses discount more to win a first-time guest.
       </div>`}
-    </div>
-    <div class="card"><div class="cb"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#3B82F6">${ic('send',15)}<span style="font-size:13px;font-weight:600;color:#1F2937">Direct Offers</span></div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-bottom:8px">Reserve spots for VIPs via personal SMS links.</div>
-    <div style="display:flex;gap:6px"><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #E5E7EB;background:#F9FAFB;color:#4B5563">Shared Pool</button><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #3B82F6;background:#EFF6FF;color:#3B82F6">Separate Pool</button></div></div></div>`;
+    </div>`;
   }
   if(S.cStep===4){
     const src=clone||{title:'Friday Night Jazz & Tapas',start:'7:00 PM',bcastStart:'4:00 PM',bcastEnd:'6:45 PM',date:'2026-03-07',cap:30,price:25,venue:acct().name+', '+acct().addr,hosts:['Josh Ritzer'],partners:["Tito's Vodka"],desc:'Live jazz trio with curated tapas.'};
@@ -1215,6 +1213,8 @@ function renderAnalytics(){
 function renderPartners(){
   const statusColor={Active:'#16A34A',Invited:'#3B82F6',Declined:'#9CA3AF',Suspended:'#F97316'};
   const statusBg={Active:'#DCFCE7',Invited:'#EFF6FF',Declined:'#F3F4F6',Suspended:'#FFF7ED'};
+  const typeColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  const typeTextColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
   return `${hdr('Partners','Manage your partners',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div style="background:#EFF6FF;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#3B82F6;line-height:1.5">Only <strong>Active</strong> partners can be added to drops. Invite by Nigh handle, mobile, or email.</div>
@@ -1223,7 +1223,10 @@ function renderPartners(){
         <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${p.name.charAt(0)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:#111827">${p.name}</div>
-          <div style="font-size:11px;color:#9CA3AF">${p.handle} · ${p.type}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+            <span style="font-size:10px;color:#9CA3AF">${p.handle}</span>
+            <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;background:${typeColors[p.type]||'#f1f5f9'};color:${typeTextColors[p.type]||'#475569'}">${p.type}</span>
+          </div>
         </div>
         <div style="text-align:right">
           <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;background:${statusBg[p.status]};color:${statusColor[p.status]}">${p.status}</span>
