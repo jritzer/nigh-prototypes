@@ -17,12 +17,12 @@ select,button,input{font-family:inherit;}
 
 // ── ICONS ─────────────────────────────────────────────────────────────────────
 function nighBug(sz){sz=sz||32;return `<svg viewBox="80 44 200 280" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="flex-shrink:0;display:inline-block;vertical-align:middle;"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>`;}
-function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,activity:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`};return d[name]||'';}
+function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,activity:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,bell:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All'};
 function ss(p){Object.assign(S,p);render();}
-function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null});}
+function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All'});}
 function cfg(){return CONFIGS[S.config];}
 
 // ── CONFIGS ───────────────────────────────────────────────────────────────────
@@ -881,7 +881,7 @@ function getFilteredDrops(){
 
 // ── CONFIG SWITCHER ───────────────────────────────────────────────────────────
 function switchConfig(key){
-  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,pushDualPrice:false,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null});
+  Object.assign(S,{config:key,page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushStep:1,collStep:1,pushDualPrice:false,locationEdit:false,addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,settingsTab:'main',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All'});
   render();
 }
 function switcherBar(){
@@ -972,6 +972,7 @@ function sidebar(){
     {id:'customers',  label:'Guests',      icon:'customers'},
     {id:'collections',label:'Collections',icon:'collections'},
     {id:'analytics',  label:'Analytics',  icon:'analytics'},
+    {id:'inbox',      label:'Inbox',       icon:'bell', unread:4},
     {id:'partners',   label:'Partners',    icon:'link'},
     {id:'users',      label:'Team',        icon:'users'},
     {id:'setup',      label:'Configure',   icon:'sliders'},
@@ -986,7 +987,7 @@ function sidebar(){
       <div style="color:rgba(255,255,255,0.45);font-size:0.6rem;margin-top:2px;">${cfg().locations.length} locations</div>
     </div>
     ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.58)'};font-size:0.77rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;transition:all 0.1s;">
-      <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}</span>${n.label}
+      <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;position:relative;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}${n.unread&&S.page!==n.id?`<span style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid transparent;"></span>`:''}</span>${n.label}${n.unread&&S.page!==n.id?`<span style="margin-left:auto;background:#EF4444;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:20px;">${n.unread}</span>`:''}
     </button>`).join('')}
     <div style="flex:1;"></div>
     <div style="padding:16px;border-top:1px solid rgba(255,255,255,0.12);margin-top:8px;">
@@ -1063,6 +1064,7 @@ function renderPage(){
   if(p==='billing')     return rBilling();
   if(p==='settings')    return rSettings();
   if(p==='activity')    return rActivity();
+  if(p==='inbox')       return rInbox();
   return '<div style="padding:32px;">Not found</div>';
 }
 
@@ -2627,6 +2629,112 @@ function rSettings(){
         <a href="${href}" style="font-size:0.72rem;font-weight:600;color:#94a3b8;text-decoration:none;padding:5px 12px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:20px;">${label}</a>
       `).join('')}
       <span style="font-size:0.72rem;color:#e2e8f0;padding:5px 0;margin-left:auto;">Nigh Enterprise v1.0</span>
+    </div>
+  </div>`;
+}
+
+// ── INBOX ────────────────────────────────────────────────────────────────────
+function rInbox(){
+  const c=cfg();
+  const filters=['All','Partners','Guests','Team','Locations','Nigh'];
+  const typeColors={partner:'#1d4ed8',guest:'#15803d',team:'#7c3aed',location:'#0e7490',system:'#475569'};
+  const typeBgs  ={partner:'#eff6ff',guest:'#f0fdf4',team:'#f5f3ff',location:'#ecfeff',system:'#f1f5f9'};
+  const typeLabels={partner:'Partner',guest:'Guest',team:'Team',location:'Location',system:'Nigh'};
+  const msgs=[
+    {id:'M01',type:'partner',unread:true, avatar:'MB',avatarC:'#1d4ed8',
+     title:'Marriott Bonvoy accepted your partnership invite',
+     sub:'Brand collaboration confirmed — ready to co-drop',
+     loc:'Corporate',time:'4m ago',action:'View Partners'},
+    {id:'M02',type:'guest',  unread:true, avatar:'RJ',avatarC:'#15803d',
+     title:'Riley Johnson left a 5-star review',
+     sub:'"Chef\'s Table at Mastro\'s was extraordinary — will definitely be back."',
+     loc:"Mastro's Beverly Hills",time:'22m ago',action:null},
+    {id:'M03',type:'location',unread:true, avatar:'BG',avatarC:'#0e7490',
+     title:"Bubba Gump Times Square drop sold out",
+     sub:'Happy Hour Shrimp Bar · All 60 spots reserved in 18 minutes',
+     loc:'Bubba Gump — Times Square',time:'1h ago',action:'View Drop'},
+    {id:'M04',type:'team',   unread:true, avatar:'DH',avatarC:'#7c3aed',
+     title:'Dana Holt invited as Brand Manager',
+     sub:"Role: Brand Manager · Access to Fine Dining division",
+     loc:'Corporate',time:'2h ago',action:null},
+    {id:'M05',type:'system', unread:false,avatar:'N', avatarC:'#5b21b6',
+     title:'Weekly performance summary ready',
+     sub:'12 drops · 847 reservations · $28,400 revenue · 94% show rate',
+     loc:'All Locations',time:'Today 8:00 AM',action:'View Analytics'},
+    {id:'M06',type:'partner',unread:false,avatar:'WH',avatarC:'#1d4ed8',
+     title:'Whole Foods Market viewed your partnership invite',
+     sub:"Partnership · Last viewed 3h ago — no response yet",
+     loc:'Corporate',time:'3h ago',action:'Follow Up'},
+    {id:'M07',type:'guest',  unread:false,avatar:'MC',avatarC:'#15803d',
+     title:'Morgan Chen asked about dietary accommodations',
+     sub:'"Is the wagyu tasting menu gluten-free? We have one guest with an allergy."',
+     loc:"Mastro's Ocean Club",time:'5h ago',action:'Reply'},
+    {id:'M08',type:'location',unread:false,avatar:'DF',avatarC:'#0e7490',
+     title:"Del Frisco's New York hit 500 followers",
+     sub:'Milestone reached — fastest-growing location this quarter',
+     loc:"Del Frisco's — New York",time:'Yesterday',action:null},
+    {id:'M09',type:'system', unread:false,avatar:'N', avatarC:'#5b21b6',
+     title:'New location onboarding complete',
+     sub:'Golden Nugget — Biloxi is live and ready to create drops',
+     loc:'Golden Nugget — Biloxi',time:'Yesterday',action:'View Location'},
+    {id:'M10',type:'team',   unread:false,avatar:'SP',avatarC:'#7c3aed',
+     title:'Steve Park checked in 47 guests manually',
+     sub:'High Roller Dining Experience · Manual override at door',
+     loc:'Golden Nugget — Las Vegas',time:'Yesterday',action:null},
+    {id:'M11',type:'partner',unread:false,avatar:'RC',avatarC:'#1d4ed8',
+     title:'Ritz-Carlton declined your co-drop invite',
+     sub:'Select Club Priority Table · Partner not available for those dates',
+     loc:"Del Frisco's — New York",time:'2 days ago',action:'Invite Another'},
+    {id:'M12',type:'guest',  unread:false,avatar:'AT',avatarC:'#15803d',
+     title:'Alex Turner reserved 2 spots for Chef\'s Table',
+     sub:'Chef\'s Table — Wagyu Tasting Menu · +1 guest added',
+     loc:"Mastro's Beverly Hills",time:'2 days ago',action:null},
+    {id:'M13',type:'system', unread:false,avatar:'N', avatarC:'#5b21b6',
+     title:'Nigh tip: Drops with photos get 2× more reservations',
+     sub:'3 of your scheduled drops are missing cover images',
+     loc:'All Locations',time:'3 days ago',action:'View Drops'},
+    {id:'M14',type:'location',unread:false,avatar:'BH',avatarC:'#0e7490',
+     title:'Bubba Gump Hollywood capacity updated to 210',
+     sub:'Location profile change by Luis Mendez',
+     loc:'Bubba Gump — Hollywood',time:'3 days ago',action:null},
+  ];
+  const f=S.inboxFilter||'All';
+  const typeKey={Partners:'partner',Guests:'guest',Team:'team',Locations:'location',Nigh:'system'};
+  const filtered=f==='All'?msgs:msgs.filter(m=>m.type===typeKey[f]);
+  const unread=msgs.filter(m=>m.unread).length;
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Inbox</div>
+        <div style="font-size:0.73rem;color:#94a3b8;margin-top:3px;">${unread} unread</div>
+      </div>
+      <button style="padding:7px 16px;background:#f1f5f9;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;color:#475569;cursor:pointer;">Mark all read</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+      ${filters.map(fi=>`<button onclick="ss({inboxFilter:'${fi}'})" style="padding:5px 14px;border-radius:20px;border:1px solid ${f===fi?c.color:'#e5e7eb'};background:${f===fi?c.color+'18':'transparent'};color:${f===fi?c.color:'#64748b'};font-size:0.72rem;font-weight:600;cursor:pointer;">${fi}</button>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      ${filtered.length===0?`<div style="padding:48px;text-align:center;color:#94a3b8;font-size:0.82rem;">No messages in this category</div>`:''}
+      ${filtered.map((m,i)=>`
+      <div style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid ${i<filtered.length-1?'#f8fafc':'transparent'};background:${m.unread?'#fafbff':'#fff'};">
+        <div style="position:relative;flex-shrink:0;">
+          <div style="width:40px;height:40px;border-radius:50%;background:${m.avatarC}18;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;color:${m.avatarC};border:1.5px solid ${m.avatarC}30;">${m.avatar}</div>
+          ${m.unread?`<div style="position:absolute;top:0;right:0;width:9px;height:9px;border-radius:50%;background:#EF4444;border:1.5px solid #fff;"></div>`:''}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:3px;">
+            <div style="font-size:0.82rem;font-weight:${m.unread?800:600};color:#0f172a;line-height:1.3;">${m.title}</div>
+            <span style="font-size:0.68rem;color:#94a3b8;white-space:nowrap;flex-shrink:0;">${m.time}</span>
+          </div>
+          <div style="font-size:0.75rem;color:#64748b;margin-bottom:6px;line-height:1.4;">${m.sub}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:0.65rem;font-weight:700;background:${typeBgs[m.type]};color:${typeColors[m.type]};padding:2px 8px;border-radius:20px;">${typeLabels[m.type]}</span>
+            <span style="font-size:0.65rem;color:#94a3b8;">${m.loc}</span>
+            ${m.action?`<button style="font-size:0.72rem;font-weight:700;color:${c.color};background:none;border:none;cursor:pointer;margin-left:auto;">${m.action} →</button>`:''}
+          </div>
+        </div>
+      </div>`).join('')}
+      <div style="padding:14px 20px;text-align:center;font-size:0.72rem;color:#cbd5e1;">You're all caught up</div>
     </div>
   </div>`;
 }
