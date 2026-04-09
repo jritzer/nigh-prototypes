@@ -657,18 +657,18 @@ const orgPayouts={
 };
 const orgPartners={
   'O001':[
-    {id:'OP001',type:'Org',entityId:'O003',name:'Whole Foods Market',handle:'@wholefoodsboulder',partnerType:'Co-Host',revenueShare:'10%',status:'Active',since:'Feb 1, 2026'},
-    {id:'OP002',type:'User',entityId:'U006',name:'Jordan Lee',handle:'@jordanl',partnerType:'Brand Ambassador',revenueShare:'5%',status:'Active',since:'Jan 25, 2026'},
+    {id:'OP001',type:'Org',entityId:'O003',name:'Whole Foods Market',handle:'@wholefoodsboulder',partnerType:'Partner',revenueShare:'10%',status:'Active',since:'Feb 1, 2026'},
+    {id:'OP002',type:'User',entityId:'U006',name:'Jordan Lee',handle:'@jordanl',partnerType:'Influencer',revenueShare:'5%',status:'Active',since:'Jan 25, 2026'},
   ],
   'O002':[
-    {id:'OP003',type:'Org',entityId:'O001',name:'Centro Mexican Kitchen',handle:'@centroboulder',partnerType:'Co-Host',revenueShare:'0%',status:'Active',since:'Feb 10, 2026'},
+    {id:'OP003',type:'Org',entityId:'O001',name:'Centro Mexican Kitchen',handle:'@centroboulder',partnerType:'Venue',revenueShare:'0%',status:'Active',since:'Feb 10, 2026'},
   ],
   'O003':[
-    {id:'OP004',type:'Org',entityId:'O001',name:'Centro Mexican Kitchen',handle:'@centroboulder',partnerType:'Co-Host',revenueShare:'10%',status:'Active',since:'Feb 1, 2026'},
-    {id:'OP005',type:'Org',entityId:'O004',name:'Elixir Spa',handle:'@elixirspa',partnerType:'Cross-Promo',revenueShare:'0%',status:'Active',since:'Feb 20, 2026'},
+    {id:'OP004',type:'Org',entityId:'O001',name:'Centro Mexican Kitchen',handle:'@centroboulder',partnerType:'Partner',revenueShare:'10%',status:'Active',since:'Feb 1, 2026'},
+    {id:'OP005',type:'Org',entityId:'O004',name:'Elixir Spa',handle:'@elixirspa',partnerType:'Sponsor',revenueShare:'0%',status:'Active',since:'Feb 20, 2026'},
   ],
   'O004':[
-    {id:'OP006',type:'Org',entityId:'O003',name:'Whole Foods Market',handle:'@wholefoodsboulder',partnerType:'Cross-Promo',revenueShare:'0%',status:'Active',since:'Feb 20, 2026'},
+    {id:'OP006',type:'Org',entityId:'O003',name:'Whole Foods Market',handle:'@wholefoodsboulder',partnerType:'Brand',revenueShare:'0%',status:'Active',since:'Feb 20, 2026'},
   ],
   'O005':[],
 };
@@ -2501,10 +2501,18 @@ function setOrgTab(tab){
   const btn=document.getElementById('od-btn-'+tab);
   if(btn){btn.style.fontWeight='600';btn.style.color='#1B2A4A';btn.style.borderBottomColor='#3B82F6';}
 }
+function setFinanceSubTab(sub){
+  S.financeSubTab=sub;
+  ['revenue','billing'].forEach(t=>{
+    const el=document.getElementById('od-fin-'+t);if(el)el.style.display=t===sub?'block':'none';
+    const btn=document.getElementById('od-fin-btn-'+t);
+    if(btn){btn.style.background=t===sub?'#fff':'transparent';btn.style.color=t===sub?'#111827':'#6B7280';btn.style.boxShadow=t===sub?'0 1px 3px rgba(0,0,0,0.08)':'none';}
+  });
+}
 
 function rOrgDetail(id){
   const o=orgs.find(x=>x.id===id);if(!o)return '<p>Organization not found</p>';
-  if(!S.orgDetailTab||S._lastOrgId!==id){S.orgDetailTab=o.status==='Prospect'?'crm':'account';S._lastOrgId=id;}
+  if(!S.orgDetailTab||S._lastOrgId!==id){S.orgDetailTab=o.status==='Prospect'?'crm':'account';S._lastOrgId=id;S.financeSubTab='revenue';}
   const at=S.orgDetailTab;
   const orgDrops=drops.filter(d=>d.org.includes(o.name.split(' ')[0]));
   const memberUsers=userAccounts.filter(u=>u.proOrgs.includes(o.id));
@@ -2519,9 +2527,9 @@ function rOrgDetail(id){
   const billingColor=o.billingStatus==='Current'?'#22C55E':o.billingStatus==='Past Due'?'#F59E0B':'#EF4444';
   const billingBg=o.billingStatus==='Current'?'#F0FDF4':o.billingStatus==='Past Due'?'#FFFBEB':'#FEF2F2';
   const hasCollections=featureFlags.find(f=>f.name==='Collections'&&(f.orgs.includes(o.id)||f.global));
-  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Account'],['crm','CRM'],['billing','Billing'],['profile','Profile'],...(o.orgType==='Parent'?[['children','Children']]:[]),['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Customers'],['followers','Followers'],['team','Team'],['venues','Venues'],['payouts','Payouts'],['credits','Credits'],['analytics','Analytics'],['partners','Partners'],['comms','Comms'],['activity','Activity'],['config','Config']];
+  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Account'],['crm','CRM'],['finance','Finance'],['profile','Profile'],...(o.orgType==='Parent'?[['children','Children']]:[]),['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Customers'],['followers','Followers'],['team','Team'],['venues','Venues'],['payouts','Payouts'],['credits','Credits'],['analytics','Analytics'],['partners','Partners'],['comms','Comms'],['activity','Activity'],['config','Config']];
   const secHdr=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
-  const accessColor=(a)=>a==='Admin (Account Owner)'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Administrator'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:{bg:'#F3F4F6',fg:'#4B5563'};
+  const accessColor=(a)=>a==='Admin (Account Owner)'||a==='Owner'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Administrator'||a==='Enterprise Admin'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Regional Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Location Manager'?{bg:'#DCFCE7',fg:'#166534'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:{bg:'#F3F4F6',fg:'#4B5563'};
   return `
 <div style="margin-bottom:16px">
   <button class="btn btn-ghost btn-sm" onclick="go(o.status==='Prospect'?'pipeline':'orgs')">${svgI('down',12)} ${o.status==='Prospect'?'Back to Pipeline':'Back to Organizations'}</button>
@@ -2537,6 +2545,7 @@ function rOrgDetail(id){
       ${o.tagline?`<div style="font-size:13px;color:#374151;margin-top:3px">${o.tagline}</div>`:''}
       <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
         ${bg(statusBg(o.status),'',o.status)}
+        ${o.status!=='Prospect'?(()=>{const oc2=orgCfg(o);const isEnt2=oc2.appType==='Enterprise';return `<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;${isEnt2?'color:#0369A1;background:#E0F2FE':'color:#065F46;background:#DCFCE7'}">${isEnt2?'&#127760; Enterprise':'&#128241; Pro'}</span>`})():''}
         ${o.status!=='Prospect'?`<span style="font-size:11px;font-weight:600;color:#5B21B6;background:#EDE9FE;padding:2px 8px;border-radius:6px">${o.plan}</span>`:''}
         ${o.status!=='Prospect'?`<span style="font-size:11px;font-weight:600;color:${billingColor};background:${billingBg};padding:2px 8px;border-radius:6px">${o.billingStatus}</span>`:''}
         ${o.status==='Prospect'?`<span style="font-size:11px;font-weight:600;color:#6D28D9;background:#EDE9FE;padding:2px 8px;border-radius:6px">${svgI('map-pin',10)} ${o.city||'Prospect'}</span>`:''}
@@ -2989,67 +2998,91 @@ ${(()=>{
 </div>
 
 
-<!-- TAB: BILLING -->
-<div id="od-tab-billing" class="od-tc" style="padding:20px;display:${at==='billing'?'block':'none'}">
-  <div class="grid grid-2" style="gap:20px;align-items:start">
-
-    <!-- Left: subscription -->
-    <div>
-      ${secHdr('Subscription')}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
-        <div class="field"><label class="label">Plan</label><select class="select">${['Starter','Growth','Pro','Enterprise'].map(p=>`<option ${o.plan===p?'selected':''}>${p}</option>`).join('')}</select></div>
-        <div class="field"><label class="label">Billing Cycle</label><select class="select">${['Monthly','Annual','Manual'].map(c=>`<option ${o.billingCycle===c?'selected':''}>${c}</option>`).join('')}</select></div>
-        <div class="field"><label class="label">Billing Status</label>
-          <select class="select" style="font-weight:600;color:${billingColor}">
-            ${['Current','Past Due','Suspended','Complimentary'].map(s=>`<option ${o.billingStatus===s?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field"><label class="label">Renewal Date</label><input class="input" value="${o.renewalDate}"/></div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
-        <button class="btn btn-primary btn-sm">${svgI('check',13)} Save</button>
-      </div>
-
-      ${o.planOverride?`
-      ${secHdr('Plan Overrides')}
-      <div class="detail-row"><span class="detail-key">Active Add-ons</span><span class="detail-val" style="font-size:12px">${o.planOverride}</span></div>
-      `:''}
-
-      ${secHdr('Plan Limits')}
-      ${[
-        ['Max Drops / Month', o.maxDropsPerMonth],
-        ['Advance Scheduling', o.advSchedulingDays+' days'],
-        ['No-show Policy', o.noShowPolicy.charAt(0).toUpperCase()+o.noShowPolicy.slice(1)],
-      ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+<!-- TAB: FINANCE -->
+<div id="od-tab-finance" class="od-tc" style="padding:20px;display:${at==='finance'?'block':'none'}">
+  ${(()=>{
+    const fst=S.financeSubTab||'revenue';
+    const tabBtn=(id,label)=>`<button id="od-fin-btn-${id}" onclick="setFinanceSubTab('${id}')" style="padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:${fst===id?'#fff':'transparent'};color:${fst===id?'#111827':'#6B7280'};box-shadow:${fst===id?'0 1px 3px rgba(0,0,0,0.08)':'none'}">${label}</button>`;
+    const months=[{m:'Oct',mult:0.72},{m:'Nov',mult:0.78},{m:'Dec',mult:0.88},{m:'Jan',mult:0.81},{m:'Feb',mult:0.90},{m:'Mar',mult:1.00}];
+    const baseRev=o.revenue||0;
+    const maxRev=Math.max(...months.map(x=>Math.round(baseRev*x.mult)),1);
+    return `
+    <!-- Finance subtab switcher -->
+    <div style="display:flex;gap:2px;background:#F1F5F9;border-radius:8px;padding:3px;width:fit-content;margin-bottom:20px">
+      ${tabBtn('revenue','Revenue')}
+      ${tabBtn('billing','Billing')}
     </div>
 
-    <!-- Right: billing summary -->
-    <div>
-      ${secHdr('Billing Summary')}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
-        <div class="card card-p" style="text-align:center;padding:16px 12px">
-          <div style="font-size:20px;font-weight:800;color:#1B2A4A">$${o.revenue.toLocaleString()}</div>
-          <div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;margin-top:2px">Lifetime Revenue</div>
-        </div>
-        <div class="card card-p" style="text-align:center;padding:16px 12px">
-          <div style="font-size:14px;font-weight:700;color:${billingColor};background:${billingBg};display:inline-block;padding:4px 12px;border-radius:6px">${o.billingStatus}</div>
-          <div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;margin-top:6px">Billing Status</div>
+    <!-- REVENUE SUBTAB -->
+    <div id="od-fin-revenue" style="display:${fst==='revenue'?'block':'none'}">
+      <div class="grid grid-4" style="margin-bottom:20px">
+        <div class="stat"><div class="stat-label">Lifetime Revenue</div><div class="stat-val" style="font-size:22px;color:#16A34A">$${baseRev.toLocaleString()}</div><div class="stat-sub">All time</div></div>
+        <div class="stat"><div class="stat-label">MTD Revenue</div><div class="stat-val" style="font-size:22px">$${Math.round(baseRev*0.42).toLocaleString()}</div><div class="stat-sub">This month</div></div>
+        <div class="stat"><div class="stat-label">Avg / Drop</div><div class="stat-val" style="font-size:22px">$${o.drops?Math.round(baseRev/o.drops).toLocaleString():0}</div><div class="stat-sub">Revenue per drop</div></div>
+        <div class="stat"><div class="stat-label">Payout Pending</div><div class="stat-val" style="font-size:22px;color:#D97706">$${payout.pending.toFixed(0)}</div><div class="stat-sub">Next payout</div></div>
+      </div>
+
+      ${secHdr('Monthly Trend (Last 6 Months)')}
+      <div class="card card-p" style="margin-bottom:20px">
+        <div style="display:flex;align-items:flex-end;gap:8px;height:100px;padding:0 4px">
+          ${months.map(x=>{
+            const rev=Math.round(baseRev*x.mult);
+            const pct=maxRev?Math.max(8,Math.round((rev/maxRev)*100)):8;
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <div style="font-size:10px;color:#6B7280;font-weight:600">$${rev>999?(rev/1000).toFixed(1)+'k':rev}</div>
+              <div style="width:100%;background:#3B82F6;border-radius:4px 4px 0 0;height:${pct}px;opacity:${x.m==='Mar'?'1':'0.55'}"></div>
+              <div style="font-size:10px;color:#9CA3AF">${x.m}</div>
+            </div>`;
+          }).join('')}
         </div>
       </div>
 
       ${secHdr('Payout Account')}
-      ${(()=>{
-        const p=payout;
-        return [
-          ['Bank', p.bankName],
-          ['Account', p.accountMasked],
-          ['Schedule', p.schedule],
-          ['Pending Balance', '$'+p.pending.toFixed(2)],
-        ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('');
-      })()}
+      <div class="card card-p" style="margin-bottom:20px">
+        ${[
+          ['Bank', payout.bankName],
+          ['Account', payout.accountMasked],
+          ['Payout Schedule', payout.schedule],
+          ['Pending Balance', '$'+payout.pending.toFixed(2)],
+        ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+      </div>
     </div>
 
-  </div>
+    <!-- BILLING SUBTAB -->
+    <div id="od-fin-billing" style="display:${fst==='billing'?'block':'none'}">
+      <div class="grid grid-2" style="gap:20px;align-items:start">
+        <div>
+          ${secHdr('Subscription')}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
+            <div class="field"><label class="label">Plan</label><select class="select">${['Standard','Pro','Enterprise'].map(p=>`<option ${o.plan===p?'selected':''}>${p}</option>`).join('')}</select></div>
+            <div class="field"><label class="label">Billing Cycle</label><select class="select">${['Monthly','Annual','Manual'].map(c=>`<option ${o.billingCycle===c?'selected':''}>${c}</option>`).join('')}</select></div>
+            <div class="field"><label class="label">Billing Status</label>
+              <select class="select" style="font-weight:600;color:${billingColor}">
+                ${['Current','Past Due','Suspended','Complimentary'].map(s=>`<option ${o.billingStatus===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field"><label class="label">Renewal Date</label><input class="input" value="${o.renewalDate}"/></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:4px">
+            <button class="btn btn-primary btn-sm">${svgI('check',13)} Save</button>
+          </div>
+          ${o.planOverride?`
+          ${secHdr('Plan Overrides')}
+          <div class="detail-row"><span class="detail-key">Active Add-ons</span><span class="detail-val" style="font-size:12px">${o.planOverride}</span></div>
+          `:''}
+        </div>
+        <div>
+          ${secHdr('Plan Limits')}
+          ${[
+            ['Max Drops / Month', o.maxDropsPerMonth],
+            ['Advance Scheduling', o.advSchedulingDays+' days'],
+            ['No-show Policy', o.noShowPolicy.charAt(0).toUpperCase()+o.noShowPolicy.slice(1)],
+          ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    `;
+  })()}
 </div>
 
 <!-- TAB: TEAM -->
@@ -3066,7 +3099,7 @@ ${(()=>{
     <td>${m.status==='Removed'
       ?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${accessColor(m.access).bg};color:${accessColor(m.access).fg}">${m.access}</span>`
       :`<select class="select" style="font-size:11px;padding:2px 6px;height:26px;min-width:180px">
-          ${['Admin (Account Owner)','Administrator','Manager','Team Member'].map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
+          ${(orgCfg(o).appType==='Enterprise'?['Admin (Account Owner)','Enterprise Admin','Regional Manager','Location Manager','Team Member']:['Admin (Account Owner)','Manager','Team Member']).map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
         </select>`}
     </td>
     <td>${bg(m.status==='Active'?'bg-green':m.status==='Suspended'?'bg-red':'bg-gray','',m.status)}</td>
@@ -3144,17 +3177,22 @@ ${(()=>{
     <div style="font-size:14px;font-weight:700">Partners (${partners.length})</div>
     <button class="btn btn-primary" onclick="openModal('add-partner-${o.id}')">${svgI('link',13)} Add Partner</button>
   </div>
-  ${partners.length?`<div class="card"><table class="tbl"><thead><tr><th>Type</th><th>Name</th><th>Partnership</th><th>Rev Share</th><th>Status</th><th>Since</th><th></th></tr></thead><tbody>
-  ${partners.map(p=>`<tr>
-    <td><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${p.type==='Org'?'#EDE9FE':'#DBEAFE'};color:${p.type==='Org'?'#5B21B6':'#1E40AF'}">${p.type}</span></td>
+  ${(()=>{
+    const ptColor={Brand:{bg:'#eff6ff',c:'#1d4ed8'},Sponsor:{bg:'#f5f3ff',c:'#5b21b6'},Partner:{bg:'#f0fdf4',c:'#166534'},Influencer:{bg:'#fef3c7',c:'#92400e'},Venue:{bg:'#ecfeff',c:'#0e7490'}};
+    return partners.length?`<div class="card"><table class="tbl"><thead><tr><th>Partnership Type</th><th>Name</th><th>Entity</th><th>Rev Share</th><th>Status</th><th>Since</th><th></th></tr></thead><tbody>
+  ${partners.map(p=>{
+    const pc=ptColor[p.partnerType]||{bg:'#F3F4F6',c:'#4B5563'};
+    return `<tr>
+    <td><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${pc.bg};color:${pc.c}">${p.partnerType}</span></td>
     <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#9CA3AF;font-family:monospace">${p.handle}</div></td>
-    <td style="font-size:12px">${p.partnerType}</td>
+    <td><span style="font-size:11px;padding:2px 8px;border-radius:6px;background:${p.type==='Org'?'#EDE9FE':'#DBEAFE'};color:${p.type==='Org'?'#5B21B6':'#1E40AF'}">${p.type}</span></td>
     <td style="font-weight:600">${p.revenueShare}</td>
     <td>${bg(statusBg(p.status),'',p.status)}</td>
     <td style="font-size:12px;color:#6B7280">${p.since}</td>
     <td><button class="btn btn-ghost btn-sm" onclick="go('${p.type==='Org'?'orgDetail':'userDetail'}',{${p.type==='Org'?'orgId':'userId'}:'${p.entityId}'})">${svgI('eye',11)} View</button></td>
-  </tr>`).join('')}
-  </tbody></table></div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">No partners linked yet.</div>`}
+  </tr>`;}).join('')}
+  </tbody></table></div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">No partners linked yet.</div>`;
+  })()}
 </div>
 
 <!-- TAB: CUSTOMERS -->
