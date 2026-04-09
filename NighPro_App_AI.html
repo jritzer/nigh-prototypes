@@ -422,24 +422,24 @@ const partnersList=[
 ];
 
 const customerList=[
-  {id:'C001',name:'Emma Johnson',email:'emma.j@gmail.com',phone:'(720) 555-0181',av:'EJ',source:'CSV Import',since:'Mar 2026',drops:['D001','D005']},
-  {id:'C002',name:'Marcus Webb',email:'marcusw@icloud.com',phone:'(720) 555-0234',av:'MW',source:'CSV Import',since:'Mar 2026',drops:['D003']},
-  {id:'C003',name:'Priya Patel',email:'priya.patel@gmail.com',phone:'(303) 555-0312',av:'PP',source:'CSV Import',since:'Mar 2026',drops:['D001','D003','D005']},
-  {id:'C004',name:'Derek Nguyen',email:'derek.n@outlook.com',phone:'(720) 555-0467',av:'DN',source:'CSV Import',since:'Mar 2026',drops:['D005']},
-  {id:'C005',name:'Sofia Ruiz',email:'sofia.ruiz@gmail.com',phone:'(303) 555-0589',av:'SR',source:'CSV Import',since:'Mar 2026',drops:[]},
-  {id:'C006',name:'Tyler Brooks',email:'tbrooks@yahoo.com',phone:'(720) 555-0623',av:'TB',source:'CSV Import',since:'Mar 2026',drops:['D001']},
-  {id:'C007',name:'Aisha Carter',email:'aisha.c@gmail.com',phone:'(303) 555-0744',av:'AC',source:'Manual',since:'Mar 2026',drops:['D003','D007']},
-  {id:'C008',name:'Ryan Kowalski',email:'ryan.k@icloud.com',phone:'(720) 555-0856',av:'RK',source:'CSV Import',since:'Mar 2026',drops:[]},
-  {id:'C009',name:'Maya Thompson',email:'maya.t@gmail.com',phone:'(720) 555-0912',av:'MT',source:'Manual',since:'Mar 2026',drops:['D001','D008']},
-  {id:'C010',name:'Jake Morrison',email:'jm@icloud.com',phone:'(303) 555-0045',av:'JM',source:'CSV Import',since:'Mar 2026',drops:['D005','D011']},
-  {id:'C011',name:'Leila Ahmadi',email:'leila.a@gmail.com',phone:'(720) 555-0178',av:'LA',source:'CSV Import',since:'Mar 2026',drops:['D009','D010']},
-  {id:'C012',name:'Sam Bradley',email:'samb@yahoo.com',phone:'(303) 555-0234',av:'SB',source:'CSV Import',since:'Mar 2026',drops:['D002']},
-  {id:'C013',name:'Carlos Vega',email:'carlos.v@gmail.com',phone:'(720) 555-0367',av:'CV',source:'Manual',since:'Mar 2026',drops:['D001','D003']},
-  {id:'C014',name:'Natalie Ross',email:'nross@icloud.com',phone:'(303) 555-0456',av:'NR',source:'CSV Import',since:'Mar 2026',drops:['D007','D010']},
-  {id:'C015',name:'Ben Okafor',email:'beno@gmail.com',phone:'(720) 555-0589',av:'BO',source:'Manual',since:'Mar 2026',drops:[]},
-  {id:'C016',name:'Jess Hartley',email:'jessh@gmail.com',phone:'(303) 555-0623',av:'JH',source:'CSV Import',since:'Mar 2026',drops:['D005']},
-  {id:'C017',name:'Kenji Tanaka',email:'kenji.t@gmail.com',phone:'(720) 555-0734',av:'KT',source:'CSV Import',since:'Mar 2026',drops:['D011']},
-  {id:'C018',name:'Rachel Kim',email:'rachk@icloud.com',phone:'(303) 555-0867',av:'RK',source:'Manual',since:'Mar 2026',drops:['D001']},
+  {id:'C001',name:'Emma Johnson',email:'emma.j@gmail.com',phone:'(720) 555-0181',av:'EJ',source:'CSV Import',since:'Mar 2026',drops:['D001','D005'],follower:true},
+  {id:'C002',name:'Marcus Webb',email:'marcusw@icloud.com',phone:'(720) 555-0234',av:'MW',source:'CSV Import',since:'Mar 2026',drops:['D003'],follower:false},
+  {id:'C003',name:'Priya Patel',email:'priya.patel@gmail.com',phone:'(303) 555-0312',av:'PP',source:'CSV Import',since:'Mar 2026',drops:['D001','D003','D005'],follower:true},
+  {id:'C004',name:'Derek Nguyen',email:'derek.n@outlook.com',phone:'(720) 555-0467',av:'DN',source:'CSV Import',since:'Mar 2026',drops:['D005'],follower:true},
+  {id:'C005',name:'Sofia Ruiz',email:'sofia.ruiz@gmail.com',phone:'(303) 555-0589',av:'SR',source:'CSV Import',since:'Mar 2026',drops:[],follower:true},
+  {id:'C006',name:'Tyler Brooks',email:'tbrooks@yahoo.com',phone:'(720) 555-0623',av:'TB',source:'CSV Import',since:'Mar 2026',drops:['D001'],follower:false},
+  {id:'C007',name:'Aisha Carter',email:'aisha.c@gmail.com',phone:'(303) 555-0744',av:'AC',source:'Manual',since:'Mar 2026',drops:['D003','D007'],follower:true},
+  {id:'C008',name:'Ryan Kowalski',email:'ryan.k@icloud.com',phone:'(720) 555-0856',av:'RK',source:'CSV Import',since:'Mar 2026',drops:[],follower:false},
+  {id:'C009',name:'Maya Thompson',email:'maya.t@gmail.com',phone:'(720) 555-0912',av:'MT',source:'Manual',since:'Mar 2026',drops:['D001','D008'],follower:true},
+  {id:'C010',name:'Jake Morrison',email:'jm@icloud.com',phone:'(303) 555-0045',av:'JM',source:'CSV Import',since:'Mar 2026',drops:['D005','D011'],follower:false},
+  {id:'C011',name:'Leila Ahmadi',email:'leila.a@gmail.com',phone:'(720) 555-0178',av:'LA',source:'CSV Import',since:'Mar 2026',drops:['D009','D010'],follower:true},
+  {id:'C012',name:'Sam Bradley',email:'samb@yahoo.com',phone:'(303) 555-0234',av:'SB',source:'CSV Import',since:'Mar 2026',drops:['D002'],follower:false},
+  {id:'C013',name:'Carlos Vega',email:'carlos.v@gmail.com',phone:'(720) 555-0367',av:'CV',source:'Manual',since:'Mar 2026',drops:['D001','D003'],follower:true},
+  {id:'C014',name:'Natalie Ross',email:'nross@icloud.com',phone:'(303) 555-0456',av:'NR',source:'CSV Import',since:'Mar 2026',drops:['D007','D010'],follower:false},
+  {id:'C015',name:'Ben Okafor',email:'beno@gmail.com',phone:'(720) 555-0589',av:'BO',source:'Manual',since:'Mar 2026',drops:[],follower:true},
+  {id:'C016',name:'Jess Hartley',email:'jessh@gmail.com',phone:'(303) 555-0623',av:'JH',source:'CSV Import',since:'Mar 2026',drops:['D005'],follower:true},
+  {id:'C017',name:'Kenji Tanaka',email:'kenji.t@gmail.com',phone:'(720) 555-0734',av:'KT',source:'CSV Import',since:'Mar 2026',drops:['D011'],follower:false},
+  {id:'C018',name:'Rachel Kim',email:'rachk@icloud.com',phone:'(303) 555-0867',av:'RK',source:'Manual',since:'Mar 2026',drops:['D001'],follower:true},
 ];
 
 // Helpers
@@ -551,6 +551,9 @@ function renderHome(){
             <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
               ${ic('map',13)} ${fmtVenue(live.venue)}
             </div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:#9CA3AF;margin-bottom:6px">
+              📡 Sent to 312 followers
+            </div>
             ${(()=>{const acc=live.partners.filter(p=>p.status==='Accepted');const awt=live.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#3B82F6">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
             ${live.cap===1?(()=>{
   const sg=guests.find(g=>g.drop===live.id);
@@ -599,6 +602,9 @@ function renderHome(){
           </div>
           <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
             ${ic('map',13)} ${fmtVenue(d.venue)}
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:#9CA3AF;margin-bottom:6px">
+            📡 Sent to 312 followers
           </div>
           ${(()=>{const acc=d.partners.filter(p=>p.status==='Accepted');const awt=d.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#3B82F6">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
           <div style="font-size:11px;color:#6B7280">${d.cap-d.res} spot${d.cap-d.res===1?'':'s'} available</div>
@@ -1207,9 +1213,12 @@ function renderPayout(){
 }
 function renderAnalytics(){
   const bars=[{l:'Mon',v:12},{l:'Tue',v:28},{l:'Wed',v:8},{l:'Thu',v:35},{l:'Fri',v:42},{l:'Sat',v:18},{l:'Sun',v:5}];const mx=42;
+  const followerWeeks=[{w:'Week 1',v:12},{w:'Week 2',v:18},{w:'Week 3',v:15},{w:'Week 4',v:23},{w:'Week 5',v:28},{w:'Week 6',v:31},{w:'Week 7',v:27},{w:'Week 8',v:35}];const fmx=35;
   return `${hdr('Analytics','Last 7 days',"S.menuSub=null;render()")}
   <div style="padding:14px 16px"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${mc('Reservations','148','+23%','users','#3B82F6','#EFF6FF')}${mc('Check-In Rate','72%','108/148','check','#0D9488','#F0FDFA')}${mc('Revenue','$2,340','After refunds','dollar','#3B82F6','#EFF6FF')}${mc('No-Show Rate','8.1%','12','alert','#F59E0B','#FFFBEB')}</div>
-  <div class="card"><div class="cb"><div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Reservations by Day</div><div style="display:flex;gap:6px;align-items:flex-end;height:100px">${bars.map((b,i)=>`<div style="flex:1;text-align:center"><div style="height:${(b.v/mx)*85}px;background:${i===4?'#3B82F6':'#DBEAFE'};border-radius:3px 3px 0 0;margin-bottom:4px;position:relative"><span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:#4B5563">${b.v}</span></div><span style="font-size:9px;color:#6B7280">${b.l}</span></div>`).join('')}</div></div></div></div>`;
+  <div class="card"><div class="cb"><div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Reservations by Day</div><div style="display:flex;gap:6px;align-items:flex-end;height:100px">${bars.map((b,i)=>`<div style="flex:1;text-align:center"><div style="height:${(b.v/mx)*85}px;background:${i===4?'#3B82F6':'#DBEAFE'};border-radius:3px 3px 0 0;margin-bottom:4px;position:relative"><span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:#4B5563">${b.v}</span></div><span style="font-size:9px;color:#6B7280">${b.l}</span></div>`).join('')}</div></div></div>
+  <div style="margin-top:18px"><div style="display:flex;gap:8px;margin-bottom:12px">${mc('Total Followers','312','','radio','#7C3AED','#EDE9FE')}${mc('New This Month','+47','followers','radio','#7C3AED','#EDE9FE')}</div>
+  <div class="card"><div class="cb"><div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Follower Growth (8 Weeks)</div><div style="display:flex;gap:6px;align-items:flex-end;height:100px">${followerWeeks.map((fw,i)=>`<div style="flex:1;text-align:center"><div style="height:${(fw.v/fmx)*85}px;background:${i===7?'#7C3AED':'#E9D5FF'};border-radius:3px 3px 0 0;margin-bottom:4px;position:relative"><span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:#4B5563">${fw.v}</span></div><span style="font-size:9px;color:#6B7280">${fw.w}</span></div>`).join('')}</div></div></div></div></div>`;
 }
 function renderPartners(){
   const statusColor={Active:'#16A34A',Invited:'#3B82F6',Declined:'#9CA3AF',Suspended:'#F97316'};
@@ -1384,6 +1393,17 @@ function renderProfile(){
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Information</div>
         ${[['Category',a.cat],['Sub-Category',a.subCat]].map(r=>`<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:11px"><span style="color:#6B7280">${r[0]}</span><span style="color:#111827;font-weight:500">${r[1]}</span></div>`).join('')}
       </div>
+      <!-- Followers -->
+      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Audience</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#111827">312 Followers</div>
+            <div style="font-size:10px;color:#9CA3AF;margin-top:2px">+47 this month</div>
+          </div>
+          <div style="width:48px;height:48px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED">${ic('radio',20)}</div>
+        </div>
+      </div>
       <!-- Drop Settings -->
       <div style="padding-bottom:0">
         <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Drop Settings</div>
@@ -1406,6 +1426,7 @@ function renderCustomers(){
     if(q&&!c.name.toLowerCase().includes(q)&&!c.email.toLowerCase().includes(q)&&!c.phone.includes(q))return false;
     if(custFilter==='attended'&&c.drops.length===0)return false;
     if(custFilter==='never'&&c.drops.length>0)return false;
+    if(custFilter==='followers'&&!c.follower)return false;
     if(custDrop!=='all'&&!c.drops.includes(custDrop))return false;
     return true;
   });
@@ -1429,7 +1450,7 @@ function renderCustomers(){
 
     <!-- Filter by engagement -->
     <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto">
-      ${[['all','All',customerList.length],['attended','Attended a Drop',customerList.filter(c=>c.drops.length>0).length],['never','Never Attended',customerList.filter(c=>c.drops.length===0).length]].map(([val,label,cnt])=>`
+      ${[['all','All',customerList.length],['attended','Attended a Drop',customerList.filter(c=>c.drops.length>0).length],['followers','Followers',customerList.filter(c=>c.follower).length],['never','Never Attended',customerList.filter(c=>c.drops.length===0).length]].map(([val,label,cnt])=>`
         <button onclick="S.custFilter='${val}';S.custDropFilter='all';render()" style="padding:5px 12px;border-radius:18px;font-size:11px;font-weight:500;border:1px solid ${custFilter===val?'#1B2A4A':'#E5E7EB'};background:${custFilter===val?'#1B2A4A':'#fff'};color:${custFilter===val?'#fff':'#4B5563'};white-space:nowrap;flex-shrink:0">${label} <span style="opacity:0.65">(${cnt})</span></button>
       `).join('')}
     </div>
@@ -1452,6 +1473,7 @@ function renderCustomers(){
     <div style="display:flex;gap:8px;margin-bottom:14px">
       ${mc('Showing',filtered.length,custFilter==='all'&&custDrop==='all'?'total contacts':'filtered','users','#3B82F6','#EFF6FF')}
       ${mc('Attended a Drop',customerList.filter(c=>c.drops.length>0).length,'of '+customerList.length,'check','#16A34A','#DCFCE7')}
+      ${mc('Followers',customerList.filter(c=>c.follower).length,'location followers','radio','#7C3AED','#EDE9FE')}
     </div>
 
     <!-- List -->
@@ -1460,7 +1482,7 @@ function renderCustomers(){
     <div onclick="S.modal='customer-${c.id}';render()" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
       <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${c.av}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600;color:#111827">${c.name}</div>
+        <div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:6px">${c.name}${c.follower?`<span style="font-size:10px;font-weight:600;color:#7C3AED;background:#EDE9FE;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:3px"><span style="width:4px;height:4px;border-radius:50%;background:#7C3AED"></span>Follows</span>`:''}</div>
         <div style="font-size:11px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.email}</div>
         <div style="font-size:11px;color:#9CA3AF">${c.phone}</div>
       </div>
