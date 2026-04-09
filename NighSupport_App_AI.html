@@ -2503,7 +2503,7 @@ function setOrgTab(tab){
 }
 function setFinanceSubTab(sub){
   S.financeSubTab=sub;
-  ['revenue','billing'].forEach(t=>{
+  ['revenue','billing','payouts'].forEach(t=>{
     const el=document.getElementById('od-fin-'+t);if(el)el.style.display=t===sub?'block':'none';
     const btn=document.getElementById('od-fin-btn-'+t);
     if(btn){btn.style.background=t===sub?'#fff':'transparent';btn.style.color=t===sub?'#111827':'#6B7280';btn.style.boxShadow=t===sub?'0 1px 3px rgba(0,0,0,0.08)':'none';}
@@ -2527,7 +2527,7 @@ function rOrgDetail(id){
   const billingColor=o.billingStatus==='Current'?'#22C55E':o.billingStatus==='Past Due'?'#F59E0B':'#EF4444';
   const billingBg=o.billingStatus==='Current'?'#F0FDF4':o.billingStatus==='Past Due'?'#FFFBEB':'#FEF2F2';
   const hasCollections=featureFlags.find(f=>f.name==='Collections'&&(f.orgs.includes(o.id)||f.global));
-  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Account'],['crm','CRM'],['finance','Finance'],['profile','Profile'],...(o.orgType==='Parent'?[['children','Children']]:[]),['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Customers'],['followers','Followers'],['team','Team'],['venues','Venues'],['payouts','Payouts'],['credits','Credits'],['analytics','Analytics'],['partners','Partners'],['comms','Comms'],['activity','Activity'],['config','Config']];
+  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Account'],['crm','CRM'],['finance','Finance'],['profile','Profile'],...(o.orgType==='Parent'?[['children','Children']]:[]),['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Customers'],['followers','Followers'],['team','Team'],['venues','Venues'],['credits','Credits'],['analytics','Analytics'],['partners','Partners'],['comms','Comms'],['activity','Activity'],['config','Config']];
   const secHdr=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
   const accessColor=(a)=>a==='Admin (Account Owner)'||a==='Owner'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Administrator'||a==='Enterprise Admin'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Regional Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Location Manager'?{bg:'#DCFCE7',fg:'#166534'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:{bg:'#F3F4F6',fg:'#4B5563'};
   return `
@@ -3011,6 +3011,7 @@ ${(()=>{
     <div style="display:flex;gap:2px;background:#F1F5F9;border-radius:8px;padding:3px;width:fit-content;margin-bottom:20px">
       ${tabBtn('revenue','Revenue')}
       ${tabBtn('billing','Billing')}
+      ${tabBtn('payouts','Payouts')}
     </div>
 
     <!-- REVENUE SUBTAB -->
@@ -3039,12 +3040,15 @@ ${(()=>{
 
       ${secHdr('Payout Account')}
       <div class="card card-p" style="margin-bottom:20px">
-        ${[
-          ['Bank', payout.bankName],
-          ['Account', payout.accountMasked],
-          ['Payout Schedule', payout.schedule],
-          ['Pending Balance', '$'+payout.pending.toFixed(2)],
-        ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:#6B7280">${payout.bankName} · ${payout.accountMasked} · ${payout.schedule}</span>
+          <button class="btn btn-ghost btn-sm" onclick="setFinanceSubTab('payouts')">Full details →</button>
+        </div>
+        <div style="display:flex;gap:16px">
+          <div><div style="font-size:18px;font-weight:800;color:#D97706">$${payout.pending.toFixed(0)}</div><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px">Pending</div></div>
+          <div><div style="font-size:18px;font-weight:800;color:#16A34A">$${payout.balance.toLocaleString()}</div><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px">Available</div></div>
+          <div><div style="font-size:18px;font-weight:800;color:#1B2A4A">$${payout.history.reduce((s,p)=>s+p.amount,0).toLocaleString()}</div><div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px">Paid Out (30d)</div></div>
+        </div>
       </div>
     </div>
 
@@ -3080,6 +3084,32 @@ ${(()=>{
           ].map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
         </div>
       </div>
+    </div>
+
+    <!-- PAYOUTS SUBTAB -->
+    <div id="od-fin-payouts" style="display:${fst==='payouts'?'block':'none'}">
+      <div class="grid grid-3" style="margin-bottom:20px">
+        <div class="stat"><div class="stat-label">Available Balance</div><div class="stat-val">$${payout.balance.toLocaleString()}</div><div class="stat-sub">Ready to pay out</div></div>
+        <div class="stat"><div class="stat-label">Pending</div><div class="stat-val" style="color:#D97706">$${payout.pending.toLocaleString()}</div><div class="stat-sub">In processing</div></div>
+        <div class="stat"><div class="stat-label">Paid Out (30d)</div><div class="stat-val">$${payout.history.reduce((s,p)=>s+p.amount,0).toLocaleString()}</div><div class="stat-sub">${payout.history.length} payout${payout.history.length!==1?'s':''}</div></div>
+      </div>
+      <div class="card card-p" style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700">Banking Config</div>
+          <button class="btn btn-ghost btn-sm" onclick="openModal('edit-bank-${o.id}')">${svgI('edit',13)} Edit</button>
+        </div>
+        ${[['Bank',payout.bankName],['Account',payout.accountMasked],['Routing',payout.routing],['Payout Schedule',payout.schedule]].map(([k,v])=>`
+        <div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val" style="font-family:monospace">${v}</span></div>`).join('')}
+      </div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px">Payout History</div>
+      ${payout.history.length?`<div class="card"><table class="tbl"><thead><tr><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+      ${payout.history.map(p=>`<tr>
+        <td style="font-family:monospace;font-size:12px;color:#6B7280">${p.ref}</td>
+        <td style="font-size:12px;color:#6B7280">${p.date}</td>
+        <td style="font-weight:700">$${p.amount.toLocaleString()}</td>
+        <td>${bg(statusBg(p.status),'',p.status)}</td>
+      </tr>`).join('')}
+      </tbody></table></div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">No payout history yet.</div>`}
     </div>
     `;
   })()}
@@ -3118,31 +3148,6 @@ ${(()=>{
 </div>
 
 <!-- TAB: PAYOUTS -->
-<div id="od-tab-payouts" class="od-tc" style="padding:20px;display:${at==='payouts'?'block':'none'}">
-  <div class="grid grid-3" style="margin-bottom:20px">
-    <div class="stat"><div class="stat-label">Available Balance</div><div class="stat-val">$${payout.balance.toLocaleString()}</div><div class="stat-sub">Ready to pay out</div></div>
-    <div class="stat"><div class="stat-label">Pending</div><div class="stat-val">$${payout.pending.toLocaleString()}</div><div class="stat-sub">In processing</div></div>
-    <div class="stat"><div class="stat-label">Paid Out (30d)</div><div class="stat-val">$${payout.history.reduce((s,p)=>s+p.amount,0).toLocaleString()}</div><div class="stat-sub">${payout.history.length} payouts</div></div>
-  </div>
-  <div class="card card-p" style="margin-bottom:20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:700">Banking Config</div>
-      <button class="btn btn-ghost btn-sm" onclick="openModal('edit-bank-${o.id}')">${svgI('edit',13)} Edit</button>
-    </div>
-    ${[['Bank',payout.bankName],['Account',payout.accountMasked],['Routing',payout.routing],['Payout Schedule',payout.schedule]].map(([k,v])=>`
-    <div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val" style="font-family:monospace">${v}</span></div>`).join('')}
-  </div>
-  <div style="font-size:14px;font-weight:700;margin-bottom:12px">Payout History</div>
-  ${payout.history.length?`<div class="card"><table class="tbl"><thead><tr><th>Reference</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>
-  ${payout.history.map(p=>`<tr>
-    <td style="font-family:monospace;font-size:12px;color:#6B7280">${p.ref}</td>
-    <td style="font-size:12px;color:#6B7280">${p.date}</td>
-    <td style="font-weight:700">$${p.amount.toLocaleString()}</td>
-    <td>${bg(statusBg(p.status),'',p.status)}</td>
-  </tr>`).join('')}
-  </tbody></table></div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">No payout history yet.</div>`}
-</div>
-
 <!-- TAB: CREDITS -->
 <div id="od-tab-credits" class="od-tc" style="padding:20px;display:${at==='credits'?'block':'none'}">
   <div class="grid grid-3" style="margin-bottom:20px">
