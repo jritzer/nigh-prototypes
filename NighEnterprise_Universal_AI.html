@@ -1987,12 +1987,11 @@ function dropDetail(d){
 
     <!-- Stats bar -->
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
-      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#0d9488'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
+      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#3b82f6'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
         ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
         <div style="flex:1;text-align:center;padding:12px 8px;">
           <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
           <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${s[0]}</div>
-          ${i===1&&(isLive||isPaused)?bar(capPct,c.color,4):''}
         </div>`).join('')}
     </div>
 
@@ -2019,13 +2018,13 @@ function dropDetail(d){
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             <div style="font-size:0.82rem;font-weight:600;color:#64748b;">Guests with reservations will appear here once the drop goes live</div>
           </div>`:`
-          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;padding:8px 18px;background:#f8fafc;border-bottom:1px solid #f1f5f9;">
-            ${['Guest','Ticket ID','Reserved','Status',''].map(h=>`<span style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">${h}</span>`).join('')}
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 120px;padding:8px 18px;background:#f8fafc;border-bottom:1px solid #f1f5f9;">
+            ${['Guest','Ticket ID','Reserved','Status',''].map((h,i)=>`<span style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;${i>0&&i<4?'text-align:center;display:block;':''}">${h}</span>`).join('')}
           </div>
           ${gFilteredGuests.map(g=>{
             const gs=gStatusStyle[g.status]||{bg:'#f1f5f9',col:'#475569'};
             const initials=g.name.split(' ').map(n=>n[0]).join('');
-            return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
+            return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 120px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
               <div style="display:flex;align-items:center;gap:9px;">
                 <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
                 <div>
@@ -2033,13 +2032,13 @@ function dropDetail(d){
                   <div style="font-size:0.68rem;color:#94a3b8;">${g.mobile}</div>
                 </div>
               </div>
-              <div style="font-size:0.72rem;color:#64748b;font-family:monospace;">${g.tid}</div>
-              <div style="font-size:0.72rem;color:#94a3b8;">${g.at}</div>
-              <div style="display:inline-flex;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
+              <div style="font-size:0.72rem;color:#64748b;font-family:monospace;text-align:center;">${g.tid}</div>
+              <div style="font-size:0.72rem;color:#94a3b8;text-align:center;">${g.at}</div>
+              <div style="display:flex;justify-content:center;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
               <div style="display:flex;gap:5px;justify-content:flex-end;">
-                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Check In</button>`:''}
-                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
-                ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;cursor:pointer;">Cancel</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
+                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;">Cancel</button>`:''}
               </div>
             </div>`;
           }).join('')}`}
@@ -2108,7 +2107,7 @@ function dropDetail(d){
             {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
             {icon:'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
             {icon:'M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8zM19 8v6M22 11h-6', label:'Check In Guest', sub:'Scan, manual, or guest scans',  action:"ss({dropModal:'checkin'})"},
-            {icon:'M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.29 6.29l1.42-1.42a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z', label:'Broadcast',     sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
+            {icon:'M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.29 6.29l1.42-1.42a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
             {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:''},
           ].map((a,i)=>`
             <button onclick="${a.action}" style="width:100%;padding:11px 14px;background:none;border:none;border-bottom:${i<4?'1px solid #f8fafc':'none'};display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
