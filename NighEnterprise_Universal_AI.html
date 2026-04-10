@@ -1806,9 +1806,14 @@ function rDrops(){
                 <span style="font-size:0.62rem;">🕐</span>
                 <span style="font-size:0.68rem;font-weight:700;color:${c.color};">Goes live ${dropCountdown(d)} · ${dropTime(d)}</span>
               </div>`:''}
-              ${d.status==='live'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border-radius:20px;padding:3px 10px;">
-                <span style="font-size:0.62rem;">📡</span>
-                <span style="font-size:0.68rem;font-weight:700;color:#15803d;">Broadcasting now</span>
+              ${d.status==='live'?`<div style="margin-top:5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <div style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border-radius:20px;padding:3px 10px;">
+                  <span style="font-size:0.62rem;">📡</span>
+                  <span style="font-size:0.68rem;font-weight:700;color:#15803d;">Broadcasting until ${broadcastCutoff(d)}</span>
+                </div>
+                ${d.res>=d.cap?`<div style="display:inline-flex;align-items:center;gap:5px;background:#fef2f2;border-radius:20px;padding:3px 10px;border:1px solid #fecaca;">
+                  <span style="font-size:0.68rem;font-weight:700;color:#dc2626;">Sold Out</span>
+                </div>`:''}
               </div>`:''}
               ${d.status==='ended'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:20px;padding:3px 10px;">
                 <span style="font-size:0.62rem;">⏹</span>
@@ -1819,7 +1824,11 @@ function rDrops(){
                 <span style="font-size:0.68rem;font-weight:700;color:#a16207;">Draft</span>
               </div>`:''}
             </div>
-            <div style="display:grid;grid-template-columns:repeat(4,60px);gap:8px;flex-shrink:0;">
+            <div style="display:grid;grid-template-columns:repeat(5,60px);gap:8px;flex-shrink:0;">
+              <div style="text-align:center;">
+                <div style="font-size:0.88rem;font-weight:900;color:#0f172a;">${d.cap}</div>
+                <div style="font-size:0.6rem;color:#94a3b8;">spots</div>
+              </div>
               <div style="text-align:center;">
                 <div style="font-size:0.88rem;font-weight:900;color:${d.status!=='scheduled'?'#0f172a':'#94a3b8'};">${d.status!=='scheduled'?d.res:'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">reserv.</div>
