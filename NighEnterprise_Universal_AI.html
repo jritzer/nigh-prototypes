@@ -1997,7 +1997,6 @@ function dropDetail(d){
               : `<div style="display:flex;gap:6px;">
                   ${['All','Reserved','Checked In','No Show'].map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+sampleGuests.filter(g=>g.status==='Checked In').length+')':f==='Reserved'?'Reserved ('+sampleGuests.filter(g=>g.status==='Reserved').length+')':f==='No Show'?'No Show ('+sampleGuests.filter(g=>g.status==='No Show').length+')':'All ('+sampleGuests.length+')'}</button>`).join('')}
                 </div>`}
-            ${!isScheduled?`<button onclick="ss({dropModal:'checkin'})" style="padding:6px 14px;border-radius:8px;border:none;background:${c.color};color:#fff;font-size:0.72rem;font-weight:700;cursor:pointer;">+ Check In</button>`:''}
           </div>
           ${isScheduled?`<div style="padding:48px;text-align:center;color:#94a3b8;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
