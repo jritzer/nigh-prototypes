@@ -145,9 +145,9 @@ function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 
 
 // Data
 const accts=[
-  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',role:'Owner',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder',multiVenue:false},
-  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false},
-  {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Food & Drink',subCat:'Brewery',addr:'4910 Nautilus Ct, Boulder, CO 80301',handle:'averybrewing',phone:'(303) 555-0192',email:'events@averybrewing.com',maxPartners:5,multiVenue:false}
+  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',role:'Owner',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',maxPartners:3,parentOrg:'Big Red F',enterprise:true,location:'Boulder',multiVenue:false},
+  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',website:'https://www.nike.com',maxPartners:3,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false},
+  {name:'Avery Brewing Co',short:'Avery',role:'Owner',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',maxPartners:5,multiVenue:false}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
 const team=[
@@ -1347,67 +1347,61 @@ function renderSubscription(){
 
 function renderProfile(){
   const a=acct();
-  return `${hdr('Pro Account','Business Profile',"S.menuSub=null;render()")}
-  <div style="padding:14px 16px">
-    <div class="card" style="margin-bottom:14px"><div class="cb">
-      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:14px">
-        <div style="width:60px;height:60px;border-radius:14px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;margin-bottom:10px">${a.short.charAt(0)}</div>
-        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:2px">${a.name}</div>
-        <div style="font-size:12px;color:#6B7280;background:#EFF6FF;color:#3B82F6;padding:4px 10px;border-radius:6px;font-weight:600">${a.role}</div>
-      </div>
-      <!-- Read-only fields -->
-      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Identity</div>
-        ${[['Location Name',a.name],['Brand Handle','@'+a.handle],['Address / Drop Location',a.addr]].map(r=>`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:3px">${r[0]}</div><div style="font-size:13px;color:#111827;font-weight:500">${r[1]}</div></div>`).join('')}
-        <div style="font-size:10px;color:#9CA3AF;margin-top:4px;display:flex;align-items:center;gap:3px">${ic('alert',10)} To update these fields, contact Nigh support.</div>
-        ${a.enterprise?`<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:12px;margin-top:12px;">
-          <div style="font-size:10px;font-weight:800;color:#0369A1;margin-bottom:9px;text-transform:uppercase;letter-spacing:0.06em;">Enterprise Account</div>
-          <div style="display:flex;flex-direction:column;gap:7px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
-              <span style="color:#6B7280;font-weight:500;">This Location</span>
-              <span style="color:#0f172a;font-weight:700;">${a.name}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
-              <span style="color:#6B7280;font-weight:500;">Brand</span>
-              <span style="color:#0f172a;font-weight:700;">${a.brandName||a.name}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">
-              <span style="color:#6B7280;font-weight:500;">Enterprise</span>
-              <span style="color:#0f172a;font-weight:700;">${a.parentOrg}</span>
-            </div>
-          </div>
-          <div style="font-size:10px;color:#9CA3AF;margin-top:9px;padding-top:8px;border-top:1px solid #BAE6FD;display:flex;align-items:center;gap:4px;">${ic('alert',10)} Internal account info — not visible to guests</div>
-        </div>`:''}
-      </div>
-      <!-- Editable fields -->
-      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Contact & Details</div>
-        ${[['Business Phone',a.phone||'(720) 555-0145'],['Business Email',a.email||'hello@centro.com']].map(r=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">${r[0]}</label><input type="text" value="${r[1]}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box"/></div>`).join('')}
-        <div style="margin-bottom:0"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Bio / Description</label><textarea style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;min-height:70px">Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.</textarea></div>
-      </div>
-      <!-- Business info -->
-      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Information</div>
-        ${[['Category',a.cat],['Sub-Category',a.subCat]].map(r=>`<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:11px"><span style="color:#6B7280">${r[0]}</span><span style="color:#111827;font-weight:500">${r[1]}</span></div>`).join('')}
-      </div>
-      <!-- Followers -->
-      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Audience</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
-          <div>
-            <div style="font-size:13px;font-weight:600;color:#111827">312 Followers</div>
-            <div style="font-size:10px;color:#9CA3AF;margin-top:2px">+47 this month</div>
-          </div>
-          <div style="width:48px;height:48px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED">${ic('radio',20)}</div>
+  const fld=(label,val,ph='')=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">${label}</label><input type="text" value="${val||''}" placeholder="${ph}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box"/></div>`;
+  const descLen=160-(a.description||'').length;
+  const CATEGORIES=['Restaurant & Dining','Bar & Nightlife','Retail','Entertainment','Fitness & Wellness','Arts & Culture','Sports & Recreation','Hotel & Hospitality'];
+  const SUBCATS={'Restaurant & Dining':['Fine Dining','Casual Dining','Fast Casual','Café & Coffee','Bar & Grill','Brunch'],'Bar & Nightlife':['Cocktail Bar','Wine Bar','Craft Beer','Nightclub','Lounge','Speakeasy'],'Retail':['Apparel','Specialty Food','Home Goods','Books','Outdoor & Sports','Jewelry'],'Entertainment':['Live Music','Comedy','Theater','Cinema','Gaming','Escape Room'],'Fitness & Wellness':['Gym & Fitness','Yoga','Spa & Massage','Cycling','Martial Arts'],'Arts & Culture':['Gallery','Museum','Studio','Workshop'],'Sports & Recreation':['Stadium','Arena','Golf','Tennis','Bowling'],'Hotel & Hospitality':['Hotel','Resort','Boutique Inn']};
+  const subCats=SUBCATS[a.cat]||[];
+  const sel=(label,val,opts)=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">${label}</label><select style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box;">${opts.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select></div>`;
+  return `${hdr('Pro Account','Location',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px;padding-bottom:90px">
+
+    <!-- Profile section -->
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px;">Profile</div>
+    <div class="card" style="margin-bottom:16px"><div class="cb">
+      ${fld('Business Name',a.name,'e.g. Centro Boulder')}
+      <div style="margin-bottom:10px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">Description</label>
+        <div style="position:relative;">
+          <textarea id="proDesc" maxlength="160" placeholder="A short description of your business for your public profile" style="width:100%;padding:8px 10px 22px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;resize:none;font-family:inherit;box-sizing:border-box;min-height:72px;" oninput="document.getElementById('proDescCount').textContent=(160-this.value.length)+' remaining'">${a.description||''}</textarea>
+          <span id="proDescCount" style="position:absolute;bottom:6px;right:8px;font-size:10px;color:#9CA3AF;">${descLen} remaining</span>
         </div>
       </div>
-      <!-- Drop Settings -->
-      <div style="padding-bottom:0">
-        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Drop Settings</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><div><div style="font-size:12px;color:#374151;font-weight:500">Max Partners per Drop</div><div style="font-size:10px;color:#9CA3AF;margin-top:2px">Partners must accept before appearing publicly</div></div><div style="display:flex;align-items:center;gap:6px">${[1,2,3,4,5].map(n=>`<button style="width:28px;height:28px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid ${a.maxPartners===n?'#3B82F6':'#E5E7EB'};background:${a.maxPartners===n?'#EFF6FF':'#fff'};color:${a.maxPartners===n?'#3B82F6':'#6B7280'}">${n}</button>`).join('')}</div></div>
+      ${fld('Street Address',a.addr,'123 Main St')}
+      <div style="display:grid;grid-template-columns:1fr 60px 72px;gap:8px;margin-bottom:10px;">
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">City</label><input value="${a.city||''}" placeholder="Boulder" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box;"/></div>
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">State</label><input value="${a.state||''}" placeholder="CO" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box;"/></div>
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">Zip</label><input value="${a.zip||''}" placeholder="80302" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box;"/></div>
       </div>
+      ${fld('Phone',a.phone,'(720) 555-0100')}
+      ${fld('Website',a.website,'https://www.yourbusiness.com')}
     </div></div>
-    <button style="width:100%;background:#3B82F6;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600">Save Changes</button>
+
+    <!-- Account section -->
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px;">Account</div>
+    <div class="card" style="margin-bottom:16px"><div class="cb">
+      ${fld('Handle','@'+a.handle,'@yourbusiness')}
+      ${sel('Category',a.cat,CATEGORIES)}
+      ${sel('Subcategory',a.subCat,['— Select —',...subCats])}
+      <div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;margin-bottom:2px;">Subscription</div>
+          <div style="font-size:13px;font-weight:700;color:#111827;">Pro</div>
+        </div>
+        <button onclick="S.menuSub='billing';render()" style="padding:5px 12px;border:1px solid #E5E7EB;border-radius:7px;font-size:11px;font-weight:600;background:#fff;color:#374151;cursor:pointer;">Manage →</button>
+      </div>
+      ${a.enterprise?`<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:12px;">
+        <div style="font-size:10px;font-weight:800;color:#0369A1;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;">Enterprise Organization</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:#6B7280;">This Location</span><span style="color:#0f172a;font-weight:700;">${a.name}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:#6B7280;">Brand</span><span style="color:#0f172a;font-weight:700;">${a.brandName||a.name}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:#6B7280;">Enterprise</span><span style="color:#0f172a;font-weight:700;">${a.parentOrg}</span></div>
+        </div>
+        <div style="font-size:10px;color:#9CA3AF;margin-top:8px;padding-top:8px;border-top:1px solid #BAE6FD;display:flex;align-items:center;gap:4px;">${ic('alert',10)} Internal account info — not visible to guests</div>
+      </div>`:''}
+    </div></div>
+
+    <button style="width:100%;background:#3B82F6;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;">Save Changes</button>
   </div>`;
 }
 function renderCustomers(){
