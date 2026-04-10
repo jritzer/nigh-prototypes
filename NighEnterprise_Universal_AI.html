@@ -1987,7 +1987,7 @@ function dropDetail(d){
 
     <!-- Stats bar -->
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
-      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#0E4EF5'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
+      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—','#0E4EF5'],['Checked In',(isLive||isPaused)?d.ci:'—','#16a34a'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
         ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
         <div style="flex:1;text-align:center;padding:12px 8px;">
           <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
@@ -2036,7 +2036,7 @@ function dropDetail(d){
               <div style="font-size:0.72rem;color:#94a3b8;text-align:center;">${g.at}</div>
               <div style="display:flex;justify-content:center;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
               <div style="display:flex;gap:5px;justify-content:flex-end;">
-                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
                 ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
                 ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;">Cancel</button>`:''}
               </div>
