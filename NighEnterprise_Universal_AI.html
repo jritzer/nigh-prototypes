@@ -1690,6 +1690,9 @@ function dropDate(d){
   return dt;
 }
 function dropTime(d){const seed=dropSeed(d);return TIMES[seed%TIMES.length];}
+function parseTimeMins(t){const[tp,per]=t.split(' ');const[h,m]=tp.split(':').map(Number);let hr=h;if(per==='PM'&&h!==12)hr+=12;if(per==='AM'&&h===12)hr=0;return hr*60+(m||0);}
+function minsToTime(mins){const h24=Math.floor(mins/60)%24;const m=mins%60;const per=h24>=12?'PM':'AM';const h12=h24%12||12;return h12+':'+(m<10?'0':'')+m+' '+per;}
+function broadcastCutoff(d,cutoff=15){const base=d.endTime||dropTime(d);return minsToTime(parseTimeMins(base)-cutoff);}
 function dropCountdown(d){
   const dt=dropDate(d);
   const diffMs=dt-TODAY;
@@ -1943,7 +1946,7 @@ function dropDetail(d){
           <span>📅 ${dateLabel} · ${tm}${d.endTime?' – '+d.endTime:''}</span>
           <span>📍 ${loc?loc.name:'—'}</span>
           <span>${d.price>0?'$'+d.price+' per spot':'Free'}</span>
-          ${isLive?`<span style="color:#16a34a;font-weight:700;display:flex;align-items:center;gap:4px;">📡 Broadcasting now</span>`:''}
+          ${isLive?`<span style="color:#16a34a;font-weight:700;display:flex;align-items:center;gap:4px;">📡 Broadcasting · closes at ${broadcastCutoff(d)}</span>`:''}
           ${isScheduled?`<span style="color:${c.color};font-weight:700;display:flex;align-items:center;gap:4px;">🕐 Goes live ${dateLabel} at ${tm}</span>`:''}
         </div>
       </div>
@@ -2029,6 +2032,11 @@ function dropDetail(d){
             <div style="font-size:0.85rem;color:#374151;">Up to ${d.bh} ${d.bh===1?'hr':'hrs'} in advance</div>
           </div>
           <div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Broadcast Window</div>
+            <div style="font-size:0.85rem;color:#374151;">${tm}${d.endTime?' – '+d.endTime:''} &rarr; closes at <strong>${broadcastCutoff(d)}</strong></div>
+            <div style="font-size:0.7rem;color:#94a3b8;margin-top:3px;">Booking closes 15 min before ${d.endTime?'end of arrival window':'drop start'}. No new reservations after ${broadcastCutoff(d)}.</div>
+          </div>
+          <div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Price</div>
             <div style="font-size:0.85rem;color:#374151;">${d.price>0?'$'+d.price+' per spot':'Free'}</div>
           </div>
@@ -2036,7 +2044,11 @@ function dropDetail(d){
             <span style="font-size:1.2rem;">📡</span>
             <div>
               <div style="font-size:0.82rem;font-weight:800;color:#5b21b6;">${loc&&loc.followers?loc.followers.toLocaleString():0} followers ${isScheduled?'will be notified':'notified'}</div>
-              <div style="font-size:0.7rem;color:#7c3aed;margin-top:2px;">${isScheduled?`Drop will broadcast to all ${loc?loc.name:''} followers when it goes live`:`Broadcast to all ${loc?loc.name:''} followers when it went live`}</div>
+              <div style="font-size:0.7rem;color:#7c3aed;margin-top:2px;">${isScheduled
+                ?`Broadcast opens at ${tm} · booking closes at ${broadcastCutoff(d)} (15 min before ${d.endTime?'window end':'start'})`
+                :isLive
+                  ?`Broadcasting now to all ${loc?loc.name:''} followers · booking closes at ${broadcastCutoff(d)}`
+                  :`Broadcast to all ${loc?loc.name:''} followers when it went live`}</div>
             </div>
           </div>
         </div>`}
