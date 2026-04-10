@@ -1721,7 +1721,7 @@ function rDrops(){
     return `<div style="padding:28px 32px;">
       ${header}
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
-        ${['live','scheduled','ended'].map(st=>`<button onclick="ss({dropStatusFilter:'${st}'===(${JSON.stringify(filterStatus)})?null:'${st}'})" style="padding:5px 12px;border-radius:20px;border:1px solid ${filterStatus===st?c.color:'#e5e7eb'};background:${filterStatus===st?c.color+'18':'transparent'};color:${filterStatus===st?c.color:'#64748b'};font-size:0.72rem;font-weight:600;cursor:pointer;text-transform:capitalize;">${st}</button>`).join('')}
+        ${['live','scheduled','ended'].map(st=>`<button onclick="ss({dropStatusFilter:S.dropStatusFilter==='${st}'?null:'${st}'})" style="padding:5px 12px;border-radius:20px;border:1px solid ${filterStatus===st?c.color:'#e5e7eb'};background:${filterStatus===st?c.color+'18':'transparent'};color:${filterStatus===st?c.color:'#64748b'};font-size:0.72rem;font-weight:600;cursor:pointer;text-transform:capitalize;">${st}</button>`).join('')}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${drops.length===0?`<div style="background:#fff;border-radius:12px;border:1px dashed #e5e7eb;padding:40px;text-align:center;color:#94a3b8;font-size:0.82rem;">No drops match your filters.</div>`:''}
