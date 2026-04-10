@@ -1664,6 +1664,18 @@ function dropDate(d){
   return dt;
 }
 function dropTime(d){const seed=dropSeed(d);return TIMES[seed%TIMES.length];}
+function dropCountdown(d){
+  const dt=dropDate(d);
+  const diffMs=dt-TODAY;
+  const diffMins=Math.round(diffMs/60000);
+  const diffHrs=Math.round(diffMs/3600000);
+  const diffDays=Math.round(diffMs/86400000);
+  if(diffMins<=0) return 'Going live soon';
+  if(diffHrs<1) return 'In '+diffMins+' min';
+  if(diffDays<1) return 'In '+diffHrs+' hr'+(diffHrs!==1?'s':'');
+  if(diffDays===1) return 'Tomorrow';
+  return 'In '+diffDays+' days';
+}
 function fmtDropDate(d){
   const dt=dropDate(d);
   const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -1740,6 +1752,22 @@ function rDrops(){
                 ${d.day?dayBadge(d.day):''}
                 <span style="font-size:0.7rem;color:#94a3b8;">${loc?loc.name:'—'}</span>
               </div>
+              ${d.status==='scheduled'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:${c.color}0f;border:1px solid ${c.color}30;border-radius:20px;padding:3px 10px;">
+                <span style="font-size:0.62rem;">🕐</span>
+                <span style="font-size:0.68rem;font-weight:700;color:${c.color};">Goes live ${dropCountdown(d)} · ${dropTime(d)}</span>
+              </div>`:''}
+              ${d.status==='live'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border-radius:20px;padding:3px 10px;">
+                <span style="font-size:0.62rem;">📡</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#15803d;">Broadcasting now</span>
+              </div>`:''}
+              ${d.status==='ended'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:20px;padding:3px 10px;">
+                <span style="font-size:0.62rem;">⏹</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;">Ended</span>
+              </div>`:''}
+              ${d.status==='draft'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#fef9c3;border-radius:20px;padding:3px 10px;">
+                <span style="font-size:0.62rem;">✏️</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#a16207;">Draft</span>
+              </div>`:''}
             </div>
             <div style="display:grid;grid-template-columns:repeat(4,60px);gap:8px;flex-shrink:0;">
               <div style="text-align:center;">
