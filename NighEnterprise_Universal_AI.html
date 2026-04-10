@@ -1079,6 +1079,7 @@ function sidebar(){
 
     <!-- Org switcher header -->
     <div style="padding:0 12px 14px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;">
+      ${isOwned?`
       <button onclick="ss({orgSwitcherOpen:!S.orgSwitcherOpen})" style="width:100%;background:${S.orgSwitcherOpen?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.06)'};border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 10px 10px 12px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='${S.orgSwitcherOpen?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.06)'}'">
         <div style="flex:1;min-width:0;">
           <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.short}</div>
@@ -1086,7 +1087,6 @@ function sidebar(){
         </div>
         <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;flex-shrink:0;transition:transform 0.15s;display:inline-block;transform:${S.orgSwitcherOpen?'rotate(180deg)':'rotate(0deg)'}">&#9660;</span>
       </button>
-
       ${S.orgSwitcherOpen?`
       <div style="margin-top:6px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);">
         ${owned.map(o=>{
@@ -1106,6 +1106,12 @@ function sidebar(){
           Add location or business
         </button>
       </div>`:''}
+      `:`
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;">
+        <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.short}</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:0.58rem;margin-top:2px;">${modeBadge} · ${mode==='single'?c.locations[0].city+', '+c.locations[0].state:c.locations.length+' '+c.locsLabel.toLowerCase()}</div>
+      </div>
+      `}
     </div>
     ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.58)'};font-size:0.77rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;transition:all 0.1s;">
       <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;position:relative;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}${n.unread&&S.page!==n.id?`<span style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid transparent;"></span>`:''}</span>${n.label}${n.unread&&S.page!==n.id?`<span style="margin-left:auto;background:#EF4444;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:20px;">${n.unread}</span>`:''}
