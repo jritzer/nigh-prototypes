@@ -32,7 +32,7 @@ const CONFIGS={
     key:'bestbuy',short:'Best Buy',name:'Best Buy Co., Inc.',
     color:'#003082',accent:'#FFE000',dark:'#001040',
     grad:'linear-gradient(180deg,#001040 0%,#003082 100%)',
-    plan:'Enterprise Retail Pro',ppl:199,allowMultiVenue:false,
+    plan:'Enterprise Retail Pro',ppl:199,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:15,
     hier:['Region','District','Store'],locLabel:'Store',locsLabel:'Stores',
     dropTypes:[
       {id:'flash-sale',    label:'Flash Sale',      icon:'&#9889;', bg:'#fef3c7',c:'#92400e'},
@@ -99,7 +99,7 @@ const CONFIGS={
     key:'chipotle',short:'Chipotle',name:'Chipotle Mexican Grill',
     color:'#A81612',accent:'#F5CB5C',dark:'#5D0E0B',
     grad:'linear-gradient(180deg,#5D0E0B 0%,#A81612 100%)',
-    plan:'Enterprise QSR Pro',ppl:149,allowMultiVenue:false,
+    plan:'Enterprise QSR Pro',ppl:149,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     hier:['Region','Market','Restaurant'],locLabel:'Restaurant',locsLabel:'Restaurants',
     dropTypes:[
       {id:'limited-time',label:'Limited-Time Offer',icon:'&#9201;', bg:'#fff7ed',c:'#c2410c'},
@@ -163,7 +163,7 @@ const CONFIGS={
     color:'#FB4F14',accent:'#002244',dark:'#001229',
     grad:'linear-gradient(180deg,#002244 0%,#1a4a00 50%,#FB4F14 100%)',
     grad:'linear-gradient(180deg,#001229 0%,#002244 60%,#FB4F14 100%)',
-    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:true,
+    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:true,broadcastLeadHrs:72,broadcastCutoffMins:30,
     hier:['Zone','Location'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience', label:'Fan Experience',  icon:'&#127944;',bg:'#fff7ed',c:'#c2410c'},
@@ -303,7 +303,7 @@ const CONFIGS={
     key:'disney',short:'Disney Parks',name:'Walt Disney World \u2014 Florida',
     color:'#003087',accent:'#E2002D',dark:'#001440',
     grad:'linear-gradient(180deg,#001440 0%,#003087 100%)',
-    plan:'Enterprise Parks Pro',ppl:299,allowMultiVenue:false,
+    plan:'Enterprise Parks Pro',ppl:299,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
     hier:['Park','Area','Location'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'character',  label:'Character Meet',   icon:'&#127921;',bg:'#eff6ff',c:'#1d4ed8'},
@@ -366,7 +366,7 @@ const CONFIGS={
     key:'ufc',short:'UFC',name:'UFC \u2014 Fight Night at T-Mobile Arena',
     color:'#D20A0A',accent:'#000000',dark:'#1a0000',
     grad:'linear-gradient(180deg,#000000 0%,#1a0000 40%,#D20A0A 100%)',
-    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:false,
+    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:30,
     hier:['Zone','Section'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience',label:'Fan Experience', icon:'&#127944;',bg:'#fff7ed',c:'#c2410c'},
@@ -432,7 +432,7 @@ const CONFIGS={
     key:'formula1',short:'Formula 1',name:'Formula 1 \u2014 Las Vegas Grand Prix',
     color:'#E10600',accent:'#15151e',dark:'#0a0a0f',
     grad:'linear-gradient(180deg,#0a0a0f 0%,#15151e 50%,#E10600 100%)',
-    plan:'Enterprise Events Pro',ppl:249,allowMultiVenue:false,
+    plan:'Enterprise Events Pro',ppl:249,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:30,
     hier:['Area','Zone'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'experience',label:'Fan Experience', icon:'&#127937;',bg:'#fff7ed',c:'#c2410c'},
@@ -502,7 +502,7 @@ const CONFIGS={
     key:'vailresorts',short:'Vail Resorts',name:'Vail Resorts \u2014 Epic Pass Network',
     color:'#1B4FA8',accent:'#A8C8FF',dark:'#0D2459',
     grad:'linear-gradient(180deg,#0D2459 0%,#1B4FA8 100%)',
-    plan:'Enterprise Multi-Venue Pro',ppl:299,allowMultiVenue:false,
+    plan:'Enterprise Multi-Venue Pro',ppl:299,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
     hier:['Region','Property Type'],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'lift',    label:'Lift Access',     icon:'&#9975;', bg:'#eff6ff',c:'#1d4ed8'},
@@ -600,7 +600,7 @@ const CONFIGS={
     key:'topgolf',short:'Topgolf',name:'Topgolf \u2014 Multi-Venue',
     color:'#218B44',accent:'#FFB800',dark:'#0F4220',
     grad:'linear-gradient(180deg,#0F4220 0%,#218B44 100%)',
-    plan:'Enterprise Venue Pro',ppl:249,allowMultiVenue:false,
+    plan:'Enterprise Venue Pro',ppl:249,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     hier:['Venue','Level'],locLabel:'Bay / Space',locsLabel:'Bays & Spaces',
     dropTypes:[
       {id:'bay',   label:'Bay Experience', icon:'&#9971;', bg:'#f0fdf4',c:'#15803d'},
@@ -663,7 +663,7 @@ const CONFIGS={
     key:'flatirons',short:'Flatirons Mall',name:'Flatirons Mall \u2014 Broomfield, CO',
     color:'#1B5E8A',accent:'#E8A020',dark:'#0D2E44',
     grad:'linear-gradient(180deg,#0D2E44 0%,#1B5E8A 100%)',
-    plan:'Enterprise Retail Pro',ppl:149,allowMultiVenue:false,
+    plan:'Enterprise Retail Pro',ppl:149,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     hier:['Wing','Level'],locLabel:'Store / Venue',locsLabel:'Stores & Venues',
     dropTypes:[
       {id:'deal',    label:'Shopping Deal', icon:'&#128722;',bg:'#eff6ff',c:'#1d4ed8'},
@@ -727,7 +727,7 @@ const CONFIGS={
     key:'bigRedf',short:'Big Red F',name:'Big Red F Restaurant Group',
     color:'#C62828',accent:'#FFA000',dark:'#7f0000',
     grad:'linear-gradient(180deg,#7f0000 0%,#C62828 100%)',
-    plan:'Enterprise Restaurant Pro',ppl:129,allowMultiVenue:false,
+    plan:'Enterprise Restaurant Pro',ppl:129,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:30,
     hier:['Brand','Market'],locLabel:'Restaurant',locsLabel:'Restaurants',
     dropTypes:[
       {id:'happy-hour',  label:'Happy Hour',   icon:'&#127867;',bg:'#fff7ed',c:'#c2410c'},
@@ -786,7 +786,7 @@ const CONFIGS={
     key:'landrys',short:"Landry's",name:"Landry's, Inc.",
     color:'#0D2F5E',accent:'#C9932A',dark:'#071829',
     grad:'linear-gradient(180deg,#071829 0%,#0D2F5E 100%)',
-    plan:'Enterprise Hospitality Pro',ppl:449,allowMultiVenue:true,
+    plan:'Enterprise Hospitality Pro',ppl:449,allowMultiVenue:true,broadcastLeadHrs:48,broadcastCutoffMins:30,
     hier:['Division','Brand'],locLabel:'Property',locsLabel:'Properties',
     dropTypes:[
       {id:'chefs-table',   label:"Chef's Table",    icon:'&#127869;',bg:'#fdf4e7',c:'#7A4F00'},
@@ -858,7 +858,7 @@ const CONFIGS={
     key:'mercantile',short:'Mercantile',name:'Mercantile Dining & Provision',
     color:'#8B4513',accent:'#D4A054',dark:'#5C2E0A',
     grad:'linear-gradient(180deg,#5C2E0A 0%,#8B4513 100%)',
-    plan:'Web Pro',ppl:79,allowMultiVenue:false,
+    plan:'Web Pro',ppl:79,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     hier:[],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'table',   label:'Table Drop',      icon:'&#127863;',bg:'#fef3c7',c:'#92400e'},
@@ -903,7 +903,7 @@ const CONFIGS={
     key:'williams',short:'Williams & Graham',name:'Williams & Graham',
     color:'#2C4A1E',accent:'#8B6914',dark:'#1A2C12',
     grad:'linear-gradient(180deg,#1A2C12 0%,#2C4A1E 100%)',
-    plan:'Web Pro',ppl:79,allowMultiVenue:false,
+    plan:'Web Pro',ppl:79,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     hier:[],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'cocktail',label:'Cocktail Drop',icon:'&#127864;',bg:'#f3e8ff',c:'#5b21b6'},
@@ -1692,7 +1692,14 @@ function dropDate(d){
 function dropTime(d){const seed=dropSeed(d);return TIMES[seed%TIMES.length];}
 function parseTimeMins(t){const[tp,per]=t.split(' ');const[h,m]=tp.split(':').map(Number);let hr=h;if(per==='PM'&&h!==12)hr+=12;if(per==='AM'&&h===12)hr=0;return hr*60+(m||0);}
 function minsToTime(mins){const h24=Math.floor(mins/60)%24;const m=mins%60;const per=h24>=12?'PM':'AM';const h12=h24%12||12;return h12+':'+(m<10?'0':'')+m+' '+per;}
-function broadcastCutoff(d,cutoff=15){const base=d.endTime||dropTime(d);return minsToTime(parseTimeMins(base)-cutoff);}
+function broadcastCutoff(d){const c=cfg();const cutoff=c.broadcastCutoffMins||15;const base=d.endTime||dropTime(d);return minsToTime(parseTimeMins(base)-cutoff);}
+function broadcastOpenDate(d){
+  const c=cfg();const leadHrs=c.broadcastLeadHrs||24;
+  const dt=new Date(dropDate(d).getTime()-leadHrs*3600000);
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[dt.getDay()]+', '+months[dt.getMonth()]+' '+dt.getDate()+' at '+dropTime(d);
+}
 function dropCountdown(d){
   const dt=dropDate(d);
   const diffMs=dt-TODAY;
@@ -2028,13 +2035,9 @@ function dropDetail(d){
             <div style="font-size:0.85rem;color:#374151;">${dateLabel} · ${tm}${d.endTime?' – '+d.endTime:''}</div>
           </div>
           <div>
-            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Booking Window</div>
-            <div style="font-size:0.85rem;color:#374151;">Up to ${d.bh} ${d.bh===1?'hr':'hrs'} in advance</div>
-          </div>
-          <div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Broadcast Window</div>
-            <div style="font-size:0.85rem;color:#374151;">${tm}${d.endTime?' – '+d.endTime:''} &rarr; closes at <strong>${broadcastCutoff(d)}</strong></div>
-            <div style="font-size:0.7rem;color:#94a3b8;margin-top:3px;">Booking closes 15 min before ${d.endTime?'end of arrival window':'drop start'}. No new reservations after ${broadcastCutoff(d)}.</div>
+            <div style="font-size:0.85rem;color:#374151;">Opens ${broadcastOpenDate(d)}</div>
+            <div style="font-size:0.85rem;color:#374151;margin-top:3px;">Closes at <strong>${broadcastCutoff(d)}</strong> · ${c.broadcastCutoffMins||15} min before ${d.endTime?'end of arrival window':'drop start'}</div>
           </div>
           <div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Price</div>
@@ -2045,9 +2048,9 @@ function dropDetail(d){
             <div>
               <div style="font-size:0.82rem;font-weight:800;color:#5b21b6;">${loc&&loc.followers?loc.followers.toLocaleString():0} followers ${isScheduled?'will be notified':'notified'}</div>
               <div style="font-size:0.7rem;color:#7c3aed;margin-top:2px;">${isScheduled
-                ?`Broadcast opens at ${tm} · booking closes at ${broadcastCutoff(d)} (15 min before ${d.endTime?'window end':'start'})`
+                ?`Broadcast opens ${broadcastOpenDate(d)} · closes at ${broadcastCutoff(d)}`
                 :isLive
-                  ?`Broadcasting now to all ${loc?loc.name:''} followers · booking closes at ${broadcastCutoff(d)}`
+                  ?`Broadcasting now · closes at ${broadcastCutoff(d)} (${c.broadcastCutoffMins||15} min before ${d.endTime?'window end':'start'})`
                   :`Broadcast to all ${loc?loc.name:''} followers when it went live`}</div>
             </div>
           </div>
@@ -2066,6 +2069,7 @@ function dropDetail(d){
               <div style="font-size:0.62rem;font-weight:700;color:${c.color};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;">Scheduled Broadcast</div>
               <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${dateLabel}</div>
               <div style="font-size:0.78rem;color:#475569;margin-top:1px;">${tm}${d.endTime?' – '+d.endTime:''}</div>
+              <div style="font-size:0.65rem;color:#94a3b8;margin-top:5px;">Opens ${c.broadcastLeadHrs||24} hrs before · closes ${c.broadcastCutoffMins||15} min before ${d.endTime?'window end':'start'}</div>
             </div>
             <div style="text-align:center;font-size:0.72rem;color:#64748b;padding:4px 0;">This drop will go live automatically at its scheduled broadcast time.</div>
           `:isEnded?`
