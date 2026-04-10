@@ -2109,8 +2109,8 @@ function dropDetail(d){
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
           ${[
             {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
-            {icon:'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
-            {icon:'M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.29 6.29l1.42-1.42a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
+            {icon:'M2 2h8v8H2zM14 2h8v8h-8zM2 14h8v8H2zM14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
+            {icon:'M3 11l19-9v18L3 13M11.6 16.8a3 3 0 1 1-5.8-1.6', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
             {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:''},
           ].map((a,i)=>`
             <button onclick="${a.action}" style="width:100%;padding:11px 14px;background:none;border:none;border-bottom:${i<4?'1px solid #f8fafc':'none'};display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
