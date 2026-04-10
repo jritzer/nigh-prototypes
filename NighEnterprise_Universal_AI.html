@@ -1074,7 +1074,7 @@ function sidebar(){
   ];
   const owned=ownerOrgs();
   const isOwned=isOwnerOrg();
-  const modeBadge=mode==='single'?'Web Pro':mode==='multi'?'Multi-Location':'Enterprise';
+  const modeBadge=mode==='single'?'Pro':mode==='multi'?'Multi-Location':'Enterprise';
   return `<div style="width:210px;min-width:210px;background:${c.grad};display:flex;flex-direction:column;padding:18px 0;overflow-y:auto;flex-shrink:0;">
 
     <!-- Org switcher header -->
@@ -1090,7 +1090,7 @@ function sidebar(){
       ${S.orgSwitcherOpen?`
       <div style="margin-top:6px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);">
         ${owned.map(o=>{
-          const om=o.locations.length===1?'Web Pro':o.hier.length<=1?'Multi-Location':'Enterprise';
+          const om=o.locations.length===1?'Pro':o.hier.length<=1?'Multi-Location':'Enterprise';
           const active=S.config===o.key;
           return `<button onclick="switchConfig('${o.key}')" style="width:100%;display:flex;align-items:center;gap:8px;padding:9px 10px;background:${active?'rgba(255,255,255,0.15)':'transparent'};border:none;border-bottom:1px solid rgba(255,255,255,0.07);cursor:pointer;text-align:left;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='${active?'rgba(255,255,255,0.15)':'transparent'}'">
             <div style="width:28px;height:28px;border-radius:6px;background:${o.color};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:900;color:#fff;${active?'box-shadow:0 0 0 2px rgba(255,255,255,0.4)':''}">${o.short.charAt(0)}</div>
@@ -1254,7 +1254,7 @@ function rDashboard(){
   return `<div style="padding:28px 32px;">
     <div style="margin-bottom:22px;">
       <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">${c.name}</div>
-      <div style="font-size:0.82rem;color:#64748b;margin-top:3px;">${c.plan} &middot; ${locs.length} ${c.locsLabel} &middot; ${fmtMoney(locs.length*c.ppl)}/mo</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:3px;">${c.plan.replace(/^Web /,'')} &middot; ${locs.length} ${locs.length===1?c.locLabel:c.locsLabel}</div>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;">
