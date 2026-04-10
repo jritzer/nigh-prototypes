@@ -1103,7 +1103,7 @@ function sidebar(){
         }).join('')}
         <button onclick="ss({addBizModal:true,addBizStep:1,addBizPath:null,orgSwitcherOpen:false})" style="width:100%;display:flex;align-items:center;gap:8px;padding:9px 10px;background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.55);font-size:0.72rem;font-weight:600;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
           <span style="width:28px;height:28px;border-radius:6px;border:1.5px dashed rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,0.35);flex-shrink:0;">+</span>
-          Add location or business
+          Add New Business
         </button>
       </div>`:''}
       `:`
@@ -1498,7 +1498,10 @@ function locationDetail(l){
   return `<div style="padding:28px 32px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       ${orgMode()!=='single'?`<button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;">&larr; Back to ${c.locsLabel}</button>`:`<div></div>`}
-      <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
+      <div style="display:flex;gap:8px;">
+        ${orgMode()==='single'?`<button onclick="ss({addBizModal:true,addBizStep:1,addBizPath:'location'})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">+ Add Location</button>`:''}
+        <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
       <div>
