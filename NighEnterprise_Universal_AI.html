@@ -873,15 +873,15 @@ const CONFIGS={
     },
     special:null,
     locations:[
-      {id:'L01',name:'Mercantile Dining & Provision',city:'Denver',state:'CO',status:'active',cap:80,followers:412,followersGrowth:28,multiVenue:false},
+      {id:'L01',name:'Mercantile Dining & Provision',addr:'1701 Wynkoop St',city:'Denver',state:'CO',status:'active',cap:80,followers:412,followersGrowth:28,multiVenue:false},
     ],
     drops:[
-      {id:'D01',title:'Chef\u2019s Table \u2014 Thursday Tasting Menu',type:'table',  status:'live',     locId:'L01',cap:12, res:12, ci:10,sr:83,price:95,bh:3},
-      {id:'D02',title:'Spring Provisions Market',                    type:'market', status:'live',     locId:'L01',cap:40, res:38, ci:35,sr:92,price:0, bh:2,endTime:'3:00 PM'},
-      {id:'D03',title:'Winemaker Dinner \u2014 Breckenridge Brewery',type:'event',  status:'paused',   locId:'L01',cap:24, res:8,  ci:0, sr:0, price:65,bh:4},
-      {id:'D04',title:'Friday Night Bar Drop \u2014 Cocktail Flight', type:'table',  status:'scheduled',locId:'L01',cap:20, res:9,  ci:0, sr:0, price:28,bh:2,endTime:'9:00 PM'},
-      {id:'D05',title:"Valentine's Day Tasting Menu Drop",             type:'table',  status:'ended',    locId:'L01',cap:12, res:12, ci:11, sr:92,price:120,bh:3},
-      {id:'D06',title:"Sunday Brunch \u2014 Chef's Counter Seats",    type:'market', status:'ended',    locId:'L01',cap:20, res:18, ci:16, sr:89,price:0,  bh:2},
+      {id:'D01',title:'Chef\u2019s Table \u2014 Thursday Tasting Menu',type:'table',  status:'live',     locId:'L01',cap:12, res:12, ci:10,sr:83,price:95, bh:3,desc:"An intimate chef-driven tasting experience featuring Daniel Asher's seasonal Colorado ingredients. 12 seats only.",hosts:['Daniel Asher','Marta Velasquez'],partners:[{name:'Crooked Stave Artisan Beer',status:'Accepted'},{name:'Stem Ciders',status:'Awaiting'}]},
+      {id:'D02',title:'Spring Provisions Market',                    type:'market', status:'live',     locId:'L01',cap:40, res:38, ci:35,sr:92,price:0,  bh:2,endTime:'3:00 PM',desc:'Mercantile opens its doors for a curated selection of local provisions, charcuterie, pantry items, and house-made preserves. Free entry.',hosts:['Daniel Asher'],partners:[]},
+      {id:'D03',title:'Winemaker Dinner \u2014 Breckenridge Brewery',type:'event',  status:'paused',   locId:'L01',cap:24, res:8,  ci:0, sr:0, price:65, bh:4,desc:'A collaborative five-course dinner with Breckenridge Brewery. Each course paired with a craft beer selected by the brewmaster.',hosts:['Daniel Asher','Jake Rizzo'],partners:[{name:'Breckenridge Brewery',status:'Accepted'}]},
+      {id:'D04',title:'Friday Night Bar Drop \u2014 Cocktail Flight', type:'table',  status:'scheduled',locId:'L01',cap:20, res:9,  ci:0, sr:0, price:28, bh:2,endTime:'9:00 PM',desc:'Reserve your spot at the Mercantile bar for a guided cocktail flight featuring four seasonal craft cocktails.',hosts:['Marta Velasquez'],partners:[]},
+      {id:'D05',title:"Valentine's Day Tasting Menu Drop",             type:'table',  status:'ended',    locId:'L01',cap:12, res:12, ci:11, sr:92,price:120,bh:3,desc:"Special Valentine's Day tasting menu for two. Five courses with wine pairings curated by our sommelier.",hosts:['Daniel Asher','Marta Velasquez'],partners:[{name:'Rémy Martin',status:'Accepted'}]},
+      {id:'D06',title:"Sunday Brunch \u2014 Chef's Counter Seats",    type:'market', status:'ended',    locId:'L01',cap:20, res:18, ci:16, sr:89,price:0,  bh:2,desc:"Grab a stool at the chef's counter and enjoy Sunday brunch from an open kitchen. Walk-in friendly, first-come seating.",hosts:['Daniel Asher'],partners:[]},
     ],
     collections:[
       {id:'C01',name:'Spring Series',desc:'Weekly chef-driven experiences throughout April',drops:3,enrolled:68,ci:45,status:'active',icon:'&#127807;'},
@@ -2051,9 +2051,14 @@ function dropDetail(d){
         :`
         <!-- Details tab -->
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
+          ${d.desc?`<div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Description</div>
+            <div style="font-size:0.85rem;color:#374151;line-height:1.6;">${d.desc}</div>
+          </div>`:''}
           <div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Location</div>
-            <div style="font-size:0.85rem;color:#374151;">${loc?loc.name:'—'}${loc&&loc.city?', '+loc.city+' '+loc.state:''}</div>
+            <div style="font-size:0.85rem;font-weight:600;color:#0f172a;">${loc?loc.name:'—'}</div>
+            ${loc&&(loc.addr||loc.city)?`<div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${loc.addr?loc.addr+', ':''}${loc.city||''}${loc.state?', '+loc.state:''}</div>`:''}
           </div>
           ${c.hier&&c.hier.length>0&&loc&&loc.t1?`<div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">${c.hier[0]||'Group'}</div>
@@ -2072,6 +2077,18 @@ function dropDetail(d){
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Price</div>
             <div style="font-size:0.85rem;color:#374151;">${d.price>0?'$'+d.price+' per spot':'Free'}</div>
           </div>
+          ${d.hosts&&d.hosts.length>0?`<div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Hosts</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              ${d.hosts.map(h=>{const ini=h.split(' ').map(n=>n[0]).join('');return`<div style="display:flex;align-items:center;gap:7px;background:#f8fafc;border-radius:20px;padding:4px 12px 4px 4px;border:1px solid #f1f5f9;"><div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;">${ini}</div><span style="font-size:0.78rem;font-weight:600;color:#374151;">${h}</span></div>`;}).join('')}
+            </div>
+          </div>`:''}
+          ${d.partners&&d.partners.length>0?`<div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Partners</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              ${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #f1f5f9;"><span style="font-size:0.82rem;font-weight:600;color:#374151;">${p.name}</span><span style="font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;background:${p.status==='Accepted'?'#dcfce7':'#fef9c3'};color:${p.status==='Accepted'?'#15803d':'#854d0e'};">${p.status}</span></div>`).join('')}
+            </div>
+          </div>`:''}
           <div style="background:#ede9fe;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;">📡</span>
             <div>
