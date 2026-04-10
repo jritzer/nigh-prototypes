@@ -2086,7 +2086,17 @@ function dropDetail(d){
           ${d.partners&&d.partners.length>0?`<div>
             <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Partners</div>
             <div style="display:flex;flex-direction:column;gap:6px;">
-              ${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #f1f5f9;"><span style="font-size:0.82rem;font-weight:600;color:#374151;">${p.name}</span><span style="font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;background:${p.status==='Accepted'?'#dcfce7':'#fef9c3'};color:${p.status==='Accepted'?'#15803d':'#854d0e'};">${p.status}</span></div>`).join('')}
+              ${d.partners.map(p=>{
+                const accepted=p.status==='Accepted';
+                const badgeBg=accepted?'#dcfce7':'#fef9c3';
+                const badgeCol=accepted?'#15803d':'#92400e';
+                const ini=p.name.split(' ').map(n=>n[0]).join('').slice(0,2);
+                return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #f1f5f9;">
+                  <div style="width:30px;height:30px;border-radius:8px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#475569;flex-shrink:0;">${ini}</div>
+                  <span style="flex:1;font-size:0.82rem;font-weight:600;color:#374151;">${p.name}</span>
+                  <span style="font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:10px;background:${badgeBg};color:${badgeCol};white-space:nowrap;">${p.status}</span>
+                </div>`;
+              }).join('')}
             </div>
           </div>`:''}
           <div style="background:#ede9fe;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
