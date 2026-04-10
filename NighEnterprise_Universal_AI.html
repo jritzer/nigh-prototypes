@@ -1962,7 +1962,7 @@ function dropDetail(d){
           <span>📅 ${dateLabel} · ${tm}${d.endTime?' – '+d.endTime:''}</span>
           <span>📍 ${loc?loc.name:'—'}</span>
           <span>${d.price>0?'$'+d.price+' per spot':'Free'}</span>
-          ${isLive?`<span style="color:#16a34a;font-weight:700;display:flex;align-items:center;gap:4px;">📡 Broadcasting · closes at ${broadcastCutoff(d)}</span>`:''}
+          ${isLive?`<span style="color:#16a34a;font-weight:700;display:flex;align-items:center;gap:4px;">📡 Broadcasting ends at ${broadcastCutoff(d)}</span>`:''}
           ${isScheduled?`<span style="color:${c.color};font-weight:700;display:flex;align-items:center;gap:4px;">🕐 Goes live ${dateLabel} at ${tm}</span>`:''}
         </div>
       </div>
