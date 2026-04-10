@@ -1459,15 +1459,17 @@ function locFormFields(l){
       ${inp('Phone','phone','(303) 555-0100',false)}
       ${inp('Email','email','location@'+c.key+'.com',false)}
     </div>
+    ${c.hier.length>0?`
     <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Organization</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      ${selField(c.hier[0]||'Group','t1',t1vals,true)}
+      ${selField(c.hier[0],'t1',t1vals,true)}
       ${t2vals.length?selField(c.hier[1]||'Sub-group','t2',['',...t2vals],false):''}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
       ${inp('Location Manager','manager','Full name',false)}
       ${inp('Manager Email','managerEmail','manager@'+c.key+'.com',false)}
-    </div>
+    </div>`:''}
+
     <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Account Config</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       ${inp('Guest Capacity','cap','200',false)}
@@ -1490,7 +1492,7 @@ function locationDetail(l){
         ${locFormFields(l)}
         <div style="display:flex;gap:10px;margin-top:24px;">
           <button onclick="ss({locationEdit:false})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Cancel</button>
-          <button onclick="ss({locationEdit:false})" style="flex:2;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Save Changes</button>
+          <button onclick="ss({locationEdit:false})" style="flex:1;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Save Changes</button>
         </div>
       </div>
     </div>`;
