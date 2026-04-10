@@ -832,10 +832,54 @@ const CONFIGS={
     ],
   },
 
+  mercantile:{
+    key:'mercantile',short:'Mercantile',name:'Mercantile Dining & Provision',
+    color:'#8B4513',accent:'#D4A054',dark:'#5C2E0A',
+    grad:'linear-gradient(180deg,#5C2E0A 0%,#8B4513 100%)',
+    plan:'Web Pro',ppl:79,allowMultiVenue:false,
+    hier:[],locLabel:'Location',locsLabel:'Locations',
+    dropTypes:[
+      {id:'table',   label:'Table Drop',      icon:'&#127863;',bg:'#fef3c7',c:'#92400e'},
+      {id:'event',   label:'Dinner Event',    icon:'&#127859;',bg:'#f3e8ff',c:'#5b21b6'},
+      {id:'collab',  label:'Chef Collab',     icon:'&#127859;',bg:'#f0fdf4',c:'#166534'},
+      {id:'market',  label:'Provisions Sale', icon:'&#128722;',bg:'#eff6ff',c:'#1d4ed8'},
+    ],
+    geoTiers:{
+      dining: {label:'Dining Room (~50 ft)',        short:'~50 ft'},
+      block:  {label:'Block Radius (~500 ft)',      short:'~500 ft'},
+      neighborhood:{label:'Neighborhood (~1,500 ft)',short:'~1,500 ft'},
+    },
+    special:null,
+    locations:[
+      {id:'L01',name:'Mercantile Dining & Provision',city:'Denver',state:'CO',status:'active',cap:80,followers:412,followersGrowth:28,multiVenue:false},
+    ],
+    drops:[
+      {id:'D01',title:'Chef\u2019s Table \u2014 Thursday Tasting Menu',type:'table',  status:'live',     locId:'L01',cap:12, res:12, ci:10,sr:83,price:95,bh:3},
+      {id:'D02',title:'Spring Provisions Market',                    type:'market', status:'live',     locId:'L01',cap:40, res:38, ci:35,sr:92,price:0, bh:2},
+      {id:'D03',title:'Winemaker Dinner \u2014 Breckenridge Brewery',type:'event',  status:'scheduled',locId:'L01',cap:24, res:18, ci:0, sr:0, price:65,bh:4},
+      {id:'D04',title:'Friday Night Bar Drop \u2014 Cocktail Flight', type:'table',  status:'scheduled',locId:'L01',cap:20, res:9,  ci:0, sr:0, price:28,bh:2},
+    ],
+    collections:[
+      {id:'C01',name:'Spring Series',desc:'Weekly chef-driven experiences throughout April',drops:3,enrolled:68,ci:45,status:'active',icon:'&#127807;'},
+    ],
+    partners:[
+      {id:'P01',name:'Crooked Stave Artisan Beer',type:'Venue',  status:'Active', since:'Jan 2026',drops:1},
+      {id:'P02',name:'Breckenridge Brewery',      type:'Brand',  status:'Active', since:'Feb 2026',drops:2},
+      {id:'P03',name:'Stem Ciders',               type:'Sponsor',status:'Invited',since:'Mar 2026',drops:0},
+    ],
+    team:[
+      {name:'Daniel Asher',    email:'daniel@mercantile.com', role:'owner',    scope:'',                           active:true, last:'Today',   since:'Jan 2026'},
+      {name:'Marta Velasquez', email:'marta@mercantile.com',  role:'manager',  scope:'Front of House',            active:true, last:'Today',   since:'Jan 2026'},
+      {name:'Jake Rizzo',      email:'jake@mercantile.com',   role:'staff',    scope:'Mercantile Dining & Provision',active:true,last:'1d ago', since:'Feb 2026'},
+      {name:'Priya Mehta',     email:'priya@mercantile.com',  role:'staff',    scope:'Mercantile Dining & Provision',active:true,last:'3d ago', since:'Mar 2026'},
+    ],
+  },
+
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function locById(id){return cfg().locations.find(l=>l.id===id);}
+function orgMode(){const c=cfg();if(c.locations.length===1)return'single';if(c.hier.length<=1)return'multi';return'enterprise';}
 function dropTypeInfo(typeId){return cfg().dropTypes.find(t=>t.id===typeId)||{id:typeId,label:typeId,icon:'&#127381;',bg:'#f1f5f9',c:'#475569'};}
 function badge(status){
   const map={live:'#dcfce7:#16a34a:Live',scheduled:'#fef9c3:#854d0e:Scheduled',draft:'#f1f5f9:#64748b:Draft',ended:'#fee2e2:#b91c1c:Ended',active:'#dcfce7:#16a34a:Active'};
@@ -968,9 +1012,10 @@ function niyaEntPanel(){
 
 function sidebar(){
   const c=cfg();
+  const mode=orgMode();
   const nav=[
     {id:'dashboard',  label:'Dashboard',  icon:'dashboard'},
-    {id:'locations',  label:'Locations',  icon:'locations'},
+    ...(mode!=='single'?[{id:'locations',label:mode==='enterprise'?'Locations':'Locations',icon:'locations'}]:[]),
     {id:'drops',      label:'Drops',       icon:'nighBug'},
     {id:'customers',  label:'Guests',      icon:'customers'},
     {id:'collections',label:'Collections',icon:'collections'},
@@ -978,7 +1023,7 @@ function sidebar(){
     {id:'inbox',      label:'Inbox',       icon:'bell', unread:4},
     {id:'partners',   label:'Partners',    icon:'link'},
     {id:'users',      label:'Team',        icon:'users'},
-    {id:'setup',      label:'Configure',   icon:'sliders'},
+    ...(mode!=='single'?[{id:'setup',label:'Configure',icon:'sliders'}]:[]),
     {id:'billing',    label:'Finance',     icon:'dollar'},
     {id:'settings',   label:'Settings',   icon:'settings'},
     {id:'activity',   label:'Activity Log',icon:'activity'},
@@ -987,7 +1032,7 @@ function sidebar(){
     <div style="padding:0 16px 18px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;">
       <div style="color:#fff;font-weight:900;font-size:0.88rem;line-height:1.2;">${c.short}</div>
       <div style="color:rgba(255,255,255,0.55);font-size:0.62rem;margin-top:3px;">${c.plan}</div>
-      <div style="color:rgba(255,255,255,0.45);font-size:0.6rem;margin-top:2px;">${cfg().locations.length} locations</div>
+      <div style="color:rgba(255,255,255,0.45);font-size:0.6rem;margin-top:2px;">${mode==='single'?c.locations[0].city+', '+c.locations[0].state:c.locations.length+' '+c.locsLabel.toLowerCase()}</div>
     </div>
     ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 16px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.58)'};font-size:0.77rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;transition:all 0.1s;">
       <span style="opacity:0.9;flex-shrink:0;width:20px;display:flex;align-items:center;justify-content:center;position:relative;">${n.icon==='nighBug'?nighBug(20):ic(n.icon,18)}${n.unread&&S.page!==n.id?`<span style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid transparent;"></span>`:''}</span>${n.label}${n.unread&&S.page!==n.id?`<span style="margin-left:auto;background:#EF4444;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:20px;">${n.unread}</span>`:''}
@@ -998,7 +1043,7 @@ function sidebar(){
       <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,${c.dark||c.color},${c.color});display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.25);">JR</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:0.75rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Josh Ritzer</div>
-        <div style="font-size:0.62rem;color:rgba(255,255,255,0.5);margin-top:1px;">Corporate Admin</div>
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.5);margin-top:1px;">${mode==='single'?'Owner':'Corporate Admin'}</div>
       </div>
       <span style="font-size:0.65rem;color:rgba(255,255,255,0.3);">›</span>
     </div>
@@ -1099,6 +1144,7 @@ function bar(pct,color,h){h=h||8;return `<div style="background:#f1f5f9;border-r
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function rDashboard(){
   const c=cfg();
+  const mode=orgMode();
   const drops=c.drops;
   const locs=c.locations;
   const live=drops.filter(d=>d.status==='live');
@@ -1139,7 +1185,7 @@ function rDashboard(){
       ${kpi('Live Drops',live.length,`${sched.length} scheduled`,c.color)}
       ${kpi('Total Reservations',fmtNum(totalRes),`across ${drops.length} drops`,'#0f172a')}
       ${kpi('Total Check-ins',fmtNum(totalCi),`${avgSr}% avg show rate`,'#0f172a')}
-      ${kpi('Active Locations',locs.filter(l=>l.status==='active').length,`${t1groups.length} ${c.hier[0].toLowerCase()}s`,'#0f172a')}
+      ${mode!=='single'?kpi('Active Locations',locs.filter(l=>l.status==='active').length,`${t1groups.length} ${c.hier[0].toLowerCase()}s`,'#0f172a'):''}
       ${kpi('Followers',fmtNum(totalFollowers),`+${totalFollowersGrowth} across all locations`,'#7C3AED')}
     </div>
 
@@ -1157,7 +1203,7 @@ function rDashboard(){
             <div style="flex:1;min-width:0;">
               <div style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
               <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
-                
+
                 ${d.timing?timingBadge(d.timing):''}
                 ${d.day?dayBadge(d.day):''}
                 <span style="font-size:0.7rem;color:#94a3b8;">${loc?loc.name:'—'}</span>
@@ -1183,6 +1229,7 @@ function rDashboard(){
           </div>`).join('')}
         </div>
 
+        ${mode!=='single'?`
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 20px;">
           <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:10px;">Top ${c.hier[0]}s by Check-ins</div>
           ${t1groups.map(t1=>{
@@ -1199,9 +1246,11 @@ function rDashboard(){
             </div>`;
           }).join('')}
         </div>
+        `:''}
       </div>
     </div>
 
+    ${mode!=='single'?`
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
       <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.82rem;font-weight:800;color:#0f172a;">Top ${c.locsLabel} by Check-ins</div>
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;">
@@ -1217,6 +1266,7 @@ function rDashboard(){
         }).join('')}
       </div>
     </div>
+    `:''}
   </div>`;
 }
 
@@ -3105,18 +3155,21 @@ function partnerModal(){
 // ── INVITE MEMBER MODAL ───────────────────────────────────────────────────────
 function inviteModal(){
   const c=cfg();
+  const mode=orgMode();
   const step=S.inviteStep||1;
   const t1s=[...new Set(c.locations.map(l=>l.t1))];
-  const ROLES=[
+  const ALL_ROLES=[
+    {id:'owner',    name:'Owner',            short:'Owner',   color:'#7C3AED',bg:'#f3e8ff', desc:'Full access to all features and settings.'},
     {id:'admin',    name:'Enterprise Admin', short:'Admin',    color:'#1d4ed8',bg:'#eff6ff', desc:'Full operational access across all locations — no billing controls.'},
     {id:'regional', name:'Regional Manager', short:'Regional', color:'#0369a1',bg:'#f0f9ff', desc:'Create, approve & view analytics within their assigned region only.'},
-    {id:'location', name:'Location Manager', short:'Location', color:'#15803d',bg:'#f0fdf4', desc:'Manage drops and view analytics at their assigned location(s).'},
+    {id:'manager',  name:'Location Manager', short:'Manager',  color:'#15803d',bg:'#f0fdf4', desc:'Manage drops and view analytics at their assigned location(s).'},
     {id:'staff',    name:'Team Member',       short:'Member',   color:'#475569',bg:'#f8fafc', desc:'Day-of check-in and activation of pre-approved drops only.'},
   ];
-  const selRole=S.inviteForm.role||'location';
-  const roleObj=ROLES.find(r=>r.id===selRole)||ROLES[2];
+  const ROLES=mode==='single'?ALL_ROLES.filter(r=>['owner','manager','staff'].includes(r.id)):mode==='multi'?ALL_ROLES.filter(r=>['owner','admin','manager','staff'].includes(r.id)):ALL_ROLES;
+  const selRole=S.inviteForm.role||(mode==='single'?'manager':'location');
+  const roleObj=ROLES.find(r=>r.id===selRole)||ROLES[0];
   const needsRegion=selRole==='regional';
-  const needsLocation=selRole==='location'||selRole==='staff';
+  const needsLocation=selRole==='manager'||selRole==='location'||selRole==='staff';
   return `
     <div onclick="ss({inviteModal:false,inviteStep:1,inviteForm:{}})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:300;display:flex;align-items:center;justify-content:center;">
       <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:540px;max-height:88vh;overflow-y:auto;padding:32px;">
