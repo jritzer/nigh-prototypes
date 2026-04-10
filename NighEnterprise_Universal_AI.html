@@ -1904,7 +1904,10 @@ function rDrops(){
       <!-- Calendar nav -->
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #f1f5f9;">
         <button onclick="ss(S.calMonth===0?{calMonth:11,calYear:S.calYear-1}:{calMonth:S.calMonth-1})" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&larr;</button>
-        <div style="font-size:1rem;font-weight:800;color:#0f172a;">${MONTH_NAMES[cm]} ${cy}</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-size:1rem;font-weight:800;color:#0f172a;">${MONTH_NAMES[cm]} ${cy}</div>
+          ${(cm!==new Date().getMonth()||cy!==new Date().getFullYear())?`<button onclick="ss({calMonth:new Date().getMonth(),calYear:new Date().getFullYear()})" style="padding:3px 10px;border:1px solid #e5e7eb;border-radius:20px;background:#fff;cursor:pointer;font-size:0.7rem;font-weight:700;color:#64748b;">Today</button>`:''}
+        </div>
         <button onclick="ss(S.calMonth===11?{calMonth:0,calYear:S.calYear+1}:{calMonth:S.calMonth+1})" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&rarr;</button>
       </div>
       <!-- Day headers -->
