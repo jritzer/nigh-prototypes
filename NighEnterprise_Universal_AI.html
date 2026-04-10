@@ -1467,8 +1467,6 @@ function locationDetail(l){
   const lres=lDrops.reduce((s,d)=>s+(d.res||0),0);
   const lsr=pct(lci,lres);
   if(S.locationEdit){
-    const tab=S.locEditTab||'profile';
-    const tabBtn=(id,label)=>`<button onclick="ss({locEditTab:'${id}'})" style="padding:8px 20px;border:none;border-bottom:2px solid ${tab===id?c.color:'transparent'};background:transparent;font-size:0.82rem;font-weight:${tab===id?'800':'500'};color:${tab===id?c.color:'#94a3b8'};cursor:pointer;transition:all 0.1s;">${label}</button>`;
     const inp=(label,key,ph,req)=>`
       <div>
         <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">${label}${req?` <span style="color:#ef4444;">*</span>`:''}</label>
@@ -1500,84 +1498,80 @@ function locationDetail(l){
     const primaryContact=l.primaryContact||(activeTeam[0]?activeTeam[0].name:'');
     const contactMember=activeTeam.find(t=>t.name===primaryContact)||activeTeam[0];
 
-    const profileTab=`
-      <div style="margin-bottom:12px;">${inp('Business Name','name','e.g. Mercantile Dining & Provision',true)}</div>
-      <div style="margin-bottom:12px;">
-        <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Description</label>
-        <textarea placeholder="A short description of your business for your Nigh profile…" style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;resize:vertical;min-height:72px;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'">${l.description||''}</textarea>
-      </div>
-      <div style="margin-bottom:12px;">${inp('Street Address','address','123 Main St',false)}</div>
-      <div style="display:grid;grid-template-columns:1fr 120px 80px;gap:12px;margin-bottom:12px;">
-        ${inp('City','city','Denver',true)}
-        <div>
-          <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">State <span style="color:#ef4444;">*</span></label>
-          <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
-            ${US_STATES.map(s=>`<option value="${s}" ${(l.state||'CO')===s?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        ${inp('Zip','zip','80202',false)}
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        ${inp('Phone','phone','(303) 555-0100',false)}
-        ${inp('Website','website','https://www.'+c.key+'.com',false)}
-      </div>`;
-
-    const accountTab=`
-      <div style="margin-bottom:16px;">${inp('Handle','handle','@'+c.key,true)}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Category <span style="color:#ef4444;">*</span></label>
-          <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
-            ${Object.keys(CATEGORIES).map(cat=>`<option value="${cat}" ${selCat===cat?'selected':''}>${cat}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Subcategory</label>
-          <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
-            <option value="">— Select —</option>
-            ${subCats.map(s=>`<option value="${s}" ${(l.subcategory||''===s)?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:3px;">Subscription</div>
-          <div style="font-size:0.85rem;font-weight:700;color:#0f172a;">${c.plan}</div>
-        </div>
-        <button onclick="go('billing')" style="padding:6px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Manage in Finance →</button>
-      </div>
-      <div style="margin-bottom:16px;">
-        <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Primary Contact</label>
-        <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
-          ${activeTeam.map(t=>`<option value="${t.name}" ${t.name===primaryContact?'selected':''}>${t.name} — ${t.role}</option>`).join('')}
-        </select>
-        ${contactMember?`<div style="margin-top:8px;background:#f8fafc;border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-          <div style="font-size:0.72rem;color:#64748b;"><span style="font-weight:700;color:#374151;">${contactMember.name}</span></div>
-          <div style="font-size:0.72rem;color:#64748b;">${contactMember.email}</div>
-        </div>`:''}
-      </div>
-      ${orgMode()!=='single'?`
-      <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;">
-        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:8px;">Organization</div>
-        ${c.hier.length>0?`
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            ${selField(c.hier[0],'t1',t1vals,false)}
-            ${t2vals.length?selField(c.hier[1]||'Sub-group','t2',['',...t2vals],false):''}
-          </div>`:`<div style="font-size:0.78rem;color:#94a3b8;">No enterprise account linked.</div>`}
-      </div>`:''}`;
     return `<div style="padding:28px 32px;">
-      <button onclick="ss({locationEdit:false,locEditTab:'profile'})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${orgMode()==='single'?'Location':'Profile'}</button>
-      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;max-width:680px;overflow:hidden;">
-        <div style="padding:20px 28px 0;border-bottom:1px solid #e5e7eb;">
-          <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:12px;">Edit ${c.locLabel}</div>
-          <div style="display:flex;gap:0;">${tabBtn('profile','Profile')}${tabBtn('account','Account')}</div>
+      <button onclick="ss({locationEdit:false})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${orgMode()==='single'?'Location':'Profile'}</button>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;max-width:680px;padding:28px;">
+        <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:24px;">Edit Location</div>
+
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:12px;">Profile</div>
+        <div style="margin-bottom:12px;">${inp('Business Name','name','e.g. Mercantile Dining & Provision',true)}</div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Description</label>
+          <textarea placeholder="A short description of your business for your Nigh profile…" style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;resize:vertical;min-height:72px;box-sizing:border-box;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'">${l.description||''}</textarea>
         </div>
-        <div style="padding:24px 28px;">
-          ${tab==='profile'?profileTab:accountTab}
-          <div style="display:flex;gap:10px;margin-top:24px;">
-            <button onclick="ss({locationEdit:false,locEditTab:'profile'})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Cancel</button>
-            <button onclick="ss({locationEdit:false,locEditTab:'profile'})" style="flex:1;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Save Changes</button>
+        <div style="margin-bottom:12px;">${inp('Street Address','address','123 Main St',false)}</div>
+        <div style="display:grid;grid-template-columns:1fr 120px 80px;gap:12px;margin-bottom:12px;">
+          ${inp('City','city','Denver',true)}
+          <div>
+            <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">State <span style="color:#ef4444;">*</span></label>
+            <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+              ${US_STATES.map(s=>`<option value="${s}" ${(l.state||'CO')===s?'selected':''}>${s}</option>`).join('')}
+            </select>
           </div>
+          ${inp('Zip','zip','80202',false)}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;">
+          ${inp('Phone','phone','(303) 555-0100',false)}
+          ${inp('Website','website','https://www.'+c.key+'.com',false)}
+        </div>
+
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:12px;">Account</div>
+        <div style="margin-bottom:12px;">${inp('Handle','handle','@'+c.key,true)}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Category <span style="color:#ef4444;">*</span></label>
+            <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+              ${Object.keys(CATEGORIES).map(cat=>`<option value="${cat}" ${selCat===cat?'selected':''}>${cat}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Subcategory</label>
+            <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+              <option value="">— Select —</option>
+              ${subCats.map(s=>`<option value="${s}" ${(l.subcategory||''===s)?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:3px;">Subscription</div>
+            <div style="font-size:0.85rem;font-weight:700;color:#0f172a;">${c.plan}</div>
+          </div>
+          <button onclick="go('billing')" style="padding:6px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.75rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Manage in Finance →</button>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Primary Contact</label>
+          <select style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;background:#fff;">
+            ${activeTeam.map(t=>`<option value="${t.name}" ${t.name===primaryContact?'selected':''}>${t.name} — ${t.role}</option>`).join('')}
+          </select>
+          ${contactMember?`<div style="margin-top:8px;background:#f8fafc;border-radius:8px;padding:10px 12px;display:flex;gap:16px;">
+            <div style="font-size:0.72rem;font-weight:700;color:#374151;">${contactMember.name}</div>
+            <div style="font-size:0.72rem;color:#64748b;">${contactMember.email}</div>
+          </div>`:''}
+        </div>
+        ${orgMode()!=='single'?`
+        <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+          <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:8px;">Organization</div>
+          ${c.hier.length>0?`
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              ${selField(c.hier[0],'t1',t1vals,false)}
+              ${t2vals.length?selField(c.hier[1]||'Sub-group','t2',['',...t2vals],false):''}
+            </div>`:`<div style="font-size:0.78rem;color:#94a3b8;">No enterprise account linked.</div>`}
+        </div>`:''}
+
+        <div style="display:flex;gap:10px;margin-top:24px;">
+          <button onclick="ss({locationEdit:false})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Cancel</button>
+          <button onclick="ss({locationEdit:false})" style="flex:1;background:${c.color};color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Save Changes</button>
         </div>
       </div>
     </div>`;
