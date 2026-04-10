@@ -1164,15 +1164,18 @@ function topbar(){
     </div>`;
   }
 
+  // Single-location / Web Pro — no hierarchy to filter, skip topbar
+  if(orgMode()==='single') return '';
+
   // Default topbar (Best Buy, Chipotle, Disney)
-  const t1vals=[...new Set(c.locations.map(l=>l.t1))];
+  const t1vals=[...new Set(c.locations.map(l=>l.t1).filter(Boolean))];
   const t2vals=S.t1?[...new Set(c.locations.filter(l=>l.t1===S.t1).map(l=>l.t2).filter(Boolean))]:[];
   return `<div style="padding:10px 24px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-    <select onchange="ss({t1:this.value||null,t2:null})" style="padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;color:#0f172a;background:#fff;cursor:pointer;">
+    ${c.hier[0]?`<select onchange="ss({t1:this.value||null,t2:null})" style="padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;color:#0f172a;background:#fff;cursor:pointer;">
       <option value="">All ${c.hier[0]}s</option>
       ${t1vals.map(v=>`<option value="${v}" ${S.t1===v?'selected':''}>${v}</option>`).join('')}
-    </select>
-    ${t2vals.length?`<select onchange="ss({t2:this.value||null})" style="padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;color:#0f172a;background:#fff;cursor:pointer;"><option value="">All ${c.hier[1]}s</option>${t2vals.map(v=>`<option value="${v}" ${S.t2===v?'selected':''}>${v}</option>`).join('')}</select>`:''}
+    </select>`:''}
+    ${c.hier[1]&&t2vals.length?`<select onchange="ss({t2:this.value||null})" style="padding:6px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;color:#0f172a;background:#fff;cursor:pointer;"><option value="">All ${c.hier[1]}s</option>${t2vals.map(v=>`<option value="${v}" ${S.t2===v?'selected':''}>${v}</option>`).join('')}</select>`:''}
     ${S.t1||S.t2||S.timing||S.weekend||S.day?`<button onclick="ss({t1:null,t2:null,timing:null,weekend:null,day:null})" style="padding:5px 12px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;color:#64748b;font-size:0.72rem;font-weight:600;cursor:pointer;">Clear Filters</button>`:''}
     <div style="flex:1;"></div>
     <span style="background:#dcfce7;color:#15803d;font-size:0.7rem;font-weight:700;padding:4px 10px;border-radius:20px;">${liveDrops} Live</span>
