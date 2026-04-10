@@ -878,7 +878,7 @@ const CONFIGS={
     drops:[
       {id:'D01',title:'Chef\u2019s Table \u2014 Thursday Tasting Menu',type:'table',  status:'live',     locId:'L01',cap:12, res:12, ci:10,sr:83,price:95,bh:3},
       {id:'D02',title:'Spring Provisions Market',                    type:'market', status:'live',     locId:'L01',cap:40, res:38, ci:35,sr:92,price:0, bh:2,endTime:'3:00 PM'},
-      {id:'D03',title:'Winemaker Dinner \u2014 Breckenridge Brewery',type:'event',  status:'scheduled',locId:'L01',cap:24, res:18, ci:0, sr:0, price:65,bh:4},
+      {id:'D03',title:'Winemaker Dinner \u2014 Breckenridge Brewery',type:'event',  status:'paused',   locId:'L01',cap:24, res:8,  ci:0, sr:0, price:65,bh:4},
       {id:'D04',title:'Friday Night Bar Drop \u2014 Cocktail Flight', type:'table',  status:'scheduled',locId:'L01',cap:20, res:9,  ci:0, sr:0, price:28,bh:2,endTime:'9:00 PM'},
       {id:'D05',title:"Valentine's Day Tasting Menu Drop",             type:'table',  status:'ended',    locId:'L01',cap:12, res:12, ci:11, sr:92,price:120,bh:3},
       {id:'D06',title:"Sunday Brunch \u2014 Chef's Counter Seats",    type:'market', status:'ended',    locId:'L01',cap:20, res:18, ci:16, sr:89,price:0,  bh:2},
@@ -951,7 +951,7 @@ function locById(id){return cfg().locations.find(l=>l.id===id);}
 function orgMode(){const c=cfg();if(c.locations.length===1)return'single';if(c.hier.length<=1)return'multi';return'enterprise';}
 function dropTypeInfo(typeId){return cfg().dropTypes.find(t=>t.id===typeId)||{id:typeId,label:typeId,icon:'&#127381;',bg:'#f1f5f9',c:'#475569'};}
 function badge(status){
-  const map={live:'#dcfce7:#16a34a:Live',scheduled:'#fef9c3:#854d0e:Scheduled',draft:'#f1f5f9:#64748b:Draft',ended:'#fee2e2:#b91c1c:Ended',active:'#dcfce7:#16a34a:Active'};
+  const map={live:'#dcfce7:#16a34a:Live',scheduled:'#fef9c3:#854d0e:Scheduled',draft:'#f1f5f9:#64748b:Draft',ended:'#f1f5f9:#64748b:Ended',active:'#dcfce7:#16a34a:Active',paused:'#fffbeb:#b45309:Paused',cancelled:'#fef2f2:#b91c1c:Cancelled'};
   const [bg,color,label]=(map[status]||'#f1f5f9:#64748b:—').split(':');
   return `<span style="background:${bg};color:${color};font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:20px;">${label}</span>`;
 }
@@ -1731,7 +1731,7 @@ function rDrops(){
   const filterStatus=S.dropStatusFilter||null;
   if(filterStatus) drops=drops.filter(d=>d.status===filterStatus);
   // Sort: live first (broadcast closing soonest), then scheduled (starting soonest), then ended (most recently ended)
-  const statusOrder={live:0,scheduled:1,ended:2,draft:3};
+  const statusOrder={live:0,scheduled:1,paused:2,ended:3,draft:4,cancelled:5};
   drops.sort((a,b)=>{
     const so=(statusOrder[a.status]||0)-(statusOrder[b.status]||0);
     if(so!==0) return so;
@@ -1746,16 +1746,17 @@ function rDrops(){
 
   const live=c.drops.filter(d=>d.status==='live').length;
   const sched=c.drops.filter(d=>d.status==='scheduled').length;
+  const pausedCount=c.drops.filter(d=>d.status==='paused').length;
   const view=S.dropView||'list';
 
-  const statusColors={live:'#16a34a',scheduled:c.color,ended:'#94a3b8',draft:'#f59e0b'};
+  const statusColors={live:'#16a34a',scheduled:c.color,paused:'#d97706',ended:'#94a3b8',draft:'#f59e0b',cancelled:'#94a3b8'};
 
   // ── shared header ──
   const header=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
       <div>
         <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Drops</div>
-        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${live} live &middot; ${sched} scheduled</div>
+        <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">${live} live &middot; ${sched} scheduled${pausedCount>0?` &middot; ${pausedCount} paused`:''}</div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="display:flex;background:#f1f5f9;border-radius:9px;padding:3px;">
@@ -1771,7 +1772,7 @@ function rDrops(){
     return `<div style="padding:28px 32px;">
       ${header}
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
-        ${['live','scheduled','ended'].map(st=>`<button onclick="ss({dropStatusFilter:S.dropStatusFilter==='${st}'?null:'${st}'})" style="padding:5px 12px;border-radius:20px;border:1px solid ${filterStatus===st?c.color:'#e5e7eb'};background:${filterStatus===st?c.color+'18':'transparent'};color:${filterStatus===st?c.color:'#64748b'};font-size:0.72rem;font-weight:600;cursor:pointer;text-transform:capitalize;">${st}</button>`).join('')}
+        ${['live','scheduled','paused','ended'].map(st=>`<button onclick="ss({dropStatusFilter:S.dropStatusFilter==='${st}'?null:'${st}'})" style="padding:5px 12px;border-radius:20px;border:1px solid ${filterStatus===st?c.color:'#e5e7eb'};background:${filterStatus===st?c.color+'18':'transparent'};color:${filterStatus===st?c.color:'#64748b'};font-size:0.72rem;font-weight:600;cursor:pointer;text-transform:capitalize;">${st}</button>`).join('')}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;">
         ${drops.length===0?`<div style="background:#fff;border-radius:12px;border:1px dashed #e5e7eb;padding:40px;text-align:center;color:#94a3b8;font-size:0.82rem;">No drops match your filters.</div>`:''}
@@ -1814,6 +1815,10 @@ function rDrops(){
                   <span style="font-size:0.68rem;font-weight:700;color:#15803d;">Broadcasting until ${broadcastCutoff(d)}</span>
                 </div>
               </div>`:''}
+              ${d.status==='paused'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#fffbeb;border:1px solid #fde68a;border-radius:20px;padding:3px 10px;">
+                <span style="font-size:0.62rem;">⏸</span>
+                <span style="font-size:0.68rem;font-weight:700;color:#b45309;">Broadcast paused</span>
+              </div>`:''}
               ${d.status==='ended'?`<div style="margin-top:5px;display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:20px;padding:3px 10px;">
                 <span style="font-size:0.62rem;">⏹</span>
                 <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;">Ended</span>
@@ -1829,16 +1834,16 @@ function rDrops(){
                 <div style="font-size:0.6rem;color:#94a3b8;">spots</div>
               </div>
               <div style="text-align:center;">
-                <div style="font-size:0.88rem;font-weight:900;color:${d.status!=='scheduled'?'#0f172a':'#94a3b8'};">${d.status!=='scheduled'?d.res:'—'}</div>
+                <div style="font-size:0.88rem;font-weight:900;color:${(d.status==='live'||d.status==='paused'||d.status==='ended')?'#0f172a':'#94a3b8'};">${(d.status==='live'||d.status==='paused'||d.status==='ended')?d.res:'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">reserv.</div>
-                ${d.status!=='scheduled'?bar(capPct,c.color,4):''}
+                ${(d.status==='live'||d.status==='paused'||d.status==='ended')?bar(capPct,c.color,4):''}
               </div>
               <div style="text-align:center;">
-                <div style="font-size:0.88rem;font-weight:900;color:${d.status!=='scheduled'?'#0f172a':'#94a3b8'};">${d.status!=='scheduled'?d.ci:'—'}</div>
+                <div style="font-size:0.88rem;font-weight:900;color:${(d.status==='live'||d.status==='paused'||d.status==='ended')?'#0f172a':'#94a3b8'};">${(d.status==='live'||d.status==='paused'||d.status==='ended')?d.ci:'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">check-ins</div>
               </div>
               <div style="text-align:center;">
-                <div style="font-size:0.88rem;font-weight:900;color:${d.status!=='scheduled'?showColor(sr):'#94a3b8'};">${d.status!=='scheduled'?sr+'%':'—'}</div>
+                <div style="font-size:0.88rem;font-weight:900;color:${(d.status==='live'||d.status==='paused'||d.status==='ended')?showColor(sr):'#94a3b8'};">${(d.status==='live'||d.status==='paused'||d.status==='ended')?sr+'%':'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">show rate</div>
               </div>
               <div style="text-align:center;">
@@ -1931,6 +1936,7 @@ function dropDetail(d){
   const notIn=Math.max(0,d.res-d.ci);
   const isLive=d.status==='live';
   const isScheduled=d.status==='scheduled';
+  const isPaused=d.status==='paused';
   const isEnded=d.status==='ended';
   const activeTab=S.dropTab||(isScheduled?'details':'guests');
   const gFilter=S.dropGFilter||'All';
@@ -1981,12 +1987,12 @@ function dropDetail(d){
 
     <!-- Stats bar -->
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
-      ${[['Spots',d.cap,'#1f2937'],['Reserved',isLive?d.res:'—',c.color],['Checked In',isLive?d.ci:'—','#0d9488'],['Not In',isLive?notIn:'—','#f59e0b']].map((s,i)=>`
+      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#0d9488'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
         ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
         <div style="flex:1;text-align:center;padding:12px 8px;">
           <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
           <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${s[0]}</div>
-          ${i===1&&isLive?bar(capPct,c.color,4):''}
+          ${i===1&&(isLive||isPaused)?bar(capPct,c.color,4):''}
         </div>`).join('')}
     </div>
 
@@ -2031,8 +2037,9 @@ function dropDetail(d){
               <div style="font-size:0.72rem;color:#94a3b8;">${g.at}</div>
               <div style="display:inline-flex;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
               <div style="display:flex;gap:5px;justify-content:flex-end;">
-                ${g.status==='Reserved'&&isLive?`<button style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Check In</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Check In</button>`:''}
                 ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;cursor:pointer;">Cancel</button>`:''}
               </div>
             </div>`;
           }).join('')}`}
@@ -2078,17 +2085,22 @@ function dropDetail(d){
       <!-- Right: actions sidebar -->
       <div style="display:flex;flex-direction:column;gap:10px;">
         <!-- Status action -->
-        ${(isLive||isEnded)?`<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:14px 16px;">
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:14px 16px;">
           ${isLive?`
-            <button style="width:100%;padding:10px;background:#fee2e2;color:#b91c1c;border:none;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;margin-bottom:8px;">⏹ End Drop</button>
-            <button style="width:100%;padding:10px;background:#fffbeb;color:#d97706;border:1px solid #fde68a;border-radius:10px;font-weight:600;font-size:0.78rem;cursor:pointer;">⏸ Pause Drop</button>
+            <button onclick="ss({dropModal:'pauseDrop'})" style="width:100%;padding:10px;background:#fffbeb;color:#b45309;border:1px solid #fde68a;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;margin-bottom:8px;">⏸ Pause Broadcast</button>
+            <button onclick="ss({dropModal:'cancelDrop'})" style="width:100%;padding:10px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:10px;font-weight:600;font-size:0.78rem;cursor:pointer;">✕ Cancel Drop</button>
+          `:isPaused?`
+            <button onclick="ss({dropModal:'resumeDrop'})" style="width:100%;padding:10px;background:#dcfce7;color:#15803d;border:none;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;margin-bottom:8px;">▶ Resume Broadcast</button>
+            <button onclick="ss({dropModal:'cancelDrop'})" style="width:100%;padding:10px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:10px;font-weight:600;font-size:0.78rem;cursor:pointer;">✕ Cancel Drop</button>
+          `:isScheduled?`
+            <button onclick="ss({dropModal:'cancelDrop'})" style="width:100%;padding:10px;background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;border-radius:10px;font-weight:600;font-size:0.78rem;cursor:pointer;">✕ Cancel Drop</button>
           `:isEnded?`
             <div style="text-align:center;padding:4px 0 6px;">
               <span style="font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">Drop Ended</span>
             </div>
             <button style="width:100%;padding:10px;background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">⧉ Duplicate Drop</button>
           `:''}
-        </div>`:''}
+        </div>
 
         <!-- Quick actions -->
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
@@ -2129,7 +2141,53 @@ function dropModalPanel(){
   const m=S.dropModal;
   if(!m) return '';
   let inner='';
-  if(m==='share'){
+  const dropData=c.drops.find(x=>x.id===S.locationDetail);
+  const reservedCount=dropData?(dropData.res||0):0;
+  if(m==='pauseDrop'){
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:6px;">Pause Broadcast?</div>
+      <div style="font-size:0.78rem;color:#64748b;line-height:1.6;margin-bottom:16px;">The drop will be hidden from the guest feed. Existing reservations are unaffected — the drop is still happening.</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Keep Live</button>
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:1px solid #fde68a;background:#fffbeb;color:#b45309;cursor:pointer;">⏸ Pause</button>
+      </div>`;
+  } else if(m==='resumeDrop'){
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:6px;">Resume Broadcast?</div>
+      <div style="font-size:0.78rem;color:#64748b;line-height:1.6;margin-bottom:16px;">The drop will reappear in the guest feed and broadcasting will resume immediately.</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Cancel</button>
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:#dcfce7;color:#15803d;cursor:pointer;">▶ Resume</button>
+      </div>`;
+  } else if(m==='cancelDrop'){
+    inner=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:38px;height:38px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✕</div>
+        <div><div style="font-size:1rem;font-weight:800;color:#b91c1c;">Cancel Drop</div><div style="font-size:0.72rem;color:#94a3b8;">This action cannot be undone</div></div>
+      </div>
+      ${reservedCount>0?`<div style="background:#fef2f2;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:0.78rem;color:#b91c1c;font-weight:600;">⚠ ${reservedCount} guest${reservedCount!==1?'s have':' has'} reservations and will be notified and fully refunded.</div>`:''}
+      <div style="margin-bottom:14px;">
+        <div style="font-size:0.7rem;font-weight:700;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">Message to guests <span style="font-weight:400;text-transform:none;">(optional)</span></div>
+        <textarea placeholder="e.g. &quot;Due to an unforeseen emergency we need to cancel this drop. We are truly sorry for the inconvenience.&quot;" rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid #fecaca;font-size:0.78rem;color:#374151;background:#fff;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Keep Drop</button>
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:#b91c1c;color:#fff;cursor:pointer;">Cancel Drop${reservedCount>0?' &amp; Refund All':''}</button>
+      </div>`;
+  } else if(m==='cancelTicket'){
+    const tid=S.cancelTicketId||'';
+    const guestEntry=dropData&&dropData.guests?dropData.guests.find(x=>x.tid===tid):null;
+    inner=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="width:38px;height:38px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✕</div>
+        <div><div style="font-size:1rem;font-weight:800;color:#b91c1c;">Cancel Reservation</div><div style="font-size:0.72rem;color:#94a3b8;">${guestEntry?guestEntry.name+' &middot; ':''} Ticket ${tid}</div></div>
+      </div>
+      <div style="background:#fef2f2;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:0.78rem;color:#b91c1c;font-weight:600;">The guest will be notified and receive a full refund.</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:null,cancelTicketId:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Keep Reservation</button>
+        <button onclick="ss({dropModal:null,cancelTicketId:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:#b91c1c;color:#fff;cursor:pointer;">Cancel &amp; Refund</button>
+      </div>`;
+  } else if(m==='share'){
     inner=`
       <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Share Drop</div>
       <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Share a link directly to this drop's reservation page</div>

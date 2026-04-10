@@ -994,6 +994,7 @@ function renderLive(){
       ${isLive?`<button onclick="modal('share-${S.drop}')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px">${ic('share',13)} Share</button>`:''}
       ${isLive?`<button onclick="S.niyaFabContext='liveview';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.scr='niya';render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #F59E0B;background:#FFFBEB;color:#F59E0B;display:flex;align-items:center;justify-content:center;gap:5px">${ic('pause',13)} Pause</button>`
       :isPaused?`<button onclick="S.niyaFabContext='liveview';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.scr='niya';render()" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#22C55E;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('play',13)} Resume</button>`:''}
+      ${(isLive||isPaused||d.status==='Scheduled')?`<button onclick="S.cancelDropIdx=S.drop;modal('cancelDrop')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#B91C1C;display:flex;align-items:center;justify-content:center;gap:5px">${ic('x',13)} Cancel</button>`:''}
       ${d.status==='Ended'?`<button onclick="go('create',{cloneFrom:${S.drop}})" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #8B5CF6;background:#EDE9FE;color:#5B21B6;display:flex;align-items:center;justify-content:center;gap:5px">${ic('copy',13)} Duplicate</button>`:''}
     </div>
   </div>`;
@@ -1087,10 +1088,10 @@ function renderG(){
           </div>
         </div>
         ${exp?`<div class="fi" style="margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6">
-          ${multi?`<div style="margin-bottom:8px">${g.tickets.map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:11px"><span style="color:#6B7280">${t.tid}</span>${bg(t.status,true)}<div style="display:flex;gap:4px">${t.status==='Reserved'?`<button onclick="event.stopPropagation()" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:none;background:#0D9488;color:#fff">Check In</button>`:''}<button onclick="event.stopPropagation()" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444">Cancel</button></div></div>`).join('')}</div>`:''}
+          ${multi?`<div style="margin-bottom:8px">${g.tickets.map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:11px"><span style="color:#6B7280">${t.tid}</span>${bg(t.status,true)}<div style="display:flex;gap:4px">${t.status==='Reserved'?`<button onclick="event.stopPropagation()" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:none;background:#0D9488;color:#fff">Check In</button>`:''}<button onclick="event.stopPropagation();S.cancelTid=t.tid;S.cancelGuestName=g.name;modal('cancelTicket')" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444">Cancel</button></div></div>`).join('')}</div>`:''}
           ${!multi?`<div style="display:flex;gap:5px">
             ${g.tickets[0].status==='Reserved'?`<button onclick="event.stopPropagation()" style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:600;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;justify-content:center;gap:3px">${ic('check',13)} Check In</button>`:''}
-            <button onclick="event.stopPropagation()" style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444;display:flex;align-items:center;justify-content:center;gap:3px">${ic('x',13)} Cancel & Refund</button></div>`:''}
+            <button onclick="event.stopPropagation();S.cancelTid=g.tickets[0].tid;S.cancelGuestName=g.name;modal('cancelTicket')" style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444;display:flex;align-items:center;justify-content:center;gap:3px">${ic('x',13)} Cancel & Refund</button></div>`:''}
         </div>`:''}</div>`;}).join('')}`;
 
   return `${hdr('Check-In','')}
@@ -1729,6 +1730,40 @@ function renderModal(){
         <button onclick="modal(null)" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:none;background:#3B82F6;color:#fff">Invite</button>
       </div>`).join('')}
       <div style="display:flex;gap:8px;margin-top:14px"><button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Cancel</button><button onclick="modal(null)" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#3B82F6;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('send',15)} Send Invite</button></div>
+    </div></div>`;
+  }
+  else if(S.modal==='cancelTicket'){
+    const tid=S.cancelTid||'';
+    const gName=S.cancelGuestName||'this guest';
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:10px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('x',20)}</div>
+        <div><div style="font-size:15px;font-weight:700;color:#B91C1C">Cancel Reservation</div><div style="font-size:11px;color:#9CA3AF">${gName} · Ticket ${tid}</div></div>
+      </div>
+      <div style="background:#FEF2F2;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:#B91C1C;font-weight:600">The guest will be notified and receive a full refund.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Keep Reservation</button>
+        <button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:700;border:none;background:#EF4444;color:#fff">Cancel &amp; Refund</button>
+      </div>
+    </div></div>`;
+  }
+  else if(S.modal==='cancelDrop'){
+    const d=drops[S.cancelDropIdx||S.drop||0];
+    const resCount=d?d.res:0;
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:10px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('x',20)}</div>
+        <div><div style="font-size:15px;font-weight:700;color:#B91C1C">Cancel Drop</div><div style="font-size:11px;color:#9CA3AF">This action cannot be undone</div></div>
+      </div>
+      ${resCount>0?`<div style="background:#FEF2F2;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#B91C1C;font-weight:600">⚠ ${resCount} guest${resCount!==1?'s':''} will be notified and fully refunded.</div>`:''}
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:5px">Message to guests <span style="font-weight:400;color:#9CA3AF">(optional)</span></div>
+        <textarea placeholder='e.g. "Due to an unforeseen emergency we need to cancel. We are truly sorry for the inconvenience."' rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid #FCA5A5;font-size:12px;color:#111827;background:#fff;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box"></textarea>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Keep Drop</button>
+        <button onclick="modal(null)" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:700;border:none;background:#EF4444;color:#fff">Cancel Drop${resCount>0?' &amp; Refund All':''}</button>
+      </div>
     </div></div>`;
   }
   else{mr.innerHTML='';}
