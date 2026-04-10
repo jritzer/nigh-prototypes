@@ -1507,7 +1507,10 @@ function locationDetail(l){
         <div style="margin-bottom:12px;">${inp('Business Name','name','e.g. Mercantile Dining & Provision',true)}</div>
         <div style="margin-bottom:12px;">
           <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:5px;">Description</label>
-          <textarea placeholder="A short description of your business for your Nigh profile…" style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px;font-size:0.85rem;font-family:inherit;outline:none;resize:vertical;min-height:72px;box-sizing:border-box;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'">${l.description||''}</textarea>
+          <div style="position:relative;">
+            <textarea id="locDesc" maxlength="160" placeholder="A short description of your business for your public profile" style="width:100%;border:1px solid #e5e7eb;border-radius:9px;padding:9px 12px 24px 12px;font-size:0.85rem;font-family:inherit;outline:none;resize:none;min-height:80px;box-sizing:border-box;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'" oninput="document.getElementById('locDescCount').textContent=(160-this.value.length)+' remaining'">${l.description||''}</textarea>
+            <span id="locDescCount" style="position:absolute;bottom:7px;right:10px;font-size:0.65rem;color:#94a3b8;">${160-(l.description||'').length} remaining</span>
+          </div>
         </div>
         <div style="margin-bottom:12px;">${inp('Street Address','address','123 Main St',false)}</div>
         <div style="display:grid;grid-template-columns:1fr 120px 80px;gap:12px;margin-bottom:12px;">
