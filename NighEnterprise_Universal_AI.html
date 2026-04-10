@@ -1742,12 +1742,12 @@ function rDrops(){
             </div>
             <div style="display:grid;grid-template-columns:repeat(4,60px);gap:8px;flex-shrink:0;">
               <div style="text-align:center;">
-                <div style="font-size:0.88rem;font-weight:900;color:#0f172a;">${d.res}</div>
+                <div style="font-size:0.88rem;font-weight:900;color:${d.status==='live'?'#0f172a':'#94a3b8'};">${d.status==='live'?d.res:'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">reserv.</div>
-                ${bar(capPct,c.color,4)}
+                ${d.status==='live'?bar(capPct,c.color,4):''}
               </div>
               <div style="text-align:center;">
-                <div style="font-size:0.88rem;font-weight:900;color:#0f172a;">${d.ci}</div>
+                <div style="font-size:0.88rem;font-weight:900;color:${d.status==='live'?'#0f172a':'#94a3b8'};">${d.status==='live'?d.ci:'—'}</div>
                 <div style="font-size:0.6rem;color:#94a3b8;">check-ins</div>
               </div>
               <div style="text-align:center;">
