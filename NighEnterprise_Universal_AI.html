@@ -1379,44 +1379,28 @@ function rLocations(){
     </div>
     ${groups.map(g=>{
       const glocs=locs.filter(l=>l.t1===g);
-      const gDrops=c.drops.filter(d=>glocs.some(l=>l.id===d.locId));
-      const gci=gDrops.reduce((s,d)=>s+(d.ci||0),0);
-      const gres=gDrops.reduce((s,d)=>s+(d.res||0),0);
-      const gsr=pct(gci,gres);
       const t2groups=[...new Set(glocs.map(l=>l.t2).filter(Boolean))];
       return `<div style="margin-bottom:24px;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
           <div style="font-size:0.9rem;font-weight:800;color:#0f172a;">${g}</div>
           <span style="font-size:0.7rem;color:#94a3b8;">${glocs.length} ${c.locsLabel.toLowerCase()}</span>
-          <span style="margin-left:auto;font-size:0.72rem;font-weight:700;color:${showColor(gsr)};">${gsr}% show rate &middot; ${gci} check-ins</span>
         </div>
         ${(t2groups.length?t2groups:[null]).map(t2=>{
           const t2locs=t2?glocs.filter(l=>l.t2===t2):glocs;
           const t2Header=t2?`<div style="font-size:0.72rem;font-weight:700;color:#64748b;padding:6px 0 4px;letter-spacing:0.04em;text-transform:uppercase;">${t2}</div>`:'';
           return t2Header+`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:${t2?'12px':'0'};">
             ${t2locs.map(l=>{
-              const lDrops=c.drops.filter(d=>d.locId===l.id);
-              const lci=lDrops.reduce((s,d)=>s+(d.ci||0),0);
-              const lres=lDrops.reduce((s,d)=>s+(d.res||0),0);
-              const lsr=pct(lci,lres);
-              const liveCt=lDrops.filter(d=>d.status==='live').length;
-              return `<div onclick="ss({locationDetail:'${l.id}'})" style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;cursor:pointer;transition:all 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)';this.style.borderColor='${c.color}50'" onmouseout="this.style.boxShadow='';this.style.borderColor='#e5e7eb'">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
-                  <div style="font-size:0.8rem;font-weight:700;color:#0f172a;line-height:1.3;">${l.name}</div>
+              return `<div onclick="ss({locationDetail:'${l.id}'})" style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;cursor:pointer;transition:all 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)';this.style.borderColor='${c.color}50'" onmouseout="this.style.boxShadow='';this.style.borderColor='#e5e7eb'">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                  <div style="font-size:0.82rem;font-weight:700;color:#0f172a;line-height:1.3;">${l.name}</div>
                   ${badge(l.status)}
                 </div>
-                <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-                  <div style="font-size:0.7rem;color:#94a3b8;">${l.city}, ${l.state}</div>
+                <div style="font-size:0.72rem;color:#64748b;margin-bottom:4px;">${l.address?l.address+' · ':''}${l.city}, ${l.state}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                  ${l.phone?`<span style="font-size:0.7rem;color:#94a3b8;">${l.phone}</span>`:''}
                   ${l.multiVenue===true?`<span style="font-size:0.62rem;font-weight:700;background:#FEF3C7;color:#B45309;padding:3px 8px;border-radius:12px;">Multi-venue</span>`:''}
+                  ${l.manager?`<span style="font-size:0.7rem;color:#94a3b8;">${l.manager}</span>`:''}
                 </div>
-                <div style="display:flex;gap:12px;margin-bottom:8px;">
-                  <div><div style="font-size:1rem;font-weight:900;color:${c.color};">${lci}</div><div style="font-size:0.62rem;color:#94a3b8;">check-ins</div></div>
-                  <div><div style="font-size:1rem;font-weight:900;color:#0f172a;">${liveCt}</div><div style="font-size:0.62rem;color:#94a3b8;">live drops</div></div>
-                  <div><div style="font-size:1rem;font-weight:900;color:${showColor(lsr)};">${lsr}%</div><div style="font-size:0.62rem;color:#94a3b8;">show rate</div></div>
-                  <div><div style="font-size:1rem;font-weight:900;color:#7C3AED;">${l.followers||0}</div><div style="font-size:0.62rem;color:#94a3b8;">followers</div></div>
-                </div>
-                ${l.followersGrowth?`<div style="font-size:0.65rem;color:#a78bfa;">+${l.followersGrowth} this month</div>`:''}
-                ${bar(lsr,c.color,5)}
               </div>`;
             }).join('')}
           </div>`;
@@ -1553,84 +1537,38 @@ function locationDetail(l){
         <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Location</button>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
-      <div>
-        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;max-width:900px;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
             <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${l.name}</div>
             ${badge(l.status)}
           </div>
-          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;">
-            <div style="text-align:center;background:#f8fafc;border-radius:10px;padding:12px 8px;">
-              <div style="font-size:1.5rem;font-weight:900;color:${c.color};">${lci}</div>
-              <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">Check-ins</div>
-            </div>
-            <div style="text-align:center;background:#f8fafc;border-radius:10px;padding:12px 8px;">
-              <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${lres}</div>
-              <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">Reservations</div>
-            </div>
-            <div style="text-align:center;background:#f8fafc;border-radius:10px;padding:12px 8px;">
-              <div style="font-size:1.5rem;font-weight:900;color:${showColor(lsr)};">${lsr}%</div>
-              <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">Show Rate</div>
-            </div>
-            <div style="text-align:center;background:#f8fafc;border-radius:10px;padding:12px 8px;">
-              <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${lDrops.length}</div>
-              <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">Drops</div>
-            </div>
-            <div style="text-align:center;background:#EDE9FE;border-radius:10px;padding:12px 8px;">
-              <div style="font-size:1.5rem;font-weight:900;color:#7C3AED;">${l.followers||0}</div>
-              <div style="font-size:0.62rem;color:#a78bfa;margin-top:2px;">Followers</div>
-              ${l.followersGrowth?`<div style="font-size:0.6rem;color:#a78bfa;margin-top:3px;">+${l.followersGrowth} mo</div>`:''}
-            </div>
-          </div>
-          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:8px;">Profile</div>
-          ${infoRow('Handle',l.handle?'@'+l.handle:'— not set')}
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Profile</div>
           ${infoRow('Address',l.address?l.address+', '+l.city+', '+l.state:l.city+', '+l.state)}
-          ${l.multiVenue===true?infoRow('Venue',`<span style="color:${c.color};font-weight:700;">Flexible</span> — set per drop<span style="display:inline-block;margin-left:8px;font-size:0.6rem;font-weight:700;background:#FEF3C7;color:#B45309;padding:2px 6px;border-radius:10px;">Multi-venue</span>`):infoRow('Venue','Fixed to location address')}
           ${infoRow('Phone',l.phone||'— not set')}
           ${infoRow('Email',l.email||'— not set')}
-          ${l.manager?infoRow('Manager',l.manager):''}
-          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin:12px 0 8px;">Organization</div>
-          ${infoRow(c.hier[0],l.t1)}
-          ${l.t2?infoRow(c.hier[1]||'District',l.t2):''}
-          ${infoRow('Capacity',l.cap+' guests')}
-          ${infoRow('Est.',l.yr)}
+          ${l.multiVenue===true?infoRow('Venue',`<span style="color:${c.color};font-weight:700;">Flexible</span> — set per drop<span style="display:inline-block;margin-left:8px;font-size:0.6rem;font-weight:700;background:#FEF3C7;color:#B45309;padding:2px 6px;border-radius:10px;">Multi-venue</span>`):infoRow('Venue','Fixed to location address')}
+          ${infoRow('Est.',l.yr||'—')}
         </div>
-        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
-          <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.85rem;font-weight:800;color:#0f172a;">Drops at this ${c.locLabel}</div>
-          ${lDrops.length===0?`<div style="padding:24px 20px;color:#94a3b8;font-size:0.78rem;">No drops yet.</div>`:''}
-          ${lDrops.map(d=>{
-            const sr=pct(d.ci,d.res);
-            return `<div style="padding:12px 20px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;gap:12px;">
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:0.82rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.title}</div>
-                <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-                  
-                  ${badge(d.status)}
-                  ${d.timing?timingBadge(d.timing):''}
-                  ${d.day?dayBadge(d.day):''}
-                </div>
-              </div>
-              <div style="text-align:right;flex-shrink:0;">
-                <div style="font-size:0.88rem;font-weight:900;color:${showColor(sr)};">${sr}%</div>
-                <div style="font-size:0.65rem;color:#94a3b8;">${d.ci} / ${d.res}</div>
-              </div>
-            </div>`;
-          }).join('')}
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;">
+          <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin-bottom:10px;">Account</div>
+          ${infoRow('Handle',l.handle?'@'+l.handle:'— not set')}
+          ${infoRow('Status',l.status||'—')}
+          ${c.hier.length>0?`
+            <div style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8;margin:12px 0 10px;">Organization</div>
+            ${infoRow(c.hier[0],l.t1||'—')}
+            ${l.t2?infoRow(c.hier[1]||'District',l.t2):''}
+            ${l.manager?infoRow('Manager',l.manager):''}
+          `:''}
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
-          <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;font-size:0.82rem;font-weight:800;color:#0f172a;">Geo-Fence Tiers</div>
-          ${Object.entries(c.geoTiers).map(([k,gt])=>`<div style="padding:10px 18px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;gap:10px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
-            <div><div style="font-size:0.75rem;font-weight:700;color:#0f172a;">${gt.short}</div><div style="font-size:0.65rem;color:#94a3b8;">${k}</div></div>
-          </div>`).join('')}
-        </div>
-        <div style="background:${c.color}10;border-radius:14px;border:1px solid ${c.color}30;padding:16px 18px;">
-          <div style="font-size:0.8rem;font-weight:800;color:${c.color};margin-bottom:10px;">Quick Actions</div>
-          <button onclick="ss({showNewColl:true,collStep:1})" style="width:100%;padding:9px;background:${c.color};color:#fff;border:none;border-radius:9px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ New Collection</button>
-        </div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;align-self:start;">
+        <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;font-size:0.82rem;font-weight:800;color:#0f172a;">Geo-Fence Tiers</div>
+        ${Object.entries(c.geoTiers).map(([k,gt])=>`<div style="padding:10px 18px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;gap:10px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
+          <div><div style="font-size:0.75rem;font-weight:700;color:#0f172a;">${gt.short}</div><div style="font-size:0.65rem;color:#94a3b8;">${k}</div></div>
+        </div>`).join('')}
       </div>
     </div>
   </div>`;
