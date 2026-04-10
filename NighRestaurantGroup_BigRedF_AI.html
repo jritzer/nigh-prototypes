@@ -671,7 +671,7 @@ function collectionDetailPanel(colId){
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
       ${miniStat('Type',col.type==='group'?'Group-Wide':'Brand',ac)}
       ${miniStat('Locations',col.participants,'#0f172a')}
-      ${miniStat('Geo-Fence',GEO_TIERS[col.geo]?GEO_TIERS[col.geo].short:'—','#0f172a')}
+      ${miniStat(GEO_TIERS[col.geo]?GEO_TIERS[col.geo].short:'—','#0f172a')}
       ${miniStat('Conv %',conv+'%',showColor(conv))}
     </div>
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;margin-bottom:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:center;">
@@ -932,8 +932,7 @@ function rSettings(){
       sRow('Group-wide drops','Enabled','Drops can broadcast across all brands')+
       sRow('Cross-brand analytics','Enabled','Compare performance across brands')
     )}
-    ${sCard('Geo-Fence Tiers',
-      Object.entries(GEO_TIERS).map(([k,v])=>sRow(v.short,v.label)).join('')
+    ${.map(([k,v])=>sRow(v.short,v.label)).join('')
     )}
     ${sCard('Hierarchy: Group &rarr; Brand &rarr; Location',`
       <div style="display:flex;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
@@ -955,7 +954,7 @@ function rSettings(){
 // ── NEW COLLECTION MODAL ────────────────────────────────────────────────────
 function newCollModal(){
   const step=S.newCollStep||1;
-  const steps=['Scope','Geo-Fence','Review'];
+  const steps=['Scope''Review'];
   return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false,newCollStep:1})">
     <div style="background:#fff;border-radius:18px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
       <div style="background:linear-gradient(135deg,#1a0505 0%,#C41230 100%);padding:20px 24px;border-radius:18px 18px 0 0;">
@@ -991,7 +990,6 @@ function newCollModal(){
         `:''}
         ${step===2?`
           <div style="margin-bottom:16px;">
-            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Geo-Fence Tier</label>
             <div style="display:flex;flex-direction:column;gap:8px;">
               ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#C41230':'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fef2f2':'#fff'};">
                 <input type="radio" name="collGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
@@ -1008,7 +1006,7 @@ function newCollModal(){
             <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
             ${infoRow('Brand Scope',S.newCollBrand?BRANDS.find(b=>b.id===S.newCollBrand)?.short||'—':'All Brands (Group-wide)')}
             ${infoRow('Locations',S.newCollBrand?LOCATIONS.filter(l=>l.brand===S.newCollBrand).length+' locations':'13 locations')}
-            ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+            ${infoRow(S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
           </div>
           <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#991b1b;">
             Drops can be added after the collection is created. Group-wide collections will appear across all brand apps.
@@ -1113,7 +1111,7 @@ function pushStep3(){
       ${infoRow('Brand',b?b.short:'—')}
       ${infoRow('Location',loc?loc.city:'—')}
       ${infoRow('Audience',S.pushScope||'Not set')}
-      ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+      ${infoRow(S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
     </div>
   </div>`;
 }

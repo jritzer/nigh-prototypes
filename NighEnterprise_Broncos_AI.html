@@ -579,7 +579,6 @@ function locationDetail(id){
           ${infoRow('Category',l.category)}
           ${infoRow('Status',l.status)}
           ${infoRow('Manager',l.manager)}
-          ${infoRow('Geo-fence','Full Stadium (~1,500 ft) — all drops geo-fenced to Empower Field')}
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
           ${miniStat('Check-ins MTD',fmtNum(l.mtdCheckins))}
@@ -1191,8 +1190,7 @@ function rSettings(){
       sRow('Timezone','Mountain Time (MT)')
     )}
     ${sCard('Drop Policies',
-      sRow('Max Simultaneous Drops','10 per zone','Across all game timing windows')+
-      sRow('Min Geo-Fence Radius','~100 ft (Concession tier)','Tightest pinpoint accuracy')+
+      sRow('Max Simultaneous Drops','10 per zone','Across all game timing windows')+','Tightest pinpoint accuracy')+
       sRow('Default Broadcast Window','3 hours','Adjustable per drop')+
       sRow('Auto-expire after game','Enabled','Drops auto-close post-game +2 hrs')+
       sRow('Sponsor drop approval','Required','All partner drops need venue review')
@@ -1205,8 +1203,7 @@ function rSettings(){
         </div>`).join('')}
       </div>
     `)}
-    ${sCard('Geo-Fence Tiers',
-      Object.entries(GEO_TIERS).map(([k,v])=>sRow(v.short,v.label)).join('')
+    ${.map(([k,v])=>sRow(v.short,v.label)).join('')
     )}
     ${sCard('Game Timing Windows',
       Object.entries(GAME_TIMING).map(([k,v])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
@@ -1229,7 +1226,7 @@ function rSettings(){
 // ── NEW COLLECTION MODAL ────────────────────────────────────────────────────
 function newCollModal(){
   const step=S.newCollStep||1;
-  const steps=['Details','Geo-Fence','Review'];
+  const steps=['Details''Review'];
   return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false,newCollStep:1})">
     <div style="background:#fff;border-radius:18px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
       <div style="background:linear-gradient(135deg,#002244 0%,#FB4F14 100%);padding:20px 24px;border-radius:18px 18px 0 0;">
@@ -1270,7 +1267,6 @@ function newCollModal(){
         `:''}
         ${step===2?`
           <div style="margin-bottom:16px;">
-            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Geo-Fence Tier</label>
             <div style="display:flex;flex-direction:column;gap:8px;">
               ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#FB4F14':'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fff8f5':'#fff'};">
                 <input type="radio" name="collGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
@@ -1287,7 +1283,7 @@ function newCollModal(){
             <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
             ${infoRow('Type',S.newCollType==='venue'?'Venue-Wide':'Zone-Specific')}
             ${infoRow('Game Timing',S.newCollTiming?GAME_TIMING[S.newCollTiming].short:'Not set')}
-            ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+            ${infoRow(S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
           </div>
           <div style="background:#fff3ec;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#9a3412;">
             This collection will be active for the selected game timing window and geo-fence range. Drops can be added after creation.

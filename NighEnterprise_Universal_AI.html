@@ -1537,7 +1537,7 @@ function locationDetail(l){
         <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Location</button>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;max-width:900px;">
+    <div style="max-width:680px;">
       <div style="display:flex;flex-direction:column;gap:14px;">
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
@@ -1563,13 +1563,7 @@ function locationDetail(l){
           `:''}
         </div>
       </div>
-      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;align-self:start;">
-        <div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;font-size:0.82rem;font-weight:800;color:#0f172a;">Geo-Fence Tiers</div>
-        ${Object.entries(c.geoTiers).map(([k,gt])=>`<div style="padding:10px 18px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;gap:10px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:${c.color};flex-shrink:0;"></div>
-          <div><div style="font-size:0.75rem;font-weight:700;color:#0f172a;">${gt.short}</div><div style="font-size:0.65rem;color:#94a3b8;">${k}</div></div>
-        </div>`).join('')}
-      </div>
+
     </div>
   </div>`;
 }
@@ -2532,7 +2526,6 @@ function rBilling(){
 function rSetup(){
   const c=cfg();
   const tiers=c.hier||[];
-  const geoTierEntries=Object.entries(c.geoTiers||{});
   const dropTypes=c.dropTypes||[];
   const t1vals=[...new Set(c.locations.map(l=>l.t1))];
   const t2vals=[...new Set(c.locations.filter(l=>l.t2).map(l=>l.t2))];
@@ -2571,24 +2564,6 @@ function rSetup(){
       <button style="padding:7px 14px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">+ Add Tier</button>
       <button style="padding:7px 14px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:0.73rem;font-weight:600;cursor:pointer;">Preview Hierarchy</button>
     </div>`);
-
-  // ── 2. Geo Tiers ──
-  const maxR=geoTierEntries.length;
-  const geoHTML=card(`
-    ${sectionHd('Geo Tiers (Drop Radius Options)','Set the radius buckets guests\u2019 phones use to qualify for a drop. Each tier becomes a selectable option when creating a drop.')}
-    <div style="display:grid;grid-template-columns:repeat(${Math.min(4,maxR)},1fr);gap:10px;margin-bottom:14px;">
-      ${geoTierEntries.map(([key,gt],i)=>{
-        const pct=Math.round((i+1)/maxR*100);
-        return `<div style="border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;position:relative;overflow:hidden;">
-          <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:${c.color};opacity:${0.25+(i*0.25)};"></div>
-          <div style="font-size:0.65rem;font-weight:700;color:${c.color};margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;">${gt.short}</div>
-          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;line-height:1.3;margin-bottom:6px;">${gt.label.split('(')[0].trim()}</div>
-          <div style="font-size:0.65rem;color:#94a3b8;">${gt.label.match(/\(([^)]+)\)/)?gt.label.match(/\(([^)]+)\)/)[1]:''}</div>
-          <button style="margin-top:8px;padding:3px 10px;background:#f8fafc;color:#64748b;border:1px solid #e5e7eb;border-radius:6px;font-size:0.65rem;font-weight:600;cursor:pointer;">Edit</button>
-        </div>`;
-      }).join('')}
-    </div>
-    <button style="padding:7px 14px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">+ Add Geo Tier</button>`);
 
   // ── 3. Drop Types ──
   const dtHTML=card(`
@@ -2715,7 +2690,7 @@ function rSetup(){
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;">
       <div>${hierHTML}${dtHTML}${importHTML}${venueSettingsHTML}</div>
-      <div>${geoHTML}${attrHTML}${approvalHTML}</div>
+      <div>${attrHTML}${approvalHTML}</div>
     </div>
   </div>`;
 }
@@ -2874,7 +2849,6 @@ function rSettings(){
           {label:'Default Booking Window',desc:'How far in advance guests can reserve',value:'Up to 4 hrs'},
           {label:'Auto-close when full',desc:'End drop when capacity is reached',toggle:true},
           {label:'Require check-in',desc:'Guests must physically check in to redeem',toggle:true},
-          {label:'Default geo-fence',desc:'Default radius for new drops',value:Object.values(c.geoTiers)[1].short},
         ])}
       </div>
       <div>
@@ -3022,7 +2996,7 @@ function rActivity(){
     {user:'Josh Ritzer',    role:'Corporate Admin', action:'Updated billing payment method',                         type:'billing',  time:'2d ago',  loc:'Corporate'},
     {user:'Dana Holt',      role:'Brand Manager',   action:'Invited Tony Reyes to manage Mastro\'s Scottsdale',     type:'team',     time:'2d ago',  loc:'Corporate'},
     {user:'Ann Kowalski',   role:'Location Manager',action:'Created drop "Chart House Sunday Brunch on the Hudson"', type:'drop',     time:'3d ago',  loc:'Chart House — Weehawken'},
-    {user:'Joe Trevino',    role:'Location Manager',action:'Updated geo-fence to Full Property for Landry\'s SA',   type:'settings', time:'3d ago',  loc:"Landry's Seafood — SA"},
+    {user:'Joe Trevino',    role:'Location Manager',action:'Updated location hours for Landry\'s SA',              type:'settings', time:'3d ago',  loc:"Landry's Seafood — SA"},
   ];
   const filterTypes=['all','drop','guest','team','location','billing','settings'];
   const f=S.actFilter||'all';
@@ -3429,7 +3403,6 @@ function pushModal(){
       <div>
         <label style="font-size:0.72rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Geo-fence Tier</label>
         <select style="width:100%;padding:9px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;background:#fff;">
-          ${Object.entries(c.geoTiers).map(([k,gt])=>`<option value="${k}">${gt.label}</option>`).join('')}
         </select>
       </div>
       <div>
@@ -3511,7 +3484,7 @@ function pushModal(){
     </div>
     <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:12px;padding:12px 16px;margin-bottom:12px;">
       <div style="font-size:0.7rem;font-weight:800;color:#92400e;margin-bottom:5px;">&#128161; What happens when you create this drop</div>
-      <div style="font-size:0.73rem;color:#78350f;line-height:1.6;">Guests within the geo-fence will receive a push notification. Your ${locMgr} will be notified and can track redemptions in real time. The drop appears in your ${c.locsLabel.toLowerCase()}'s activity feed immediately.</div>
+      <div style="font-size:0.73rem;color:#78350f;line-height:1.6;">Your ${locMgr} will be notified and can track redemptions in real time. The drop appears in your ${c.locsLabel.toLowerCase()}'s activity feed immediately.</div>
     </div>
     <div style="background:${c.color}12;border-radius:10px;padding:9px 14px;font-size:0.73rem;color:${c.color};font-weight:600;">&#128204; Targeting ${selLoc?selLoc.name:'selected '+c.locLabel.toLowerCase()} · ${selType.label}${dual?' · Dual Pricing ON':''}</div>`;
   }
