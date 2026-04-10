@@ -1987,7 +1987,7 @@ function dropDetail(d){
 
     <!-- Stats bar -->
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
-      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#3b82f6'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
+      ${[['Spots',d.cap,'#1f2937'],['Reserved',(isLive||isPaused)?d.res:'—',c.color],['Checked In',(isLive||isPaused)?d.ci:'—','#0E4EF5'],['Not In',(isLive||isPaused)?notIn:'—','#f59e0b']].map((s,i)=>`
         ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
         <div style="flex:1;text-align:center;padding:12px 8px;">
           <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
@@ -2026,7 +2026,7 @@ function dropDetail(d){
             const initials=g.name.split(' ').map(n=>n[0]).join('');
             return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 120px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
               <div style="display:flex;align-items:center;gap:9px;">
-                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
                 <div>
                   <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${g.name}</div>
                   <div style="font-size:0.68rem;color:#94a3b8;">${g.mobile}</div>
@@ -2036,8 +2036,8 @@ function dropDetail(d){
               <div style="font-size:0.72rem;color:#94a3b8;text-align:center;">${g.at}</div>
               <div style="display:flex;justify-content:center;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
               <div style="display:flex;gap:5px;justify-content:flex-end;">
-                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
-                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
+                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
+                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
                 ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;">Cancel</button>`:''}
               </div>
             </div>`;
@@ -2226,7 +2226,7 @@ function dropModalPanel(){
       ${ciMode==='scan'?`
         <div style="background:#111827;border-radius:14px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;position:relative;overflow:hidden;">
           <div style="width:150px;height:150px;border:2px solid rgba(255,255,255,0.2);border-radius:12px;position:relative;">
-            ${['top:-2px;left:-2px;border-top:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:5px 0 0 0','top:-2px;right:-2px;border-top:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 5px 0 0','bottom:-2px;left:-2px;border-bottom:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:0 0 0 5px','bottom:-2px;right:-2px;border-bottom:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 0 5px 0'].map(s=>`<div style="position:absolute;width:18px;height:18px;${s};"></div>`).join('')}
+            ${['top:-2px;left:-2px;border-top:3px solid #0E4EF5;border-left:3px solid #0E4EF5;border-radius:5px 0 0 0','top:-2px;right:-2px;border-top:3px solid #0E4EF5;border-right:3px solid #0E4EF5;border-radius:0 5px 0 0','bottom:-2px;left:-2px;border-bottom:3px solid #0E4EF5;border-left:3px solid #0E4EF5;border-radius:0 0 0 5px','bottom:-2px;right:-2px;border-bottom:3px solid #0E4EF5;border-right:3px solid #0E4EF5;border-radius:0 0 5px 0'].map(s=>`<div style="position:absolute;width:18px;height:18px;${s};"></div>`).join('')}
           </div>
           <div style="color:rgba(255,255,255,0.4);font-size:0.7rem;margin-top:10px;">Point camera at guest's QR code</div>
         </div>
@@ -2241,7 +2241,7 @@ function dropModalPanel(){
           <div style="font-size:0.7rem;color:#64748b;">Guest scans this to check in</div>
         </div>
         <div style="display:flex;gap:8px;">
-          <button style="flex:1;padding:9px;border-radius:10px;font-size:0.73rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;">🖨 Print QR</button>
+          <button style="flex:1;padding:9px;border-radius:10px;font-size:0.73rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;">🖨 Print QR</button>
           <button style="flex:1;padding:9px;border-radius:10px;font-size:0.73rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">↗ Share</button>
         </div>
       `:`
