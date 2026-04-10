@@ -1724,10 +1724,13 @@ function rDrops(){
   let drops=getFilteredDrops();
   const filterStatus=S.dropStatusFilter||null;
   if(filterStatus) drops=drops.filter(d=>d.status===filterStatus);
-  // Sort: live & scheduled ascending (soonest first); ended descending (most recent first)
+  // Sort: live first (broadcast closing soonest), then scheduled (starting soonest), then ended (most recently ended)
+  const statusOrder={live:0,scheduled:1,ended:2,draft:3};
   drops.sort((a,b)=>{
-    if(a.status==='ended'&&b.status==='ended') return dropDate(b)-dropDate(a);
-    return dropDate(a)-dropDate(b);
+    const so=(statusOrder[a.status]||0)-(statusOrder[b.status]||0);
+    if(so!==0) return so;
+    if(a.status==='ended') return dropDate(b)-dropDate(a); // most recent ended first
+    return dropDate(a)-dropDate(b); // live: soonest to close; scheduled: soonest to start
   });
 
   if(S.locationDetail){
