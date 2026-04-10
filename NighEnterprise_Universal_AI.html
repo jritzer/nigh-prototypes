@@ -1688,6 +1688,11 @@ function rDrops(){
   let drops=getFilteredDrops();
   const filterStatus=S.dropStatusFilter||null;
   if(filterStatus) drops=drops.filter(d=>d.status===filterStatus);
+  // Sort: live & scheduled ascending (soonest first); ended descending (most recent first)
+  drops.sort((a,b)=>{
+    if(a.status==='ended'&&b.status==='ended') return dropDate(b)-dropDate(a);
+    return dropDate(a)-dropDate(b);
+  });
 
   if(S.locationDetail){
     const d=c.drops.find(x=>x.id===S.locationDetail);
