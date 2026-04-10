@@ -1059,7 +1059,7 @@ function sidebar(){
   const mode=orgMode();
   const nav=[
     {id:'dashboard',  label:'Dashboard',  icon:'dashboard'},
-    ...(mode!=='single'?[{id:'locations',label:mode==='enterprise'?'Locations':'Locations',icon:'locations'}]:[]),
+    {id:'locations',label:c.locations.length===1?'Location':'Locations',icon:'locations'},
     {id:'drops',      label:'Drops',       icon:'nighBug'},
     {id:'customers',  label:'Guests',      icon:'customers'},
     {id:'collections',label:'Collections',icon:'collections'},
@@ -1355,6 +1355,10 @@ function rDashboard(){
 // ── LOCATIONS ─────────────────────────────────────────────────────────────────
 function rLocations(){
   const c=cfg();
+  // Single-location org: skip the list entirely, go straight to their one location's profile
+  if(orgMode()==='single'){
+    return locationDetail(c.locations[0]);
+  }
   const locs=c.locations.filter(l=>{
     if(S.t1 && l.t1!==S.t1) return false;
     if(S.t2 && l.t2!==S.t2) return false;
@@ -1479,7 +1483,7 @@ function locationDetail(l){
   const lsr=pct(lci,lres);
   if(S.locationEdit){
     return `<div style="padding:28px 32px;">
-      <button onclick="ss({locationEdit:false})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${l.name}</button>
+      <button onclick="ss({locationEdit:false})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to ${orgMode()==='single'?'Location':'Profile'}</button>
       <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:24px 28px;max-width:680px;">
         <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:4px;">Edit ${c.locLabel} Profile</div>
         <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:22px;">Changes apply to this ${c.locLabel}'s Nigh account and public profile.</div>
@@ -1493,7 +1497,7 @@ function locationDetail(l){
   }
   return `<div style="padding:28px 32px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;">&larr; Back to ${c.locsLabel}</button>
+      ${orgMode()!=='single'?`<button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;">&larr; Back to ${c.locsLabel}</button>`:`<div></div>`}
       <button onclick="ss({locationEdit:true})" style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.78rem;font-weight:700;background:#fff;cursor:pointer;color:#374151;">Edit Profile</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
