@@ -22,7 +22,7 @@ function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},settingsTab:'main',financeTab:'revenue',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026};
 function ss(p){Object.assign(S,p);render();}
-function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},settingsTab:'main',financeTab:'revenue',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null});}
+function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,showPush:false,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},settingsTab:'main',financeTab:'revenue',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null});}
 function cfg(){return CONFIGS[S.config];}
 
 // ── CONFIGS ───────────────────────────────────────────────────────────────────
@@ -1006,6 +1006,7 @@ function layout(){
   ${S.partnerModal?partnerModal():''}
   ${S.inviteModal?inviteModal():''}
   ${S.addBizModal?addBizModal():''}
+  ${S.dropModal?dropModalPanel():''}
   ${niyaEntPanel()}`;
 }
 
@@ -1838,92 +1839,284 @@ function dropDetail(d){
   const loc=locById(d.locId);
   const sr=pct(d.ci,d.res);
   const capPct=pct(d.res,d.cap);
+  const notIn=Math.max(0,d.res-d.ci);
+  const isLive=d.status==='live';
+  const isScheduled=d.status==='scheduled';
+  const isEnded=d.status==='ended';
+  const activeTab=S.dropTab||(isScheduled?'details':'guests');
+  const gFilter=S.dropGFilter||'All';
+  const dt=dropDate(d); const tm=dropTime(d);
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateLabel=days[dt.getDay()]+', '+months[dt.getMonth()]+' '+dt.getDate();
+
+  const sampleGuests=[
+    {name:'Riley Johnson',  tid:'T001',mobile:'+1 (303) 555-0142',status:'Checked In',at:'8:32 PM'},
+    {name:'Morgan Rivera',  tid:'T002',mobile:'+1 (303) 555-0198',status:'Checked In',at:'8:45 PM'},
+    {name:'Alex Chen',      tid:'T003',mobile:'+1 (303) 555-0211',status:'Reserved',  at:'9:01 PM'},
+    {name:'Avery Thompson', tid:'T004',mobile:'+1 (303) 555-0167',status:'Reserved',  at:'9:14 PM'},
+    {name:'Jordan Kim',     tid:'T005',mobile:'+1 (303) 555-0183',status:'No Show',   at:'7:55 PM'},
+    {name:'Casey Patel',    tid:'T006',mobile:'+1 (303) 555-0229',status:'Reserved',  at:'9:22 PM'},
+    {name:'Sam Nguyen',     tid:'T007',mobile:'+1 (303) 555-0301',status:'Checked In',at:'8:10 PM'},
+    {name:'Dana Park',      tid:'T008',mobile:'+1 (303) 555-0344',status:'Reserved',  at:'9:38 PM'},
+  ];
+  const gFilteredGuests=gFilter==='All'?sampleGuests:sampleGuests.filter(g=>g.status===gFilter);
+  const gStatusStyle={'Reserved':{bg:'#eff6ff',col:'#1d4ed8'},'Checked In':{bg:'#dcfce7',col:'#15803d'},'No Show':{bg:'#fee2e2',col:'#b91c1c'}};
+
+  const statusBorderColor=isLive?'#22c55e':isScheduled?c.color:'#e5e7eb';
+
   return `<div style="padding:28px 32px;">
-    <button onclick="ss({locationDetail:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:16px;">&larr; Back to Drops</button>
-    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
-      <div>
-        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:16px;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
-            <div style="font-size:1.1rem;font-weight:900;color:#0f172a;line-height:1.3;">${d.title}</div>
-            ${badge(d.status)}
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-            
-            ${d.timing?timingBadge(d.timing):''}
-            ${d.day?dayBadge(d.day):''}
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
-            <div style="background:#f8fafc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:#0f172a;">${d.cap}</div><div style="font-size:0.62rem;color:#94a3b8;">capacity</div></div>
-            <div style="background:#f8fafc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:${c.color};">${d.res}</div><div style="font-size:0.62rem;color:#94a3b8;">reserved</div>${bar(capPct,c.color,4)}</div>
-            <div style="background:#f8fafc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:#0f172a;">${d.ci}</div><div style="font-size:0.62rem;color:#94a3b8;">check-ins</div></div>
-            <div style="background:#f8fafc;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:1.4rem;font-weight:900;color:${d.status==='live'?showColor(sr):'#94a3b8'};">${d.status==='live'?sr+'%':'—'}</div><div style="font-size:0.62rem;color:#94a3b8;">show rate</div></div>
-          </div>
-          ${infoRow('Location',loc?loc.name:'—')}
-          ${loc?infoRow(c.hier[0],loc.t1):''}
-          ${loc&&loc.t2?infoRow(c.hier[1]||'District',loc.t2):''}
-          ${infoRow('Booking Hours','Up to '+d.bh+' hrs in advance')}
-          ${infoRow('Price',d.price?'$'+d.price:'Free')}
-          <div style="margin-top:12px;background:#EDE9FE;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-            <span style="font-size:1.2rem;">📡</span>
-            <div>
-              <div style="font-size:0.82rem;font-weight:800;color:#5B21B6;">${loc&&loc.followers?loc.followers.toLocaleString():0} followers notified</div>
-              <div style="font-size:0.7rem;color:#7C3AED;margin-top:2px;">Drop broadcast to all ${loc?loc.name:''} followers when it went live</div>
-            </div>
-          </div>
+    <button onclick="ss({locationDetail:null,dropTab:null,dropGFilter:null})" style="display:flex;align-items:center;gap:6px;color:${c.color};font-size:0.78rem;font-weight:700;background:none;border:none;cursor:pointer;margin-bottom:18px;">&larr; Back to Drops</button>
+
+    <!-- Identity strip -->
+    <div style="background:#fff;border-radius:14px;border:2px solid ${statusBorderColor};padding:16px 20px;display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+      <div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#1B2A4A,${c.color});flex-shrink:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap;">
+          <div style="font-size:1.05rem;font-weight:900;color:#0f172a;">${d.title}</div>
+          ${badge(d.status)}
+          ${d.timing?timingBadge(d.timing):''}
+          ${d.day?dayBadge(d.day):''}
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;font-size:0.75rem;color:#64748b;flex-wrap:wrap;">
+          <span>📅 ${dateLabel} · ${tm}${d.endTime?' – '+d.endTime:''}</span>
+          <span>📍 ${loc?loc.name:'—'}</span>
+          <span>${d.price>0?'$'+d.price+' per spot':'Free'}</span>
+          ${isLive?`<span style="color:#16a34a;font-weight:700;display:flex;align-items:center;gap:4px;">📡 Broadcasting</span>`:''}
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 18px;">
-          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:10px;">Fill Rate</div>
-          ${bar(capPct,c.color,10)}
+    </div>
+
+    <!-- Stats bar -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
+      ${[['Total',d.cap,'#1f2937'],['Reserved',isLive?d.res:'—',c.color],['Checked In',isLive?d.ci:'—','#0d9488'],['Not In',isLive?notIn:'—','#f59e0b']].map((s,i)=>`
+        ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
+        <div style="flex:1;text-align:center;padding:12px 8px;">
+          <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
+          <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${s[0]}</div>
+          ${i===1&&isLive?bar(capPct,c.color,4):''}
+        </div>`).join('')}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 290px;gap:16px;align-items:start;">
+      <!-- Left: tabs -->
+      <div>
+        <!-- Tab switcher -->
+        <div style="display:flex;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:12px;">
+          <button onclick="ss({dropTab:'guests'})" style="flex:1;padding:7px;border-radius:8px;font-size:0.76rem;font-weight:700;border:none;cursor:pointer;background:${activeTab==='guests'?'#fff':'transparent'};color:${activeTab==='guests'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='guests'?'0 1px 3px rgba(0,0,0,0.08)':'none'};">Guests</button>
+          <button onclick="ss({dropTab:'details'})" style="flex:1;padding:7px;border-radius:8px;font-size:0.76rem;font-weight:700;border:none;cursor:pointer;background:${activeTab==='details'?'#fff':'transparent'};color:${activeTab==='details'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='details'?'0 1px 3px rgba(0,0,0,0.08)':'none'};">Details</button>
+        </div>
+
+        ${activeTab==='guests'?`
+        <!-- Guests tab -->
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+          <div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div style="display:flex;gap:6px;">
+              ${['All','Reserved','Checked In','No Show'].map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+sampleGuests.filter(g=>g.status==='Checked In').length+')':f==='Reserved'?'Reserved ('+sampleGuests.filter(g=>g.status==='Reserved').length+')':f==='No Show'?'No Show ('+sampleGuests.filter(g=>g.status==='No Show').length+')':'All ('+sampleGuests.length+')'}</button>`).join('')}
+            </div>
+            <button onclick="ss({dropModal:'checkin'})" style="padding:6px 14px;border-radius:8px;border:none;background:${c.color};color:#fff;font-size:0.72rem;font-weight:700;cursor:pointer;">+ Check In</button>
+          </div>
+          ${isScheduled?`<div style="padding:48px;text-align:center;color:#94a3b8;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <div style="font-size:0.82rem;font-weight:600;color:#64748b;">Guests with reservations will appear here once the drop goes live</div>
+          </div>`:`
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;padding:8px 18px;background:#f8fafc;border-bottom:1px solid #f1f5f9;">
+            ${['Guest','Ticket ID','Reserved','Status',''].map(h=>`<span style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">${h}</span>`).join('')}
+          </div>
+          ${gFilteredGuests.map(g=>{
+            const gs=gStatusStyle[g.status]||{bg:'#f1f5f9',col:'#475569'};
+            const initials=g.name.split(' ').map(n=>n[0]).join('');
+            return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
+                <div>
+                  <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${g.name}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;">${g.mobile}</div>
+                </div>
+              </div>
+              <div style="font-size:0.72rem;color:#64748b;font-family:monospace;">${g.tid}</div>
+              <div style="font-size:0.72rem;color:#94a3b8;">${g.at}</div>
+              <div style="display:inline-flex;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
+              <div style="display:flex;gap:5px;justify-content:flex-end;">
+                ${g.status==='Reserved'&&isLive?`<button style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Check In</button>`:''}
+                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0d9488;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
+              </div>
+            </div>`;
+          }).join('')}`}
+        </div>`
+
+        :`
+        <!-- Details tab -->
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Location</div>
+            <div style="font-size:0.85rem;color:#374151;">${loc?loc.name:'—'}${loc&&loc.city?', '+loc.city+' '+loc.state:''}</div>
+          </div>
+          ${c.hier&&c.hier.length>0&&loc&&loc.t1?`<div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">${c.hier[0]||'Group'}</div>
+            <div style="font-size:0.85rem;color:#374151;">${loc.t1}${loc.t2?' · '+loc.t2:''}</div>
+          </div>`:''}
+          <div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Date &amp; Time</div>
+            <div style="font-size:0.85rem;color:#374151;">${dateLabel} · ${tm}${d.endTime?' – '+d.endTime:''}</div>
+          </div>
+          <div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Booking Window</div>
+            <div style="font-size:0.85rem;color:#374151;">Up to ${d.bh} ${d.bh===1?'hr':'hrs'} in advance</div>
+          </div>
+          <div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Price</div>
+            <div style="font-size:0.85rem;color:#374151;">${d.price>0?'$'+d.price+' per spot':'Free'}</div>
+          </div>
+          <div style="background:#ede9fe;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.2rem;">📡</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:800;color:#5b21b6;">${loc&&loc.followers?loc.followers.toLocaleString():0} followers notified</div>
+              <div style="font-size:0.7rem;color:#7c3aed;margin-top:2px;">Broadcast to all ${loc?loc.name:''} followers when it went live</div>
+            </div>
+          </div>
+        </div>`}
+      </div>
+
+      <!-- Right: actions sidebar -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <!-- Status action -->
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:14px 16px;">
+          ${isLive?`
+            <button style="width:100%;padding:10px;background:#fee2e2;color:#b91c1c;border:none;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;margin-bottom:8px;">⏹ End Drop</button>
+            <button style="width:100%;padding:10px;background:#fffbeb;color:#d97706;border:1px solid #fde68a;border-radius:10px;font-weight:600;font-size:0.78rem;cursor:pointer;">⏸ Pause Drop</button>
+          `:isScheduled?`
+            <button style="width:100%;padding:10px;background:#dcfce7;color:#15803d;border:none;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">▶ Go Live Now</button>
+          `:isEnded?`
+            <div style="text-align:center;padding:4px 0 6px;">
+              <span style="font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">Drop Ended</span>
+            </div>
+            <button style="width:100%;padding:10px;background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">⧉ Duplicate Drop</button>
+          `:''}
+        </div>
+
+        <!-- Quick actions -->
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+          ${[
+            {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
+            {icon:'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
+            {icon:'M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 100 8 4 4 0 000-8zM19 8v6M22 11h-6', label:'Check In Guest', sub:'Scan, manual, or guest scans',  action:"ss({dropModal:'checkin'})"},
+            {icon:'M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.7A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.29 6.29l1.42-1.42a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z', label:'Broadcast',     sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
+            {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:''},
+          ].map((a,i)=>`
+            <button onclick="${a.action}" style="width:100%;padding:11px 14px;background:none;border:none;border-bottom:${i<4?'1px solid #f8fafc':'none'};display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
+              <div style="width:34px;height:34px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${a.icon}"/></svg>
+              </div>
+              <div>
+                <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${a.label}</div>
+                <div style="font-size:0.65rem;color:#94a3b8;">${a.sub}</div>
+              </div>
+            </button>`).join('')}
+        </div>
+
+        <!-- Fill rate -->
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:14px 16px;">
+          <div style="font-size:0.78rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Fill Rate</div>
+          ${bar(capPct,c.color,8)}
           <div style="display:flex;justify-content:space-between;margin-top:6px;">
             <span style="font-size:0.7rem;color:#94a3b8;">${d.res} / ${d.cap} spots</span>
             <span style="font-size:0.7rem;font-weight:700;color:${showColor(capPct)};">${capPct}%</span>
           </div>
         </div>
-        <div style="background:${c.color}10;border-radius:14px;border:1px solid ${c.color}30;padding:16px 18px;">
-          <div style="font-size:0.8rem;font-weight:800;color:${c.color};margin-bottom:10px;">Actions</div>
-          ${d.status==='live'?`<button style="width:100%;padding:8px;background:#fee2e2;color:#b91c1c;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">⏹ End Drop</button>`:''}
-          ${d.status==='scheduled'?`<button style="width:100%;padding:8px;background:#dcfce7;color:#15803d;border:none;border-radius:8px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-bottom:6px;">▶ Go Live Now</button>`:''}
-          <button style="width:100%;padding:8px;background:#fff;color:#475569;border:1px solid #e5e7eb;border-radius:8px;font-weight:600;font-size:0.75rem;cursor:pointer;">Edit Drop</button>
-        </div>
       </div>
-    </div>
-
-    <!-- Guest list with status change -->
-    <div style="margin-top:20px;">
-      ${(() => {
-        const guestStatuses = ['Reserved','Checked In','No Show'];
-        const statusStyle = {
-          'Reserved':  {bg:'#eff6ff',  color:'#1d4ed8'},
-          'Checked In':{bg:'#dcfce7',  color:'#15803d'},
-          'No Show':   {bg:'#fee2e2',  color:'#b91c1c'},
-        };
-        const sampleGuests = [
-          {name:'Riley Johnson',  mobile:'+1 (303) 555-0142', status:'Checked In', reserved:'8:32 PM'},
-          {name:'Morgan Rivera',  mobile:'+1 (303) 555-0198', status:'Checked In', reserved:'8:45 PM'},
-          {name:'Alex Chen',      mobile:'+1 (303) 555-0211', status:'Reserved',   reserved:'9:01 PM'},
-          {name:'Avery Thompson', mobile:'+1 (303) 555-0167', status:'Reserved',   reserved:'9:14 PM'},
-          {name:'Jordan Kim',     mobile:'+1 (303) 555-0183', status:'No Show',    reserved:'7:55 PM'},
-          {name:'Casey Patel',    mobile:'+1 (303) 555-0229', status:'Reserved',   reserved:'9:22 PM'},
-        ];
-        let html = '<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;margin-top:16px;">';
-        html += '<div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;"><div style="font-size:0.85rem;font-weight:800;color:#0f172a;">Guest List</div><span style="font-size:0.72rem;color:#64748b;">'+d.res+' reservations · '+d.ci+' checked in</span></div>';
-        html += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;padding:8px 20px;background:#f8fafc;border-bottom:1px solid #f1f5f9;">';
-        html += ['Guest','Mobile','Reserved','Status'].map(h=>'<span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;">'+h+'</span>').join('');
-        html += '</div>';
-        sampleGuests.forEach(g=>{
-          const ss=statusStyle[g.status]||{bg:'#f1f5f9',color:'#475569'};
-          html += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;padding:11px 20px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;"><div style="font-size:0.82rem;font-weight:700;color:#0f172a;">'+g.name+'</div><div style="font-size:0.75rem;color:#64748b;">'+g.mobile+'</div><div style="font-size:0.72rem;color:#94a3b8;">'+g.reserved+'</div><select style="font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:8px;border:1px solid '+ss.bg+';background:'+ss.bg+';color:'+ss.color+';cursor:pointer;font-family:inherit;">';
-          html += guestStatuses.map(s=>'<option value="'+s+'" '+(s===g.status?'selected':'')+'>'+s+'</option>').join('');
-          html += '</select></div>';
-        });
-        html += '</div>';
-        return html;
-      })()}
     </div>
   </div>`;
 }
+
+function dropModalPanel(){
+  const c=cfg();
+  const m=S.dropModal;
+  if(!m) return '';
+  let inner='';
+  if(m==='share'){
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Share Drop</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Share a link directly to this drop's reservation page</div>
+      <div style="display:flex;align-items:center;gap:8px;background:#f1f5f9;border-radius:10px;padding:10px 14px;margin-bottom:16px;">
+        <span style="font-size:0.82rem;color:#374151;flex:1;font-weight:500;">nigh.com/${c.key}/drop</span>
+        <button style="padding:6px 14px;border-radius:8px;font-size:0.72rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">Copy</button>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        ${['SMS','Email','Instagram','More'].map(s=>`<button style="width:68px;padding:10px 0;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-size:0.68rem;color:#374151;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <div style="width:34px;height:34px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#64748b;">
+            ${s==='SMS'?'💬':s==='Email'?'📧':s==='Instagram'?'📷':'⋯'}
+          </div>${s}</button>`).join('')}
+      </div>`;
+  } else if(m==='qr'){
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Check-In QR Code</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Guests scan this to check in at the venue</div>
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px;text-align:center;margin-bottom:16px;">
+        <div style="width:160px;height:160px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#94a3b8;">
+          <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
+        </div>
+        <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${c.name||c.short}</div>
+        <div style="font-size:0.65rem;color:#94a3b8;margin-top:3px;">Scan to check in to this drop</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button style="flex:1;padding:10px;border-radius:10px;font-size:0.75rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">🖨 Print QR</button>
+        <button onclick="ss({dropModal:'share'})" style="flex:1;padding:10px;border-radius:10px;font-size:0.75rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">↗ Share Link</button>
+      </div>`;
+  } else if(m==='checkin'){
+    const ciMode=S.dropCIMode||'scan';
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Check In Guest</div>
+      <div style="display:flex;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:14px;">
+        ${[['scan','📷 Scan Guest'],['biz','📱 Guest Scans'],['manual','🔍 Manual']].map(([id,lbl])=>`
+          <button onclick="ss({dropCIMode:'${id}'})" style="flex:1;padding:7px 4px;border-radius:8px;font-size:0.7rem;font-weight:700;border:none;cursor:pointer;background:${ciMode===id?'#fff':'transparent'};color:${ciMode===id?'#0f172a':'#94a3b8'};box-shadow:${ciMode===id?'0 1px 3px rgba(0,0,0,0.08)':'none'};">${lbl}</button>`).join('')}
+      </div>
+      ${ciMode==='scan'?`
+        <div style="background:#111827;border-radius:14px;height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;position:relative;overflow:hidden;">
+          <div style="width:150px;height:150px;border:2px solid rgba(255,255,255,0.2);border-radius:12px;position:relative;">
+            ${['top:-2px;left:-2px;border-top:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:5px 0 0 0','top:-2px;right:-2px;border-top:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 5px 0 0','bottom:-2px;left:-2px;border-bottom:3px solid #3b82f6;border-left:3px solid #3b82f6;border-radius:0 0 0 5px','bottom:-2px;right:-2px;border-bottom:3px solid #3b82f6;border-right:3px solid #3b82f6;border-radius:0 0 5px 0'].map(s=>`<div style="position:absolute;width:18px;height:18px;${s};"></div>`).join('')}
+          </div>
+          <div style="color:rgba(255,255,255,0.4);font-size:0.7rem;margin-top:10px;">Point camera at guest's QR code</div>
+        </div>
+      `:ciMode==='biz'?`
+        <div style="text-align:center;margin-bottom:12px;">
+          <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px;display:inline-block;margin-bottom:10px;">
+            <div style="width:140px;height:140px;background:#f1f5f9;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:#94a3b8;">
+              <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
+            </div>
+            <div style="font-size:0.78rem;font-weight:700;color:#0f172a;margin-top:8px;">${c.name||c.short}</div>
+          </div>
+          <div style="font-size:0.7rem;color:#64748b;">Guest scans this to check in</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button style="flex:1;padding:9px;border-radius:10px;font-size:0.73rem;font-weight:700;border:none;background:#3b82f6;color:#fff;cursor:pointer;">🖨 Print QR</button>
+          <button style="flex:1;padding:9px;border-radius:10px;font-size:0.73rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">↗ Share</button>
+        </div>
+      `:`
+        <input placeholder="Name, @username, or Ticket ID" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #e5e7eb;font-size:0.82rem;background:#f8fafc;outline:none;margin-bottom:10px;box-sizing:border-box;font-family:inherit;"/>
+        <button style="width:100%;padding:10px;border-radius:10px;font-size:0.82rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">Look Up Guest</button>
+      `}`;
+  } else if(m==='broadcast'){
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Broadcast Message</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:14px;">Send a push notification to all <strong>${sampleGuestCount()} spot holders</strong> for this drop</div>
+      <textarea placeholder="e.g. 'Head to the back patio entrance — doors open at 6:30'" rows="4" style="width:100%;padding:12px;border-radius:10px;border:1px solid #e5e7eb;font-size:0.82rem;color:#111827;background:#f9fafb;outline:none;resize:none;font-family:inherit;box-sizing:border-box;margin-bottom:12px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Cancel</button>
+        <button onclick="ss({dropModal:null})" style="flex:2;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">📡 Send Broadcast</button>
+      </div>`;
+  }
+  return `<div onclick="ss({dropModal:null})" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center;">
+    <div onclick="event.stopPropagation()" style="background:#fff;border-radius:18px;padding:24px;width:440px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;">
+      ${inner}
+      ${m!=='broadcast'?`<button onclick="ss({dropModal:null})" style="width:100%;margin-top:14px;padding:9px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#64748b;font-size:0.75rem;font-weight:600;cursor:pointer;">Close</button>`:''}
+    </div>
+  </div>`;
+}
+
+function sampleGuestCount(){return 8;}
 
 // ── GUESTS ─────────────────────────────────────────────────────────────────
 function rCustomers(){
