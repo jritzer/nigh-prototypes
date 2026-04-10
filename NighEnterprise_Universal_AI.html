@@ -1938,6 +1938,9 @@ function dropDetail(d){
   const isScheduled=d.status==='scheduled';
   const isPaused=d.status==='paused';
   const isEnded=d.status==='ended';
+  const noShowHrs=c.noShowHrs||12;
+  const hoursElapsed=isEnded?(new Date()-dropDate(d))/3600000:0;
+  const noShowVisible=hoursElapsed>=noShowHrs;
   const activeTab=S.dropTab||(isScheduled?'details':'guests');
   const gFilter=S.dropGFilter||'All';
   const dt=dropDate(d); const tm=dropTime(d);
@@ -1955,7 +1958,8 @@ function dropDetail(d){
     {name:'Sam Nguyen',     tid:'T007',mobile:'+1 (303) 555-0301',status:'Checked In',at:'8:10 PM'},
     {name:'Dana Park',      tid:'T008',mobile:'+1 (303) 555-0344',status:'Reserved',  at:'9:38 PM'},
   ];
-  const gFilteredGuests=gFilter==='All'?sampleGuests:sampleGuests.filter(g=>g.status===gFilter);
+  const guestsWithDisplay=sampleGuests.map(g=>({...g,displayStatus:(g.status==='No Show'&&!noShowVisible)?'Reserved':g.status}));
+  const gFilteredGuests=gFilter==='All'?guestsWithDisplay:guestsWithDisplay.filter(g=>g.displayStatus===gFilter);
   const gStatusStyle={'Reserved':{bg:'#eff6ff',col:'#1d4ed8'},'Checked In':{bg:'#dcfce7',col:'#15803d'},'No Show':{bg:'#fee2e2',col:'#b91c1c'}};
 
   const statusBorderColor=isLive?'#22c55e':isScheduled?c.color:'#e5e7eb';
@@ -2011,7 +2015,7 @@ function dropDetail(d){
             ${isScheduled
               ? `<span style="font-size:0.75rem;color:#94a3b8;font-weight:600;">Guests will appear here once the drop goes live</span>`
               : `<div style="display:flex;gap:6px;">
-                  ${['All','Reserved','Checked In','No Show'].map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+sampleGuests.filter(g=>g.status==='Checked In').length+')':f==='Reserved'?'Reserved ('+sampleGuests.filter(g=>g.status==='Reserved').length+')':f==='No Show'?'No Show ('+sampleGuests.filter(g=>g.status==='No Show').length+')':'All ('+sampleGuests.length+')'}</button>`).join('')}
+                  ${['All','Reserved','Checked In','No Show'].filter(f=>f!=='No Show'||noShowVisible).map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+guestsWithDisplay.filter(g=>g.displayStatus==='Checked In').length+')':f==='Reserved'?'Reserved ('+guestsWithDisplay.filter(g=>g.displayStatus==='Reserved').length+')':f==='No Show'?'No Show ('+guestsWithDisplay.filter(g=>g.displayStatus==='No Show').length+')':'All ('+guestsWithDisplay.length+')'}</button>`).join('')}
                 </div>`}
           </div>
           ${isScheduled?`<div style="padding:48px;text-align:center;color:#94a3b8;">
@@ -2022,7 +2026,7 @@ function dropDetail(d){
             ${['Guest','Ticket ID','Reserved','Status',''].map((h,i)=>`<div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;${i>0&&i<4?'text-align:center;':''}">${h}</div>`).join('')}
           </div>
           ${gFilteredGuests.map(g=>{
-            const gs=gStatusStyle[g.status]||{bg:'#f1f5f9',col:'#475569'};
+            const gs=gStatusStyle[g.displayStatus]||{bg:'#f1f5f9',col:'#475569'};
             const initials=g.name.split(' ').map(n=>n[0]).join('');
             return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 90px 120px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
               <div style="display:flex;align-items:center;gap:9px;">
@@ -2034,11 +2038,11 @@ function dropDetail(d){
               </div>
               <div style="font-size:0.72rem;color:#64748b;font-family:monospace;text-align:center;">${g.tid}</div>
               <div style="font-size:0.72rem;color:#94a3b8;text-align:center;">${g.at}</div>
-              <div style="display:flex;justify-content:center;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.status}</span></div>
+              <div style="display:flex;justify-content:center;"><span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};">${g.displayStatus}</span></div>
               <div style="display:flex;gap:5px;justify-content:flex-end;">
-                ${g.status==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
-                ${g.status==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
-                ${g.status==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;">Cancel</button>`:''}
+                ${g.displayStatus==='Reserved'&&(isLive||isPaused)?`<button style="padding:4px 12px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
+                ${g.displayStatus==='Reserved'&&isEnded?`<button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;">No Show</button>`:''}
+                ${g.displayStatus==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;">Cancel</button>`:''}
               </div>
             </div>`;
           }).join('')}`}
