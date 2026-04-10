@@ -1792,17 +1792,17 @@ function rDrops(){
   while(cells.length%7!==0) cells.push(null);
 
   const calGrid=cells.map(day=>{
-    if(!day) return `<div style="background:#fafafa;border:1px solid #f1f5f9;min-height:100px;"></div>`;
+    if(!day) return `<div style="background:#fafafa;border-right:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;min-height:110px;"></div>`;
     const dayDrops=dropsByDay[day]||[];
-    const todaySty=isToday(day)?`background:${c.color};color:#fff;font-weight:900;`:'color:#0f172a;font-weight:700;';
-    return `<div style="background:#fff;border:1px solid #e5e7eb;min-height:100px;padding:6px;vertical-align:top;">
-      <div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:0.75rem;margin-bottom:4px;${todaySty}">${day}</div>
+    const todaySty=isToday(day)?`background:${c.color};color:#fff;`:'color:#374151;';
+    return `<div style="background:#fff;border-right:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;min-height:110px;padding:5px 4px 4px 4px;box-sizing:border-box;overflow:hidden;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:0.72rem;font-weight:700;margin-bottom:3px;${todaySty}">${day}</div>
       ${dayDrops.slice(0,3).map(d=>`
-        <div onclick="ss({locationDetail:'${d.id}'})" style="background:${statusColors[d.status]||'#94a3b8'}18;border-left:2.5px solid ${statusColors[d.status]||'#94a3b8'};border-radius:0 4px 4px 0;padding:2px 5px;margin-bottom:2px;cursor:pointer;overflow:hidden;" title="${d.title}">
-          <div style="font-size:0.62rem;font-weight:700;color:${statusColors[d.status]||'#94a3b8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${dropTime(d)}</div>
-          <div style="font-size:0.65rem;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;">${d.title}</div>
+        <div onclick="ss({locationDetail:'${d.id}'})" style="background:${statusColors[d.status]||'#94a3b8'}1a;border-left:2px solid ${statusColors[d.status]||'#94a3b8'};border-radius:0 3px 3px 0;padding:2px 4px;margin-bottom:2px;cursor:pointer;max-width:100%;overflow:hidden;" title="${d.title}">
+          <div style="font-size:0.6rem;font-weight:700;color:${statusColors[d.status]||'#94a3b8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;">${dropTime(d)}</div>
+          <div style="font-size:0.63rem;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;line-height:1.3;">${d.title}</div>
         </div>`).join('')}
-      ${dayDrops.length>3?`<div style="font-size:0.6rem;color:#94a3b8;font-weight:600;padding:1px 4px;">+${dayDrops.length-3} more</div>`:''}
+      ${dayDrops.length>3?`<div style="font-size:0.6rem;color:#64748b;font-weight:600;padding:0 4px;margin-top:1px;">+${dayDrops.length-3} more</div>`:''}
     </div>`;
   }).join('');
 
@@ -1811,16 +1811,16 @@ function rDrops(){
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
       <!-- Calendar nav -->
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #f1f5f9;">
-        <button onclick="prevMonth()" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&larr;</button>
+        <button onclick="ss(S.calMonth===0?{calMonth:11,calYear:S.calYear-1}:{calMonth:S.calMonth-1})" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&larr;</button>
         <div style="font-size:1rem;font-weight:800;color:#0f172a;">${MONTH_NAMES[cm]} ${cy}</div>
-        <button onclick="nextMonth()" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&rarr;</button>
+        <button onclick="ss(S.calMonth===11?{calMonth:0,calYear:S.calYear+1}:{calMonth:S.calMonth+1})" style="padding:6px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:0.8rem;font-weight:700;color:#374151;">&rarr;</button>
       </div>
       <!-- Day headers -->
       <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid #f1f5f9;">
         ${DAY_NAMES.map(d=>`<div style="padding:8px;text-align:center;font-size:0.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">${d}</div>`).join('')}
       </div>
       <!-- Grid -->
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);">${calGrid}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid #e5e7eb;border-top:1px solid #e5e7eb;">${calGrid}</div>
       <!-- Legend -->
       <div style="padding:10px 20px;border-top:1px solid #f1f5f9;display:flex;gap:16px;">
         ${Object.entries(statusColors).map(([st,col])=>`<div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:2px;background:${col};"></div><span style="font-size:0.68rem;font-weight:600;color:#64748b;text-transform:capitalize;">${st}</span></div>`).join('')}
