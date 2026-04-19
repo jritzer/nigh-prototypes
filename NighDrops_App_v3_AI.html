@@ -2786,43 +2786,37 @@ function renderModal(){
         </div>
       </button>`;
     };
-    // Group row — tap row body to expand members, separate checkbox to select
+    // Group row — avatar stack shows up to 3 members + overflow count
     const renderGroupRow=function(g){
       const chk=sel.indexOf(g.id)>-1;
       const initials=g.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
       const members=g.members.map(function(mid){return friendsList.find(function(f){return f.id===mid;});}).filter(Boolean);
-      const expandFn=`(function(){var m=document.getElementById('sfg-${g.id}');var ch=document.getElementById('sfch-${g.id}');var open=m.style.display!=='none';m.style.display=open?'none':'block';ch.style.transform=open?'rotate(0deg)':'rotate(90deg)';})()`;
-      return`<div style="border-bottom:1px solid #F3F4F6">
-        <div style="display:flex;align-items:center;gap:12px;padding:11px 4px">
-          <button onclick="${expandFn}" style="display:flex;align-items:center;gap:12px;flex:1;background:none;border:none;cursor:pointer;text-align:left;padding:0;min-width:0">
-            <div style="width:40px;height:40px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <span style="font-size:13px;font-weight:700;color:#0E4EF5">${initials}</span>
-            </div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:14px;font-weight:600;color:#111827">${g.name}</div>
-              <div style="font-size:12px;color:#9CA3AF;display:flex;align-items:center;gap:3px">
-                ${g.members.length} members
-                <svg id="sfch-${g.id}" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" style="transition:transform 0.2s;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
-            </div>
-          </button>
-          <button onclick="${toggleF(g.id)}" style="background:none;border:none;padding:0;cursor:pointer;flex-shrink:0">
-            <div id="sfcb-${g.id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${chk?'#0E4EF5':'#D1D5DB'};background:${chk?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;pointer-events:none">
-              ${chk?chkSVG:''}
-            </div>
-          </button>
+      const previewCount=Math.min(3,members.length);
+      const overflow=g.members.length-previewCount;
+      const avatarStack=members.slice(0,previewCount).map(function(f,i){
+        return`<div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#374151);border:2px solid #fff;display:flex;align-items:center;justify-content:center;margin-left:${i===0?'0':'-6px'};z-index:${3-i};position:relative;flex-shrink:0">
+          <span style="font-size:7px;font-weight:700;color:#fff">${f.av}</span>
+        </div>`;
+      }).join('');
+      const overflowBadge=overflow>0?`<span style="font-size:11px;color:#9CA3AF;margin-left:4px;white-space:nowrap">+${overflow}</span>`:'';
+      const memberNames=members.slice(0,previewCount).map(function(f){return f.name.split(' ')[0];}).join(', ');
+      const nameLabel=overflow>0?memberNames:memberNames;
+      return`<button onclick="${toggleF(g.id)}" style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 4px;background:none;border:none;border-bottom:1px solid #F3F4F6;cursor:pointer;text-align:left">
+        <div style="width:40px;height:40px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-size:13px;font-weight:700;color:#0E4EF5">${initials}</span>
         </div>
-        <div id="sfg-${g.id}" style="display:none;padding:0 4px 12px 56px">
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            ${members.map(function(f){return`<div style="display:flex;align-items:center;gap:5px">
-              <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#374151);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                <span style="font-size:8px;font-weight:700;color:#fff">${f.av}</span>
-              </div>
-              <span style="font-size:12px;color:#374151">${f.name.split(' ')[0]}</span>
-            </div>`;}).join('')}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600;color:#111827">${g.name}</div>
+          <div style="display:flex;align-items:center;gap:0;margin-top:3px">
+            ${avatarStack}
+            ${overflowBadge}
+            <span style="font-size:11px;color:#9CA3AF;margin-left:${overflow>0?'2':'6'}px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${nameLabel}${overflow>0?'…':''}</span>
           </div>
         </div>
-      </div>`;
+        <div id="sfcb-${g.id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${chk?'#0E4EF5':'#D1D5DB'};background:${chk?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none">
+          ${chk?chkSVG:''}
+        </div>
+      </button>`;
     };
     const renderRow=function(item,type){return type==='group'?renderGroupRow(item):renderFriendRow(item);};
 
