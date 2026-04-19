@@ -473,7 +473,7 @@ function timeRem(drop){
   return'';
 }
 function renderTB(){
-  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'guests',ic:'users',l:'Guests'},{id:'menu',ic:'menu2',l:'Menu'}];
+  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'inbox',ic:'bell',l:'Inbox'},{id:'menu',ic:'menu2',l:'Menu'}];
   document.getElementById('tb').innerHTML=tabs.map(t=>{
     const active=S.scr===t.id||(S.scr==='liveview'&&t.id==='home');
     const badge=t.id==='inbox'?`<div style="position:absolute;top:2px;right:8px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid #fff"></div>`:'';
