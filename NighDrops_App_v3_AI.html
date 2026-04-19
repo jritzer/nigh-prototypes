@@ -13,7 +13,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 #scr::-webkit-scrollbar{width:0}
 #scr.feed-mode{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
 .feed-card{scroll-snap-align:start;height:100%;position:relative;overflow:hidden}
-.tb{display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
+.tb{display:flex;justify-content:space-evenly;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
 .tt{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;padding:2px 10px;min-width:50px;color:#9CA3AF;transition:color 0.15s;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
 .tt.a{color:#0E4EF5;font-weight:700}
 .card{background:#fff;border-radius:14px;border:1px solid #E5E7EB;overflow:hidden}
@@ -44,7 +44,7 @@ input:focus,textarea:focus{outline:none}
 <div id="app"><div id="scr"></div><div class="tb" id="tb"></div></div>
 <div id="mr"></div>
 <script>
-let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:''};
+let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false};
 
 // ── Icons ──────────────────────────────────────────────
 const I={
@@ -105,7 +105,7 @@ function openMaps(address){
 }
 
 // ── Data ───────────────────────────────────────────────
-const currentUser={name:'Alex Rivera',uname:'@alexr',av:'AR',phone:'(303) 555-0188',email:'alex@gmail.com'};
+const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-0188',email:'jritzer@gmail.com'};
 
 const feedDrops=[
   {id:'D001',title:'Nike Air Max Day Access',
@@ -145,7 +145,7 @@ const feedDrops=[
    desc:'Be among the first to get hands-on with the Samsung Galaxy S25 Ultra before its official retail launch. Demo the new AI camera features, try the new S Pen, and get entered to win one. Free to attend — ticket required for entry. Best Buy Totaltech members get priority access.',
    slug:'bestbuyboulder/SMG25'},
   {id:'D005',title:'Colorado Limited Tap Takeover',
-   host:{name:'Fate Brewing Co.',handle:'@fatebrewing',short:'FATE',addr:'1600 38th St, Boulder, CO'},
+   host:{name:'Fate Brewing Co',handle:'@fatebrewing',short:'FATE',addr:'1600 38th St, Boulder, CO'},
    partners:[{handle:'@oskarblues',name:"Oskar Blues"}],
    status:'Live',timing:'Start Time',start:'5:00 PM',date:'Apr 2',
    closesIn:'3h 00m',startsIn:'2h 00m',price:12,cap:40,spotsLeft:7,age21:true,
@@ -225,15 +225,6 @@ const feedDrops=[
    liked:false,likeCount:71,
    desc:'Watch the Buffs vs Arizona State on the Fox Theatre main stage screen. Ticket includes entry and a Coors Light on arrival. Cash bar all night. Doors 5:30 PM, tip-off 6 PM. Must be 21+ with valid ID. Standing room floor only.',
    slug:'foxtheatreboulder/BUFF4'},
-  {id:'D014',title:'Shine Restaurant: Farm-to-Table Dinner',
-   host:{name:'Shine Restaurant',handle:'@shineboulder',short:'SR',addr:'2027 13th St, Boulder, CO'},
-   partners:[{handle:'@sladogboulder',name:'Sladoga Winery'}],
-   status:'Live',timing:'Start Time',start:'7:00 PM',date:'Mar 29',
-   closesIn:'2h 30m',startsIn:'3h 00m',price:65,cap:10,spotsLeft:4,age21:true,
-   media:'photo',maxPerUser:2,
-   liked:false,likeCount:31,
-   desc:'An intimate four-course farm-to-table dinner featuring locally sourced ingredients from Boulder County farms. Executive Chef Dana Park walks you through each course, paired with Sladoga Winery selections. Limited to 10 guests. Smart casual. Valid ID required.',
-   slug:'shineboulder/DT72PX'},
 ];
 
 const myTickets=[
@@ -269,7 +260,7 @@ const myTickets=[
    status:'Active',orderId:'ORD-2847',
    terms:'Free entry. One ticket per person. Must present QR at door.'},
   {id:'TK005',dropId:'D005',title:'Colorado Limited Tap Takeover',
-   host:'Fate Brewing Co.',hostHandle:'@fatebrewing',
+   host:'Fate Brewing Co',hostHandle:'@fatebrewing',
    date:'Apr 2, 2026',time:'5:00 PM',addr:'1600 38th St, Boulder, CO',
    price:12,qty:2,extras:[{name:'Priya Nair',uname:'@priyan'}],age21:true,
    status:'Active',orderId:'ORD-5192',
@@ -332,6 +323,63 @@ const inboxMessages=[
    detail:{category:'Culture & Values',description:"Learn about Nigh's mission to bring people together for meaningful moments. This video shares our core values and the experiences we're creating."}},
   {id:2,type:'alert',title:'Nike Air Max Day Access',subtitle:'Nike Boulder · Starts in 2h',description:"Don't miss this exclusive early access to the Air Max Day collection.",time:'12 min ago',unread:true,
    detail:{status:'Starting soon',location:'1800 29th St, Boulder, CO',time:'Starts in 2 hours at 2:00 PM',message:"Don't miss this exclusive early access to the Air Max Day collection."}},
+  {id:14,type:'headsup',broadcast:false,title:'Weekend Squad',subtitle:"Free at 4pm — anyone want to meet up?",description:"Hey! I'm free this afternoon starting at 4pm and looking for something to do. Anyone want to meet up?",time:'18 min ago',unread:true,
+   detail:{
+     group:'Weekend Squad',groupMembers:5,sentTo:'5 friends',niyaHelp:true,broadcast:false,
+     message:"Hey! I'm free this afternoon starting at 4pm and looking for something to do. Anyone want to meet up?",
+     niyaNote:"Niya helped me write and send this to your Weekend Squad group.",
+     threadHistory:[
+       {name:'Maya Torres',av:'MT',time:'Friday 5:12 PM',msg:"Anyone up for doing something this weekend?"},
+       {name:'You',av:'JR',time:'Friday 5:28 PM',msg:"Possibly — what did you have in mind?"},
+       {name:'Alex Rivera',av:'AR',time:'Friday 5:45 PM',msg:"I'm around Saturday afternoon if people want to grab food or drinks"},
+       {name:'Jordan Lee',av:'JL',time:'Friday 6:01 PM',msg:"Saturday works for me too. Nothing planned yet"},
+       {name:'You',av:'JR',time:'Friday 6:15 PM',msg:"Ok let's do it. I'll send something Saturday when I have a better read on the day"},
+       {name:'Maya Torres',av:'MT',time:'Friday 6:22 PM',msg:"Sounds good. Just tag me when you know"},
+       {name:'Alex Rivera',av:'AR',time:'Saturday 10:04 AM',msg:"Still on for later? I'm thinking around 4 or 5"},
+       {name:'Jordan Lee',av:'JL',time:'Saturday 10:31 AM',msg:"Yeah I'm free from 4 onward"},
+     ],
+     replies:[
+       {name:'Alex Rivera',av:'AR',time:'11m ago',msg:"I'm in! Was thinking about grabbing food somewhere — Centro might have something on tonight"},
+       {name:'Jordan Lee',av:'JL',time:'8m ago',msg:'Same here. Let me know where you land, I could meet by 4:30'},
+       {name:'Maya Torres',av:'MT',time:'3m ago',msg:'Just checked Nigh — Fate Brewing has a tap takeover at 5. 7 spots left'},
+     ]
+   }},
+  {id:15,type:'headsup',broadcast:true,title:"Anyone going to the Fate Brewing tap event tonight?",subtitle:'You → All Friends · 9 people',description:'Anyone else interested? 7 spots left — would love to go with a crew.',time:'25 min ago',unread:true,
+   detail:{
+     group:'All Friends',sentTo:'9 friends',niyaHelp:false,broadcast:true,
+     message:"Hey — I'm thinking about going to the Colorado Limited Tap Takeover at Fate Brewing tonight (starts 5pm, only 7 spots left). Anyone else interested? Would be more fun with a crew.",
+     dropRef:{title:'Colorado Limited Tap Takeover',venue:'Fate Brewing Co',time:'Tonight · 5:00 PM',dropId:'D005'},
+     replies:[
+       {name:'Tyler Brooks',av:'TB',time:'18m ago',msg:"Yes!! Been eyeing this one. Let's grab spots now before they're gone",unread:true,
+        history:[
+          {from:'TB',text:"Hey did you end up going to that Avery collab thing last week?",time:'Last Tuesday 2:14 PM'},
+          {from:'me',text:"Missed it — got tied up. Was it good?",time:'Last Tuesday 2:31 PM'},
+          {from:'TB',text:"Really good. They only had like 8 kegs, went fast. You gotta move quick on those Nigh drops",time:'Last Tuesday 2:38 PM'},
+          {from:'me',text:"Noted. I've been sleeping on the app lol",time:'Last Tuesday 2:42 PM'},
+          {from:'TB',text:"I check it every morning now. So many more things going on around here than I realized",time:'Last Tuesday 2:45 PM'},
+          {from:'me',text:"Ha ok ok. I'll actually pay attention. You going to the TRVE thing Thursday?",time:'Last Tuesday 2:50 PM'},
+          {from:'TB',text:"Nah can't Thursday. But let me know if you see anything good this weekend",time:'Last Tuesday 2:58 PM'},
+          {from:'me',text:"Will do",time:'Last Tuesday 3:01 PM'},
+        ]
+       },
+       {name:'James Kim',av:'JK',time:'14m ago',msg:"I'm down. How do we get tickets — through the app?",unread:true},
+       {name:'Priya Nair',av:'PN',time:'5m ago',msg:'Just got one! See you all there',unread:false},
+     ]
+   }},
+  {id:16,type:'bizheadsup',title:'Colorado Limited Tap Takeover is live — 7 spots left',subtitle:'Fate Brewing Co',description:"Grab yours before they're gone. Tonight starting at 5pm.",time:'32 min ago',unread:true,
+   detail:{
+     venue:'Fate Brewing Co',venueAv:'FB',venueFollowers:'You + 214 others follow this',
+     message:"Colorado Limited is on tap right now. Only 7 spots left for tonight's takeover — grab yours before they're gone. Starts at 5pm.",
+     dropRef:{title:'Colorado Limited Tap Takeover',venue:'Fate Brewing Co',time:'Tonight · 5:00 PM',dropId:'D005',spotsLeft:7},
+     cta:'Get a spot',
+   }},
+  {id:17,type:'bizheadsup',title:'Heads up: Maharaja double IPA dropping tomorrow at noon',subtitle:'Avery Brewing Co',description:'Tap room only. No online tickets — first come first served.',time:'2 hours ago',unread:true,
+   detail:{
+     venue:'Avery Brewing Co',venueAv:'AV',venueFollowers:'You + 189 others follow this',
+     message:"Our Maharaja Double IPA is pouring tomorrow at noon — tap room only. We're not putting this one on Nigh but wanted to give our followers a heads up first. No tickets, first come first served. Get there early.",
+     dropRef:null,
+     cta:null,
+   }},
   {id:3,type:'friend',title:'Alex Rivera got a ticket',subtitle:"Whole Foods Chef's Table · Mar 5",description:'5-course tasting menu with seasonal organic ingredients',time:'35 min ago',unread:false,
    detail:{friend:'Alex Rivera',action:'just got a ticket to',drop:"Whole Foods Chef's Table",date:'Wednesday, March 5 · 6:30 PM – 8:00 PM',message:'Alex is going to experience a 5-course tasting menu with seasonal organic ingredients.'}},
   {id:4,type:'nigh',title:'Training: How to Use Nigh Drops',author:'The Nigh Team',subtitle:'Quick tutorial',time:'2 hours ago',unread:false,
@@ -342,7 +390,7 @@ const inboxMessages=[
    detail:{status:'Spots available',location:'2905 Pearl St, Boulder, CO',time:'Arrival Window: 6:30 PM – 8:00 PM',message:'Spots are still available for this 5-course tasting menu experience. Reserve now before they fill up.'}},
   {id:7,type:'nigh',title:"Nigh Updates: What's New",author:'The Nigh Team',subtitle:'Monthly update',time:'2 days ago',unread:false,
    detail:{category:'Product Updates',description:"See what's new in Nigh this month. We've been busy building features to make discovering and sharing experiences easier than ever."}},
-  {id:8,type:'drop',title:'Colorado Limited Tap Takeover',subtitle:'Fate Brewing Co. · Starts in 2h',description:"7 spots left for tonight's exclusive tap event.",time:'45 min ago',unread:true,
+  {id:8,type:'drop',title:'Colorado Limited Tap Takeover',subtitle:'Fate Brewing Co · Starts in 2h',description:"7 spots left for tonight's exclusive tap event.",time:'45 min ago',unread:true,
    detail:{status:'Starting soon',location:'1600 38th St, Boulder, CO',time:'Starts tonight at 5:00 PM',message:'Doors open in 2 hours. 7 spots remaining. Meet your crew at the bar.',dropId:'D005'}},
   {id:9,type:'friend',title:'Zoe Martinez got a ticket',subtitle:"REI Gear Demo Day · Apr 3",description:"Arc'teryx spring collection demo with brand experts.",time:'1 hour ago',unread:true,
    detail:{friend:'Zoe Martinez',action:'just got a ticket to',drop:"REI Boulder: Arc'teryx Gear Demo",date:'Thursday, April 3 · 10:00 AM – 1:00 PM',message:"Zoe is going to demo Arc'teryx's new spring collection at REI Boulder."}},
@@ -357,16 +405,35 @@ const inboxMessages=[
 ];
 
 const friendsList=[
-  {id:'F001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',mutual:2,hasTicket:'D001'},
-  {id:'F002',name:'James Kim',uname:'@jamesk',av:'JK',mutual:5,hasTicket:'D001'},
-  {id:'F003',name:'Maya Torres',uname:'@mayat',av:'MT',mutual:1,hasTicket:'D003'},
-  {id:'F004',name:'Chris Park',uname:'@chrisp',av:'CP',mutual:0,hasTicket:null},
-  {id:'F005',name:'Zoe Martinez',uname:'@zoemar',av:'ZM',mutual:3,hasTicket:'D006'},
-  {id:'F006',name:'Tyler Brooks',uname:'@tylerb',av:'TB',mutual:1,hasTicket:'D013'},
-  {id:'F007',name:'Priya Nair',uname:'@priyan',av:'PN',mutual:2,hasTicket:'D005'},
-  {id:'F008',name:'Dev Singh',uname:'@devs',av:'DS',mutual:0,hasTicket:null},
-  {id:'F009',name:'Aisha Johnson',uname:'@aishaj',av:'AJ',mutual:4,hasTicket:'D007'},
+  {id:'F001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',mutual:2,hasTicket:'D001',ticketPrivacy:'friends'},
+  {id:'F002',name:'James Kim',uname:'@jamesk',av:'JK',mutual:5,hasTicket:'D001',ticketPrivacy:'only_me'},
+  {id:'F003',name:'Maya Torres',uname:'@mayat',av:'MT',mutual:1,hasTicket:'D003',ticketPrivacy:'friends'},
+  {id:'F004',name:'Chris Park',uname:'@chrisp',av:'CP',mutual:0,hasTicket:null,ticketPrivacy:'friends'},
+  {id:'F005',name:'Zoe Martinez',uname:'@zoemar',av:'ZM',mutual:3,hasTicket:'D006',ticketPrivacy:'friends'},
+  {id:'F006',name:'Tyler Brooks',uname:'@tylerb',av:'TB',mutual:1,hasTicket:'D013',ticketPrivacy:'friends'},
+  {id:'F007',name:'Priya Nair',uname:'@priyan',av:'PN',mutual:2,hasTicket:'D005',ticketPrivacy:'friends'},
+  {id:'F008',name:'Dev Singh',uname:'@devs',av:'DS',mutual:0,hasTicket:null,ticketPrivacy:'friends'},
+  {id:'F009',name:'Aisha Johnson',uname:'@aishaj',av:'AJ',mutual:4,hasTicket:'D007',ticketPrivacy:'friends'},
 ];
+
+// Returns friends who have a ticket to a drop AND whose privacy allows visibility.
+// ticketPrivacy values: 'friends' (visible to all), 'only_me' (hidden), or a group id (visible to that group only).
+function friendsGoingForDrop(dropId){
+  const allGroups=[...(S.friendGroups||[]),...(typeof socialGroups!=='undefined'?socialGroups:[]),...(typeof eventGroups!=='undefined'?eventGroups:[])];
+  return friendsList.filter(f=>{
+    if(f.hasTicket!==dropId) return false;
+    const p=f.ticketPrivacy||'friends';
+    if(p==='friends') return true;
+    if(p==='only_me') return false;
+    // Group privacy — visible only if current user is a member of that group
+    const g=allGroups.find(x=>x.id===p);
+    return !!(g&&g.members&&g.members.includes('me'));
+  });
+}
+// Friends with a ticket to this drop regardless of privacy (for hidden count)
+function friendsWithTicketForDrop(dropId){
+  return friendsList.filter(f=>f.hasTicket===dropId);
+}
 
 const phoneContacts=[
   {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW'},
@@ -385,7 +452,7 @@ const recentTransfers=[
 const followingList=[
   {handle:'@nikeboulder',name:'Nike Boulder',short:'Nike',cat:'Retail',notifs:true,hasLive:true},
   {handle:'@centroboulder',name:'Centro Mexican Kitchen',short:'Centro',cat:'Food & Drink',notifs:true,hasLive:false},
-  {handle:'@fatebrewing',name:'Fate Brewing Co.',short:'Fate',cat:'Food & Drink',notifs:true,hasLive:true},
+  {handle:'@fatebrewing',name:'Fate Brewing Co',short:'Fate',cat:'Food & Drink',notifs:true,hasLive:true},
   {handle:'@reiboulder',name:'REI Boulder',short:'REI',cat:'Outdoor & Sports',notifs:false,hasLive:true},
   {handle:'@shineboulder',name:'Shine Restaurant',short:'Shine',cat:'Food & Drink',notifs:true,hasLive:false},
   {handle:'@chautauqua',name:'Chautauqua Park',short:'Chaut.',cat:'Outdoors & Parks',notifs:true,hasLive:false},
@@ -402,7 +469,7 @@ const headsUps=[
   {id:'HU002',biz:'Centro Mexican Kitchen',handle:'@centroboulder',short:'Centro',
    text:"Fresh truffle pasta on tonight's menu — available while it lasts.",
    time:'1h ago',cat:'Food & Drink',following:true},
-  {id:'HU003',biz:'Fate Brewing Co.',handle:'@fatebrewing',short:'Fate',
+  {id:'HU003',biz:'Fate Brewing Co',handle:'@fatebrewing',short:'Fate',
    text:'Tap Takeover kicks off at 5 PM tonight. 7 spots left — grab yours.',
    time:'45m ago',cat:'Food & Drink',following:true},
   {id:'HU004',biz:'REI Boulder',handle:'@reiboulder',short:'REI',
@@ -429,7 +496,7 @@ const proProfiles={
     cat:'Food & Grocery',following:true,
     friendsFollowing:[{name:'Maya Torres',av:'MT'}],
     recentDrops:["Whole Foods Chef's Table"]},
-  '@fatebrewing':{name:'Fate Brewing Co.',handle:'@fatebrewing',short:'FATE',
+  '@fatebrewing':{name:'Fate Brewing Co',handle:'@fatebrewing',short:'FATE',
     addr:'1600 38th St, Boulder, CO 80301',phone:'(303) 555-0299',email:'hello@fatebrewing.com',
     bio:'Award-winning Boulder craft brewery. Known for bold Colorado ales and innovative tap collaborations. Regular exclusive tap events and limited beer releases.',
     cat:'Food & Drink',following:true,
@@ -508,7 +575,7 @@ const socialGroups=[
   {id:'SG001',name:'Boulder Sneakerheads',type:'social',av:'BS',color:'#6226E9',
    inviteLink:'nigh.com/g/boulder-sneakerheads',unread:3,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'admin'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},
      {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member'},
      {name:'Jordan Lee',uname:'@jordanl',av:'JL',role:'member'},
      {name:'Sam Park',uname:'@samp',av:'SP',role:'member'},
@@ -517,13 +584,13 @@ const socialGroups=[
    drops:['Nike Air Max Day Access'],
    chat:[
      {av:'MT',text:'Anyone copping the Air Max drops?',time:'2m ago',mine:false,name:'Maya'},
-     {av:'AR',text:'Already got 4 spots secured 🔥',time:'1m ago',mine:true,name:'You'},
+     {av:'JR',text:'Already got 4 spots secured',time:'1m ago',mine:true,name:'You'},
      {av:'JL',text:'Wait how?? I missed it',time:'just now',mine:false,name:'Jordan'},
    ]},
   {id:'SG002',name:'Whole Foods Crew',type:'social',av:'WC',color:'#16A34A',
    inviteLink:'nigh.com/g/whole-foods-crew',unread:0,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'admin'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},
      {name:'Sarah Mitchell',uname:'@sarahm',av:'SM',role:'member'},
      {name:'James Kim',uname:'@jamesk',av:'JK',role:'member'},
    ],
@@ -531,13 +598,13 @@ const socialGroups=[
    drops:["Whole Foods Chef's Table"],
    chat:[
      {av:'SM',text:"Chef's Table event is next Friday!",time:'1h ago',mine:false,name:'Sarah'},
-     {av:'AR',text:'Counting me in, grabbing 2 spots',time:'45m ago',mine:true,name:'You'},
-     {av:'JK',text:'Same! See you there 🙌',time:'30m ago',mine:false,name:'James'},
+     {av:'JR',text:'Counting me in, grabbing 2 spots',time:'45m ago',mine:true,name:'You'},
+     {av:'JK',text:'Same! See you there',time:'30m ago',mine:false,name:'James'},
    ]},
   {id:'SG003',name:'Boulder Foodies',type:'social',av:'BF',color:'#16A34A',
    inviteLink:'nigh.com/g/boulder-foodies',unread:5,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'admin'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},
      {name:'Sarah Mitchell',uname:'@sarahm',av:'SM',role:'member'},
      {name:'Aisha Johnson',uname:'@aishaj',av:'AJ',role:'member'},
      {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member'},
@@ -547,13 +614,30 @@ const socialGroups=[
    drops:["The Sink: 50% Off Burger Night","Spruce Confections: Weekend Pastry Drop"],
    chat:[
      {av:'AJ',text:'The Sink burger night is on tonight!',time:'22m ago',mine:false,name:'Aisha'},
-     {av:'AR',text:'In! Meeting at 6?',time:'18m ago',mine:true,name:'You'},
-     {av:'SM',text:"I'll be there 🙋",time:'15m ago',mine:false,name:'Sarah'},
+     {av:'JR',text:'In! Meeting at 6?',time:'18m ago',mine:true,name:'You'},
+     {av:'SM',text:"I'll be there",time:'15m ago',mine:false,name:'Sarah'},
+   ]},
+  {id:'SG005',name:'Weekend Squad',type:'social',av:'WS',color:'#0E4EF5',
+   inviteLink:'nigh.com/g/weekend-squad',unread:3,
+   members:[
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},
+     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'member'},
+     {name:'Jordan Lee',uname:'@jordanl',av:'JL',role:'member'},
+     {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member'},
+     {name:'Chris Park',uname:'@chrisp',av:'CP',role:'member'},
+   ],
+   lastMsg:{text:"Just checked Nigh — Fate Brewing has a tap takeover at 5",sender:'Maya Torres',time:'3m ago'},
+   drops:['Colorado Limited Tap Takeover'],
+   chat:[
+     {av:'JR',text:"Hey! Free this afternoon starting at 4pm — anyone want to meet up?",time:'18m ago',mine:true,name:'You'},
+     {av:'AR',text:"I'm in! Was thinking about grabbing food somewhere — Centro might have something on tonight",time:'11m ago',mine:false,name:'Alex'},
+     {av:'JL',text:'Same here. Let me know where you land, I could meet by 4:30',time:'8m ago',mine:false,name:'Jordan'},
+     {av:'MT',text:'Just checked Nigh — Fate Brewing has a tap takeover at 5. 7 spots left',time:'3m ago',mine:false,name:'Maya'},
    ]},
   {id:'SG004',name:'Pearl St Crew',type:'social',av:'PS',color:'#D97706',
    inviteLink:'nigh.com/g/pearl-st-crew',unread:0,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'member'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'member'},
      {name:'Tyler Brooks',uname:'@tylerb',av:'TB',role:'admin'},
      {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW',role:'member'},
      {name:'Dev Singh',uname:'@devs',av:'DS',role:'member'},
@@ -562,40 +646,40 @@ const socialGroups=[
    drops:['Spruce Confections: Weekend Pastry Drop'],
    chat:[
      {av:'TB',text:'Anyone doing the Spruce drop Saturday?',time:'3h ago',mine:false,name:'Tyler'},
-     {av:'AR',text:'Already got a reminder set 🥐',time:'2h ago',mine:true,name:'You'},
+     {av:'JR',text:'Already got a reminder set',time:'2h ago',mine:true,name:'You'},
      {av:'DS',text:'Same. Their croissants are unreal',time:'1h ago',mine:false,name:'Dev'},
    ]},
 ];
 
 // Event groups auto-derive from multi-spot tickets
 const eventGroups=[
-  {id:'EG-TK002',name:'Nike Air Max Day',type:'event',av:'NI',color:'#0E4EF5',
-   ticketId:'TK002',orderId:'ORD-7291',
-   inviteLink:'nigh.com/g/ev/air-max-day-7291',unread:1,
+  {id:'EG-TK003',name:"Whole Foods Chef's Table",type:'event',av:'WF',color:'#0E4EF5',
+   ticketId:'TK003',orderId:'ORD-7291',
+   inviteLink:'nigh.com/g/ev/chefs-table-7291',unread:1,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'admin',spot:1,status:'active'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
      {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member',spot:2,status:'accepted'},
-     {name:'Jordan Lee',uname:'@jordanl',av:'JL',role:'member',spot:3,status:'pending'},
+     {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW',role:'member',spot:3,status:'pending'},
      {name:null,uname:null,av:null,role:'member',spot:4,status:'available'},
    ],
-   lastMsg:{text:"Meet at the east entrance at 10:45",sender:'You',time:'Mar 4'},
+   lastMsg:{text:"Arrival window 6:30–8 PM — see you all there",sender:'You',time:'Mar 4'},
    chat:[
-     {av:'AR',text:'Alright squad, got us 4 spots for Air Max Day 🎉',time:'Mar 4 · 1:30 PM',mine:true,name:'You'},
-     {av:'MT',text:'Lets gooo!! Thanks Alex',time:'Mar 4 · 2:48 PM',mine:false,name:'Maya'},
-     {av:'AR',text:'Meet at the east entrance at 10:45',time:'Mar 4 · 3:00 PM',mine:true,name:'You'},
+     {av:'JR',text:"Got us 4 spots for the Chef's Table dinner",time:'Mar 4 · 1:30 PM',mine:true,name:'You'},
+     {av:'MT',text:"Amazing!! I've been wanting to go to this",time:'Mar 4 · 2:48 PM',mine:false,name:'Maya'},
+     {av:'JR',text:'Arrival window 6:30–8 PM — see you all there',time:'Mar 4 · 3:00 PM',mine:true,name:'You'},
    ]},
   {id:'EG-TK005',name:'Fate Brewing Tap Night',type:'event',av:'FB',color:'#DC2626',
    ticketId:'TK005',orderId:'ORD-5192',
    inviteLink:'nigh.com/g/ev/fate-tap-5192',unread:2,
    members:[
-     {name:'Alex Rivera',uname:'@alexr',av:'AR',role:'admin',spot:1,status:'active'},
+     {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
      {name:'Priya Nair',uname:'@priyan',av:'PN',role:'member',spot:2,status:'accepted'},
    ],
    lastMsg:{text:'Meet at the bar at 5 sharp!',sender:'You',time:'Apr 1'},
    chat:[
-     {av:'AR',text:'Grabbed us 2 spots for the tap takeover 🍺',time:'Apr 1 · 4:00 PM',mine:true,name:'You'},
+     {av:'JR',text:'Grabbed us 2 spots for the tap takeover',time:'Apr 1 · 4:00 PM',mine:true,name:'You'},
      {av:'PN',text:'Yesss!! Been wanting to try their collab beers',time:'Apr 1 · 4:57 PM',mine:false,name:'Priya'},
-     {av:'AR',text:'Meet at the bar at 5 sharp!',time:'Apr 1 · 5:10 PM',mine:true,name:'You'},
+     {av:'JR',text:'Meet at the bar at 5 sharp!',time:'Apr 1 · 5:10 PM',mine:true,name:'You'},
    ]},
 ];
 
@@ -612,7 +696,7 @@ function hdr(t,sub,back,right,hideNiya){
     <div style="display:flex;gap:8px;align-items:center">${right||''}</div>
   </div>`;
 }
-function av(initials,size=36,gradient='135deg,#1B2A4A,#3B82F6'){return`<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(${gradient});display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.33)}px;font-weight:700;color:#fff;flex-shrink:0">${initials}</div>`;}
+function av(initials,size=36,gradient='135deg,#1B2A4A,#0E4EF5'){return`<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(${gradient});display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.33)}px;font-weight:700;color:#fff;flex-shrink:0">${initials}</div>`;}
 
 
 // ── NIYA HELPERS ───────────────────────────────────────
@@ -705,7 +789,7 @@ function renderNiyaOnboarding(){
   const step=S.obStep; // 3, 4, 5
   const fname=S.obFirstName||'';
   // Suggest handle: first initial + last part of name (simplified: @firstnamelower)
-  const suggestedHandle='@'+fname.toLowerCase().replace(/[^a-z0-9]/g,'')+(fname.toLowerCase()==='alex'?'r':'');
+  const suggestedHandle='@'+fname.toLowerCase().replace(/[^a-z0-9]/g,'')+(fname.toLowerCase()==='josh'?'r':'');
   const handle=S.obHandle||suggestedHandle;
 
   // Build progressive message list
@@ -814,7 +898,7 @@ function renderFeed(){
   const cards=feedDrops.map((d,idx)=>{
     const isMine=!!d.myTicket;
     const soldOut=d.spotsLeft===0&&!isMine;
-    const friendsOn=friendsList.filter(f=>f.hasTicket===d.id);
+    const friendsOn=friendsGoingForDrop(d.id);
     const urgent=d.closesIn.includes('m')&&!d.closesIn.includes('h');
     // Vibrant brand gradients per card
     const bgGrad=idx===0
@@ -869,7 +953,7 @@ function renderFeed(){
         </div>
         <!-- Like -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-          <button onclick="event.stopPropagation();feedDrops[${idx}].liked=!feedDrops[${idx}].liked;render()" style="background:none;border:none;padding:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))"><svg width="32" height="32" viewBox="0 0 24 24" fill="${d.liked?'#EC1977':'#fff'}" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+          <button onclick="event.stopPropagation();var d=feedDrops[${idx}];d.liked=!d.liked;d.likeCount=d.liked?d.likeCount+1:d.likeCount-1;render()" style="background:none;border:none;padding:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))"><svg width="32" height="32" viewBox="0 0 24 24" fill="${d.liked?'#EC1977':'#fff'}" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
         </div>
         <!-- Share -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
@@ -911,7 +995,9 @@ function renderDropDetail(){
   const d=feedDrops[S.drop];
   const qty=S.orderQty;
   const total=d.price*qty;
-  const friendsOn=friendsList.filter(f=>f.hasTicket===d.id);
+  const friendsOn=friendsGoingForDrop(d.id);
+  const friendsTotal=friendsWithTicketForDrop(d.id);
+  const hiddenCount=friendsTotal.length-friendsOn.length;
   const isWindow=d.timing==='Arrival Window';
 
   // Date label
@@ -990,12 +1076,46 @@ function renderDropDetail(){
       <div style="color:rgba(255,255,255,0.55);flex-shrink:0">${ic('map',20)}</div>
     </button>
 
-    <!-- Friends going — no box -->
-    ${friendsOn.length?`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <div style="display:flex">${friendsOn.slice(0,3).map((f,i)=>`<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid #0a0a0a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-left:${i>0?'-7px':'0'}">${f.av}</div>`).join('')}</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.6)">${friendsOn.slice(0,2).map(f=>f.name.split(' ')[0]).join(' & ')} ${friendsOn.length===1?'is':'are'} going</div>
-    </div>`:''}
+    <!-- Friends section -->
+    <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:10px">FRIENDS</div>
+      ${d.myTicket&&(S.ticketPrivacy[d.myTicket]||'friends')==='only_me'?`
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px;margin-bottom:10px">
+        <svg width="12" height="12" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span style="font-size:11px;color:rgba(255,255,255,0.40)">Your attendance is private — friends can't see you're going</span>
+        <button onclick="modal('ticketPrivacy_${d.myTicket}')" style="margin-left:auto;background:none;border:none;font-size:10px;font-weight:600;color:rgba(14,78,245,0.8);cursor:pointer;font-family:inherit;padding:0;white-space:nowrap">Change</button>
+      </div>`:''}
+      ${friendsOn.length?`
+      <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px">
+        ${friendsOn.map(f=>`
+        <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${f.av}</div>
+          <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.8);white-space:nowrap">${f.name.split(' ')[0]}</div>
+          <div style="font-size:9px;color:rgba(34,197,94,0.8);font-weight:600">Going</div>
+        </div>`).join('')}
+        ${hiddenCount>0?`<div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0">
+          <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);white-space:nowrap">+${hiddenCount} private</div>
+        </div>`:''}
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal('coord-${S.drop}')" style="flex:1;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.35);border-radius:10px;padding:9px 12px;font-size:12px;font-weight:600;color:#93C5FD;cursor:pointer;font-family:inherit">
+          Coordinate with friends going
+        </button>
+      </div>`:`
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:2px">${hiddenCount>0?`${hiddenCount} friend${hiddenCount!==1?'s':''} going (private)`:'None of your friends are going yet'}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35)">${hiddenCount>0?'Their attendance is set to private':'Be the first — or bring someone'}</div>
+        </div>
+      </div>
+      <button onclick="modal('headsup-drop-${S.drop}')" style="width:100%;margin-top:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        Send a Heads Up to your friends
+      </button>`}
+    </div>
 
     <!-- About this Drop -->
     <div>
@@ -1208,7 +1328,7 @@ function renderTicketView(){
   const isWindow=tk.timing==='Arrival Window';
   const timeDisplay=isWindow&&tk.endTime?tk.time+' \u2013 '+tk.endTime:tk.time;
   const hostInitials=tk.host.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const dropFriends=isOwnerTicket?friendsList.filter(f=>f.hasTicket===tk.dropId):[];
+  const dropFriends=isOwnerTicket?friendsGoingForDrop(tk.dropId):[];
 
   const subtotal=(tk.price||0)*(tk.qty||1);
   const tax=subtotal>0?Math.round(subtotal*0.0885*100)/100:0;
@@ -1226,11 +1346,36 @@ function renderTicketView(){
     :`<span style="color:#EC1977;font-weight:700">${siMins}</span><span style="color:rgba(255,255,255,0.65);font-size:10px">m</span> <span style="color:#EC1977;font-weight:700">00</span><span style="color:rgba(255,255,255,0.65);font-size:10px">s</span>`;
   const ctaMsg=si?`<span style="font-size:17px;font-weight:600;color:rgba(255,255,255,0.60)">Starts in ${timerHtml}</span><br><span style="font-size:10px;font-weight:400;margin-top:2px;display:block;color:rgba(255,255,255,0.60)">Scan QR upon arrival</span>`:`<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.60)">Scan QR upon arrival</span>`;
 
+  const drpIdx=feedDrops.findIndex(f=>f.id===tk.dropId);
   const confirmBanner=isNew?`
-    <div class="fi" style="background:linear-gradient(135deg,rgba(98,38,233,0.15),rgba(14,78,245,0.15));border:1px solid rgba(14,78,245,0.35);border-radius:14px;padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:center">
+    <div class="fi" style="background:linear-gradient(135deg,rgba(98,38,233,0.15),rgba(14,78,245,0.15));border:1px solid rgba(14,78,245,0.35);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:center">
       <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">${ic('check',16)}</div>
       <div><div style="font-size:13px;font-weight:700;color:#fff">You're in!</div>
       <div style="font-size:11px;color:rgba(255,255,255,0.60);margin-top:1px">Reservation confirmed \u00b7 ${tk.orderId}</div></div>
+    </div>
+    <!-- Social sharing nudge -->
+    <div style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:16px">
+      ${(S.ticketPrivacy['TK_NEW']||'friends')==='only_me'?`
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.07)">
+        <svg width="13" height="13" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" style="flex-shrink:0;margin-top:1px"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <div style="flex:1">
+          <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5">Your ticket is set to <strong style="color:rgba(255,255,255,0.75)">private</strong> — friends won't see you're going</div>
+        </div>
+        <button onclick="modal('ticketPrivacy_TK_NEW')" style="background:none;border:none;font-size:10px;font-weight:600;color:rgba(14,78,245,0.8);cursor:pointer;font-family:inherit;padding:0;flex-shrink:0">Change</button>
+      </div>`:''}
+      ${dropFriends.length?`
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px">${dropFriends[0].name.split(' ')[0]}${dropFriends.length>1?` and ${dropFriends.length-1} other${dropFriends.length>1?'s':''} are`:' is'} also going</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px">Coordinate your arrival or meet up before</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal('coord-${drpIdx}')" style="flex:1;background:rgba(14,78,245,0.2);border:1px solid rgba(14,78,245,0.4);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:#93C5FD;cursor:pointer;font-family:inherit">Coordinate</button>
+        <button onclick="modal('headsup-drop-${drpIdx}')" style="flex:1;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit">Tell more friends</button>
+      </div>`:`
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">None of your friends are going yet</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px">Let them know — it's more fun with people you know</div>
+      <button onclick="modal('headsup-drop-${drpIdx}')" style="width:100%;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:10px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        Send a Heads Up to your friends
+      </button>`}
     </div>`:'';
 
   // ── Shared top section (same on all tickets) ──
@@ -1696,25 +1841,35 @@ function openInboxMessage(id){
 }
 function renderInbox(){
   const filter=S.inboxFilter||'all';
-  const filterMap={'friends':'friend','drops':'drop','nigh':'nigh'};
-  const filtered=filter==='all'?inboxMessages:inboxMessages.filter(m=>m.type===filterMap[filter]);
+  const filterMap={'friends':['friend','headsup'],'places':['bizheadsup','drop','alert'],'nigh':['nigh']};
+  const filtered=filter==='all'?inboxMessages:inboxMessages.filter(m=>{
+    const types=filterMap[filter]||[];
+    return types.includes(m.type);
+  });
   const unread=filtered.filter(m=>m.unread).length;
   const avatarStyle={
     nigh:'background:linear-gradient(135deg,rgba(98,38,233,0.9),rgba(14,78,245,0.9));border-radius:12px',
     drop:'background:linear-gradient(135deg,rgba(245,166,35,0.85),rgba(236,25,119,0.85));border-radius:12px',
     alert:'background:linear-gradient(135deg,rgba(245,166,35,0.85),rgba(236,25,119,0.85));border-radius:12px',
-    friend:'background:rgba(65,239,249,0.25);border:1px solid rgba(65,239,249,0.35);border-radius:12px',
+    friend:'background:rgba(65,239,249,0.18);border:1px solid rgba(65,239,249,0.30);border-radius:50%',
+    headsup:'background:linear-gradient(135deg,rgba(34,197,94,0.85),rgba(16,185,129,0.85));border-radius:12px',
+    bizheadsup:'background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(234,88,12,0.9));border-radius:12px',
   };
   const filters=[
     {key:'all',label:'All'},
     {key:'friends',label:'Friends'},
-    {key:'drops',label:'Drops'},
+    {key:'places',label:'Places'},
     {key:'nigh',label:'From Nigh'},
   ];
   return`
   <div style="background:#0B0B1A;min-height:762px;display:flex;flex-direction:column">
     <div style="background:#0B0B1A;padding:16px 16px 0;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:99">
-      <div style="font-size:28px;font-weight:800;color:#fff;margin-bottom:2px">Inbox</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+        <div style="font-size:28px;font-weight:800;color:#fff">Inbox</div>
+        <button onclick="modal('compose')" style="width:38px;height:38px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 12px rgba(14,78,245,0.45)">
+          <svg width="18" height="18" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
       ${unread>0?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:10px">${unread} unread</div>`:`<div style="margin-bottom:10px"></div>`}
       <div style="display:flex;gap:8px;padding-bottom:12px;overflow-x:auto">
         ${filters.map(f=>`
@@ -1725,21 +1880,110 @@ function renderInbox(){
     <div style="padding:8px 0">
       ${filtered.length===0?`<div style="text-align:center;padding:48px 24px;color:rgba(255,255,255,0.35);font-size:14px">No messages in this category</div>`:''}
       ${filtered.map(msg=>{
-        const avStyle=avatarStyle[msg.type]||avatarStyle.nigh;
+        const isBroadcast=msg.type==='headsup'&&msg.broadcast;
+        const isGroupHU=msg.type==='headsup'&&!msg.broadcast;
+        const isBizHUrow=msg.type==='bizheadsup';
+        const avStyle=isBroadcast
+          ?'background:linear-gradient(135deg,rgba(34,197,94,0.85),rgba(16,185,129,0.85));border-radius:12px'
+          :isGroupHU
+          ?'background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.3);border-radius:12px'
+          :isBizHUrow
+          ?'background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(234,88,12,0.9));border-radius:12px'
+          :(avatarStyle[msg.type]||avatarStyle.nigh);
+        const isBizHU=msg.type==='bizheadsup';
         const avatarContent=msg.type==='nigh'
           ?`<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>`
           :(msg.type==='drop'||msg.type==='alert')
           ?`<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>`
+          :isBroadcast
+          ?`<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>`
+          :isGroupHU
+          ?`<svg width="20" height="20" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.9)" stroke-width="2" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`
+          :isBizHU
+          ?`<span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:-0.02em">${(msg.detail&&msg.detail.venueAv)||'?'}</span>`
+          :msg.type==='friend'
+          ?`<span style="font-size:13px;font-weight:700;color:#41EFF9">${(msg.detail&&msg.detail.friend||'').split(' ').map(w=>w[0]).join('').slice(0,2)}</span>`
           :`<span style="font-size:13px;font-weight:700;color:#41EFF9">${(msg.title||'').split(' ')[0].charAt(0)}${(msg.title||'').split(' ')[1]?(msg.title||'').split(' ')[1].charAt(0):''}</span>`;
+        const replyCount=msg.detail&&msg.detail.replies?msg.detail.replies.length:0;
         return`
         <div onclick="openInboxMessage(${msg.id})" style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;display:flex;gap:12px;align-items:flex-start;-webkit-tap-highlight-color:rgba(255,255,255,0.05)">
           <div style="width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;${avStyle}">${avatarContent}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px">${msg.title}</div>
-            ${msg.author?`<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:1px">${msg.author}</div>`:''}
-            <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:1px">${msg.subtitle}</div>
-            ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${msg.description}</div>`:''}
-            <div style="font-size:11px;color:rgba(255,255,255,0.40);margin-top:2px">${msg.time}</div>
+            ${isBroadcast?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.85);letter-spacing:0.03em">📣 HEADS UP</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.40)">You → All Friends</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.35">${msg.title}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.description}</div>`:''}
+              <div style="display:flex;align-items:center;gap:8px">
+                ${replyCount?`<span style="font-size:11px;color:rgba(255,255,255,0.40);display:flex;align-items:center;gap:3px"><svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> ${replyCount} private repl${replyCount===1?'y':'ies'}</span>`:'<span style="font-size:11px;color:rgba(255,255,255,0.30)">No replies yet</span>'}
+                <span style="font-size:11px;color:rgba(255,255,255,0.25)">·</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</span>
+              </div>
+            `:isGroupHU?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.75);letter-spacing:0.03em">💬 GROUP</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.40)">${msg.detail&&msg.detail.groupMembers?msg.detail.groupMembers+' members':''}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">${msg.title}</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.subtitle}</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                ${replyCount?`<span style="font-size:11px;color:rgba(65,239,249,0.65)">${replyCount} repl${replyCount===1?'y':'ies'}</span>`:''}
+                ${replyCount?`<span style="font-size:11px;color:rgba(255,255,255,0.25)">·</span>`:''}
+                <span style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</span>
+              </div>
+            `:isBizHU?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(245,158,11,0.9);letter-spacing:0.03em">HEADS UP</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.55)">${msg.detail&&msg.detail.venue||''}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.35">${msg.title}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.description}</div>`:''}
+              <div style="display:flex;align-items:center;gap:8px">
+                ${msg.detail&&msg.detail.dropRef?`<span style="font-size:11px;color:rgba(245,158,11,0.75);display:flex;align-items:center;gap:3px"><svg width="9" height="9" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Drop linked</span><span style="font-size:11px;color:rgba(255,255,255,0.25)">·</span>`:''}
+                <span style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</span>
+              </div>
+            `:(msg.type==='drop'||msg.type==='alert')?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(245,166,35,0.9);letter-spacing:0.03em">DROP</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.55)">${msg.subtitle&&msg.subtitle.split('·')[0].trim()||''}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.35">${msg.title}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.description}</div>`:''}
+              <div style="display:flex;align-items:center;gap:8px">
+                ${msg.detail&&msg.detail.time?`<span style="font-size:11px;color:rgba(255,255,255,0.40)">${msg.detail.time}</span><span style="font-size:11px;color:rgba(255,255,255,0.20)">·</span>`:''}
+                <span style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</span>
+              </div>
+            `:msg.type==='nigh'?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(139,92,246,0.9);letter-spacing:0.03em">FROM NIGH</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.45)">${msg.subtitle||''}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.35">${msg.title}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.description}</div>`:''}
+              <div style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</div>
+            `:msg.type==='friend'?`
+              <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+                <span style="font-size:10px;font-weight:700;color:rgba(65,239,249,0.85);letter-spacing:0.03em">FRIEND</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.30)">·</span>
+                <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.45)">${msg.detail&&msg.detail.friend||''}</span>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;line-height:1.35">${msg.title}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px">${msg.description}</div>`:''}
+              <div style="font-size:11px;color:rgba(255,255,255,0.35)">${msg.time}</div>
+            `:`
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px">${msg.title}</div>
+              ${msg.author?`<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:1px">${msg.author}</div>`:''}
+              <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:1px">${msg.subtitle}</div>
+              ${msg.description?`<div style="font-size:12px;color:rgba(255,255,255,0.50);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px">${msg.description}</div>`:''}
+              <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px">${msg.time}</div>
+            `}
           </div>
           <div style="flex-shrink:0;width:12px;display:flex;justify-content:center;padding-top:4px">
             ${msg.unread?`<div style="width:8px;height:8px;border-radius:50%;background:#0E4EF5"></div>`:''}
@@ -1759,7 +2003,7 @@ function renderMenu(){
   if(S.menuSub==='settingsPreferences')return renderSettings();
   if(S.menuSub==='settingsNotifications')return renderSettings();
   if(S.menuSub==='settingsLegal')return renderSettings();
-  const row=(icon,label,sub,action)=>`<button onclick="${action}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6;flex-shrink:0">${ic(icon,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${label}</div>${sub?`<div style="font-size:11px;color:#6B7280;margin-top:1px">${sub}</div>`:''}</div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`;
+  const row=(icon,label,sub,action)=>`<button onclick="${action}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic(icon,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${label}</div>${sub?`<div style="font-size:11px;color:#6B7280;margin-top:1px">${sub}</div>`:''}</div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`;
   return`${hdr('Menu')}
   <div style="padding:14px 16px">
     ${row('users','Friends',`${friendsList.length} friends · ${socialGroups.length+eventGroups.length} groups`,"S.menuSub='friends';render()")}
@@ -1805,7 +2049,7 @@ function renderSettingsPreferences(){
 
   const partnerChip=(label,key)=>{
     const on=S['partner_type_'+key]===true;
-    return`<button onclick="S['partner_type_'+('${key}')]=!${on};render()" style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid ${on?'#0E4EF5':'#E5E7EB'};background:${on?'#EFF6FF':'#fff'};color:${on?'#0E4EF5':'#6B7280'};cursor:pointer">${label}</button>`;
+    return`<button onclick="S['partner_type_'+('${key}')]=!${on};render()" style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid ${on?'#0E4EF5':'#E5E7EB'};background:${on?'#EEF2FF':'#fff'};color:${on?'#0E4EF5':'#6B7280'};cursor:pointer">${label}</button>`;
   };
 
   const accordion=(key,title,summary,content)=>{
@@ -1936,7 +2180,7 @@ function renderSettingsNotifications(){
   };
   return`${hdr('Notifications',null,"S.menuSub='settings';render()")}
   <div style="padding:14px 16px">
-    ${toggle('Drop Alerts','Notify me when new drops go live from accounts I follow','dropAlerts')}
+    ${toggle('New Drops','Notify me when a new drop goes live from a place I follow','dropAlerts')}
     ${toggle('Friend Activity','When a friend reserves or attends a drop','friendActivity')}
     ${toggle('Reminders','Remind me before a drop I\'m attending starts','reminders')}
     ${toggle('Nigh Updates','News and announcements from Nigh','updates')}
@@ -2013,8 +2257,8 @@ function renderFriends(){
     ${hdr('Friends',null,"S.menuSub=null;render()")}
     ${tabBar}
     <div style="overflow-y:auto;flex:1;padding:14px 16px">
-      <div style="background:#EFF6FF;border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
-        ${ic('users',18)}<div style="flex:1;font-size:12px;color:#3B82F6;font-weight:500">Sync contacts or enter a mobile number to invite friends to Nigh</div>
+      <div style="background:#EEF2FF;border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
+        ${ic('users',18)}<div style="flex:1;font-size:12px;color:#0E4EF5;font-weight:500">Sync contacts or enter a mobile number to invite friends to Nigh</div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:16px">
         <button style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#1B2A4A;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('users',14)} Sync Contacts</button>
@@ -2039,7 +2283,7 @@ function renderFollowing(){
     <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap a business to view their profile and manage your preferences.</div>
     ${followingList.map(p=>{
       return`<div onclick="S.proHandle='${p.handle}';S.scr='proProfile';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
-        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1B2A4A,#3B82F6);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${p.short.charAt(0)}</div>
+        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${p.short.charAt(0)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:700;color:#111827">${p.name}</div>
           <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${p.handle} · ${p.cat}</div>
@@ -2060,31 +2304,18 @@ function renderProProfile(){
   return`${hdr(p.name,p.cat,"go('feed')",bizMenuBtn)}
   <div style="padding:14px 16px">
     <!-- Header card -->
-    <div style="background:linear-gradient(135deg,#1B2A4A,#3B82F6);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;position:relative">
+    <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;position:relative">
       <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px">${p.short.charAt(0)}</div>
       <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:2px">${p.name}</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px">${p.handle}</div>
-      <button onclick="if(!S.followState)S.followState={};S.followState['${p.handle}']=!${isFollowing};render()" style="background:${isFollowing?'rgba(255,255,255,0.15)':'#0E4EF5'};border:${isFollowing?'1px solid rgba(255,255,255,0.3)':'none'};border-radius:20px;padding:8px 24px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">${isFollowing?'Following ✓':'+ Follow'}</button>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <button onclick="if(!S.followState)S.followState={};S.followState['${p.handle}']=!${isFollowing};render()" style="background:${isFollowing?'rgba(255,255,255,0.15)':'#0E4EF5'};border:${isFollowing?'1px solid rgba(255,255,255,0.3)':'none'};border-radius:20px;padding:8px 24px;font-size:13px;font-weight:700;color:#fff;cursor:pointer">${isFollowing?'Following ✓':'+ Follow'}</button>
+        ${isFollowing?`
+        <button onclick="event.stopPropagation();if(!S.notifState)S.notifState={};S.notifState['${p.handle}']=S.notifState['${p.handle}']===false?true:false;render()" title="${(S.notifState&&S.notifState[p.handle]===false)?'Notifications off':'Notifications on'}" style="width:34px;height:34px;border-radius:50%;background:${(S.notifState&&S.notifState[p.handle]===false)?'rgba(255,255,255,0.08)':'rgba(255,255,255,0.18)'};border:1px solid rgba(255,255,255,${(S.notifState&&S.notifState[p.handle]===false)?'0.15':'0.35'});display:flex;align-items:center;justify-content:center;cursor:pointer;color:${(S.notifState&&S.notifState[p.handle]===false)?'rgba(255,255,255,0.35)':'#fff'}">
+          ${(S.notifState&&S.notifState[p.handle]===false)?ic('bellOff',15):ic('bell',15)}
+        </button>`:''}
+      </div>
     </div>
-
-    <!-- Notification preference (only shown when following) -->
-    ${(()=>{
-      if(!isFollowing)return'';
-      if(!S.notifState)S.notifState={};
-      const notifOn=S.notifState[p.handle]!==undefined?S.notifState[p.handle]:true;
-      return`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="color:${notifOn?'#3B82F6':'#9CA3AF'}">${ic('bell',18)}</span>
-          <div>
-            <div style="font-size:13px;font-weight:600;color:#111827">Drop Alerts</div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${notifOn?'Notifying you of new drops':'Alerts muted'}</div>
-          </div>
-        </div>
-        <button onclick="if(!S.notifState)S.notifState={};S.notifState['${p.handle}']=!${notifOn};render()" style="width:44px;height:26px;border-radius:13px;border:none;background:${notifOn?'#0E4EF5':'#D1D5DB'};position:relative;cursor:pointer;flex-shrink:0;transition:background 0.2s">
-          <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;${notifOn?'right:3px':'left:3px'};transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div>
-        </button>
-      </div>`;
-    })()}
 
     <!-- Friends following -->
     ${p.friendsFollowing.length?`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px">
@@ -2322,7 +2553,21 @@ function renderGroups(){
 
 function renderGroupDetail(){
   const gId=S.groupId||'SG001';
-  const g=[...socialGroups,...eventGroups].find(x=>x.id===gId)||socialGroups[0];
+  const allGroups=[...socialGroups,...eventGroups,...(S.friendGroups||[])];
+  const rawG=allGroups.find(x=>x.id===gId)||socialGroups[0];
+  // Normalize members: S.friendGroups stores IDs, socialGroups store objects
+  const normalizeMembers=(grp)=>{
+    if(!grp.members) return [];
+    return grp.members.map((m,mi)=>{
+      if(typeof m==='string'){
+        const f=friendsList.find(f=>f.id===m);
+        if(!f) return null;
+        return {name:f.name,uname:f.uname,av:f.av,role:grp.owner==='me'&&mi===0?'admin':'member'};
+      }
+      return m;
+    }).filter(Boolean);
+  };
+  const g={...rawG, members:normalizeMembers(rawG), chat:rawG.chat||[], drops:rawG.drops||[]};
   const tab=S.groupTab||'chat';
   const isEvent=g.type==='event';
 
@@ -2344,12 +2589,12 @@ function renderGroupDetail(){
         </div>
       </div>`).join('');
 
-    content=`<div style="flex:1;overflow-y:auto;padding:16px">
+    content=`<div id="gchat-${gId}" style="flex:1;overflow-y:auto;padding:16px 16px 8px">
       ${msgs}
     </div>
-    <div style="border-top:1px solid #E5E7EB;padding:10px 16px;display:flex;align-items:center;gap:10px;background:#fff">
-      <div style="flex:1;background:#F3F4F6;border-radius:22px;padding:10px 16px;font-size:14px;color:#9CA3AF">Message ${g.name.split(' ')[0]}...</div>
-      <button style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">${ic('send',15)}</button>
+    <div style="border-top:1px solid #E5E7EB;padding:10px 16px 16px;display:flex;align-items:center;gap:10px;background:#fff;flex-shrink:0">
+      <input id="gchat-input-${gId}" placeholder="Message ${g.name.split(' ')[0]}..." onkeydown="if(event.key==='Enter'){var inp=document.getElementById('gchat-input-${gId}');var txt=inp.value.trim();if(txt){var grpAll=[...socialGroups,...eventGroups,...(S.friendGroups||[])];var grp=grpAll.find(x=>x.id==='${gId}');if(grp){if(!grp.chat)grp.chat=[];grp.chat.push({av:'JR',text:txt,time:'just now',mine:true,name:'You'});}inp.value='';render();setTimeout(()=>{var el=document.getElementById('gchat-${gId}');if(el)el.scrollTop=el.scrollHeight;},50);}}" style="flex:1;background:#F3F4F6;border:none;border-radius:22px;padding:10px 16px;font-size:14px;color:#111827;outline:none;font-family:inherit"/>
+      <button onclick="var inp=document.getElementById('gchat-input-${gId}');var txt=inp.value.trim();if(txt){var grpAll=[...socialGroups,...eventGroups,...(S.friendGroups||[])];var grp=grpAll.find(x=>x.id==='${gId}');if(grp){if(!grp.chat)grp.chat=[];grp.chat.push({av:'JR',text:txt,time:'just now',mine:true,name:'You'});}inp.value='';render();setTimeout(()=>{var el=document.getElementById('gchat-${gId}');if(el)el.scrollTop=el.scrollHeight;},50);}" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;cursor:pointer">${ic('send',15)}</button>
     </div>`;
   }
 
@@ -2407,10 +2652,12 @@ function renderGroupDetail(){
   }
 
   const inviteLinkBtn=`<button onclick="modal('inviteLink-${gId}')" style="background:none;border:none;padding:6px;display:flex;color:#6B7280;cursor:pointer;border-radius:8px">${ic('link',20)}</button>`;
-  return`<div style="height:100%;display:flex;flex-direction:column;background:#F9FAFB">
+  return`<div style="height:100%;display:flex;flex-direction:column;background:#F9FAFB;overflow:hidden">
     ${hdr(g.name,`${isEvent?'Event Group':'Social Group'} · ${g.members.filter(m=>m.av).length} members`,"S.friendsTab='groups';S.menuSub='friends';S.scr='menu';render()",inviteLinkBtn)}
     ${tabBar}
-    ${content}
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      ${content}
+    </div>
   </div>`;
 }
 
@@ -2454,7 +2701,7 @@ function renderTB(){
   const tabs=[
     {id:'feed',ic:'nighPin',l:'Drops'},
     {id:'ticketCollection',ic:'ticket',l:'Tickets'},
-    {id:'niya',ic:null,l:'Ask Niya',niyaTab:true},
+    {id:'niya',ic:null,l:'',niyaTab:true},
     {id:'inbox',ic:'bell',l:'Inbox',badge:inboxMessages.filter(m=>m.unread).length||0},
     {id:'menu',ic:'menu2',l:'Menu'},
   ];
@@ -2465,9 +2712,9 @@ function renderTB(){
                S.scr==='alerts'?'inbox':S.scr;
   document.getElementById('tb').innerHTML=tabs.map(t=>`
     <button class="tt${active===t.id?' a':''}" onclick="${t.niyaTab?`S.niyaScr=S.scr==='niya'?S.niyaScr:S.scr;S.scr='niya';S.niyaStep=0;S.niyaListening=false;render()`:`go('${t.id}')`}" style="position:relative${t.niyaTab?';min-width:62px':''}">
-      ${t.niyaTab?`<div style="width:47px;height:47px;border-radius:50%;overflow:hidden;margin:0 auto;flex-shrink:0;transform:scale(1.15);transform-origin:center"><img src="niya_icon.svg" style="width:47px;height:47px;object-fit:cover;display:block${active==='niya'?';animation:niyaInnerPulse 2.5s ease-in-out infinite':''}"/></div>`:ic(t.ic,22)}
+      ${t.niyaTab?`<div style="width:47px;height:47px;border-radius:50%;overflow:hidden;margin:0 auto;flex-shrink:0;transform:scale(1);transform-origin:center"><img src="niya_icon.svg" style="width:47px;height:47px;object-fit:cover;display:block${active==='niya'?';animation:niyaInnerPulse 2.5s ease-in-out infinite':''}"/></div>`:ic(t.ic,22)}
       ${t.badge?`<span style="position:absolute;top:2px;right:8px;width:16px;height:16px;border-radius:50%;background:#EF4444;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center">${t.badge}</span>`:''}
-      <span${t.niyaTab?` style="position:relative;top:5px"`:''}>${t.l}</span>
+      ${t.l?`<span>${t.l}</span>`:''}
     </button>`).join('');
 }
 
@@ -2493,6 +2740,45 @@ function renderModal(){
     const msgId=parseInt(S.modal.split('-')[1]);
     const msg=inboxMessages.find(m=>m.id===msgId);
     if(!msg){mr.innerHTML='';return;}
+    // ── Business Heads Up detail modal ──
+    if(msg.type==='bizheadsup'){
+      const bd=msg.detail;
+      mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1)">
+        <div class="mh" style="background:rgba(255,255,255,0.2)"></div>
+        <!-- Venue header -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+          <div style="width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,0.9),rgba(234,88,12,0.9));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:14px;font-weight:800;color:#fff">${bd.venueAv}</span>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:700;color:#fff">${bd.venue}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px">${bd.venueFollowers}</div>
+          </div>
+          <div style="padding:4px 10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:20px">
+            <span style="font-size:10px;font-weight:700;color:rgba(245,158,11,0.9);letter-spacing:0.04em">HEADS UP</span>
+          </div>
+        </div>
+        <!-- Message -->
+        <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.65;margin-bottom:20px">${bd.message}</div>
+        <!-- Drop card if linked -->
+        ${bd.dropRef?`
+        <div style="background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:13px 14px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px">
+            <svg width="11" height="11" viewBox="0 0 24 24" stroke="rgba(245,158,11,0.8)" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span style="font-size:10px;font-weight:700;color:rgba(245,158,11,0.75);letter-spacing:0.05em">DROP LINKED</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px">${bd.dropRef.title}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.50);margin-bottom:12px">${bd.dropRef.venue} · ${bd.dropRef.time} · ${bd.dropRef.spotsLeft} spots left</div>
+          <button onclick="modal(null);S.drop=feedDrops.findIndex(d=>d.id==='${bd.dropRef.dropId}');S.scr='drop';render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">${bd.cta||'View Drop'}</button>
+        </div>`:''}
+        <!-- Share with friends CTA -->
+        <button onclick="modal(null)" style="width:100%;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:11px;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:10px">
+          <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          Send a Heads Up to your friends
+        </button>
+        <button onclick="modal(null)" style="width:100%;background:none;border:none;color:rgba(255,255,255,0.35);font-size:13px;cursor:pointer;font-family:inherit;padding:8px">Dismiss</button>
+      </div></div>`;return;
+    }
     let detailHtml='';
     if(msg.type==='nigh'){
       detailHtml=`
@@ -2512,15 +2798,505 @@ function renderModal(){
         <div style="font-size:14px;color:#fff;line-height:1.6;margin-bottom:8px">${msg.detail.friend} ${msg.detail.action} <strong>${msg.detail.drop}</strong></div>
         <div style="font-size:14px;color:#fff;line-height:1.6;margin-bottom:8px">${msg.detail.date}</div>
         <div style="font-size:14px;color:#fff;line-height:1.6">${msg.detail.message}</div>`;
+    } else if(msg.type==='headsup'){
+      const d=msg.detail;
+      const initials=(name)=>{const p=name.split(' ');return p[0][0]+(p[1]?p[1][0]:'');};
+      detailHtml=`
+        ${d.broadcast?`
+        <!-- BROADCAST: post-style header -->
+        <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1B3A4B,#2563EB);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:11px;font-weight:700;color:#fff">JR</span>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#fff">You</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.40)">${msg.time}</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+              <svg width="12" height="12" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.8)" stroke-width="2" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+              <span style="font-size:11px;font-weight:600;color:rgba(34,197,94,0.8)">${d.sentTo}</span>
+            </div>
+          </div>
+          <div style="font-size:14px;color:#fff;line-height:1.6">${d.message}</div>
+        </div>
+        <!-- Broadcast context note -->
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;padding:0 2px">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <span style="font-size:11px;color:rgba(255,255,255,0.35);line-height:1.4">Each friend receives this individually. Replies come back to you privately — friends can't see each other's responses.</span>
+        </div>
+        `:`
+        <!-- GROUP: thread-style header -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.07)">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.9)" stroke-width="2" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:700;color:#fff">${d.group}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.40)">${d.groupMembers} members · Group thread</div>
+          </div>
+        </div>
+        `}
+        ${d.niyaHelp?`<div style="background:rgba(98,38,233,0.12);border:1px solid rgba(98,38,233,0.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px">
+          <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,rgba(98,38,233,0.9),rgba(14,78,245,0.9));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="11" height="11" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+          <div style="font-size:11px;color:rgba(180,160,255,0.9);line-height:1.5">${d.niyaNote}</div>
+        </div>`:''}
+        ${!d.broadcast?`
+        <!-- Group message bubble -->
+        <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:14px">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1B3A4B,#2563EB);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:10px;font-weight:700;color:#fff">JR</span>
+          </div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:700;color:#fff">You</span>
+              <span style="font-size:10px;color:rgba(255,255,255,0.35)">${msg.time}</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.07);border-radius:4px 14px 14px 14px;padding:10px 13px">
+              <div style="font-size:13px;color:#fff;line-height:1.6">${d.message}</div>
+            </div>
+          </div>
+        </div>`:''}
+
+        ${d.dropRef?`
+        <!-- Drop reference card -->
+        <div onclick="modal(null);const idx=feedDrops.findIndex(d=>d.id==='${d.dropRef?d.dropRef.dropId:''}');if(idx>=0){go('dropDetail',{drop:idx})}" style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;cursor:pointer">
+          <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,rgba(245,166,35,0.85),rgba(236,25,119,0.85));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.dropRef.title}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.55)">${d.dropRef.venue} · ${d.dropRef.time}</div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:rgba(245,166,35,0.9);flex-shrink:0">View →</div>
+        </div>`:''}
+        <!-- Replies section: group thread vs. broadcast individual replies -->
+        ${d.replies&&d.replies.length?d.broadcast?`
+        <!-- Broadcast: replies open as 1:1 DM threads -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.40);text-transform:uppercase;letter-spacing:0.05em">${d.replies.length} friends replied</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.30)">Each reply is a 1:1 conversation</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+          ${d.replies.map((r,ri)=>`
+          <div onclick="modal('dm-${msgId}-${ri}')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:10px;cursor:pointer">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(65,239,249,0.15);border:1px solid rgba(65,239,249,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative">
+              <span style="font-size:11px;font-weight:700;color:#41EFF9">${initials(r.name)}</span>
+              ${r.unread?`<div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:#0E4EF5;border:1.5px solid #0B0B1A"></div>`:''}
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px">${r.name}</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.msg}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+              <span style="font-size:10px;color:rgba(255,255,255,0.30)">${r.time}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>`).join('')}
+        </div>`:`
+        <!-- Group thread replies -->
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.40);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px">${d.replies.length} Repl${d.replies.length===1?'y':'ies'}</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+          ${d.replies.map(r=>`
+          <div style="display:flex;align-items:flex-start;gap:9px">
+            <div style="width:30px;height:30px;border-radius:50%;background:rgba(65,239,249,0.2);border:1px solid rgba(65,239,249,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:10px;font-weight:700;color:#41EFF9">${initials(r.name)}</span>
+            </div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px">
+                <span style="font-size:12px;font-weight:700;color:#fff">${r.name}</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.35)">${r.time}</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border-radius:4px 14px 14px 14px;padding:9px 12px">
+                <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5">${r.msg}</div>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>`:''}
+        <!-- Reply input / action -->
+        ${d.broadcast?`
+        <div style="background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.12);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.6)" stroke-width="2" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          <span style="flex:1;font-size:13px;color:rgba(255,255,255,0.30)">Send a follow-up Heads Up…</span>
+        </div>`:`
+        <div onclick="modal('dm-group-${msgId}')" style="display:flex;align-items:center;gap:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:12px 14px;cursor:pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.8)" stroke-width="2" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span style="flex:1;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9)">Open ${d.group} thread</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.6)" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+        </div>`}`;
     }
-    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1)"><div class="mh" style="background:rgba(255,255,255,0.2)"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:17px;font-weight:700;color:#fff;flex:1;padding-right:12px">${msg.title}</div>
-        <button onclick="modal(null)" style="background:none;border:none;color:rgba(255,255,255,0.50);padding:0;line-height:1">${ic('x',20)}</button>
+    const isHeadsUp=msg.type==='headsup';
+    const isBcast=isHeadsUp&&msg.broadcast;
+    const modalTitle=isBcast?'📣 Heads Up':isHeadsUp?msg.title:msg.title;
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1);${isHeadsUp?'max-height:88vh;overflow-y:auto;':''}">${isHeadsUp?`<div class="mh" style="background:rgba(255,255,255,0.2);position:sticky;top:0;z-index:1"></div>`:`<div class="mh" style="background:rgba(255,255,255,0.2)"></div>`}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px${isHeadsUp?';position:sticky;top:18px;z-index:1;background:#0B0B1A;padding-bottom:4px':''}">
+        <div style="font-size:17px;font-weight:700;color:#fff;padding-right:12px">${modalTitle}</div>
+        <button onclick="modal(null)" style="background:none;border:none;color:rgba(255,255,255,0.50);padding:0;line-height:1;flex-shrink:0">${ic('x',20)}</button>
       </div>
       ${detailHtml}
     </div></div>`;return;
   }
+  if(S.modal&&S.modal.startsWith('dm-')){
+    const parts=S.modal.split('-');
+    const isGroup=parts[1]==='group';
+    if(isGroup){
+      // Group thread modal
+      const gMsgId=parseInt(parts[2]);
+      const gMsg=inboxMessages.find(m=>m.id===gMsgId);
+      if(!gMsg){mr.innerHTML='';return;}
+      const gd=gMsg.detail;
+      const ginit=(name)=>{const p=name.split(' ');return p[0][0]+(p[1]?p[1][0]:'');};
+      mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1);max-height:92vh;overflow:hidden;display:flex;flex-direction:column;padding:0">
+        <div class="mh" style="background:rgba(255,255,255,0.2);flex-shrink:0"></div>
+        <!-- Group thread header -->
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0">
+          <button onclick="modal('inbox-${gMsgId}')" style="background:none;border:none;color:rgba(255,255,255,0.6);padding:0;display:flex;align-items:center;cursor:pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.9)" stroke-width="2" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:700;color:#fff">${gd.group}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.40)">${gd.groupMembers} members</div>
+          </div>
+        </div>
+        <!-- Thread messages -->
+        <div id="grp-thread-scroll-${gMsgId}" style="flex:1;overflow-y:auto;padding:16px">
+          <!-- Thread history before Heads Up -->
+          ${gd.threadHistory&&gd.threadHistory.length?`
+          <div style="text-align:center;margin-bottom:14px">
+            <span style="font-size:10px;color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:10px">Earlier in ${gd.group}</span>
+          </div>
+          ${gd.threadHistory.map(h=>{
+            const isMe=h.av==='JR';
+            return`<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:12px${isMe?';flex-direction:row-reverse':''}">
+              ${isMe?'':`<div style="width:28px;height:28px;border-radius:50%;background:rgba(65,239,249,0.12);border:1px solid rgba(65,239,249,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:9px;font-weight:700;color:#41EFF9">${h.av}</span>
+              </div>`}
+              <div style="flex:1;${isMe?'display:flex;flex-direction:column;align-items:flex-end':''}">
+                ${isMe?'':`<div style="display:flex;align-items:baseline;gap:5px;margin-bottom:3px">
+                  <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">${h.name}</span>
+                  <span style="font-size:10px;color:rgba(255,255,255,0.25)">${h.time}</span>
+                </div>`}
+                <div style="background:${isMe?'rgba(14,78,245,0.25);border:1px solid rgba(14,78,245,0.3)':'rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07)'};border-radius:${isMe?'14px 4px 14px 14px':'4px 14px 14px 14px'};padding:8px 11px;display:inline-block;max-width:88%">
+                  <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.5">${h.msg}</div>
+                </div>
+                ${isMe?`<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:3px">${h.time}</div>`:''}
+              </div>
+            </div>`;
+          }).join('')}
+          <div style="text-align:center;margin-bottom:16px;margin-top:4px">
+            <span style="font-size:10px;color:rgba(34,197,94,0.5);background:rgba(34,197,94,0.06);padding:3px 10px;border-radius:10px">Today · Heads Up sent</span>
+          </div>
+          `:''}
+          <!-- Your Heads Up as first message -->
+          <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:14px">
+            <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1B3A4B,#2563EB);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:10px;font-weight:700;color:#fff">JR</span>
+            </div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px">
+                <span style="font-size:12px;font-weight:700;color:#fff">You</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.35)">${gMsg.time}</span>
+                <span style="font-size:9px;font-weight:700;color:rgba(34,197,94,0.8);background:rgba(34,197,94,0.1);padding:1px 6px;border-radius:4px">Heads Up</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.07);border-radius:4px 14px 14px 14px;padding:10px 13px">
+                <div style="font-size:13px;color:#fff;line-height:1.6">${gd.message}</div>
+              </div>
+              ${gd.niyaHelp?`<div style="display:flex;align-items:center;gap:4px;margin-top:5px">
+                <div style="width:14px;height:14px;border-radius:4px;background:linear-gradient(135deg,rgba(98,38,233,0.9),rgba(14,78,245,0.9));display:flex;align-items:center;justify-content:center">
+                  <svg width="7" height="7" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <span style="font-size:10px;color:rgba(180,160,255,0.7)">Written with Niya</span>
+              </div>`:''}
+            </div>
+          </div>
+          <!-- Friend replies in thread -->
+          ${gd.replies.map(r=>`
+          <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:12px">
+            <div style="width:30px;height:30px;border-radius:50%;background:rgba(65,239,249,0.15);border:1px solid rgba(65,239,249,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:10px;font-weight:700;color:#41EFF9">${ginit(r.name)}</span>
+            </div>
+            <div style="flex:1">
+              <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:700;color:#fff">${r.name}</span>
+                <span style="font-size:10px;color:rgba(255,255,255,0.35)">${r.time}</span>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border-radius:4px 14px 14px 14px;padding:9px 12px">
+                <div style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.5">${r.msg}</div>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>
+        <!-- Reply input -->
+        <div style="padding:10px 14px 16px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#0B0B1A">
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border-radius:24px;padding:4px 4px 4px 16px;border:1px solid rgba(255,255,255,0.1)">
+            <input id="grp-reply-${gMsgId}" placeholder="Reply in ${gd.group}…" onkeydown="if(event.key==='Enter'){var inp=this;var txt=inp.value.trim();if(txt){var gm=inboxMessages.find(m=>m.id===${gMsgId});if(gm&&gm.detail&&gm.detail.replies){gm.detail.replies.push({name:'You',av:'JR',time:'just now',msg:txt});}inp.value='';render();}}" style="flex:1;background:none;border:none;font-size:13px;color:#fff;outline:none;font-family:inherit;padding:8px 0"/>
+            <button onclick="var inp=document.getElementById('grp-reply-${gMsgId}');var txt=inp?inp.value.trim():'';if(txt){var gm=inboxMessages.find(m=>m.id===${gMsgId});if(gm&&gm.detail&&gm.detail.replies){gm.detail.replies.push({name:'You',av:'JR',time:'just now',msg:txt});}if(inp)inp.value='';render();}" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">
+              <svg width="13" height="13" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div></div>`;
+      setTimeout(()=>{const sc=document.getElementById('grp-thread-scroll-'+gMsgId);if(sc)sc.scrollTop=sc.scrollHeight;},30);
+      return;
+    }
+    // 1:1 DM thread from broadcast reply
+    const dmMsgId=parseInt(parts[1]);
+    const dmReplyIdx=parseInt(parts[2]);
+    const dmMsg=inboxMessages.find(m=>m.id===dmMsgId);
+    if(!dmMsg){mr.innerHTML='';return;}
+    const dmD=dmMsg.detail;
+    const dmReply=dmD.replies[dmReplyIdx];
+    if(!dmReply){mr.innerHTML='';return;}
+    const dminit=(name)=>{const p=name.split(' ');return p[0][0]+(p[1]?p[1][0]:'');};
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1);max-height:92vh;overflow:hidden;display:flex;flex-direction:column;padding:0">
+      <div class="mh" style="background:rgba(255,255,255,0.2);flex-shrink:0"></div>
+      <!-- DM header -->
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0">
+        <button onclick="modal('inbox-${dmMsgId}')" style="background:none;border:none;color:rgba(255,255,255,0.6);padding:0;display:flex;align-items:center;cursor:pointer">
+          <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(65,239,249,0.15);border:1px solid rgba(65,239,249,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-size:12px;font-weight:700;color:#41EFF9">${dminit(dmReply.name)}</span>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#fff">${dmReply.name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.40)">replied to your Heads Up</div>
+        </div>
+      </div>
+      <!-- Messages -->
+      <div id="dm-scroll-${dmMsgId}-${dmReplyIdx}" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px">
+        <!-- Prior DM history before the Heads Up -->
+        ${dmReply.history&&dmReply.history.length?`
+        <div style="text-align:center;margin-bottom:6px">
+          <span style="font-size:10px;color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.06);padding:3px 10px;border-radius:10px">Earlier conversation</span>
+        </div>
+        ${dmReply.history.map(h=>{
+          const isMe=h.from==='me';
+          return`<div style="display:flex;align-items:flex-end;gap:8px;${isMe?'flex-direction:row-reverse':''}">
+            ${isMe?'':`<div style="width:26px;height:26px;border-radius:50%;background:rgba(65,239,249,0.12);border:1px solid rgba(65,239,249,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:9px;font-weight:700;color:#41EFF9">${dminit(dmReply.name)}</span>
+            </div>`}
+            <div style="${isMe?'display:flex;flex-direction:column;align-items:flex-end;':''}flex:1">
+              <div style="background:${isMe?'rgba(14,78,245,0.22);border:1px solid rgba(14,78,245,0.28)':'rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)'};border-radius:${isMe?'14px 4px 14px 14px':'4px 14px 14px 14px'};padding:8px 11px;display:inline-block;max-width:85%">
+                <div style="font-size:12px;color:rgba(255,255,255,0.78);line-height:1.5">${h.text}</div>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.22);margin-top:3px;${isMe?'text-align:right':''}">${h.time}</div>
+            </div>
+          </div>`;
+        }).join('')}
+        <div style="text-align:center;margin:8px 0 10px">
+          <span style="font-size:10px;color:rgba(34,197,94,0.5);background:rgba(34,197,94,0.06);padding:3px 10px;border-radius:10px">Today · You sent a Heads Up</span>
+        </div>`:''}
+        <!-- Heads Up context card -->
+        <div style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.18);border-radius:12px;padding:11px 13px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+            <svg width="11" height="11" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.8)" stroke-width="2" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+            <span style="font-size:10px;font-weight:700;color:rgba(34,197,94,0.8);letter-spacing:0.04em">YOUR HEADS UP · ${dmD.sentTo} · ${dmMsg.time}</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.5">${dmD.message}</div>
+          ${dmD.dropRef?`<div style="margin-top:8px;padding:7px 10px;background:rgba(245,166,35,0.1);border-radius:8px;display:flex;align-items:center;gap:8px">
+            <svg width="12" height="12" viewBox="0 0 24 24" stroke="rgba(245,166,35,0.8)" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span style="font-size:11px;color:rgba(245,166,35,0.85);font-weight:600">${dmD.dropRef.title}</span>
+          </div>`:''}
+        </div>
+        <!-- Friend's reply bubble -->
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(65,239,249,0.15);border:1px solid rgba(65,239,249,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-size:9px;font-weight:700;color:#41EFF9">${dminit(dmReply.name)}</span>
+          </div>
+          <div style="flex:1">
+            <div style="background:rgba(255,255,255,0.08);border-radius:4px 14px 14px 14px;padding:10px 13px;display:inline-block;max-width:85%">
+              <div style="font-size:13px;color:#fff;line-height:1.5">${dmReply.msg}</div>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.30);margin-top:4px;padding-left:4px">${dmReply.time}</div>
+          </div>
+        </div>
+        <!-- Any subsequent thread messages -->
+        ${dmReply.thread&&dmReply.thread.length?dmReply.thread.map(t=>{
+          const isMe=t.from==='me';
+          return`<div style="display:flex;align-items:flex-end;gap:8px;${isMe?'flex-direction:row-reverse':''}">
+            ${isMe?'':`<div style="width:26px;height:26px;border-radius:50%;background:rgba(65,239,249,0.12);border:1px solid rgba(65,239,249,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:9px;font-weight:700;color:#41EFF9">${dminit(dmReply.name)}</span>
+            </div>`}
+            <div style="${isMe?'display:flex;flex-direction:column;align-items:flex-end;':''}flex:1">
+              <div style="background:${isMe?'rgba(14,78,245,0.3);border:1px solid rgba(14,78,245,0.4)':'rgba(255,255,255,0.08)'};border-radius:${isMe?'14px 4px 14px 14px':'4px 14px 14px 14px'};padding:9px 12px;display:inline-block;max-width:85%">
+                <div style="font-size:13px;color:#fff;line-height:1.5">${t.text}</div>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.28);margin-top:3px">${t.time}</div>
+            </div>
+          </div>`;
+        }).join(''):''}
+      </div>
+      <!-- Reply input -->
+      <div style="padding:10px 14px 16px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#0B0B1A">
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border-radius:24px;padding:4px 4px 4px 16px;border:1px solid rgba(255,255,255,0.1)">
+          <input id="dm-reply-input-${dmMsgId}-${dmReplyIdx}" placeholder="Reply to ${dmReply.name.split(' ')[0]}…" onkeydown="if(event.key==='Enter'){var inp=this;var txt=inp.value.trim();if(txt){var dm=inboxMessages.find(m=>m.id===${dmMsgId});if(dm&&dm.detail&&dm.detail.replies[${dmReplyIdx}]){if(!dm.detail.replies[${dmReplyIdx}].thread)dm.detail.replies[${dmReplyIdx}].thread=[];dm.detail.replies[${dmReplyIdx}].thread.push({from:'me',text:txt,time:'just now'});}inp.value='';render();}}" style="flex:1;background:none;border:none;font-size:13px;color:#fff;outline:none;font-family:inherit;padding:8px 0"/>
+          <button onclick="var inp=document.getElementById('dm-reply-input-${dmMsgId}-${dmReplyIdx}');var txt=inp.value.trim();if(txt){var dm=inboxMessages.find(m=>m.id===${dmMsgId});if(dm&&dm.detail&&dm.detail.replies[${dmReplyIdx}]){if(!dm.detail.replies[${dmReplyIdx}].thread)dm.detail.replies[${dmReplyIdx}].thread=[];dm.detail.replies[${dmReplyIdx}].thread.push({from:'me',text:txt,time:'just now'});}inp.value='';render();}" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div></div>`;
+    setTimeout(()=>{const sc=document.getElementById('dm-scroll-'+dmMsgId+'-'+dmReplyIdx);if(sc)sc.scrollTop=sc.scrollHeight;},30);
+    return;
+  }
+  // ── COMPOSE MODAL ──
+  if(S.modal==='compose'||S.modal==='compose-group'||S.modal==='compose-dm'){
+    const cAud=S.composeAud||'broadcast'; // 'broadcast' | 'group' | 'dm'
+    const cGroup=S.composeGroup||null;
+    const cFriend=S.composeFriend||null;
+    const cNiya=S.composeNiya||false;
+    const groupOptions=[...(S.friendGroups||[]),...socialGroups];
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null);S.composeAud=null;S.composeGroup=null;S.composeFriend=null;S.composeNiya=false;render()">
+      <div class="modal fi" onclick="event.stopPropagation()" style="background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.1);padding:0;overflow:hidden">
+        <div class="mh" style="background:rgba(255,255,255,0.2);margin:12px auto 0"></div>
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 14px">
+          <div style="font-size:16px;font-weight:700;color:#fff">Post a Heads Up</div>
+          <button onclick="modal(null);S.composeAud=null;S.composeGroup=null;S.composeFriend=null;S.composeNiya=false;render()" style="background:none;border:none;color:rgba(255,255,255,0.45);padding:0;cursor:pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <!-- Audience selector -->
+        <div style="padding:0 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.07em;margin-bottom:8px">SEND TO</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <button onclick="S.composeAud='broadcast';S.composeGroup=null;S.composeFriend=null;render()" style="padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid ${cAud==='broadcast'?'rgba(34,197,94,0.6)':'rgba(255,255,255,0.14)'};background:${cAud==='broadcast'?'rgba(34,197,94,0.12)':'rgba(255,255,255,0.05)'};color:${cAud==='broadcast'?'rgba(34,197,94,0.95)':'rgba(255,255,255,0.55)'};cursor:pointer;font-family:inherit">All Friends</button>
+            ${groupOptions.map(g=>`
+            <button onclick="S.composeAud='group';S.composeGroup='${g.id}';S.composeFriend=null;render()" style="padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid ${cAud==='group'&&cGroup===g.id?'rgba(34,197,94,0.6)':'rgba(255,255,255,0.14)'};background:${cAud==='group'&&cGroup===g.id?'rgba(34,197,94,0.12)':'rgba(255,255,255,0.05)'};color:${cAud==='group'&&cGroup===g.id?'rgba(34,197,94,0.95)':'rgba(255,255,255,0.55)'};cursor:pointer;font-family:inherit">${g.name}</button>`).join('')}
+          </div>
+          ${cAud==='broadcast'?`<div style="font-size:11px;color:rgba(255,255,255,0.30);margin-top:8px">Each friend receives it privately — replies come back to you 1:1</div>`:''}
+          ${cAud==='group'&&cGroup?`<div style="font-size:11px;color:rgba(255,255,255,0.30);margin-top:8px">Visible to everyone in the group — all members see all replies</div>`:''}
+        </div>
+        <!-- Message input -->
+        <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.07)">
+          ${cNiya?`
+          <div style="background:linear-gradient(135deg,rgba(98,38,233,0.12),rgba(14,78,245,0.08));border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <div style="width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,rgba(98,38,233,0.9),rgba(14,78,245,0.9));display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              <span style="font-size:11px;font-weight:700;color:rgba(180,160,255,0.9)">Niya suggestion</span>
+            </div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6">Hey! Free this afternoon — anyone want to grab a drink or check out something on Nigh? Let me know.</div>
+            <button onclick="document.getElementById('compose-msg').value='Hey! Free this afternoon — anyone want to grab a drink or check out something on Nigh? Let me know.';S.composeNiya=false;render()" style="margin-top:8px;background:none;border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:5px 11px;font-size:11px;font-weight:600;color:rgba(180,160,255,0.9);cursor:pointer;font-family:inherit">Use this</button>
+          </div>`:''}
+          <div style="position:relative">
+            <textarea id="compose-msg" placeholder="What's the heads up?" rows="3" maxlength="130" oninput="var r=130-this.value.length;var el=document.getElementById('compose-char');el.textContent=r;el.style.color=r<=20?'rgba(239,68,68,0.8)':r<=40?'rgba(245,158,11,0.7)':'rgba(255,255,255,0.25)'" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 13px 24px;font-size:13px;color:#fff;font-family:inherit;resize:none;line-height:1.6;outline:none;box-sizing:border-box">${cNiya?'':''}</textarea>
+            <span id="compose-char" style="position:absolute;bottom:8px;right:12px;font-size:11px;color:rgba(255,255,255,0.25);pointer-events:none">130</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+            <button onclick="S.composeNiya=!${cNiya};render()" style="display:flex;align-items:center;gap:5px;background:${cNiya?'rgba(139,92,246,0.15)':'rgba(255,255,255,0.05)'};border:1px solid ${cNiya?'rgba(139,92,246,0.35)':'rgba(255,255,255,0.12)'};border-radius:8px;padding:6px 11px;font-size:11px;font-weight:600;color:${cNiya?'rgba(180,160,255,0.95)':'rgba(255,255,255,0.45)'};cursor:pointer;font-family:inherit">
+              <div style="width:13px;height:13px;border-radius:3px;background:linear-gradient(135deg,rgba(98,38,233,0.8),rgba(14,78,245,0.8));display:flex;align-items:center;justify-content:center"><svg width="7" height="7" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+              Ask Niya
+            </button>
+            <div style="font-size:11px;color:rgba(255,255,255,0.25)">Drop can be attached from a drop page</div>
+          </div>
+        </div>
+        <!-- Send -->
+        <div style="padding:14px 16px 28px">
+          <button onclick="
+            var txt=document.getElementById('compose-msg').value.trim();
+            if(!txt){document.getElementById('compose-msg').style.border='1px solid rgba(239,68,68,0.6)';return;}
+            var aud=S.composeAud||'broadcast';
+            var grpId=S.composeGroup;
+            var newMsg={id:Date.now(),type:'headsup',broadcast:aud==='broadcast',
+              title:aud==='broadcast'?txt:(groupOptions.find(g=>g.id===grpId)||{name:'Group'}).name,
+              subtitle:aud==='broadcast'?'You → All Friends · '+friendsList.length+' people':'',
+              description:txt,time:'just now',unread:false,
+              detail:{group:aud==='broadcast'?'All Friends':(groupOptions.find(g=>g.id===grpId)||{name:'Group'}).name,
+                sentTo:aud==='broadcast'?friendsList.length+' friends':'Group',
+                broadcast:aud==='broadcast',message:txt,replies:[]}};
+            inboxMessages.unshift(newMsg);
+            S.modal=null;S.composeAud=null;S.composeGroup=null;S.composeFriend=null;S.composeNiya=false;
+            render();" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+            <svg width="15" height="15" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+            Send Heads Up
+          </button>
+        </div>
+      </div>
+    </div>`;return;
+  }
+  // ── COORDINATION MODAL (friends already going) ──
+  if(S.modal&&S.modal.startsWith('coord-')){
+    const cIdx=parseInt(S.modal.split('-')[1]);
+    const cDrop=feedDrops[cIdx];
+    if(!cDrop){mr.innerHTML='';return;}
+    const cFriends=friendsGoingForDrop(cDrop.id);
+    const cinit=(name)=>{const p=name.split(' ');return p[0][0]+(p[1]?p[1][0]:'');};
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal" onclick="event.stopPropagation()" style="background:#111827"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Friends Going</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:16px">${cFriends.length} friend${cFriends.length!==1?'s':''} have spots for ${cDrop.title}</div>
+      ${cFriends.map((f,fi)=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.07)">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${f.av}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#fff">${f.name}</div>
+          <div style="font-size:11px;color:rgba(34,197,94,0.8);font-weight:600">Has a spot</div>
+        </div>
+        <button onclick="modal(null);S.scr='inbox';S.inboxFilter='friends';render()" style="background:rgba(14,78,245,0.2);border:1px solid rgba(14,78,245,0.35);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:#93C5FD;cursor:pointer;font-family:inherit">Message</button>
+      </div>`).join('')}
+      <button onclick="modal('headsup-drop-${cIdx}')" style="width:100%;margin-top:14px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:11px;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">
+        <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        Invite more friends
+      </button>
+    </div></div>`;return;
+  }
+
+  // ── HEADS UP PRE-COMPOSE (invite friends to a drop) ──
+  if(S.modal&&S.modal.startsWith('headsup-drop-')){
+    const hdIdx=parseInt(S.modal.split('-')[2]);
+    const hdDrop=feedDrops[hdIdx];
+    if(!hdDrop){mr.innerHTML='';return;}
+    const goingFriends=friendsGoingForDrop(hdDrop.id);
+    const notGoingFriends=friendsList.filter(f=>!f.hasTicket);
+    const spotsText=hdDrop.spotsLeft>0?`Only ${hdDrop.spotsLeft} spot${hdDrop.spotsLeft!==1?'s':''} left`:'Filling up fast';
+    const huMsg=`Hey — ${hdDrop.title} at ${hdDrop.host.name} is today${hdDrop.price>0?' ($'+hdDrop.price+')':''}. ${spotsText} — anyone interested?`;
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal" onclick="event.stopPropagation()" style="background:#111827"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.9)" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        <div style="font-size:15px;font-weight:700;color:#fff">Send a Heads Up</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.40);margin-bottom:16px">Broadcast to friends individually — each reply comes back to you privately</div>
+      <!-- Drop reference card -->
+      <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:11px 13px;margin-bottom:14px;display:flex;gap:10px;align-items:center">
+        <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,rgba(245,166,35,0.85),rgba(236,25,119,0.85));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${hdDrop.title}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.50)">${hdDrop.host.name} · ${hdDrop.price>0?'$'+hdDrop.price+' per spot':'Free'}</div>
+        </div>
+      </div>
+      <!-- Pre-composed message -->
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:6px">YOUR MESSAGE</div>
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;margin-bottom:16px">
+        <div style="font-size:13px;color:rgba(255,255,255,0.80);line-height:1.6">${huMsg}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.30);margin-top:8px;text-align:right">Tap to edit</div>
+      </div>
+      <!-- Send to -->
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:8px">SEND TO</div>
+      <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+        ${['All Friends','Weekend Squad','Boulder Crew'].map(g=>`
+        <button onclick="this.style.background=this.style.background.includes('0.2)')?'rgba(255,255,255,0.05)':'rgba(34,197,94,0.2)';this.style.borderColor=this.style.borderColor.includes('0.25)')?'rgba(255,255,255,0.15)':'rgba(34,197,94,0.4)';this.style.color=this.style.color.includes('0.6)')?'rgba(34,197,94,0.9)':'rgba(255,255,255,0.6)'" style="padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit">${g}</button>
+        `).join('')}
+      </div>
+      ${notGoingFriends.length?`
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:0.06em;margin-bottom:8px">FRIENDS NOT GOING YET · ${notGoingFriends.length}</div>
+      <div style="display:flex;gap:-4px;margin-bottom:16px">
+        ${notGoingFriends.slice(0,6).map((f,i)=>`<div style="width:32px;height:32px;border-radius:50%;background:rgba(65,239,249,0.15);border:2px solid #111827;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#41EFF9;margin-left:${i>0?'-8px':'0'};position:relative;z-index:${10-i}">${f.av}</div>`).join('')}
+        ${notGoingFriends.length>6?`<div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid #111827;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.5);margin-left:-8px">+${notGoingFriends.length-6}</div>`:''}
+      </div>`:''}
+      <button onclick="modal(null)" style="width:100%;background:linear-gradient(135deg,rgba(34,197,94,0.9),rgba(16,185,129,0.9));border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        Send Heads Up
+      </button>
+    </div></div>`;return;
+  }
+
   if(S.modal==='add-spot'){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Add or Transfer a Spot</div>
@@ -2579,7 +3355,7 @@ function renderModal(){
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:6px">
               <div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div>
-              ${g.owner==='me'&&f.id===g.members[0]?`<span style="font-size:9px;font-weight:700;color:#0E4EF5;background:#EFF6FF;padding:2px 6px;border-radius:6px">OWNER</span>`:''}
+              ${g.owner==='me'&&f.id===g.members[0]?`<span style="font-size:9px;font-weight:700;color:#0E4EF5;background:#EEF2FF;padding:2px 6px;border-radius:6px">OWNER</span>`:''}
             </div>
             <div style="font-size:11px;color:#9CA3AF">${f.uname}</div>
           </div>
@@ -2593,7 +3369,7 @@ function renderModal(){
       ${nonMembers.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6">
         ${av(f.av,40)}
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div><div style="font-size:11px;color:#9CA3AF">${f.uname}</div></div>
-        <button onclick="var g=(S.friendGroups||[]).find(x=>x.id==='${gId}');if(g&&!g.members.includes('${f.id}'))g.members.push('${f.id}');modal('groupSettings_${gId}')" style="font-size:12px;font-weight:600;color:#0E4EF5;background:#EFF6FF;border:none;border-radius:8px;padding:6px 12px;cursor:pointer">Add</button>
+        <button onclick="var g=(S.friendGroups||[]).find(x=>x.id==='${gId}');if(g&&!g.members.includes('${f.id}'))g.members.push('${f.id}');modal('groupSettings_${gId}')" style="font-size:12px;font-weight:600;color:#0E4EF5;background:#EEF2FF;border:none;border-radius:8px;padding:6px 12px;cursor:pointer">Add</button>
       </div>`).join('')}`:''}
 
       <!-- Who can add -->
@@ -2634,7 +3410,7 @@ function renderModal(){
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px">
             <div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div>
-            ${isOwner&&f.id===g.members[0]?`<span style="font-size:9px;font-weight:700;color:#0E4EF5;background:#EFF6FF;padding:2px 6px;border-radius:6px">OWNER</span>`:''}
+            ${isOwner&&f.id===g.members[0]?`<span style="font-size:9px;font-weight:700;color:#0E4EF5;background:#EEF2FF;padding:2px 6px;border-radius:6px">OWNER</span>`:''}
           </div>
           <div style="font-size:11px;color:#9CA3AF">${f.uname}</div>
         </div>
@@ -2722,7 +3498,7 @@ function renderModal(){
       <div style="display:flex;gap:8px;margin-bottom:16px">
         ${['Messages','WhatsApp','Instagram'].map(s=>`<button style="flex:1;padding:10px 0;border-radius:10px;border:1px solid #E5E7EB;background:#fff;font-size:11px;color:#374151;font-weight:600">${s}</button>`).join('')}
       </div>
-      ${g.type==='event'?`<div style="background:#FEF3C7;border-radius:10px;padding:10px 14px;font-size:12px;color:#92400E">⏳ Link expires when all spots are filled or the event starts.</div>`:`<div style="background:#EFF6FF;border-radius:10px;padding:10px 14px;font-size:12px;color:#1D4ED8">🔒 New members need your approval before joining.</div>`}
+      ${g.type==='event'?`<div style="background:#FEF3C7;border-radius:10px;padding:10px 14px;font-size:12px;color:#92400E">⏳ Link expires when all spots are filled or the event starts.</div>`:`<div style="background:#EEF2FF;border-radius:10px;padding:10px 14px;font-size:12px;color:#1D4ED8">🔒 New members need your approval before joining.</div>`}
       <button onclick="modal(null)" style="width:100%;margin-top:14px;background:#F3F4F6;color:#374151;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600;cursor:pointer">Done</button>
     </div></div>`;return;
   }
@@ -2737,7 +3513,7 @@ function renderModal(){
           <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">${msg.title}</div>
           <div style="font-size:12px;color:#6B7280;margin-bottom:16px">${msg.time}</div>
           ${d.status?`<div style="display:inline-flex;align-items:center;gap:6px;background:#DCFCE7;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;margin-bottom:12px">${d.status}</div>`:''}
-          ${d.category?`<div style="display:inline-flex;align-items:center;gap:6px;background:#EFF6FF;color:#1D4ED8;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;margin-bottom:12px">${d.category}</div>`:''}
+          ${d.category?`<div style="display:inline-flex;align-items:center;gap:6px;background:#EEF2FF;color:#1D4ED8;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;margin-bottom:12px">${d.category}</div>`:''}
           ${d.location?`<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px"><div style="color:#6B7280;margin-top:1px">${ic('map',14)}</div><div style="font-size:13px;color:#374151">${d.location}</div></div>`:''}
           ${d.time?`<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px"><div style="color:#6B7280;margin-top:1px">${ic('clock',14)}</div><div style="font-size:13px;color:#374151">${d.time}</div></div>`:''}
           ${d.friend?`<div style="font-size:13px;color:#374151;margin-bottom:10px"><span style="font-weight:600">${d.friend}</span> ${d.action} <span style="font-weight:600">${d.drop}</span></div>`:''}

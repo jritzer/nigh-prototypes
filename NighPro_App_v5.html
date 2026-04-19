@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh Pro — App v5</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#E5E7EB;display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
+#app{width:375px;height:812px;border-radius:24px;border:1px solid #D1D5DB;box-shadow:0 8px 32px rgba(0,0,0,0.12);overflow:hidden;display:flex;flex-direction:column;background:#F9FAFB;position:relative}
+#scr{flex:1;overflow-y:auto}
+#scr::-webkit-scrollbar{width:0}
+button,input,textarea,select{font-family:inherit}
+button{cursor:pointer}
+@keyframes scanLine{0%,100%{top:15%}50%{top:75%}}
+.scanL{animation:scanLine 2s ease-in-out infinite}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn 0.25s ease-out}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}70%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+.lp{animation:livePulse 2s ease-in-out infinite}
+.card{background:#fff;border-radius:14px;border:1px solid #E5E7EB;overflow:hidden}
+.cb{padding:14px}
+.bg{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px}
+.bg-s{font-size:10px;padding:2px 7px}
+.bg .dt{width:6px;height:6px;border-radius:50%}
+.bg-live{background:#DCFCE7;color:#166534}.bg-live .dt{background:#22C55E}
+.bg-sold{background:#FEF3C7;color:#92400E}.bg-sold .dt{background:#F59E0B}
+.bg-draft{background:#F3F4F6;color:#4B5563}.bg-draft .dt{background:#9CA3AF}
+.bg-ended{background:#F3F4F6;color:#6B7280}.bg-ended .dt{background:#9CA3AF}
+.bg-ci{background:#DCFCE7;color:#166534}.bg-ci .dt{background:#22C55E}
+.bg-res{background:#DBEAFE;color:#1E40AF}.bg-res .dt{background:#0E4EF5}
+.bg-ns{background:#FFF7ED;color:#C2410C}.bg-ns .dt{background:#F97316}
+.bg-sched{background:#EDE9FE;color:#5B21B6}.bg-sched .dt{background:#8B5CF6}
+.bg-paused{background:#FFFBEB;color:#92400E}.bg-paused .dt{background:#F59E0B}
+.tb{display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:6px 0 10px;flex-shrink:0}
+.tt{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 10px;min-width:50px;color:#9CA3AF;transition:color 0.15s;font-size:10px;font-weight:500}
+.tt.a{color:#0E4EF5;font-weight:600}
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:flex-end;justify-content:center;z-index:200}
+.modal{background:#fff;border-radius:20px 20px 0 0;width:375px;max-height:75vh;overflow-y:auto;padding:20px 16px 30px}
+.mh{width:36px;height:4px;border-radius:2px;background:#D1D5DB;margin:0 auto 16px}
+</style>
+</head>
+<body>
+<div id="app"><div id="scr"></div><div class="tb" id="tb"></div></div>
+<div id="mr"></div>
+<script>
+let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,
+  calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,
+  formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0};
+const TODAY=new Date('2026-03-05T12:00:00');
+function go(scr,x){S.scr=scr;if(x)Object.assign(S,x);
+  if(scr==='create'){S.cStep=1;if(!x||!x.cloneFrom)S.cloneFrom=null;}
+  if(scr==='checkin')S.ciMode='scan';
+  if(scr==='guests'){S.rFilter='All';S.rSel=null;S.guestDrop='current';}
+  if(scr==='menu')S.menuSub=null;
+  S.showAcct=false;S.modal=null;render();}
+function modal(m){S.modal=m;render();}
+
+// Icons
+const I={
+home:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+qr:'<rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z"/>',
+users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+menu2:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+dollar:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+check:'<polyline points="20 6 9 17 4 12"/>',
+search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+left:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+right:'<polyline points="9 18 15 12 9 6"/>',
+down:'<polyline points="6 9 12 15 18 9"/>',
+bell:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>',
+upload:'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>',
+image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
+alert:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+pause:'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',
+play2:'<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>',
+cam:'<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>',
+more:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>',
+play:'<polygon points="5 3 19 12 5 21 5 3"/>',
+printer:'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+billing:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+store:'<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/>',
+user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+msgCircle:'<path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>',
+file:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+link:'<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>',
+userPlus:'<path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+radio:'<path d="M16.24 7.76a6 6 0 010 8.49"/><path d="M19.07 4.93a10 10 0 010 14.14"/><circle cx="12" cy="12" r="2"/><path d="M7.76 16.24a6 6 0 010-8.49"/><path d="M4.93 19.07a10 10 0 010-14.14"/>',
+share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+history:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M2 12a10 10 0 0110-10"/>',
+target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+today:'<path d="M4 3 L20 3 Q21 3 21 4 L21 17 L18 21 L4 21 Q3 21 3 20 L3 4 Q3 3 4 3 Z"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+};
+function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
+
+// Data
+const accts=[
+  {name:'Centro Mexican Kitchen',short:'Centro',role:'Super Admin',cat:'Food & Drink',subCat:'Restaurant / Bar',addr:'950 Pearl St, Boulder, CO 80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',maxPartners:3,description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',website:'https://www.centroboulder.com',enterprise:false,multiVenue:false},
+  {name:'Nike Boulder',short:'Nike',role:'Staff',cat:'Retail',subCat:'Footwear / Apparel',addr:'1800 29th St, Boulder, CO 80301',handle:'nikeboulder',maxPartners:3,description:'Premium footwear and apparel retail location.',website:'https://www.nike.com',enterprise:false,multiVenue:false}
+];
+let acctIdx=0;const acct=()=>accts[acctIdx];
+const team=[
+  {name:'Josh Ritzer',uname:'@joshr',role:'Super Admin',active:true,av:'JR'},
+  {name:'Alex Turner',uname:'@alext',role:'Manager',active:true,av:'AT'},
+  {name:'Maria Santos',uname:'@marias',role:'Team Member',active:true,av:'MS'},
+  {name:'Chris Lee',uname:'@chrisl',role:'Team Member',active:true,av:'CL'},
+];
+const drops=[
+  {id:'D001',title:'Nike Air Max Day Access',timing:'Start Time',
+    start:'2:00 PM',bcastStart:'11:00 AM',bcastEnd:'1:45 PM',date:'2026-03-05',cap:8,res:8,ci:5,ns:1,
+    price:0,status:'Live',venue:'Nike Boulder, 1800 29th St, Boulder, CO 80301',
+    hosts:['Josh Ritzer','Alex Turner'],partners:[{handle:'@titosvodka',name:"Tito's Vodka",status:'Accepted'},{handle:'@shedeurs',name:'Shedeur Sanders',status:'Awaiting'}],media:'video',
+    desc:'Exclusive early access to the Air Max Day collection.',slug:'nikeboulder/XHD3RT'},
+  {id:'D002',title:'Starbucks Secret Menu Tasting',timing:'Arrival Window',
+    start:'5:00 - 7:00 PM',bcastStart:'2:00 PM',bcastEnd:'4:45 PM',date:'2026-03-07',cap:50,res:38,ci:22,ns:0,
+    price:0,status:'Scheduled',venue:'Starbucks Pearl St, 1600 Pearl St, Boulder, CO 80302',
+    hosts:['Maria Santos'],partners:[],media:'photo',
+    desc:'Try 5 secret menu drinks crafted by our head barista.',slug:'starbuckspearl/MN42KL'},
+  {id:'D003',title:"Whole Foods Chef's Table",timing:'Start Time',
+    start:'6:30 PM',bcastStart:'3:00 PM',bcastEnd:'6:15 PM',date:'2026-03-06',cap:12,res:9,ci:0,ns:0,
+    price:45,status:'Scheduled',venue:'Whole Foods, 2905 Pearl St, Boulder, CO 80301',
+    hosts:['Josh Ritzer'],partners:[{handle:'@kendallj',name:'Kendall Jenner',status:'Accepted'},{handle:'@rootdown',name:'Root Down Restaurant',status:'Awaiting'}],media:'photo',
+    desc:'5-course tasting menu with seasonal organic ingredients.',slug:'wholefoodsboulder/CF89QW'},
+  {id:'D004',title:'Williams-Sonoma Cooking Class',timing:'Start Time',
+    start:'11:00 AM',bcastStart:'8:00 AM',bcastEnd:'10:45 AM',date:'2026-03-08',cap:10,res:4,ci:0,ns:0,
+    price:75,status:'Draft',venue:'Williams-Sonoma, 1755 29th St, Boulder, CO 80301',
+    hosts:['Josh Ritzer','Maria Santos'],partners:[],media:'photo',
+    desc:'Hands-on pasta making with Chef Maria.',slug:'williamsonoma/PQ56TY'},
+  {id:'D005',title:'Friday Night Jazz & Tapas',timing:'Arrival Window',
+    start:'7:00 - 10:00 PM',bcastStart:'4:00 PM',bcastEnd:'6:45 PM',date:'2026-02-28',cap:30,res:28,ci:26,ns:2,
+    price:25,status:'Ended',venue:'Centro Mexican Kitchen, 950 Pearl St, Boulder, CO 80302',
+    hosts:['Josh Ritzer'],partners:[{handle:'@titosvodka',name:"Tito's Vodka",status:'Accepted'},{handle:'@kendallj',name:'Kendall Jenner',status:'Accepted'}],media:'video',
+    desc:'Live jazz trio with curated tapas menu.',slug:'centroboulder/JZ73AB'},
+  {id:'D006',title:'Rooftop Yoga Session',timing:'',
+    start:'',bcastStart:'',bcastEnd:'',date:'',cap:'',res:0,ci:0,ns:0,
+    price:'',status:'Draft',venue:'',
+    hosts:['Josh Ritzer'],partners:[],media:'',
+    desc:'',slug:''},
+  {id:'D007',title:'Elixir Spa: Deep Tissue Massage',timing:'Start Time',
+    start:'3:00 PM',bcastStart:'9:00 AM',bcastEnd:'2:45 PM',date:'2026-03-09',cap:1,res:1,ci:0,ns:0,
+    price:90,status:'Scheduled',venue:'Elixir Spa, 1234 Pearl St, Boulder, CO 80302',
+    hosts:['Josh Ritzer'],partners:[{handle:'@blackdiamond',name:'Black Diamond Equipment',status:'Awaiting'}],media:'photo',
+    desc:'A 60-minute deep tissue massage slot just opened up.',slug:'elixirspa/SM23PQ'},
+];
+const guests=[
+  {id:'G001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',drop:'D001',
+    tickets:[{tid:'T001-A',status:'Checked In'},{tid:'T001-B',status:'Reserved'}]},
+  {id:'G002',name:'James Kim',uname:'@jamesk',av:'JK',drop:'D001',
+    tickets:[{tid:'T002-A',status:'Checked In'}]},
+  {id:'G003',name:'Alex Rivera',uname:'@alexr',av:'AR',drop:'D001',
+    tickets:[{tid:'T003-A',status:'Checked In'},{tid:'T003-B',status:'Checked In'}]},
+  {id:'G004',name:'Maya Torres',uname:'@mayat',av:'MT',drop:'D001',
+    tickets:[{tid:'T004-A',status:'Reserved'}]},
+  {id:'G005',name:'Chris Park',uname:'@chrisp',av:'CP',drop:'D001',
+    tickets:[{tid:'T005-A',status:'No-Show'}]},
+  {id:'G006',name:'Lin Wang',uname:'@linw',av:'LW',drop:'D001',
+    tickets:[{tid:'T006-A',status:'Reserved'}]},
+  {id:'G007',name:'Taylor Adams',uname:'@taylora',av:'TA',drop:'D003',
+    tickets:[{tid:'T007-A',status:'Reserved'},{tid:'T007-B',status:'Reserved'}]},
+  {id:'G008',name:'Jordan Lee',uname:'@jordanl',av:'JL',drop:'D007',
+    tickets:[{tid:'T008-A',status:'Reserved'}]},
+];
+const partnersList=[
+  {id:'P001',name:"Tito's Vodka",handle:'@titosvodka',type:'Brand',status:'Active',since:'Feb 2026'},
+  {id:'P002',name:'Kendall Jenner',handle:'@kendallj',type:'Influencer',status:'Active',since:'Jan 2026'},
+  {id:'P003',name:'Root Down Restaurant',handle:'@rootdown',type:'Venue',status:'Invited',since:'Mar 2026'},
+  {id:'P004',name:'Black Diamond Equipment',handle:'@blackdiamond',type:'Brand',status:'Declined',since:'Mar 2026'},
+];
+
+const customerList=[
+  {id:'C001',name:'Emma Johnson',email:'emma.j@gmail.com',phone:'(720) 555-0181',av:'EJ',source:'CSV Import',since:'Mar 2026',drops:['D001','D005']},
+  {id:'C002',name:'Marcus Webb',email:'marcusw@icloud.com',phone:'(720) 555-0234',av:'MW',source:'CSV Import',since:'Mar 2026',drops:['D003']},
+  {id:'C003',name:'Priya Patel',email:'priya.patel@gmail.com',phone:'(303) 555-0312',av:'PP',source:'CSV Import',since:'Mar 2026',drops:['D001','D003','D005']},
+  {id:'C004',name:'Derek Nguyen',email:'derek.n@outlook.com',phone:'(720) 555-0467',av:'DN',source:'CSV Import',since:'Mar 2026',drops:['D005']},
+  {id:'C005',name:'Sofia Ruiz',email:'sofia.ruiz@gmail.com',phone:'(303) 555-0589',av:'SR',source:'CSV Import',since:'Mar 2026',drops:[]},
+  {id:'C006',name:'Tyler Brooks',email:'tbrooks@yahoo.com',phone:'(720) 555-0623',av:'TB',source:'CSV Import',since:'Mar 2026',drops:['D001']},
+  {id:'C007',name:'Aisha Carter',email:'aisha.c@gmail.com',phone:'(303) 555-0744',av:'AC',source:'Manual',since:'Mar 2026',drops:['D003','D007']},
+  {id:'C008',name:'Ryan Kowalski',email:'ryan.k@icloud.com',phone:'(720) 555-0856',av:'RK',source:'CSV Import',since:'Mar 2026',drops:[]},
+];
+
+// Helpers
+function bg(st,sm){const m={'Live':'bg-live','Draft':'bg-draft','Ended':'bg-ended','Scheduled':'bg-sched','Paused':'bg-paused','Checked In':'bg-ci','Reserved':'bg-res','No-Show':'bg-ns'};
+  return `<span class="bg ${m[st]||'bg-draft'}${sm?' bg-s':''}""><span class="dt"></span>${st}</span>`;}
+function fmtD(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+function sameD(a,b){return a.toDateString()===b.toDateString()}
+function dk(d){return d.toISOString().slice(0,10)}
+function fmtVenue(v){return v.replace(/,?\s*\d{5}(-\d{4})?\s*$/,'');}
+function gSt(g){const t=g.tickets;if(t.length===1)return t[0].status;const ci=t.filter(x=>x.status==='Checked In').length;if(ci===t.length)return'Checked In';if(ci>0)return`${ci}/${t.length} In`;if(t.some(x=>x.status==='No-Show'))return'No-Show';return'Reserved';}
+function mc(l,v,sub,icn,col,bgc){return `<div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #E5E7EB;flex:1 1 45%;min-width:130px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-size:11px;color:#6B7280;font-weight:500;margin-bottom:3px">${l}</div><div style="font-size:20px;font-weight:700;color:#111827">${v}</div>${sub?`<div style="font-size:10px;color:${col||'#0D9488'};margin-top:2px">${sub}</div>`:''}</div><div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:${bgc||'#EEF2FF'};color:${col||'#0E4EF5'}">${ic(icn,16)}</div></div></div>`;}
+function hdr(t,sub,back,right){return `<div style="background:#fff;padding:12px 16px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99"><div style="display:flex;align-items:center;gap:10px">${back?`<button onclick="${back}" style="background:none;border:none;padding:4px;display:flex;color:#374151">${ic('left',20)}</button>`:''}<div><div style="font-size:17px;font-weight:700;color:#111827;line-height:1.2">${t}</div>${sub?`<div style="font-size:12px;color:#6B7280;margin-top:1px">${sub}</div>`:''}</div></div>${right||''}</div>`;}
+
+// Tab
+function renderTB(){
+  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'guests',ic:'users',l:'Guests'},{id:'menu',ic:'menu2',l:'Menu'}];
+  document.getElementById('tb').innerHTML=tabs.map(t=>`<button class="tt${S.scr===t.id||(S.scr==='liveview'&&t.id==='home')?' a':''}" onclick="go('${t.id}')">${ic(t.ic,22)}<span>${t.l}</span></button>`).join('');
+}
+
+// ═══ HOME ═══
+function renderHome(){
+  const today=S.calDay;const ds=dk(today);const isT=sameD(today,TODAY);
+  const ws=new Date(today);ws.setDate(ws.getDate()-3);
+  let wd=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);wd.push(d);}
+  const dd=drops.filter(d=>d.date===ds);
+  const live=drops.find(d=>d.status==='Live'&&d.date===ds);
+  const dayDrafts=drops.filter(d=>d.status==='Draft'&&(d.date===ds||(isT&&!d.date)));
+
+  return `
+  <!-- Account -->
+  <div style="background:#1B2A4A;padding:14px 16px 12px;color:#fff">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="S.showAcct=!S.showAcct;render()" style="background:none;border:none;color:#fff;display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">${acct().short.charAt(0)}</div>
+        <div style="text-align:left"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px">${acct().short} ${ic('down',14)}</div><div style="font-size:10px;opacity:0.6">${acct().role}</div></div>
+      </button>
+      <button style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;color:#fff">${ic('bell',18)}</button>
+    </div>
+    ${S.showAcct?`<div class="fi" style="margin-top:10px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">${accts.map((a,i)=>`<button onclick="acctIdx=${i};S.showAcct=false;render()" style="width:100%;padding:10px 14px;background:${i===acctIdx?'rgba(255,255,255,0.15)':'transparent'};border:none;color:#fff;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid rgba(255,255,255,0.08)':'none'}"><div style="width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${a.short.charAt(0)}</div><div><div style="font-size:12px;font-weight:600">${a.name}</div><div style="font-size:10px;opacity:0.6">${a.role}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</button>`).join('')}</div>`:''}
+  </div>
+
+  <!-- Calendar -->
+  <div style="background:#fff;padding:10px 0 6px;border-bottom:1px solid #E5E7EB">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:8px">
+      <button onclick="S.calDay.setDate(S.calDay.getDate()-7);render()" style="background:none;border:none;color:#374151;padding:4px">${ic('left',18)}</button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center">
+        <div style="width:32px;flex-shrink:0"></div>
+        <span style="font-size:14px;font-weight:700;color:#111827">${today.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>
+        <button ${isT?'disabled':''} onclick="S.calDay=new Date('${TODAY.toISOString()}');render()" style="width:32px;height:28px;flex-shrink:0;margin-left:12px;background:none;border:none;box-shadow:none;appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:flex-start;color:${isT?'#D1D5DB':'#0E4EF5'};cursor:${isT?'default':'pointer'};padding:0;outline:none" title="Go to today"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L20 3 Q21 3 21 4 L21 17 L18 21 L4 21 Q3 21 3 20 L3 4 Q3 3 4 3 Z"/><text x="12" y="15.5" text-anchor="middle" font-size="8.5" font-weight="700" stroke="none" fill="currentColor" font-family="-apple-system,BlinkMacSystemFont,sans-serif">${TODAY.getDate()}</text></svg></button>
+      </div>
+      <button onclick="S.calDay.setDate(S.calDay.getDate()+7);render()" style="background:none;border:none;color:#374151;padding:4px">${ic('right',18)}</button>
+    </div>
+    <div style="display:flex;justify-content:space-around;padding:0 8px">
+      ${wd.map(d=>{const sel=sameD(d,today);const isTd=sameD(d,TODAY);const dayDr=drops.filter(x=>x.date===dk(d)&&x.status!=='Draft');const hasDraft=drops.some(x=>x.date===dk(d)&&x.status==='Draft');const hasLive=dayDr.some(x=>x.status==='Live');
+        return `<button onclick="S.calDay=new Date('${d.toISOString()}');render()" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:12px;border:none;background:${sel?'#0E4EF5':'transparent'};min-width:40px">
+          <span style="font-size:10px;font-weight:500;color:${sel?'rgba(255,255,255,0.7)':isTd?'#0E4EF5':'#9CA3AF'}">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</span>
+          <span style="font-size:16px;font-weight:${sel||isTd?700:500};color:${sel?'#fff':isTd?'#0E4EF5':'#374151'}">${d.getDate()}</span>
+          ${dayDr.length?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'rgba(255,255,255,0.8)':hasLive?'#22C55E':'#0E4EF5'}"></span>`:hasDraft?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'rgba(255,255,255,0.5)':'#D1D5DB'}"></span>`:'<span style="width:5px;height:5px"></span>'}
+        </button>`;}).join('')}
+    </div>
+  </div>
+
+  <div style="padding:14px 16px">
+  ${(()=>{
+    const isPast=today<TODAY&&!sameD(today,TODAY);
+    const isToday=sameD(today,TODAY);
+
+    /* LIVE drop for this day only */
+    let liveHtml='';
+    if(live){
+      liveHtml=`<div class="card" style="border:2px solid #22C55E;margin-bottom:10px">
+        <div onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="cursor:pointer">
+          <div style="height:270px;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);display:flex;align-items:center;justify-content:center;position:relative">
+            ${live.media==='video'?`<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',28)}</div>
+            <div style="position:absolute;bottom:12px;left:14px;background:rgba(0,0,0,0.5);color:#fff;font-size:11px;padding:4px 10px;border-radius:5px">0:32</div>`
+            :`<div style="color:rgba(255,255,255,0.15)">${ic('image',52)}</div>`}
+            <div style="position:absolute;top:12px;left:12px">
+              <span style="font-size:12px;font-weight:700;color:#fff;background:rgba(0,0,0,0.4);padding:5px 12px;border-radius:10px;backdrop-filter:blur(4px);display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#22C55E"></span>LIVE</span>
+            </div>
+            <div style="position:absolute;top:12px;right:12px">
+              <button onclick="event.stopPropagation();modal('share-${drops.indexOf(live)}')" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('share',16)}</button>
+            </div>
+          </div>
+          <div class="cb" style="padding:14px 16px">
+            <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:5px">${live.title}</div>
+            <div style="display:flex;gap:14px;font-size:13px;color:#374151;margin-bottom:4px">
+              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',14)} ${live.start}</span>
+              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('dollar',14)} ${live.price===0?'Free':'$'+live.price}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px">
+              ${ic('user',13)} ${live.hosts.join(', ')}
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              ${ic('map',13)} ${fmtVenue(live.venue)}
+            </div>
+            ${(()=>{const acc=live.partners.filter(p=>p.status==='Accepted');const awt=live.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#0E4EF5">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
+            <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#16A34A;margin-bottom:10px">
+              ${ic('radio',13)} Broadcasting until ${live.bcastEnd}
+            </div>
+            ${live.cap===1?(()=>{
+  const sg=guests.find(g=>g.drop===live.id);
+  const st=sg?sg.tickets[0].status:'Open';
+  const stCol=st==='Checked In'?'#0D9488':st==='Reserved'?'#0E4EF5':st==='No-Show'?'#F97316':'#9CA3AF';
+  if(!sg||st==='Open') return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:#D1D5DB"></div><span style="font-size:13px;color:#6B7280">No reservation yet — spot available</span></div>`;
+  return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${sg.av}</div><div><div style="font-size:13px;font-weight:600;color:#111827">${sg.name}</div><div style="font-size:11px;color:#9CA3AF">${sg.uname}</div></div></div>${bg(st,true)}</div>`;
+})():`
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+  <div style="font-size:13px;font-weight:600;color:#111827">${ic('users',14)} <span style="margin-left:2px">${live.res} / ${live.cap}</span> <span style="font-weight:400;color:#6B7280;font-size:11px">spots</span></div>
+  ${live.cap===live.res?`<span style="font-size:10px;font-weight:600;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:10px">SOLD OUT</span>`:`<span style="font-size:11px;color:#6B7280">${live.cap-live.res} remaining</span>`}
+</div>
+<div style="display:flex;gap:1px;margin-bottom:6px">
+  <div style="height:6px;flex:${live.ci};background:#0D9488;border-radius:3px 0 0 3px"></div>
+  <div style="height:6px;flex:${live.res-live.ci-live.ns};background:#0E4EF5"></div>
+  <div style="height:6px;flex:${live.ns||0.001};background:#F97316"></div>
+  <div style="height:6px;flex:${live.cap-live.res||0.001};background:#E5E7EB;border-radius:0 3px 3px 0"></div>
+</div>
+${(()=>{const _its=[live.ci>0?{v:live.ci,l:'Checked In',c:'#0D9488'}:null,(live.res-live.ci-live.ns)>0?{v:live.res-live.ci-live.ns,l:'Reserved',c:'#0E4EF5'}:null,live.ns>0?{v:live.ns,l:'No-Show',c:'#F97316'}:null,(live.cap-live.res)>0?{v:live.cap-live.res,l:'Open',c:'#374151'}:null].filter(Boolean);return`<div style="display:flex;font-size:11px;color:#6B7280;margin-top:2px">${_its.map((it,i)=>`<div style="flex:1;text-align:${i===0?'left':i===_its.length-1?'right':'center'};white-space:nowrap"><b style="color:${it.c}">${it.v}</b> ${it.l}</div>`).join('')}</div>`;})()}
+`}
+          </div>
+        </div>
+        <div style="display:flex;border-top:1px solid #E5E7EB">
+          <button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('edit',16)} Manage</button>
+          <button style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#F59E0B;display:flex;align-items:center;justify-content:center;gap:6px">${ic('pause',16)} Pause</button>
+        </div>
+      </div>`;
+    }
+
+    /* Scheduled drops — same layout as live card */
+    const scheduled=dd.filter(d=>d.status==='Scheduled'||d.status==='Paused');
+    const schedHtml=scheduled.map(d=>`
+      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px;border:2px solid ${d.status==='Paused'?'#F59E0B':'#8B5CF6'}">
+        <div style="height:270px;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);display:flex;align-items:center;justify-content:center;position:relative">
+          ${d.media==='video'?`<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',28)}</div>`
+          :`<div style="color:rgba(255,255,255,0.15)">${ic('image',52)}</div>`}
+          <div style="position:absolute;top:12px;left:12px">${bg(d.status)}</div>
+          <div style="position:absolute;top:12px;right:12px">
+            <button onclick="event.stopPropagation();modal('share-${drops.indexOf(d)}')" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('share',16)}</button>
+          </div>
+        </div>
+        <div class="cb" style="padding:14px 16px">
+          <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:5px">${d.title}</div>
+          <div style="display:flex;gap:14px;font-size:13px;color:#374151;margin-bottom:4px">
+            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',14)} ${d.start}</span>
+            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('dollar',14)} ${d.price===0?'Free':'$'+d.price}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px">
+            ${ic('user',13)} ${d.hosts.join(', ')}
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px">
+            ${ic('map',13)} ${fmtVenue(d.venue)}
+          </div>
+          ${(()=>{const acc=d.partners.filter(p=>p.status==='Accepted');const awt=d.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#0E4EF5">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
+          <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:#0E4EF5;margin-bottom:6px">
+            ${ic('radio',13)} Broadcasts ${d.bcastStart} — ${d.bcastEnd}
+          </div>
+          <div style="font-size:11px;color:#6B7280">${d.res}/${d.cap} reserved</div>
+        </div>
+        <div style="display:flex;border-top:1px solid #E5E7EB">
+          <button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('edit',16)} Edit</button>
+          <button onclick="event.stopPropagation();modal('share-${drops.indexOf(d)}')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;justify-content:center;gap:6px">${ic('share',16)} Share</button>
+        </div>
+      </div>
+    `).join('');
+
+    /* Ended drops — for past days, shown with clone option */
+    const ended=dd.filter(d=>d.status==='Ended'||d.status==='Canceled');
+    const endedHtml=ended.map(d=>`
+      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px">
+        <div style="height:180px;background:linear-gradient(135deg,#4B5563 0%,#6B7280 100%);display:flex;align-items:center;justify-content:center;position:relative;opacity:0.85">
+          ${d.media==='video'?`<div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#fff">${ic('play',22)}</div>`
+          :`<div style="color:rgba(255,255,255,0.2)">${ic('image',40)}</div>`}
+          <div style="position:absolute;top:12px;left:12px">${bg(d.status)}</div>
+        </div>
+        <div class="cb" style="padding:14px 16px">
+          <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:5px">${d.title}</div>
+          <div style="display:flex;gap:14px;font-size:13px;color:#374151;margin-bottom:4px">
+            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',14)} ${d.start}</span>
+            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('dollar',14)} ${d.price===0?'Free':'$'+d.price}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:6px">
+            ${ic('users',13)} ${d.ci}/${d.res} checked in
+          </div>
+          <button onclick="event.stopPropagation();go('create',{cloneFrom:${drops.indexOf(d)}})" style="padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #8B5CF6;background:#EDE9FE;color:#5B21B6;display:flex;align-items:center;gap:5px">${ic('copy',13)} Clone Drop</button>
+        </div>
+      </div>
+    `).join('');
+
+    /* Drafts — same card layout, dashed border, gray placeholder if no media */
+    const draftHtml=dayDrafts.length?`<div style="margin-top:12px"><div style="font-size:11px;font-weight:600;color:#9CA3AF;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em">Drafts</div>
+    ${dayDrafts.map(d=>{
+      const hasMedia=d.media&&d.media!=='none'&&d.media!=='';
+      return `<div style="margin-bottom:8px;border:2px dashed #D1D5DB;border-radius:14px;overflow:hidden;background:#FAFAFA">
+        <div onclick="go('create',{cloneFrom:${drops.indexOf(d)}})" style="cursor:pointer">
+          <div style="height:200px;background:${hasMedia?'linear-gradient(135deg,#6B7280 0%,#9CA3AF 100%)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;position:relative">
+            ${hasMedia?(d.media==='video'?`<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',24)}</div>`:`<div style="color:rgba(255,255,255,0.15)">${ic('image',44)}</div>`)
+            :`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:#9CA3AF"><div>${ic('cam',36)}</div><div style="font-size:12px;font-weight:500">No video or image yet</div></div>`}
+            <div style="position:absolute;top:12px;left:12px">${bg('Draft')}</div>
+          </div>
+          <div class="cb" style="padding:14px 16px">
+            <div style="font-size:17px;font-weight:700;color:#6B7280;margin-bottom:5px">${d.title||'Untitled Drop'}</div>
+            ${d.start?`<div style="display:flex;gap:14px;font-size:13px;color:#9CA3AF;margin-bottom:4px">
+              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',14)} ${d.start}</span>
+              ${d.price!==''?`<span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('dollar',14)} ${d.price===0?'Free':'$'+d.price}</span>`:''}
+            </div>`:`<div style="font-size:13px;color:#D1D5DB;margin-bottom:4px">No time set</div>`}
+            ${d.hosts&&d.hosts.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#9CA3AF;margin-bottom:4px">
+              ${ic('user',13)} ${d.hosts.join(', ')}
+            </div>`:''}
+          </div>
+        </div>
+        <div style="display:flex;border-top:1px dashed #D1D5DB">
+          <button onclick="go('create',{cloneFrom:${drops.indexOf(d)}})" style="flex:2;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px dashed #D1D5DB">${ic('edit',16)} Continue Editing</button>
+          <button onclick="event.stopPropagation()" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#EF4444;display:flex;align-items:center;justify-content:center;gap:6px">${ic('x',16)} Delete</button>
+        </div>
+      </div>`;
+    }).join('')}</div>`:'';
+
+    /* Empty state */
+    const hasAnything=live||scheduled.length||ended.length||dayDrafts.length;
+    let emptyHtml='';
+    if(!hasAnything){
+      if(isPast) emptyHtml=`<div style="text-align:center;padding:28px 16px;color:#9CA3AF"><div style="margin-bottom:6px">${ic('cal',28)}</div><div style="font-size:13px;font-weight:500">No Drop on this day</div></div>`;
+    }
+
+    /* Create button — only on future/today days with no active drop and no draft, pushed down */
+    const dayHasActiveDrop=dd.some(d=>d.status!=='Draft'&&d.status!=='Ended');
+    const dayHasDraft=dayDrafts.length>0;
+    const showCreate=!isPast&&!dayHasActiveDrop&&!dayHasDraft;
+    const createHtml=showCreate?`<div style="padding-top:40px"><button onclick="go('create')" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;box-shadow:0 2px 8px rgba(59,130,246,0.25)">${ic('plus',18)} Create New Drop</button></div>`:'';
+
+    return emptyHtml+liveHtml+schedHtml+endedHtml+createHtml+draftHtml;
+  })()}
+  </div>`;
+}
+
+// ═══ CREATE ═══
+function renderCreate(){
+  const clone=S.cloneFrom!==null?drops[S.cloneFrom]:null;
+  const steps=['Date & Location','Drop Details','Capacity & Pricing','Review & Confirm'];
+  const hasLive=drops.some(d=>d.status==='Live');
+  const inp=(l,ph,ty,req,val)=>`<div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">${l}${req?' <span style="color:#EF4444">*</span>':''}</label><input type="${ty||'text'}" placeholder="${ph}" ${val?`value="${val}"`:''} style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/></div>`;
+  let c='';
+
+  if(S.cStep===1){
+    c=`${clone?`<div style="background:#EDE9FE;border-radius:10px;padding:10px 14px;display:flex;gap:8px;margin-bottom:14px;align-items:center"><span style="color:#7C3AED">${ic('copy',16)}</span><div style="font-size:12px;color:#5B21B6;font-weight:500">Cloning: <strong>${clone.title}</strong></div></div>`:''}
+    ${inp('Date','','date',true,clone?clone.date:'')}
+    <div style="font-size:10px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px;display:flex;align-items:center;gap:4px">${ic('alert',11)} Limit: 1 Drop per day per account</div>
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Timing Type <span style="color:#EF4444">*</span></label>
+    <div style="display:flex;gap:8px">${[{id:'start',l:'Start Time',i:'clock'},{id:'window',l:'Arrival Window',i:'cal'}].map(o=>`<button onclick="S.formTiming='${o.id}';render()" style="flex:1;padding:12px;border-radius:10px;border:2px solid ${S.formTiming===o.id?'#0E4EF5':'#E5E7EB'};background:${S.formTiming===o.id?'#EEF2FF':'#fff'};text-align:left"><div style="color:${S.formTiming===o.id?'#0E4EF5':'#9CA3AF'};margin-bottom:4px">${ic(o.i,18)}</div><div style="font-size:12px;font-weight:600;color:${S.formTiming===o.id?'#0E4EF5':'#1F2937'}">${o.l}</div></button>`).join('')}</div></div>
+    ${S.formTiming==='start'?inp('Start Time','','time',true):`<div style="display:flex;gap:10px"><div style="flex:1">${inp('Window Open','','time',true)}</div><div style="flex:1">${inp('Window Close','','time',true)}</div></div>`}
+    ${inp('Broadcast Start','When the Drop becomes visible','time',true,clone?'':'')}
+    <div style="font-size:10px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Broadcast ends 15 min before ${S.formTiming==='start'?'start time':'window close'} (purchase cutoff)</div>
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Location</label>
+    <div style="padding:10px 12px;border-radius:10px;font-size:13px;color:#374151;background:#F9FAFB"><div style="font-weight:600">${acct().name}</div><div style="font-size:12px;color:#6B7280;margin-top:2px">${acct().addr}</div></div></div>`;
+  }
+  if(S.cStep===2){
+    c=`${inp('Drop Title','e.g. Friday Night Jazz & Tapas','text',true,clone?clone.title:'')}
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Description <span style="color:#EF4444">*</span></label><textarea placeholder="What makes this Drop special?" rows="3" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box">${clone?clone.desc:''}</textarea></div>
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Video or Image <span style="color:#EF4444">*</span></label>
+    <div style="border:2px dashed #D1D5DB;border-radius:10px;padding:30px 16px;text-align:center;background:#F9FAFB"><div style="color:#9CA3AF;margin-bottom:6px">${ic('cam',28)}</div><div style="font-size:12px;color:#6B7280;font-weight:500">Upload or record</div><div style="font-size:10px;color:#9CA3AF;margin-top:3px">Portrait recommended — Photo or short video</div></div></div>
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Event Host(s) <span style="color:#EF4444">*</span></label>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${team.filter(t=>t.active).map(t=>{const sel=clone?clone.hosts.includes(t.name):t.name==='Josh Ritzer';return`<button style="padding:5px 10px;border-radius:18px;font-size:11px;font-weight:500;border:1px solid ${sel?'#0E4EF5':'#E5E7EB'};background:${sel?'#EEF2FF':'#fff'};color:${sel?'#0E4EF5':'#4B5563'};display:flex;align-items:center;gap:3px">${ic('user',11)} ${t.name} ${sel?ic('check',11):''}</button>`;}).join('')}</div></div>
+    <div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Partners <span style="font-weight:400;color:#9CA3AF">(optional — up to ${acct().maxPartners})</span></label>
+    ${clone&&clone.partners.length?`<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">${clone.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:8px;background:${p.status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${p.status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div style="display:flex;align-items:center;gap:6px">${ic('link',11)}<div><div style="font-size:11px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#6B7280">${p.handle}</div></div></div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:10px;font-weight:600;color:${p.status==='Accepted'?'#16A34A':'#D97706'}">${p.status}</span><span style="color:#9CA3AF">${ic('x',12)}</span></div></div>`).join('')}</div>`:''}
+    <div style="display:flex;gap:6px"><input placeholder="Search by Nigh handle or name..." style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#fff;outline:none"/><button style="padding:7px 10px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #0E4EF5;background:#EEF2FF;color:#0E4EF5;display:flex;align-items:center;gap:3px;white-space:nowrap">${ic('userPlus',12)} Invite</button></div>
+    <div style="font-size:10px;color:#9CA3AF;margin-top:5px">Partner must accept before they appear on the live Drop.</div></div>`;
+  }
+  if(S.cStep===3){
+    c=`${inp('Capacity','Max number of guests','number',true,clone?clone.cap:'')}
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Pricing</label>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button onclick="S.dualPrice=false;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${!S.dualPrice?'#0E4EF5':'#E5E7EB'};background:${!S.dualPrice?'#EEF2FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${!S.dualPrice?'#0E4EF5':'#6B7280'}">Single Price</div>
+          <div style="font-size:10px;color:${!S.dualPrice?'#93C5FD':'#9CA3AF'};margin-top:1px">Same for all guests</div>
+        </button>
+        <button onclick="S.dualPrice=true;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${S.dualPrice?'#0E4EF5':'#E5E7EB'};background:${S.dualPrice?'#EEF2FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${S.dualPrice?'#0E4EF5':'#6B7280'}">Dual Pricing</div>
+          <div style="font-size:10px;color:${S.dualPrice?'#93C5FD':'#9CA3AF'};margin-top:1px">New vs. existing</div>
+        </button>
+      </div>
+      ${S.dualPrice?`
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#15803d;line-height:1.5">
+        &#11088; <strong>Dual pricing on.</strong> Nigh checks your customer list at view time — each guest sees only their price.
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">New Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1.5px solid #0E4EF5;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="margin-top:4px"><span style="font-size:10px;font-weight:700;background:#DCFCE7;color:#15803d;padding:2px 8px;border-radius:8px">First Visit Special</span></div>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">Existing Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:4px">In your customer list</div>
+        </div>
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;font-size:11px;color:#78350F;line-height:1.45">
+        &#128161; Guests only see their own price. A "First Visit Special" label explains any difference if friends compare.
+      </div>`:`
+      <div style="position:relative;margin-bottom:8px">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+        <input type="number" placeholder="0.00 (leave blank for free)" ${clone&&clone.price>0?`value="${clone.price}"`:''} style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+      </div>
+      <div onclick="S.dualPrice=true;render()" style="background:#EEF2FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 10px;font-size:11px;color:#1D4ED8;line-height:1.45;cursor:pointer">
+        &#128161; <strong>Tip:</strong> Use <strong>Dual Pricing</strong> to offer a lower "First Visit Special" to new customers — most businesses discount more to win a first-time guest.
+      </div>`}
+    </div>
+    <div class="card"><div class="cb"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#0E4EF5">${ic('send',15)}<span style="font-size:13px;font-weight:600;color:#1F2937">Direct Offers</span></div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-bottom:8px">Reserve spots for VIPs via personal SMS links.</div>
+    <div style="display:flex;gap:6px"><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #E5E7EB;background:#F9FAFB;color:#4B5563">Shared Pool</button><button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #0E4EF5;background:#EEF2FF;color:#0E4EF5">Separate Pool</button></div></div></div>`;
+  }
+  if(S.cStep===4){
+    const src=clone||{title:'Friday Night Jazz & Tapas',start:'7:00 PM',bcastStart:'4:00 PM',bcastEnd:'6:45 PM',date:'2026-03-07',cap:30,price:25,venue:acct().name+', '+acct().addr,hosts:['Josh Ritzer'],partners:["Tito's Vodka"],desc:'Live jazz trio with curated tapas.'};
+    const pl=S.dualPrice
+      ?'Dual — '+'New customer price · Existing customer price'
+      :(src.price===0||!src.price?'Free':'$'+src.price);
+    const pricingBadge=S.dualPrice
+      ?`<span style="font-size:10px;font-weight:700;background:#DCFCE7;color:#15803d;padding:2px 7px;border-radius:8px;margin-left:4px">First Visit Special</span>`
+      :'';
+    return `${hdr('Review & Confirm','Step 4 of 4',"S.cStep--;render()")}
+    <div style="padding:16px" class="fi">
+      <div class="card" style="margin-bottom:14px">
+        <div style="height:120px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15)">${ic('cam',32)}</div>
+        <div class="cb">
+          <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">${src.title}</div>
+          <div style="font-size:12px;color:#6B7280;margin-bottom:10px;line-height:1.4">${src.desc}</div>
+          ${[['cal','Date',fmtD(src.date)],['clock','Time',src.start],['radio','Broadcasting',src.bcastStart+' — '+src.bcastEnd],['map','Location',(src.venue||acct().name+', '+acct().addr).split(',').slice(0,2).join(',')],['users','Capacity',''+src.cap],['dollar','Pricing',pl+pricingBadge],['user','Host(s)',src.hosts.join(', ')],['link','Partners',src.partners&&src.partners.length?src.partners.filter(p=>p.status==='Accepted').map(p=>p.name).join(', ')||(src.partners.length+' awaiting'):'None']].map((r,i,a)=>`
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<a.length-1?'border-bottom:1px solid #F3F4F6':''}"><span style="color:#9CA3AF">${ic(r[0],14)}</span><span style="font-size:11px;color:#6B7280;width:70px">${r[1]}</span><span style="font-size:12px;color:#111827;font-weight:500;flex:1">${r[2]}</span></div>
+          `).join('')}
+        </div>
+      </div>
+      ${hasLive?`<div style="background:#FEF3C7;border-radius:10px;padding:9px 12px;display:flex;gap:6px;margin-bottom:12px;font-size:11px;color:#92400E;line-height:1.3">${ic('alert',14)} You already have a live Drop. This will be scheduled.</div>`:''}
+      <div style="display:flex;gap:8px">
+        <button style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Save Draft</button>
+        ${hasLive?`<button style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#8B5CF6;color:#fff;box-shadow:0 2px 8px rgba(139,92,246,0.3)">Schedule Drop</button>`
+        :`<button style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#22C55E;color:#fff;box-shadow:0 2px 8px rgba(34,197,94,0.3)">Publish Now</button>`}
+      </div>
+    </div>`;
+  }
+  return `${hdr('Create Drop',`Step ${S.cStep}/4 — ${steps[S.cStep-1]}`,S.cStep>1?"S.cStep--;render()":"go('home')")}
+    <div style="padding:0 16px;margin-top:10px"><div style="display:flex;gap:3px">${[1,2,3,4].map(s=>`<div style="flex:1;height:3px;border-radius:2px;background:${s<=S.cStep?'#0E4EF5':'#E5E7EB'}"></div>`).join('')}</div></div>
+    <div style="padding:16px" class="fi">${c}${S.cStep<4?`<button onclick="S.cStep++;render()" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:600;border:none;background:#0E4EF5;color:#fff;margin-top:16px">Continue</button>`:''}</div>`;
+}
+
+// ═══ LIVE VIEW (Drop Detail) ═══
+function renderLive(){
+  const d=drops[S.drop||0];const rem=d.cap-d.res;const pct=d.res>0?Math.round((d.ci/d.res)*100):0;
+  const isLive=d.status==='Live';const isPaused=d.status==='Paused';
+
+  return `${hdr('Drop Details',null,"go('home')",
+    `<button onclick="modal('dropmenu')" style="background:none;border:none;color:#4B5563;padding:4px">${ic('more',20)}</button>`)}
+  <div style="padding:14px 16px">
+    <!-- Portrait media -->
+    <div class="card" style="margin-bottom:12px;${isLive?'border:2px solid #22C55E':isPaused?'border:2px solid #F59E0B':''}">
+      <div style="height:270px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;position:relative;border-radius:12px 12px 0 0;overflow:hidden">
+        ${d.media==='video'?`<div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',26)}</div>
+        <div style="position:absolute;bottom:10px;left:12px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">0:32</div>`
+        :`<div style="color:rgba(255,255,255,0.15)">${ic('image',44)}</div>`}
+        <div style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px">
+          ${isLive?`<div class="lp" style="width:10px;height:10px;border-radius:50%;background:#22C55E"></div>`:''}
+          ${bg(d.status)}
+        </div>
+      </div>
+      <!-- Title row inside card -->
+      <div style="padding:12px 14px 10px">
+        <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">${d.title}</div>
+        <div style="font-size:13px;color:#374151;margin-bottom:5px;display:flex;flex-wrap:wrap;gap:10px">
+          <span style="display:flex;align-items:center;gap:3px">${ic('cal',13)} ${fmtD(d.date)}</span>
+          <span style="display:flex;align-items:center;gap:3px">${ic('clock',13)} ${d.start}</span>
+          <span style="display:flex;align-items:center;gap:3px">${ic('dollar',13)} ${d.price===0?'Free':'$'+d.price}</span>
+        </div>
+        <div style="font-size:12px;color:#6B7280;margin-bottom:4px;display:flex;align-items:center;gap:4px">${ic('map',12)} ${fmtVenue(d.venue)}</div>
+        <div style="font-size:12px;color:#6B7280;margin-bottom:4px;display:flex;align-items:center;gap:4px">${ic('user',12)} ${d.hosts.join(', ')}</div>
+        ${(()=>{const acc=d.partners.filter(p=>p.status==='Accepted');const awt=d.partners.filter(p=>p.status==='Awaiting');const canAdd=d.partners.length<acct().maxPartners;return`<div style="margin-top:8px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:11px;font-weight:600;color:#374151">Partners ${d.partners.length?`(${d.partners.length}/${acct().maxPartners})`:''}</span>${canAdd?`<button onclick="modal('invite-partner')" style="font-size:10px;font-weight:600;color:#0E4EF5;background:none;border:none;padding:0;display:flex;align-items:center;gap:3px">${ic('userPlus',12)} Invite</button>`:''}</div>${d.partners.length?`<div style="display:flex;flex-direction:column;gap:5px">${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:8px;background:${p.status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${p.status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div style="display:flex;align-items:center;gap:6px">${ic('link',11)}<div><div style="font-size:11px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#6B7280">${p.handle}</div></div></div><span style="font-size:10px;font-weight:600;color:${p.status==='Accepted'?'#16A34A':'#D97706'};background:${p.status==='Accepted'?'#DCFCE7':'#FEF3C7'};padding:2px 7px;border-radius:8px">${p.status==='Accepted'?'Accepted':'Awaiting'}</span></div>`).join('')}</div>`:`<div style="font-size:11px;color:#9CA3AF;text-align:center;padding:8px">No partners added yet</div>`}</div>`;})()}
+        ${isLive?`<div style="font-size:12px;color:#16A34A;margin-top:6px;display:flex;align-items:center;gap:4px">${ic('radio',12)} Broadcasting until ${d.bcastEnd}</div>`:''}
+        ${isPaused?`<div style="background:#FFFBEB;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11px;color:#92400E;display:flex;gap:5px">${ic('alert',13)} Paused — Only active spot holders can see this Drop</div>`:''}
+      </div>
+    </div>
+
+    <!-- Stats -->
+    ${d.cap===1?(()=>{
+      const sg=guests.find(g=>g.drop===d.id);
+      if(!sg) return `<div class="card" style="margin:10px 0"><div class="cb"><div style="display:flex;align-items:center;gap:8px;color:#6B7280"><div style="width:10px;height:10px;border-radius:50%;background:#D1D5DB;flex-shrink:0"></div><span style="font-size:13px">No reservation yet — spot is open</span></div></div></div>`;
+      const st=sg.tickets[0].status;
+      return `<div class="card" style="margin:10px 0"><div class="cb"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">${sg.av}</div><div><div style="font-size:13px;font-weight:600;color:#111827">${sg.name}</div><div style="font-size:11px;color:#9CA3AF">${sg.uname}</div></div></div>${bg(st)}</div><div style="display:flex;gap:6px">${st==='Reserved'?`<button style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;justify-content:center;gap:4px">${ic('check',13)} Check In</button>`:''}<button style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444;display:flex;align-items:center;justify-content:center;gap:4px">${ic('x',13)} Cancel & Refund</button></div></div></div>`;
+    })():`<div class="card" style="margin:10px 0"><div class="cb">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="position:relative;width:70px;height:70px;flex-shrink:0">
+          <svg width="70" height="70" viewBox="0 0 70 70"><circle cx="35" cy="35" r="28" fill="none" stroke="#E5E7EB" stroke-width="7"/>
+          <circle cx="35" cy="35" r="28" fill="none" stroke="${rem===0?'#F59E0B':'#0E4EF5'}" stroke-width="7" stroke-dasharray="${(d.res/d.cap)*175.9} 175.9" stroke-linecap="round" transform="rotate(-90 35 35)"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:16px;font-weight:700;color:#111827">${rem}</div><div style="font-size:8px;color:#6B7280">left</div></div>
+        </div>
+        <div style="flex:1">${[['Capacity',d.cap,'#1F2937'],['Reserved',d.res,'#0E4EF5'],['Checked In',d.ci,'#0D9488'],['No-Shows',d.ns,'#F97316']].map(r=>`<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#6B7280">${r[0]}</span><span style="font-size:12px;font-weight:600;color:${r[2]}">${r[1]}</span></div>`).join('')}</div>
+      </div>
+      ${pct>0?`<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:10px;color:#6B7280;margin-bottom:3px"><span>Check In rate</span><span style="font-weight:600;color:#0D9488">${pct}%</span></div><div style="height:5px;background:#F3F4F6;border-radius:3px"><div style="height:100%;border-radius:3px;background:#0D9488;width:${pct}%"></div></div></div>`:''}
+    </div></div>`}
+
+    <!-- Actions: Edit, Share, Pause/Resume -->
+    <div style="display:flex;gap:6px">
+      <button style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px">${ic('edit',14)} Edit</button>
+      <button onclick="modal('share-${S.drop}')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px">${ic('share',14)} Share</button>
+      ${isLive?`<button style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #F59E0B;background:#FFFBEB;color:#F59E0B;display:flex;align-items:center;justify-content:center;gap:5px">${ic('pause',14)} Pause</button>`
+      :isPaused?`<button style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#22C55E;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('play',14)} Resume</button>`:''}
+    </div>
+
+    ${d.status==='Ended'?`<button onclick="go('create',{cloneFrom:${S.drop}})" style="width:100%;margin-top:10px;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #8B5CF6;background:#EDE9FE;color:#5B21B6;display:flex;align-items:center;justify-content:center;gap:5px">${ic('copy',14)} Duplicate This Drop</button>`:''}
+  </div>`;
+}
+
+// ═══ CHECK-IN ═══
+function renderCI(){
+  const modes=[{id:'scan',l:'Scan Guest',i:'cam'},{id:'biz',l:'Guest Scans',i:'qr'},{id:'manual',l:'Manual',i:'search'}];
+  let c='';
+  if(S.ciMode==='scan'){
+    c=`<div style="background:#111827;border-radius:14px;height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:14px">
+      <div style="width:180px;height:180px;border:3px solid rgba(255,255,255,0.25);border-radius:14px;position:relative">
+        ${['top:-3px;left:-3px;border-top:4px solid #0E4EF5;border-left:4px solid #0E4EF5;border-radius:6px 0 0 0','top:-3px;right:-3px;border-top:4px solid #0E4EF5;border-right:4px solid #0E4EF5;border-radius:0 6px 0 0','bottom:-3px;left:-3px;border-bottom:4px solid #0E4EF5;border-left:4px solid #0E4EF5;border-radius:0 0 0 6px','bottom:-3px;right:-3px;border-bottom:4px solid #0E4EF5;border-right:4px solid #0E4EF5;border-radius:0 0 6px 0'].map(s=>`<div style="position:absolute;width:20px;height:20px;${s}"></div>`).join('')}
+        <div class="scanL" style="position:absolute;left:8px;right:8px;height:2px;background:#0E4EF5;opacity:0.8;box-shadow:0 0 12px #0E4EF5"></div>
+      </div><div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:14px">Point camera at guest's QR code</div>
+    </div><button onclick="S.ciMode='ok';render()" style="width:100%;padding:11px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0D9488;color:#fff">Simulate Scan</button>`;
+  }else if(S.ciMode==='biz'){
+    c=`<div style="text-align:center;padding:12px 0">
+      <div style="background:#fff;border-radius:14px;border:1px solid #E5E7EB;padding:20px;display:inline-block;margin-bottom:12px">
+        <div style="width:160px;height:160px;background:#F3F4F6;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto;color:#9CA3AF">${ic('qr',70)}</div>
+        <div style="font-size:13px;font-weight:600;color:#111827;margin-top:10px">${acct().name}</div>
+      </div>
+      <div style="font-size:11px;color:#6B7280;margin-bottom:12px">Guest scans this code to check in</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button style="padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#0E4EF5;color:#fff;display:flex;align-items:center;gap:5px">${ic('printer',14)} Print QR</button>
+        <button style="padding:10px 14px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;gap:5px">${ic('share',14)} Share</button>
+      </div>
+    </div>`;
+  }else if(S.ciMode==='manual'){
+    c=`<div class="card" style="margin-bottom:12px"><div class="cb" style="padding:16px"><div style="font-size:14px;font-weight:600;color:#1F2937;margin-bottom:10px">Manual Check-In</div>
+    <input placeholder="Name, username, or Ticket ID" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;margin-bottom:10px;box-sizing:border-box"/>
+    <button onclick="S.ciMode='ok';render()" style="width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff">Look Up</button></div></div>`;
+  }else{
+    c=`<div class="fi" style="text-align:center;padding:14px 0">
+      <div style="width:80px;height:80px;border-radius:50%;background:#F0FDFA;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#0D9488">${ic('check',40)}</div>
+      <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:2px">Checked In!</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:14px">Sarah Mitchell — T001-A</div>
+      <div class="card" style="text-align:left;margin-bottom:14px"><div class="cb">
+        ${[['Spot','T001-A'],['Price','Free'],['Time','2:03 PM']].map(r=>`<div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:#6B7280">${r[0]}</span><span style="font-size:12px;font-weight:600;color:#111827">${r[1]}</span></div>`).join('')}
+        <div style="background:#FEF3C7;border-radius:6px;padding:6px 8px;margin-top:6px;font-size:10px;color:#92400E">1 more spot (T001-B) still pending</div>
+      </div></div>
+      <button onclick="S.ciMode='scan';render()" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:600;border:none;background:#0E4EF5;color:#fff">Scan Next</button>
+    </div>`;
+  }
+  return `${hdr('Check-In','Nike Air Max Day Access')}
+  <div style="padding:14px 16px">
+    <div style="display:flex;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:14px">${modes.map(m=>{const act=S.ciMode===m.id||(m.id==='scan'&&S.ciMode==='ok');return`<button onclick="S.ciMode='${m.id}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:4px;background:${act?'#fff':'transparent'};color:${act?'#1F2937':'#6B7280'};box-shadow:${act?'0 1px 2px rgba(0,0,0,0.06)':'none'}">${ic(m.i,14)} ${m.l}</button>`;}).join('')}</div>
+    ${c}
+    <div class="card" style="margin-top:12px"><div class="cb" style="display:flex;justify-content:space-around">${[['5','In','#0D9488'],['2','Reserved','#0E4EF5'],['1','No-Show','#F97316'],['8','Total','#1F2937']].map((s,i)=>`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`).join('')}</div></div>
+  </div>`;
+}
+
+// ═══ GUESTS ═══
+function renderG(){
+  const live=drops.find(d=>d.status==='Live')||drops[0];
+  const cur=S.guestDrop==='all'?null:live;
+  const fl=['All','Checked In','Reserved','No-Show'];
+  const gl=cur?guests.filter(g=>g.drop===cur.id):guests;
+  const fg=S.rFilter==='All'?gl:gl.filter(g=>{const st=gSt(g);return S.rFilter==='Checked In'?st.includes('Checked')||st.includes('In'):st===S.rFilter;});
+
+  return `${hdr('Guests','')}
+  <div style="padding:12px 16px">
+    <select onchange="S.guestDrop=this.value;S.rFilter='All';S.rSel=null;render()" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;color:#111827;background:#fff;font-weight:600;margin-bottom:8px">
+      <option value="current" ${S.guestDrop==='current'?'selected':''}>Current: ${live.title}</option>
+      ${drops.filter(d=>d.status!=='Draft'&&d.id!==live.id).map(d=>`<option value="${d.id}">${d.title} — ${fmtD(d.date)}</option>`).join('')}
+      <option value="all" ${S.guestDrop==='all'?'selected':''}>All Guests</option>
+    </select>
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:7px 10px;margin-bottom:8px"><span style="color:#9CA3AF">${ic('search',15)}</span><input placeholder="Search by name or username..." style="flex:1;border:none;outline:none;font-size:12px;color:#111827;background:transparent"/></div>
+    <button onclick="S.modal='csv-import';S.importStep=1;render()" style="width:100%;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;color:#0E4EF5;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:6px">${ic('upload',14)} Import Customers</button>
+    <div style="display:flex;gap:5px;margin-bottom:10px;overflow-x:auto">${fl.map(f=>{const cnt=f==='All'?gl.length:gl.filter(g=>{const st=gSt(g);return f==='Checked In'?st.includes('Checked')||st.includes('In'):st===f}).length;return`<button onclick="S.rFilter='${f}';S.rSel=null;render()" style="padding:5px 12px;border-radius:18px;font-size:11px;font-weight:500;border:1px solid ${S.rFilter===f?'#0E4EF5':'#E5E7EB'};background:${S.rFilter===f?'#EEF2FF':'#fff'};color:${S.rFilter===f?'#0E4EF5':'#4B5563'};white-space:nowrap">${f} (${cnt})</button>`;}).join('')}</div>
+    ${fg.map(g=>{const st=gSt(g);const multi=g.tickets.length>1;const exp=S.rSel===g.id;
+      return `<div onclick="S.rSel=S.rSel==='${g.id}'?null:'${g.id}';render()" style="background:#fff;border-radius:10px;padding:10px 12px;border:1px solid ${exp?'#0E4EF5':'#E5E7EB'};margin-bottom:6px;cursor:pointer">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${g.av}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827">${g.name}</div><div style="font-size:11px;color:#9CA3AF">${g.uname}</div></div>
+          <div style="text-align:right;flex-shrink:0">
+            ${multi?`<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:${st.includes('/')? '#FEF3C7':'#DCFCE7'};color:${st.includes('/')?'#92400E':'#166534'}">${st}</span>`
+              :bg(g.tickets[0].status,true)}
+            ${multi?`<div style="font-size:10px;color:#9CA3AF;margin-top:2px">${g.tickets.length} spots</div>`:''}
+          </div>
+        </div>
+        ${exp?`<div class="fi" style="margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6">
+          ${multi?`<div style="margin-bottom:8px">${g.tickets.map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;font-size:11px"><span style="color:#6B7280">${t.tid}</span>${bg(t.status,true)}<div style="display:flex;gap:4px">${t.status==='Reserved'?`<button onclick="event.stopPropagation()" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:none;background:#0D9488;color:#fff">Check In</button>`:''}<button onclick="event.stopPropagation()" style="padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444">Cancel</button></div></div>`).join('')}</div>`:''}
+          ${!multi?`<div style="display:flex;gap:5px">
+            ${g.tickets[0].status==='Reserved'?`<button onclick="event.stopPropagation()" style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:600;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;justify-content:center;gap:3px">${ic('check',13)} Check In</button>`:''}
+            <button onclick="event.stopPropagation()" style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444;display:flex;align-items:center;justify-content:center;gap:3px">${ic('x',13)} Cancel & Refund</button></div>`:''}
+        </div>`:''}</div>`;}).join('')}
+  </div>`;
+}
+
+// ═══ MENU ═══
+function renderMenu(){
+  if(S.menuSub==='team')return renderTeam();
+  if(S.menuSub==='payout')return renderPayout();
+  if(S.menuSub==='analytics')return renderAnalytics();
+  if(S.menuSub==='profile')return renderProfile();
+  if(S.menuSub==='subscription')return renderSubscription();
+  if(S.menuSub==='partners')return renderPartners();
+  if(S.menuSub==='customers')return renderCustomers();
+  if(S.menuSub==='settings')return renderSettings();
+  if(S.menuSub==='userAccount')return renderUserAccount();
+  if(S.menuSub==='feedback')return renderFeedback();
+  if(S.menuSub==='tos')return renderToS();
+  if(S.menuSub==='privacy')return renderPrivacy();
+  const userRole=team.find(t=>t.name==='Josh Ritzer')?.role||'Team Member';
+  const canManagePartners=['Super Admin','Admin','Manager'].includes(userRole);
+  const items=[
+    {ic:'userPlus',l:'Team',d:'Manage staff & roles',act:"S.menuSub='team';render()"},
+    {ic:'store',l:'Location',d:'Profile & account',act:"S.menuSub='profile';render()"},
+    {ic:'users',l:'Guests',d:'View and import your customers',act:"S.menuSub='customers';render()"},
+    {ic:'chart',l:'Analytics',d:'Performance & metrics',act:"S.menuSub='analytics';render()"},
+    {ic:'dollar',l:'Payouts',d:'Revenue & transactions',act:"S.menuSub='payout';render()"},
+    {ic:'billing',l:'Billing',d:'Plan, billing & usage',act:"S.menuSub='subscription';render()"},
+    ...(canManagePartners?[{ic:'link',l:'Partners',d:'Manage & invite partners',act:"S.menuSub='partners';render()"}]:[]),
+  ];
+  return `${hdr('Menu',acct().name)}
+  <div style="padding:14px 16px">
+    ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
+    <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#6B7280">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">Account & preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
+    <div style="text-align:center;margin-top:16px;font-size:11px;color:#9CA3AF">Nigh Pro v1.0</div>
+  </div>`;
+}
+function renderTeam(){
+  return `${hdr('Team','4 Active Members',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    ${team.filter(t=>t.active).map(t=>`<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+      <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${t.av}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:6px">${t.name}${t.name==='Josh Ritzer'?`<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:#EEF2FF;color:#0E4EF5">You</span>`:''}</div><div style="font-size:11px;color:#6B7280">${t.role}</div></div>
+      ${t.name!=='Josh Ritzer'?`<button style="padding:6px 12px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444">Remove</button>`:''}</div>`).join('')}
+    <button onclick="S.menuSub=null;render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;margin-top:14px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">${ic('userPlus',16)} Invite Team Member</button>
+    <div style="background:#F9FAFB;border-radius:10px;padding:12px;margin-top:14px;font-size:11px;color:#6B7280;line-height:1.6">
+      <div style="font-weight:600;color:#111827;margin-bottom:6px">Role Descriptions</div>
+      <div style="margin-bottom:6px"><span style="font-weight:600;color:#0E4EF5">Owner / Admin</span> — Full access to all features</div>
+      <div style="margin-bottom:6px"><span style="font-weight:600;color:#8B5CF6">Manager</span> — Manages drops & team members</div>
+      <div><span style="font-weight:600;color:#9CA3AF">Team Member</span> — Check In only</div>
+    </div>
+  </div>`;
+}
+function renderPayout(){
+  return `${hdr('Payouts','Revenue & Transactions',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${mc('Available Balance','$1,240.00','Ready to withdraw','dollar','#10B981','#ECFDF5')}${mc('Pending','$380.00','From recent drops','dollar','#F59E0B','#FFFBEB')}${mc('Total Earned','$4,860.00','All time','dollar','#0E4EF5','#EEF2FF')}</div>
+    <button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600;margin-bottom:16px">Request Payout</button>
+    <div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:10px">Recent Transactions</div>
+    ${[
+      {title:'Nike Air Max Day',amount:0,breakdown:'Free Drop',date:'Mar 5'},
+      {title:'Sunset Wine Tasting',amount:380,breakdown:'8 × $47.50',date:'Mar 8',status:'Pending'},
+      {title:'Acoustic Brunch',amount:540,breakdown:'12 × $45.00',date:'Feb 28'},
+      {title:'Taco Tuesday Fiesta',amount:0,breakdown:'Free Drop',date:'Feb 25'},
+    ].map(t=>`<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div><div style="font-size:12px;font-weight:600;color:#111827">${t.title}</div><div style="font-size:10px;color:#6B7280">${t.breakdown}</div></div>
+        <div style="text-align:right"><div style="font-size:12px;font-weight:700;color:#111827">+$${t.amount.toFixed(2)}</div>
+        ${t.status?`<div style="font-size:10px;font-weight:600;color:#F59E0B;background:#FFFBEB;padding:2px 8px;border-radius:6px;margin-top:4px;display:inline-block">${t.status}</div>`:''}</div>
+      </div>
+      <div style="font-size:10px;color:#9CA3AF">${t.date}</div>
+    </div>`).join('')}
+    <button style="width:100%;background:none;border:none;border-radius:10px;padding:12px 0;margin-top:14px;font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;justify-content:space-between"><span>Payout Settings</span>${ic('right',16)}</button>
+  </div>`;
+}
+function renderAnalytics(){
+  const bars=[{l:'Mon',v:12},{l:'Tue',v:28},{l:'Wed',v:8},{l:'Thu',v:35},{l:'Fri',v:42},{l:'Sat',v:18},{l:'Sun',v:5}];const mx=42;
+  return `${hdr('Analytics','Last 7 days',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px"><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${mc('Reservations','148','+23%','users','#0E4EF5','#EEF2FF')}${mc('Check-In Rate','72%','108/148','check','#0D9488','#F0FDFA')}${mc('Revenue','$2,340','After refunds','dollar','#0E4EF5','#EEF2FF')}${mc('No-Show Rate','8.1%','12','alert','#F59E0B','#FFFBEB')}</div>
+  <div class="card"><div class="cb"><div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Reservations by Day</div><div style="display:flex;gap:6px;align-items:flex-end;height:100px">${bars.map((b,i)=>`<div style="flex:1;text-align:center"><div style="height:${(b.v/mx)*85}px;background:${i===4?'#0E4EF5':'#DBEAFE'};border-radius:3px 3px 0 0;margin-bottom:4px;position:relative"><span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:#4B5563">${b.v}</span></div><span style="font-size:9px;color:#6B7280">${b.l}</span></div>`).join('')}</div></div></div></div>`;
+}
+function renderSubscription(){
+  const plan={name:'Growth',price:'$149',cycle:'/ month',renewDate:'Apr 28, 2026',status:'Active'};
+  const usage=[
+    {label:'Drops Published',used:8,limit:20,unit:'drops'},
+    {label:'Reservations',used:312,limit:500,unit:'this month'},
+    {label:'Team Members',used:4,limit:10,unit:'seats'},
+    {label:'Niya AI Interactions',used:187,limit:500,unit:'this month'},
+  ];
+  const bar=(used,limit)=>{
+    const pct=Math.min(100,Math.round((used/limit)*100));
+    const color=pct>=90?'#EF4444':pct>=70?'#F59E0B':'#0E4EF5';
+    return`<div style="height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${color};border-radius:3px;transition:width 0.3s"></div></div>`;
+  };
+  const tiers=[
+    {name:'Starter',price:'$49',drops:'5 drops/mo',reservations:'100 reservations',team:'2 seats',highlight:false},
+    {name:'Growth',price:'$149',drops:'20 drops/mo',reservations:'500 reservations',team:'10 seats',highlight:true},
+    {name:'Scale',price:'$399',drops:'Unlimited',reservations:'Unlimited',team:'Unlimited',highlight:false},
+  ];
+  return`${hdr('Billing','Plan, Billing & Usage',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px 32px">
+
+    <!-- Current plan card -->
+    <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Current Plan</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
+        <div style="font-size:24px;font-weight:800;color:#fff">${plan.name}</div>
+        <div style="font-size:18px;font-weight:700;color:rgba(255,255,255,0.85)">${plan.price}<span style="font-size:12px;font-weight:400">${plan.cycle}</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="background:rgba(34,197,94,0.2);color:#4ADE80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid rgba(74,222,128,0.3)">${plan.status}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.55)">Renews ${plan.renewDate}</span>
+      </div>
+    </div>
+
+    <!-- Usage -->
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Usage This Period</div>
+    <div class="card" style="margin-bottom:16px"><div class="cb" style="display:flex;flex-direction:column;gap:14px">
+      ${usage.map(u=>`
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+            <div style="font-size:12px;font-weight:600;color:#374151">${u.label}</div>
+            <div style="font-size:11px;color:#6B7280">${u.used.toLocaleString()} / ${u.limit.toLocaleString()} ${u.unit}</div>
+          </div>
+          ${bar(u.used,u.limit)}
+        </div>`).join('')}
+    </div></div>
+
+    <!-- Billing -->
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Billing</div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid #F3F4F6">
+        <div style="width:36px;height:24px;background:#1A1F71;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;flex-shrink:0">VISA</div>
+        <div style="flex:1;font-size:13px;color:#374151">Visa ···· 4821</div>
+        <button style="font-size:12px;font-weight:600;color:#0E4EF5;background:none;border:none;cursor:pointer">Update</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 14px">
+        <div style="font-size:13px;color:#374151">View invoices</div>
+        <span style="color:#D1D5DB">${ic('right',14)}</span>
+      </div>
+    </div>
+
+    <!-- Change plan -->
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Change Plan</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      ${tiers.map(t=>`
+        <div style="background:${t.highlight?'#EEF2FF':'#fff'};border:${t.highlight?'1.5px solid #0E4EF5':'1px solid #E5E7EB'};border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+              <div style="font-size:14px;font-weight:700;color:#111827">${t.name}</div>
+              ${t.highlight?`<span style="font-size:10px;font-weight:700;color:#0E4EF5;background:#DBEAFE;padding:1px 7px;border-radius:5px">Current</span>`:''}
+            </div>
+            <div style="font-size:11px;color:#6B7280">${t.drops} · ${t.reservations} · ${t.team}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:15px;font-weight:700;color:#111827">${t.price}<span style="font-size:11px;font-weight:400;color:#6B7280">/mo</span></div>
+            ${!t.highlight?`<button style="margin-top:4px;padding:4px 12px;border-radius:7px;border:1px solid ${t.name==='Scale'?'#0E4EF5':'#E5E7EB'};background:${t.name==='Scale'?'#0E4EF5':'#fff'};color:${t.name==='Scale'?'#fff':'#374151'};font-size:11px;font-weight:600;cursor:pointer">${t.name==='Scale'?'Upgrade':'Downgrade'}</button>`:''}
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <button style="width:100%;background:#fff;border:1px solid #FCA5A5;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#EF4444;cursor:pointer">Cancel Subscription</button>
+  </div>`;
+}
+
+function renderPartners(){
+  const statusColor={Active:'#16A34A',Invited:'#0E4EF5',Declined:'#9CA3AF',Suspended:'#F97316'};
+  const statusBg={Active:'#DCFCE7',Invited:'#EEF2FF',Declined:'#F3F4F6',Suspended:'#FFF7ED'};
+  const typeColors={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
+  const typeTextColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  return `${hdr('Partners','Manage your partners',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <div style="background:#EEF2FF;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#0E4EF5;line-height:1.5">Only <strong>Active</strong> partners can be added to drops. Invite by Nigh handle, mobile, or email.</div>
+    ${partnersList.map(p=>`<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">${p.name.charAt(0)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:#111827">${p.name}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+            <span style="font-size:10px;color:#9CA3AF">${p.handle}</span>
+            <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;background:${typeColors[p.type]||'#f1f5f9'};color:${typeTextColors[p.type]||'#475569'}">${p.type}</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <span style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;background:${statusBg[p.status]};color:${statusColor[p.status]}">${p.status}</span>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:3px">Since ${p.since}</div>
+        </div>
+      </div>
+      ${p.status==='Active'||p.status==='Invited'?`<div style="display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #F3F4F6">
+        ${p.status==='Active'?`<button style="flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #F97316;background:#FFF7ED;color:#F97316">Suspend</button>`:
+        `<button style="flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:600;border:none;background:#0E4EF5;color:#fff">Resend Invite</button>`}
+      </div>`:''}
+    </div>`).join('')}
+    <button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;margin-top:6px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">${ic('userPlus',16)} Invite Partner</button>
+  </div>`;
+}
+function renderProfile(){
+  const a=acct();
+  return `${hdr('Location','Profile, account & venue info',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <div class="card" style="margin-bottom:14px"><div class="cb">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:14px">
+        <div style="width:60px;height:60px;border-radius:14px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;margin-bottom:10px">${a.short.charAt(0)}</div>
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:2px">${a.name}</div>
+        <div style="font-size:12px;color:#6B7280;background:#EEF2FF;color:#0E4EF5;padding:4px 10px;border-radius:6px;font-weight:600">${a.role}</div>
+      </div>
+      <!-- Read-only fields -->
+      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Identity</div>
+        ${[['Business Name',a.name],['Brand Handle','@'+a.handle],['Address / Drop Location',a.addr]].map(r=>`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:3px">${r[0]}</div><div style="font-size:13px;color:#111827;font-weight:500">${r[1]}</div></div>`).join('')}
+        <div style="font-size:10px;color:#9CA3AF;margin-top:4px;display:flex;align-items:center;gap:3px">${ic('alert',10)} To update these fields, contact Nigh support.</div>
+      </div>
+      <!-- Editable fields -->
+      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Contact & Details</div>
+        ${[['Business Phone',a.phone||'(720) 555-0145'],['Business Email',a.email||'hello@centro.com']].map(r=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">${r[0]}</label><input type="text" value="${r[1]}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box"/></div>`).join('')}
+        <div style="margin-bottom:0"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Bio / Description</label><textarea style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;min-height:70px">Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.</textarea></div>
+      </div>
+      <!-- Business info -->
+      <div style="border-bottom:1px solid #F3F4F6;padding-bottom:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Business Information</div>
+        ${[['Category',a.cat],['Sub-Category',a.subCat]].map(r=>`<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:11px"><span style="color:#6B7280">${r[0]}</span><span style="color:#111827;font-weight:500">${r[1]}</span></div>`).join('')}
+      </div>
+      <!-- Drop Settings -->
+      <div style="padding-bottom:0">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Drop Settings</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><div><div style="font-size:12px;color:#374151;font-weight:500">Max Partners per Drop</div><div style="font-size:10px;color:#9CA3AF;margin-top:2px">Partners must accept before appearing publicly</div></div><div style="display:flex;align-items:center;gap:6px">${[1,2,3,4,5].map(n=>`<button style="width:28px;height:28px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid ${a.maxPartners===n?'#0E4EF5':'#E5E7EB'};background:${a.maxPartners===n?'#EEF2FF':'#fff'};color:${a.maxPartners===n?'#0E4EF5':'#6B7280'}">${n}</button>`).join('')}</div></div>
+      </div>
+    </div></div>
+    <button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600">Save Changes</button>
+  </div>`;
+}
+function renderCustomers(){
+  if(S.modal&&S.modal.startsWith('customer-'))return renderCustomerDetail(S.modal.replace('customer-',''));
+  if(S.modal==='csv-import')return renderCsvImport();
+  const q=S.custSearch.toLowerCase();
+  const filtered=customerList.filter(c=>!q||c.name.toLowerCase().includes(q)||c.email.toLowerCase().includes(q)||c.phone.includes(q));
+  return `${hdr('Guests',`${customerList.length} contacts`,"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <!-- Import banner -->
+    <button onclick="S.modal='csv-import';S.importStep=1;render()" style="width:100%;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border:none;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer">
+      <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff">${ic('upload',20)}</div>
+      <div style="text-align:left"><div style="font-size:13px;font-weight:700;color:#fff">Import from CSV</div><div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:2px">Upload a spreadsheet from Square, Shopify & more</div></div>
+      <span style="color:rgba(255,255,255,0.5);margin-left:auto">${ic('right',16)}</span>
+    </button>
+    <!-- Search -->
+    <div style="position:relative;margin-bottom:12px">
+      <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9CA3AF">${ic('search',15)}</div>
+      <input type="text" placeholder="Search customers..." value="${S.custSearch}" oninput="S.custSearch=this.value;render()" style="width:100%;padding:9px 10px 9px 32px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;box-sizing:border-box"/>
+    </div>
+    <!-- Stats row -->
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      ${mc('Total Customers',customerList.length,'','users','#0E4EF5','#EEF2FF')}
+      ${mc('Attended a Drop',customerList.filter(c=>c.drops.length>0).length,'of '+customerList.length,'check','#16A34A','#DCFCE7')}
+    </div>
+    <!-- List -->
+    ${filtered.length===0?`<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No customers found</div>`
+    :filtered.map(c=>`
+    <div onclick="S.modal='customer-${c.id}';render()" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
+      <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${c.av}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#111827">${c.name}</div>
+        <div style="font-size:11px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.email}</div>
+        <div style="font-size:11px;color:#9CA3AF">${c.phone}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        ${c.drops.length>0?`<span style="font-size:10px;font-weight:600;color:#0D9488;background:#CCFBF1;padding:2px 8px;border-radius:8px">${c.drops.length} drop${c.drops.length>1?'s':''}</span>`:`<span style="font-size:10px;color:#9CA3AF">No drops yet</span>`}
+        <div style="color:#D1D5DB;margin-top:4px">${ic('right',14)}</div>
+      </div>
+    </div>`).join('')}
+    <button style="width:100%;background:none;border:1px dashed #D1D5DB;border-radius:10px;padding:12px;margin-top:4px;font-size:13px;font-weight:500;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px">${ic('plus',15)} Add Customer Manually</button>
+  </div>`;
+}
+function renderCustomerDetail(cid){
+  const c=customerList.find(x=>x.id===cid);
+  if(!c)return'';
+  const attended=c.drops.map(did=>drops.find(d=>d.id===did)).filter(Boolean);
+  return `${hdr(c.name,c.email,"S.modal=null;render()")}
+  <div style="padding:14px 16px">
+    <!-- Contact card -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #F3F4F6">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0">${c.av}</div>
+        <div><div style="font-size:16px;font-weight:700;color:#111827">${c.name}</div><div style="font-size:11px;color:#6B7280;margin-top:2px">Added via ${c.source} · ${c.since}</div></div>
+      </div>
+      ${[['Email',c.email,'send'],['Phone',c.phone,'bell']].map(r=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #F9FAFB">
+        <div style="color:#9CA3AF">${ic(r[2],14)}</div>
+        <div style="font-size:12px;color:#374151">${r[0]}</div>
+        <div style="font-size:12px;color:#111827;font-weight:500;margin-left:auto">${r[1]}</div>
+      </div>`).join('')}
+    </div>
+    <!-- Drop history -->
+    <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:10px">Drop History <span style="font-size:11px;font-weight:400;color:#9CA3AF">(${attended.length} attended)</span></div>
+    ${attended.length===0
+      ?`<div style="background:#F9FAFB;border-radius:10px;padding:20px;text-align:center;color:#9CA3AF;font-size:12px">This customer hasn't attended any drops yet</div>`
+      :attended.map(d=>`
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.title}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">${fmtD(d.date)} · ${d.price===0?'Free':'$'+d.price}</div>
+      </div>
+      ${bg(d.status,true)}
+    </div>`).join('')}
+  </div>`;
+}
+function renderCsvImport(){
+  const step=S.importStep||1;
+  const sampleCols=['First Name','Last Name','Email','Phone Number','Total Spent'];
+  const mapping=[{nigh:'Name',csv:'First Name + Last Name'},{nigh:'Email',csv:'Email'},{nigh:'Phone',csv:'Phone Number'}];
+  return `${hdr(step===1?'Import Customers':step===2?'Map Columns':'Review & Confirm',`Step ${step} of 3`,"S.modal=null;render()")}
+  <div style="padding:14px 16px">
+    <!-- Step indicators -->
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:20px">
+      ${[1,2,3].map((n,i)=>`
+        <div style="display:flex;align-items:center;flex:1">
+          <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:${step>=n?'#0E4EF5':'#E5E7EB'};color:${step>=n?'#fff':'#9CA3AF'}">${step>n?ic('check',13):n}</div>
+          ${i<2?`<div style="flex:1;height:2px;background:${step>n?'#0E4EF5':'#E5E7EB'}"></div>`:''}
+        </div>`).join('')}
+    </div>
+    ${step===1?`
+    <!-- Step 1: Upload -->
+    <div style="border:2px dashed #D1D5DB;border-radius:14px;padding:36px 20px;text-align:center;background:#F9FAFB;margin-bottom:16px">
+      <div style="color:#9CA3AF;margin-bottom:10px">${ic('upload',36)}</div>
+      <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:6px">Drop your CSV here</div>
+      <div style="font-size:12px;color:#9CA3AF;margin-bottom:16px">or click to browse files</div>
+      <button style="background:#0E4EF5;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600">Select CSV File</button>
+    </div>
+    <div style="background:#F3F4F6;border-radius:10px;padding:12px 14px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:6px">Supported formats</div>
+      <div style="font-size:11px;color:#6B7280;line-height:1.7">• Square, Shopify, Toast, Mindbody exports<br>• Any CSV with Name, Email, or Phone columns<br>• Max 10,000 rows per import</div>
+    </div>
+    <button onclick="S.importStep=2;render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600">Continue</button>
+    `:''}
+    ${step===2?`
+    <!-- Step 2: Map columns -->
+    <div style="background:#EEF2FF;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#0E4EF5">Match your CSV columns to Nigh fields. We've made our best guess — adjust as needed.</div>
+    <div style="font-size:11px;font-weight:600;color:#9CA3AF;display:flex;gap:8px;margin-bottom:6px;padding:0 2px">
+      <span style="flex:1">NIGH FIELD</span><span style="flex:1">YOUR CSV COLUMN</span>
+    </div>
+    ${mapping.map(m=>`
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+      <div style="flex:1;font-size:12px;font-weight:600;color:#111827">${m.nigh}</div>
+      <div style="color:#D1D5DB">${ic('right',14)}</div>
+      <select style="flex:1;padding:6px 8px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;color:#111827;outline:none">
+        ${sampleCols.map(col=>`<option ${col===m.csv||col.includes(m.csv)?'selected':''}>${col}</option>`).join('')}
+        <option>— Skip this field —</option>
+      </select>
+    </div>`).join('')}
+    <div style="background:#FFFBEB;border-radius:10px;padding:10px 12px;margin:14px 0;font-size:11px;color:#92400E;display:flex;gap:8px;align-items:flex-start">
+      <span style="flex-shrink:0;margin-top:1px">${ic('alert',13)}</span>
+      <span>Email or Phone is required to import a contact. Rows missing both will be skipped.</span>
+    </div>
+    <button onclick="S.importStep=3;render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600">Continue</button>
+    `:''}
+    ${step===3?`
+    <!-- Step 3: Preview & confirm -->
+    <div style="background:#DCFCE7;border-radius:12px;padding:16px;margin-bottom:14px;text-align:center">
+      <div style="font-size:28px;font-weight:800;color:#166534">47</div>
+      <div style="font-size:13px;font-weight:600;color:#16A34A;margin-top:2px">Customers ready to import</div>
+    </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden;margin-bottom:14px">
+      ${[['47','Valid contacts','#16A34A','#DCFCE7'],['3','Skipped — missing email & phone','#F97316','#FFF7ED'],['2','Duplicates — will be merged','#0E4EF5','#EEF2FF']].map(r=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F3F4F6">
+        <div style="width:32px;height:32px;border-radius:8px;background:${r[3]};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${r[2]}">${r[0]}</div>
+        <div style="font-size:12px;color:#374151">${r[1]}</div>
+      </div>`).join('')}
+    </div>
+    <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-bottom:16px;line-height:1.6">Imported customers will appear in your Customers list.<br>They will not be notified or added to Nigh automatically.</div>
+    <button onclick="S.modal=null;S.menuSub='customers';render()" style="width:100%;background:#16A34A;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:600;margin-bottom:8px">Import 47 Customers</button>
+    <button onclick="S.importStep=2;render()" style="width:100%;background:none;border:1px solid #E5E7EB;border-radius:10px;padding:12px;font-size:13px;font-weight:500;color:#374151">Back</button>
+    `:''}
+  </div>`;
+}
+function renderSettings(){
+  return `${hdr('Settings','Account & Preferences',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <button onclick="S.menuSub='userAccount';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('user',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">User Account</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
+    <button onclick="S.menuSub='feedback';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('msgCircle',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Send Feedback</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
+    <button onclick="S.menuSub='tos';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('file',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Terms of Service</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
+    <button onclick="S.menuSub='privacy';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('shield',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Privacy Policy</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
+    <button style="width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444;margin-top:14px">Log Out</button>
+    <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Pro v1.0</div>
+  </div>`;
+}
+function renderUserAccount(){
+  return `${hdr('User Account',null,"S.menuSub='settings';render()")}
+  <div style="padding:14px 16px">
+    <div class="card" style="margin-bottom:14px"><div class="cb">
+      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;margin-bottom:10px">JR</div>
+        <div style="font-size:11px;color:#0E4EF5;font-weight:600">@joshr</div>
+      </div>
+      ${[['First Name','Josh'],['Last Name','Ritzer'],['Username','@joshr'],['Mobile Phone','(303) 555-0192'],['Email','josh@centro.com']].map(r=>`<div style="margin-bottom:10px"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">${r[0]}</label><input type="text" value="${r[1]}" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box"/></div>`).join('')}
+      <div style="margin-bottom:0"><label style="font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Pro Account Name</label><input type="text" value="Centro Mexican Kitchen" style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#F9FAFB;outline:none;box-sizing:border-box" placeholder="How your name appears on this Pro Account"/></div>
+    </div></div>
+    <button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600;margin-bottom:10px">Save Changes</button>
+    <button style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:12px;font-size:13px;font-weight:600;color:#374151">Change Password</button>
+  </div>`;
+}
+function renderFeedback(){
+  const cats=['General','Bug Report','Feature Request','Other'];
+  return `${hdr('Send Feedback',null,"S.menuSub='settings';render()")}
+  <div style="padding:14px 16px">
+    <div class="card" style="margin-bottom:14px"><div class="cb">
+      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:10px">Category</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${cats.map((c,i)=>`<button onclick="S.fbCat=${i};render()" style="padding:6px 12px;border-radius:18px;font-size:11px;font-weight:500;border:1px solid ${(S.fbCat||0)===i?'#0E4EF5':'#E5E7EB'};background:${(S.fbCat||0)===i?'#EEF2FF':'#fff'};color:${(S.fbCat||0)===i?'#0E4EF5':'#4B5563'}">${c}</button>`).join('')}</div>
+      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px">Your Feedback</div>
+      <textarea rows="5" placeholder="Tell us what's on your mind..." style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#F9FAFB;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;margin-bottom:6px"></textarea>
+      <div style="font-size:10px;color:#9CA3AF">Your feedback helps us improve Nigh Pro for everyone.</div>
+    </div></div>
+    <button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px">${ic('send',15)} Submit Feedback</button>
+  </div>`;
+}
+function renderToS(){
+  return `${hdr('Terms of Service',null,"S.menuSub='settings';render()")}
+  <div style="padding:14px 16px;font-size:12px;color:#374151;line-height:1.6">
+    <div style="font-size:11px;color:#9CA3AF;margin-bottom:14px">Last updated: January 1, 2026</div>
+    ${[['1. Acceptance of Terms','By accessing or using the Nigh Pro platform, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the platform.'],['2. Use of the Platform','Nigh Pro is intended for use by verified business operators and their authorized team members. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.'],['3. Drop Content','All Drop content must comply with applicable laws and Nigh\'s content policies. You retain ownership of content you upload, but grant Nigh a license to display and distribute it in connection with the platform.'],['4. Payments & Refunds','Nigh processes payments on your behalf subject to our payment processing terms. Refunds to guests are subject to the refund policies you set for each Drop.'],['5. Termination','Nigh reserves the right to suspend or terminate accounts that violate these terms or engage in fraudulent activity.'],['6. Limitation of Liability','Nigh shall not be liable for indirect, incidental, or consequential damages arising from your use of the platform.'],['7. Changes to Terms','We may update these terms from time to time. Continued use of the platform constitutes acceptance of the updated terms.']].map(([h,b])=>`<div style="margin-bottom:14px"><div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">${h}</div><div>${b}</div></div>`).join('')}
+    <div style="font-size:11px;color:#9CA3AF;margin-top:6px">For questions, contact legal@nigh.com</div>
+  </div>`;
+}
+function renderPrivacy(){
+  return `${hdr('Privacy Policy',null,"S.menuSub='settings';render()")}
+  <div style="padding:14px 16px;font-size:12px;color:#374151;line-height:1.6">
+    <div style="font-size:11px;color:#9CA3AF;margin-bottom:14px">Last updated: January 1, 2026</div>
+    ${[['1. Information We Collect','We collect information you provide when creating an account, managing Drops, and processing transactions. This includes business details, contact information, and usage data.'],['2. How We Use Your Information','Your information is used to operate the platform, process payments, communicate with you, and improve our services. We do not sell your personal data to third parties.'],['3. Guest Data','Guest information collected through your Drops is subject to your own privacy practices. You are responsible for handling guest data in compliance with applicable privacy laws.'],['4. Data Security','We use industry-standard security measures to protect your information. However, no method of transmission over the internet is 100% secure.'],['5. Data Retention','We retain your data as long as your account is active. You may request deletion of your data by contacting our support team.'],['6. Third-Party Services','We use third-party services for payment processing, analytics, and communication. These services have their own privacy policies.'],['7. Contact Us','If you have questions about this Privacy Policy, please contact privacy@nigh.com']].map(([h,b])=>`<div style="margin-bottom:14px"><div style="font-size:13px;font-weight:600;color:#111827;margin-bottom:4px">${h}</div><div>${b}</div></div>`).join('')}
+  </div>`;
+}
+
+// ═══ MODALS ═══
+function renderModal(){
+  const mr=document.getElementById('mr');
+  if(!S.modal){mr.innerHTML='';return;}
+
+  if(S.modal==='dropmenu'){
+    const d=drops[S.drop||0];
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:14px">Drop Actions</div>
+      ${[
+        {ic:'send',l:'Direct Offers',d:'Send personal invite to VIPs',act:"modal(null)"},
+        {ic:'radio',l:'Broadcast Message',d:'Notify all spot holders',act:"modal('broadcast')"},
+        {ic:'qr',l:'Show QR Code',d:'Display or print drop QR',act:"modal(null)"},
+        {ic:'share',l:'Share Drop',d:'nigh.com/'+d.slug,act:"modal('share-'+(S.drop||0))"},
+        {ic:'history',l:'Drop History',d:'View all changes & edits',act:"modal('history')"},
+      ].map(m=>`<button onclick="${m.act}" style="width:100%;padding:12px 14px;background:none;border:none;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:12px;text-align:left">
+        <div style="width:36px;height:36px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#374151">${ic(m.ic,18)}</div>
+        <div><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div>
+      </button>`).join('')}
+    </div></div>`;
+  }
+  else if(S.modal==='broadcast'){
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('radio',18)}</div><div><div style="font-size:15px;font-weight:700;color:#111827">Broadcast Message</div><div style="font-size:11px;color:#6B7280">Send to all spot holders</div></div></div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:6px">This will notify <strong>8 guests</strong> via push notification.</div>
+      <textarea placeholder="e.g. 'Venue moved to back patio entrance'" rows="4" style="width:100%;padding:12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#F9FAFB;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box;margin-bottom:12px"></textarea>
+      <div style="display:flex;gap:8px"><button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Cancel</button><button onclick="modal(null)" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('send',15)} Send</button></div>
+    </div></div>`;
+  }
+  else if(S.modal&&S.modal.startsWith('share')){
+    const idx=parseInt(S.modal.split('-')[1])||0;const d=drops[idx];
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Share Drop</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:14px">${d.title}</div>
+      <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:10px;padding:10px 14px;margin-bottom:14px">
+        <span style="font-size:13px;color:#374151;flex:1;font-weight:500">nigh.com/${d.slug}</span>
+        <button style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:#0E4EF5;color:#fff">Copy</button>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        ${['SMS','Email','Instagram','More'].map(s=>`<button style="width:60px;padding:10px 0;border-radius:10px;border:1px solid #E5E7EB;background:#fff;font-size:10px;color:#374151;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#6B7280">${ic(s==='SMS'?'msgCircle':s==='Email'?'send':s==='Instagram'?'cam':'share',16)}</div>${s}</button>`).join('')}
+      </div>
+    </div></div>`;
+  }
+  else if(S.modal==='history'){
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:14px">Drop History</div>
+      ${[
+        {time:'Mar 5, 11:02 AM',who:'Josh Ritzer',act:'Published drop'},
+        {time:'Mar 5, 10:58 AM',who:'Josh Ritzer',act:'Updated description'},
+        {time:'Mar 5, 10:46 AM',who:'System',act:'@shedeurs declined partner invite'},
+        {time:'Mar 5, 10:45 AM',who:'Josh Ritzer',act:'Invited @shedeurs as partner'},
+        {time:'Mar 5, 10:42 AM',who:'Josh Ritzer',act:'Invited @titosvodka as partner'},
+        {time:'Mar 5, 10:40 AM',who:"Tito's Vodka",act:'Accepted partner invite'},
+        {time:'Mar 4, 3:30 PM',who:'Maria Santos',act:'Updated capacity: 6 → 8'},
+        {time:'Mar 4, 2:15 PM',who:'Josh Ritzer',act:'Created drop'},
+      ].map((h,i,a)=>`
+        <div style="display:flex;gap:10px;padding:10px 0;${i<a.length-1?'border-bottom:1px solid #F3F4F6':''}">
+          <div style="width:8px;display:flex;flex-direction:column;align-items:center;padding-top:4px"><div style="width:8px;height:8px;border-radius:50%;background:${i===0?'#0E4EF5':'#D1D5DB'}"></div>${i<a.length-1?'<div style="width:1px;flex:1;background:#E5E7EB;margin-top:4px"></div>':''}</div>
+          <div><div style="font-size:12px;font-weight:600;color:#111827">${h.act}</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">${h.who} — ${h.time}</div></div>
+        </div>
+      `).join('')}
+    </div></div>`;
+  }
+  else if(S.modal==='invite-partner'){
+    const d=drops[S.drop||0];const rem=acct().maxPartners-d.partners.length;
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('userPlus',18)}</div><div><div style="font-size:15px;font-weight:700;color:#111827">Invite Partner</div><div style="font-size:11px;color:#6B7280">${rem} slot${rem!==1?'s':''} remaining of ${acct().maxPartners}</div></div></div>
+      <div style="background:#EEF2FF;border-radius:8px;padding:8px 10px;margin:10px 0;font-size:11px;color:#0E4EF5;line-height:1.5">Partners won't appear on the public drop until they accept your invite.</div>
+      <div style="margin-bottom:10px"><label style="font-size:11px;font-weight:600;color:#374151;display:block;margin-bottom:5px">Nigh Handle or Name</label>
+      <div style="display:flex;gap:6px"><input id="pinv" placeholder="e.g. @shedeurs or 303-555-0100" style="flex:1;padding:9px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none"/></div></div>
+      <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:7px">Quick Add from Previous Drops</div>
+      ${partnersList.filter(p=>p.status==='Active').map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6">
+        <div style="display:flex;align-items:center;gap:8px"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${p.name.charAt(0)}</div><div><div style="font-size:12px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#9CA3AF">${p.handle}</div></div></div>
+        <button onclick="modal(null)" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:none;background:#0E4EF5;color:#fff">Invite</button>
+      </div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:14px"><button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Cancel</button><button onclick="modal(null)" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('send',15)} Send Invite</button></div>
+    </div></div>`;
+  }
+  else{mr.innerHTML='';}
+}
+
+// ── Render ──
+function render(){
+  const c=document.getElementById('scr');
+  const m={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCI,guests:renderG,menu:renderMenu};
+  c.innerHTML=(m[S.scr]||renderHome)();
+  renderTB();renderModal();c.scrollTop=0;
+}
+render();
+</script>
+</body>
+</html>
