@@ -2728,8 +2728,8 @@ function renderModal(){
     const sel=S.shareSelected||[];
     const allIds=friendsList.map(f=>f.id);
     const allChk=allIds.length>0&&allIds.every(id=>sel.includes(id));
-    const toggleAll=`var all=${JSON.stringify(allIds)};S.shareSelected=all.every(id=>( S.shareSelected||[]).includes(id))?[]:[...all];modal('share-friends-${idx}')`;
-    const toggleF=id=>`var s=S.shareSelected||[];var i=s.indexOf('${id}');if(i>-1)s.splice(i,1);else s.push('${id}');S.shareSelected=[...s];modal('share-friends-${idx}')`;
+    const toggleAll=`(function(){var ids=friendsList.map(function(f){return f.id;});var s=S.shareSelected||[];S.shareSelected=ids.every(function(id){return s.indexOf(id)>-1;})?[]:ids.slice();modal('share-friends-${idx}');})()`;
+    const toggleF=id=>`(function(){var s=S.shareSelected||[];var i=s.indexOf('${id}');if(i>-1)s.splice(i,1);else s.push('${id}');S.shareSelected=s.slice();modal('share-friends-${idx}');})()`;
     const sendLabel=sel.length===allIds.length&&allIds.length>0?'Send to All Friends':`Send to ${sel.length} ${sel.length===1?'friend':'friends'}`;
     mr.innerHTML=`<div class="modal-bg" onclick="S.shareSelected=[];modal('share-${idx}')"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;max-height:85vh;display:flex;flex-direction:column"><div class="mh"></div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
