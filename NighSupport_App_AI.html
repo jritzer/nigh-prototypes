@@ -361,6 +361,7 @@ function svgI(n,s){
     user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
     users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
     alert:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+    bell:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
     upload:'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>',
     eye:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
     edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',
@@ -1620,8 +1621,8 @@ function go(page,extra){
   const navKey=page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='dropDetail'?'drops':page;
   const nav=document.getElementById('nav-'+navKey);
   if(nav)nav.classList.add('active');
-  const titles={dashboard:'Dashboard',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',orgs:'Organizations',orgDetail:'Organization',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration'};
-  const subs={dashboard:'Welcome back, Josh',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all organizations',users:'Search, view and edit user accounts',userDetail:'View and edit user account',orgs:'Manage all organizations',orgDetail:'View and edit organization config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps'};
+  const titles={dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',orgs:'Organizations',orgDetail:'Organization',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration'};
+  const subs={dashboard:'Welcome back, Josh',inbox:'Escalations, Pro messages, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all organizations',users:'Search, view and edit user accounts',userDetail:'View and edit user account',orgs:'Manage all organizations',orgDetail:'View and edit organization config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   document.getElementById('topbar-sub').textContent=subs[page]||'';
   document.getElementById('content').innerHTML=renderPage(page);
@@ -1665,7 +1666,66 @@ function renderPage(p){
   if(p==='flags')return rFlags();
   if(p==='videos')return rVideos();
   if(p==='niyaconfig')return rNiyaConfig();
+  if(p==='inbox')return rInbox();
   return '<p>Page not found</p>';
+}
+
+// ── SUPPORT INBOX DATA ────────────────────────────────────────────────────
+const supportInbox=[
+  {id:1,type:'escalation',unread:true,priority:'urgent',time:'4 min ago',from:'Priya Okafor',fromRole:'Tier 2 Agent',subject:'Duplicate charge — Williams-Sonoma, $90',body:'Escalating to you — customer has contacted bank and is disputing. Needs resolution before EOD. Case SC-0041.',action:'View Case',actionFn:"go('support')"},
+  {id:2,type:'pro_message',unread:true,priority:'high',time:'18 min ago',from:'Centro Boulder',fromRole:'Pro Account',subject:'Our drop isn\'t showing in the feed',body:'Org: centroboulder. Their drop "Truffle Pasta Night" scheduled for 7 PM isn\'t visible in the consumer app. Investigated — looks like a geo-fence issue.',action:'View Org',actionFn:"go('orgDetail',{orgId:'centroboulder'})"},
+  {id:3,type:'flag',unread:true,priority:'high',time:'44 min ago',from:'Niya AI',fromRole:'Automated Flag',subject:'Suspicious check-in pattern — 3 accounts',body:'Three accounts (U003, U011, U018) checked in to separate drops within 90 seconds from the same IP. Possible bot or shared-device fraud.',action:'View Users',actionFn:"go('users')"},
+  {id:4,type:'escalation',unread:true,priority:'high',time:'1 hr ago',from:'Marcus Webb',fromRole:'Tier 1 Agent',subject:'REI Co-op — collections not showing',body:'Pro user reporting their drop collections are not appearing in the enterprise dashboard. Reproducible. Needs engineering ticket.',action:'View Case',actionFn:"go('support')"},
+  {id:5,type:'internal',unread:false,priority:'normal',time:'2 hr ago',from:'Ryan Torres',fromRole:'Nigh Team',subject:'New Onboarding App — Avery Brewing',body:'Avery Brewing Co has submitted their Pro application. Revenue potential: high. Recommend fast-track review.',action:'View Queue',actionFn:"go('onboarding')"},
+  {id:6,type:'pro_message',unread:false,priority:'normal',time:'3 hr ago',from:'Elixir Spa',fromRole:'Pro Account',subject:'Refund not processed after 5 days',body:'Customer Jordan Lee (T006-A) requested refund on Mar 1. Still showing Pending in Stripe. Needs manual push.',action:'View Financials',actionFn:"go('financials')"},
+  {id:7,type:'flag',unread:false,priority:'normal',time:'Yesterday',from:'Niya AI',fromRole:'Automated Flag',subject:'Off-platform data collection reported',body:'Guest reported businesses collecting names/phones via paper form at drop. 6 other attendees may be affected. T&S analyst review required.',action:'View Case',actionFn:"go('support')"},
+  {id:8,type:'internal',unread:false,priority:'normal',time:'Yesterday',from:'Sarah Chen',fromRole:'Administrator',subject:'Niya Config update — tone adjustment',body:'Updated Niya\'s escalation threshold for billing disputes from Tier 2 to Tier 3. Please review the new config before tomorrow\'s rollout.',action:'View Config',actionFn:"go('niyaconfig')"},
+  {id:9,type:'pro_message',unread:false,priority:'normal',time:'Mar 4',from:'Shine Restaurant',fromRole:'Pro Account',subject:'Missing payout — Feb drop revenue',body:'Org reports $840 in drop revenue from Feb 28 not reflected in their Payouts dashboard. Stripe shows captured.',action:'View Financials',actionFn:"go('financials')"},
+  {id:10,type:'internal',unread:false,priority:'normal',time:'Mar 3',from:'Priya Okafor',fromRole:'Tier 2 Agent',subject:'4 new Pro accounts stalled 5+ days',body:'All completed onboarding but never posted a first drop. Early data suggests drops in week 1 correlate with retention. Proactive outreach recommended.',action:'View Queue',actionFn:"go('onboarding')"},
+];
+function rInbox(){
+  const filter=S.inboxFilter||'all';
+  const filtered=filter==='all'?supportInbox:supportInbox.filter(m=>m.type===filter);
+  const unread=supportInbox.filter(m=>m.unread).length;
+  const typeColor={escalation:'#EF4444',pro_message:'#0E4EF5',flag:'#F59E0B',internal:'#7C3AED'};
+  const typeLabel={escalation:'Escalation',pro_message:'Pro Message',flag:'AI Flag',internal:'Internal'};
+  const typeBg={escalation:'#FEF2F2',pro_message:'#EEF2FF',flag:'#FFFBEB',internal:'#F5F3FF'};
+  const priorityBadge=p=>p==='urgent'?`<span style="font-size:10px;font-weight:700;color:#EF4444;background:#FEF2F2;padding:1px 7px;border-radius:8px;border:1px solid #FCA5A5">URGENT</span>`:p==='high'?`<span style="font-size:10px;font-weight:600;color:#F59E0B;background:#FFFBEB;padding:1px 7px;border-radius:8px;border:1px solid #FDE68A">High</span>`:'';
+  const filters=[{key:'all',label:'All'},{key:'escalation',label:'Escalations'},{key:'pro_message',label:'Pro Messages'},{key:'flag',label:'AI Flags'},{key:'internal',label:'Internal'}];
+  return`<div style="max-width:860px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#111827">Inbox</div>
+        <div style="font-size:13px;color:#6B7280">${unread} unread · ${supportInbox.length} total</div>
+      </div>
+      <button onclick="supportInbox.forEach(m=>m.unread=false);render&&render();document.getElementById('content').innerHTML=rInbox()" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;cursor:pointer">Mark all read</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+      ${filters.map(f=>`<button onclick="S.inboxFilter='${f.key}';document.getElementById('content').innerHTML=rInbox()" style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid ${filter===f.key?'#1B2A4A':'#E5E7EB'};background:${filter===f.key?'#1B2A4A':'#fff'};color:${filter===f.key?'#fff':'#6B7280'};cursor:pointer">${f.label}${f.key==='all'?` (${supportInbox.filter(m=>m.unread).length})`:f.key==='escalation'?` (${supportInbox.filter(m=>m.type==='escalation'&&m.unread).length})`:''}</button>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">
+      ${filtered.length===0?`<div style="padding:48px;text-align:center;color:#9CA3AF">Nothing here</div>`:''}
+      ${filtered.map((msg,i)=>`
+        <div style="padding:16px 20px;${i<filtered.length-1?'border-bottom:1px solid #F3F4F6':''};${msg.unread?'background:#FAFBFF;border-left:3px solid #0E4EF5':'border-left:3px solid transparent'};display:flex;gap:14px;align-items:flex-start">
+          <div style="width:40px;height:40px;border-radius:10px;background:${typeBg[msg.type]};border:1px solid ${typeColor[msg.type]}22;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${msg.type==='escalation'?svgI('alert',16,typeColor[msg.type]):msg.type==='pro_message'?svgI('store',16,typeColor[msg.type]):msg.type==='flag'?svgI('zap',16,typeColor[msg.type]):svgI('users',16,typeColor[msg.type])}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:${msg.unread?'700':'600'};color:#111827">${msg.subject}</span>
+              ${priorityBadge(msg.priority)}
+              <span style="font-size:10px;font-weight:600;color:${typeColor[msg.type]};background:${typeBg[msg.type]};padding:1px 7px;border-radius:8px">${typeLabel[msg.type]}</span>
+              <span style="font-size:11px;color:#9CA3AF;margin-left:auto">${msg.time}</span>
+            </div>
+            <div style="font-size:12px;color:#374151;margin-bottom:2px;font-weight:500">${msg.from} <span style="color:#9CA3AF;font-weight:400">· ${msg.fromRole}</span></div>
+            <div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:8px">${msg.body}</div>
+            <button onclick="${msg.actionFn}" style="padding:5px 12px;border-radius:7px;font-size:11px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;cursor:pointer">${msg.action} →</button>
+          </div>
+          ${msg.unread?`<div style="width:8px;height:8px;border-radius:50%;background:#0E4EF5;flex-shrink:0;margin-top:4px"></div>`:''}
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -5432,6 +5492,7 @@ function renderSidebar(){
   document.getElementById('sb-nav').innerHTML=`
     <div class="sb-section">OVERVIEW</div>
     <button class="sb-item active" id="nav-dashboard" onclick="go('dashboard')">${svgI('home')} Dashboard</button>
+    <button class="sb-item" id="nav-inbox" onclick="go('inbox')">${svgI('bell')} Inbox <span class="badge" style="background:#EF4444">${supportInbox.filter(m=>m.unread).length}</span></button>
     <button class="sb-item" id="nav-search" onclick="go('search')">${svgI('search')} Search</button>
     <div class="sb-section">OPERATIONS</div>
     <button class="sb-item" id="nav-onboarding" onclick="go('onboarding')">${svgI('zap')} Onboarding Queue <span class="badge" id="badge-onboarding">3</span></button>
