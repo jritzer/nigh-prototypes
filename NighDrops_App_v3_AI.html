@@ -2735,14 +2735,13 @@ function renderModal(){
     const sendLabel=sel.length===allIds.length&&allIds.length>0?'Send to All Friends':sel.length>0?`Send to ${sel.length} ${sel.length===1?'friend':'friends'}`:'Select friends to send';
     const chkSVG=`<svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>`;
 
-    // In-place update helper — no re-render, just DOM patches
-    const updateUI=`(function(){
+    // Define a global helper once — keeps onclick attrs clean (no embedded SVG/double-quotes)
+    window._sfUpdate=function(){
       var s=S.shareSelected||[];
       var ids=friendsList.map(function(f){return f.id;});
       var n=s.length;
       var allC=ids.length>0&&ids.every(function(id){return s.indexOf(id)>-1;});
-      var svg='<svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
-      // update every checkbox
+      var svg='<svg width="12" height="12" viewBox="0 0 24 24" stroke=\'#fff\' stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
       ids.forEach(function(id){
         var c=document.getElementById('sfcb-'+id);
         if(!c)return;
@@ -2751,10 +2750,8 @@ function renderModal(){
         c.style.borderColor=on?'#0E4EF5':'#D1D5DB';
         c.innerHTML=on?svg:'';
       });
-      // update all-friends checkbox
       var ac=document.getElementById('sfcb-all');
       if(ac){ac.style.background=allC?'#0E4EF5':'#fff';ac.style.borderColor=allC?'#0E4EF5':'#D1D5DB';ac.innerHTML=allC?svg:'';}
-      // update send button
       var btn=document.getElementById('sf-send');
       if(btn){
         btn.disabled=n===0;
@@ -2763,10 +2760,10 @@ function renderModal(){
         btn.style.cursor=n?'pointer':'default';
         btn.textContent=n===0?'Select friends to send':n===ids.length?'Send to All Friends':'Send to '+n+(n===1?' friend':' friends');
       }
-    })()`;
+    };
 
-    const toggleF=function(id){return`(function(){var s=S.shareSelected||[];var i=s.indexOf('${id}');if(i>-1)s.splice(i,1);else s.push('${id}');S.shareSelected=s.slice();${updateUI}})()`};
-    const toggleAll=`(function(){var ids=friendsList.map(function(f){return f.id;});var s=S.shareSelected||[];S.shareSelected=ids.every(function(id){return s.indexOf(id)>-1;})?[]:ids.slice();${updateUI}})()`;
+    const toggleF=function(id){return`(function(){var s=S.shareSelected||[];var i=s.indexOf('${id}');if(i>-1)s.splice(i,1);else s.push('${id}');S.shareSelected=s.slice();_sfUpdate();})()`;};
+    const toggleAll=`(function(){var ids=friendsList.map(function(f){return f.id;});var s=S.shareSelected||[];S.shareSelected=ids.every(function(id){return s.indexOf(id)>-1;})?[]:ids.slice();_sfUpdate();})()`;
 
     const renderRow=function(item,type){
       const id=item.id; const chk=sel.indexOf(id)>-1;
