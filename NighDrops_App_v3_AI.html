@@ -2725,10 +2725,14 @@ function renderModal(){
   if(S.modal&&S.modal.startsWith('share-friends')){
     const idx=parseInt(S.modal.split('-')[2])||0;const d=feedDrops[idx];
     const sel=S.shareSelected||[];
-    const groups=(S.friendGroups||[{id:'G001',name:'Wine Crew',members:['F001','F002','F003']},{id:'G002',name:'Hiking Buddies',members:['F002','F004']}]);
+    const groups=(S.friendGroups||[
+      {id:'G001',name:'Wine Crew',members:['F001','F002','F003']},
+      {id:'G002',name:'Hiking Buddies',members:['F002','F004']},
+      {id:'G003',name:'Boulder Social',members:['F001','F002','F003','F004','F005','F006','F007','F008','F009','FX01','FX02','FX03','FX04','FX05']}
+    ]);
     const frequentFriendIds=['F001','F002','F003'];
     const frequentFriends=friendsList.filter(function(f){return frequentFriendIds.indexOf(f.id)>-1;});
-    const frequentGroups=groups.slice(0,1);
+    const frequentGroups=groups.slice(0,2);
     const remainingFriends=friendsList.filter(function(f){return frequentFriendIds.indexOf(f.id)===-1;});
     const allIds=friendsList.map(function(f){return f.id;});
     const allChk=allIds.length>0&&allIds.every(function(id){return sel.indexOf(id)>-1;});
