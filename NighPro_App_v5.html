@@ -46,7 +46,20 @@ button{cursor:pointer}
 <script>
 let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,
-  formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0};
+  formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,inboxFilter:'all'};
+
+const proInbox=[
+  {id:1,type:'reservation',unread:true,time:'2 min ago',title:'New Reservation',body:'Sarah Mitchell just reserved 2 spots for Nike Air Max Day Access.',av:'SM',avColor:'#0E4EF5',drop:'Nike Air Max Day Access'},
+  {id:2,type:'headsup_reply',unread:true,time:'14 min ago',title:'Reply to your Heads Up',body:'Alex Rivera replied: "Is there parking nearby? So excited for this!"',av:'AR',avColor:'#8B5CF6',drop:null},
+  {id:3,type:'partner',unread:true,time:'1 hr ago',title:'Partner Request',body:'@titosvodka accepted your partnership request for Nike Air Max Day Access.',av:'TV',avColor:'#F59E0B',drop:'Nike Air Max Day Access'},
+  {id:4,type:'checkin',unread:false,time:'2 hr ago',title:'5 Guests Checked In',body:'Jordan Lee, Maya Torres, and 3 others have checked in to Nike Air Max Day Access.',av:null,avColor:'#0D9488',drop:'Nike Air Max Day Access'},
+  {id:5,type:'alert',unread:false,time:'2 hr ago',title:'Drop Sold Out 🎉',body:'Nike Air Max Day Access just sold out! All 8 spots are reserved.',av:null,avColor:'#22C55E',drop:'Nike Air Max Day Access'},
+  {id:6,type:'reservation',unread:false,time:'Yesterday',title:'New Reservation',body:'Chris Park reserved 1 spot for Craft Beer Happy Hour — Mar 6.',av:'CP',avColor:'#0E4EF5',drop:'Craft Beer Happy Hour'},
+  {id:7,type:'headsup_reply',unread:false,time:'Yesterday',title:'Reply to your Heads Up',body:'Jamie Nguyen replied: "Fresh truffle pasta?? On my way!"',av:'JN',avColor:'#8B5CF6',drop:null},
+  {id:8,type:'noshow',unread:false,time:'Mar 4',title:'No-Show Recorded',body:'Kevin Walker was marked as a no-show for Weekend Brunch. A refund was issued.',av:'KW',avColor:'#F97316',drop:'Weekend Brunch'},
+  {id:9,type:'alert',unread:false,time:'Mar 4',title:'Drop Starting in 30 min',body:'Nike Air Max Day Access goes live at 2:00 PM. Make sure your team is ready.',av:null,avColor:'#0E4EF5',drop:'Nike Air Max Day Access'},
+  {id:10,type:'partner',unread:false,time:'Mar 3',title:'New Partner Request',body:'@nikeboulder wants to partner on your next drop. Review their request.',av:'NB',avColor:'#F59E0B',drop:null},
+];
 const TODAY=new Date('2026-03-05T12:00:00');
 function go(scr,x){S.scr=scr;if(x)Object.assign(S,x);
   if(scr==='create'){S.cStep=1;if(!x||!x.cloneFrom)S.cloneFrom=null;}
@@ -205,8 +218,9 @@ function hdr(t,sub,back,right){return `<div style="background:#fff;padding:12px 
 
 // Tab
 function renderTB(){
-  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'guests',ic:'users',l:'Guests'},{id:'menu',ic:'menu2',l:'Menu'}];
-  document.getElementById('tb').innerHTML=tabs.map(t=>`<button class="tt${S.scr===t.id||(S.scr==='liveview'&&t.id==='home')?' a':''}" onclick="go('${t.id}')">${ic(t.ic,22)}<span>${t.l}</span></button>`).join('');
+  const unreadCount=proInbox.filter(m=>m.unread).length;
+  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'inbox',ic:'bell',l:'Inbox',badge:unreadCount},{id:'menu',ic:'menu2',l:'Menu'}];
+  document.getElementById('tb').innerHTML=tabs.map(t=>`<button class="tt${S.scr===t.id||(S.scr==='liveview'&&t.id==='home')?' a':''}" onclick="go('${t.id}')" style="position:relative">${ic(t.ic,22)}${t.badge?`<span style="position:absolute;top:4px;right:50%;transform:translateX(10px);background:#EF4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;line-height:1.4">${t.badge}</span>`:''}<span>${t.l}</span></button>`).join('');
 }
 
 // ═══ HOME ═══
@@ -226,7 +240,7 @@ function renderHome(){
         <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">${acct().short.charAt(0)}</div>
         <div style="text-align:left"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px">${acct().short} ${ic('down',14)}</div><div style="font-size:10px;opacity:0.6">${acct().role}</div></div>
       </button>
-      <button style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;color:#fff">${ic('bell',18)}</button>
+      <button onclick="go('inbox')" style="position:relative;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;color:#fff">${ic('bell',18)}${proInbox.filter(m=>m.unread).length?`<span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid #1B2A4A"></span>`:''}</button>
     </div>
     ${S.showAcct?`<div class="fi" style="margin-top:10px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">${accts.map((a,i)=>`<button onclick="acctIdx=${i};S.showAcct=false;render()" style="width:100%;padding:10px 14px;background:${i===acctIdx?'rgba(255,255,255,0.15)':'transparent'};border:none;color:#fff;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid rgba(255,255,255,0.08)':'none'}"><div style="width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${a.short.charAt(0)}</div><div><div style="font-size:12px;font-weight:600">${a.name}</div><div style="font-size:10px;opacity:0.6">${a.role}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</button>`).join('')}</div>`:''}
   </div>
@@ -1198,9 +1212,56 @@ function renderModal(){
 }
 
 // ── Render ──
+function renderInbox(){
+  const filter=S.inboxFilter||'all';
+  const typeMap={reservation:'all',headsup_reply:'messages',partner:'partners',checkin:'activity',alert:'activity',noshow:'activity'};
+  const filtered=filter==='all'?proInbox:proInbox.filter(m=>typeMap[m.type]===filter);
+  const unread=proInbox.filter(m=>m.unread).length;
+  const filters=[{key:'all',label:'All'},{key:'activity',label:'Activity'},{key:'messages',label:'Messages'},{key:'partners',label:'Partners'}];
+  const typeIcon={
+    reservation:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>',
+    headsup_reply:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+    partner:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',
+    checkin:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"/></svg>',
+    alert:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>',
+    noshow:'<svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+  };
+  return`
+  <div style="background:#F9FAFB;min-height:100%">
+    <div style="background:#fff;padding:16px 16px 0;border-bottom:1px solid #E5E7EB;position:sticky;top:0;z-index:99">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+        <div style="font-size:22px;font-weight:800;color:#111827">Inbox</div>
+        ${unread>0?`<span style="font-size:11px;font-weight:600;color:#0E4EF5;background:#EEF2FF;padding:3px 10px;border-radius:20px">${unread} new</span>`:''}
+      </div>
+      <div style="display:flex;gap:6px;padding:10px 0 0;overflow-x:auto">
+        ${filters.map(f=>`<button onclick="S.inboxFilter='${f.key}';render()" style="flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid ${filter===f.key?'#0E4EF5':'#E5E7EB'};background:${filter===f.key?'#0E4EF5':'#fff'};color:${filter===f.key?'#fff':'#6B7280'};cursor:pointer;font-family:inherit;margin-bottom:10px">${f.label}</button>`).join('')}
+      </div>
+    </div>
+    <div>
+      ${filtered.length===0?`<div style="text-align:center;padding:48px 24px;color:#9CA3AF;font-size:14px">Nothing here yet</div>`:''}
+      ${filtered.map(msg=>`
+        <div onclick="${msg.type==='partner'?"S.menuSub='partners';S.scr='menu';render()":msg.type==='checkin'||msg.type==='noshow'?"S.scr='checkin';render()":''}" style="background:#fff;margin:0;padding:14px 16px;border-bottom:1px solid #F3F4F6;display:flex;gap:12px;align-items:flex-start;cursor:pointer;${msg.unread?'border-left:3px solid #0E4EF5;':''}" >
+          <div style="width:46px;height:46px;flex-shrink:0;border-radius:${msg.type==='partner'?'10px':'50%'};background:${msg.avColor};display:flex;align-items:center;justify-content:center;">
+            ${msg.av?`<span style="font-size:13px;font-weight:700;color:#fff">${msg.av}</span>`:typeIcon[msg.type]||''}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+              <div style="font-size:13px;font-weight:${msg.unread?'700':'600'};color:#111827">${msg.title}</div>
+              <div style="font-size:11px;color:#9CA3AF;flex-shrink:0;margin-left:8px">${msg.time}</div>
+            </div>
+            <div style="font-size:12px;color:#6B7280;line-height:1.45">${msg.body}</div>
+            ${msg.drop?`<div style="margin-top:5px;font-size:11px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;gap:3px">${ic('zap',11)} ${msg.drop}</div>`:''}
+          </div>
+          ${msg.unread?`<div style="width:8px;height:8px;border-radius:50%;background:#0E4EF5;flex-shrink:0;margin-top:4px"></div>`:''}
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
 function render(){
   const c=document.getElementById('scr');
-  const m={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCI,guests:renderG,menu:renderMenu};
+  const m={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCI,guests:renderG,menu:renderMenu,inbox:renderInbox};
   c.innerHTML=(m[S.scr]||renderHome)();
   renderTB();renderModal();c.scrollTop=0;
 }
