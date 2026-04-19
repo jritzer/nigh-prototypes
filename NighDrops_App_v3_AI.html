@@ -2726,11 +2726,14 @@ function renderModal(){
     const idx=parseInt(S.modal.split('-')[1])||0;const d=feedDrops[idx];
     const shareSel=S.shareSelected||[];
     const groups=(S.friendGroups||[{id:'G001',name:'Wine Crew',members:['F001','F002','F003']},{id:'G002',name:'Hiking Buddies',members:['F002','F004']}]);
-    const allTargets=[
-      ...groups.map(g=>({id:g.id,type:'group',name:g.name,av:g.name.split(' ').map(w=>w[0]).join('').slice(0,2),count:g.members.length})),
-      ...friendsList.map(f=>({id:f.id,type:'friend',name:f.name,uname:f.uname,av:f.av}))
-    ];
+    const friendTargets=friendsList.map(f=>({id:f.id,type:'friend',name:f.name,uname:f.uname,av:f.av}));
+    const groupTargets=groups.map(g=>({id:g.id,type:'group',name:g.name,av:g.name.split(' ').map(w=>w[0]).join('').slice(0,2),count:g.members.length}));
+    const allTargets=[...groupTargets,...friendTargets];
+    const allIds=allTargets.map(t=>t.id);
+    const allSelected=allIds.every(id=>shareSel.includes(id));
+    const toggleAll=`var all=${JSON.stringify(allIds)};if(${allSelected})S.shareSelected=[];else S.shareSelected=all.slice();modal('share-${idx}')`;
     const toggle=id=>`var sel=S.shareSelected||[];var i=sel.indexOf('${id}');if(i>-1)sel.splice(i,1);else sel.push('${id}');S.shareSelected=sel;modal('share-${idx}')`;
+    const sendLabel=allSelected?'Send to All Friends':`Send to ${shareSel.length} ${shareSel.length===1?'person':'people'}`;
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:2px">Share Drop</div>
       <div style="font-size:12px;color:#6B7280;margin-bottom:14px">${d.title}</div>
@@ -2738,6 +2741,15 @@ function renderModal(){
       <!-- Share on Nigh -->
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px">Share on Nigh</div>
       <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;margin-bottom:${shareSel.length?'12px':'16px'}">
+        <!-- All Friends tile -->
+        <button onclick="${toggleAll}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;flex-shrink:0;width:58px">
+          <div style="width:48px;height:48px;border-radius:14px;background:${allSelected?'#0E4EF5':'#EEF2FF'};display:flex;align-items:center;justify-content:center;border:2px solid ${allSelected?'#0E4EF5':'transparent'};transition:all 0.15s;position:relative">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${allSelected?'#fff':'#0E4EF5'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            ${allSelected?`<div style="position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:#0E4EF5;border:2px solid #fff;display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg></div>`:''}
+          </div>
+          <span style="font-size:10px;color:${allSelected?'#0E4EF5':'#374151'};font-weight:${allSelected?'600':'400'};text-align:center;line-height:1.2">All Friends</span>
+        </button>
+        <!-- Individual groups + friends -->
         ${allTargets.map(t=>{
           const sel=shareSel.includes(t.id);
           return`<button onclick="${toggle(t.id)}" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;flex-shrink:0;width:58px">
@@ -2749,7 +2761,7 @@ function renderModal(){
           </button>`;
         }).join('')}
       </div>
-      ${shareSel.length?`<button onclick="S.shareSelected=[];modal(null)" style="width:100%;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px;font-family:inherit">Send to ${shareSel.length} ${shareSel.length===1?'person':'people'}</button>`:''}
+      ${shareSel.length?`<button onclick="S.shareSelected=[];modal(null)" style="width:100%;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px;font-family:inherit">${sendLabel}</button>`:''}
 
       <!-- Copy link -->
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px">Or Share Link</div>
