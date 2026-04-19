@@ -2770,27 +2770,61 @@ function renderModal(){
     const toggleF=function(id){return`(function(){var s=S.shareSelected||[];var i=s.indexOf('${id}');if(i>-1)s.splice(i,1);else s.push('${id}');S.shareSelected=s.slice();_sfUpdate();})()`;};
     const toggleAll=`(function(){var ids=friendsList.map(function(f){return f.id;});var s=S.shareSelected||[];S.shareSelected=ids.every(function(id){return s.indexOf(id)>-1;})?[]:ids.slice();_sfUpdate();})()`;
 
-    const renderRow=function(item,type){
-      const id=item.id; const chk=sel.indexOf(id)>-1;
-      const isGroup=type==='group';
-      const initials=isGroup?item.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2):item.av;
-      const sublabel=isGroup?`${item.members.length} members`:`@${item.uname}`;
-      const avatarBg=isGroup?'#EEF2FF':'linear-gradient(135deg,#1B2A4A,#374151)';
-      const avatarRadius=isGroup?'10px':'50%';
-      const initColor=isGroup?'#0E4EF5':'#fff';
-      return`<button onclick="${toggleF(id)}" style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 4px;background:none;border:none;border-bottom:1px solid #F3F4F6;cursor:pointer;text-align:left">
-        <div style="width:40px;height:40px;border-radius:${avatarRadius};background:${avatarBg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <span style="font-size:13px;font-weight:700;color:${initColor}">${initials}</span>
+    // Friend row
+    const renderFriendRow=function(f){
+      const chk=sel.indexOf(f.id)>-1;
+      return`<button onclick="${toggleF(f.id)}" style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 4px;background:none;border:none;border-bottom:1px solid #F3F4F6;cursor:pointer;text-align:left">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#374151);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-size:13px;font-weight:700;color:#fff">${f.av}</span>
         </div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600;color:#111827">${item.name}</div>
-          <div style="font-size:12px;color:#9CA3AF">${sublabel}</div>
+          <div style="font-size:14px;font-weight:600;color:#111827">${f.name}</div>
+          <div style="font-size:12px;color:#9CA3AF">@${f.uname}</div>
         </div>
-        <div id="sfcb-${id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${chk?'#0E4EF5':'#D1D5DB'};background:${chk?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none">
+        <div id="sfcb-${f.id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${chk?'#0E4EF5':'#D1D5DB'};background:${chk?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none">
           ${chk?chkSVG:''}
         </div>
       </button>`;
     };
+    // Group row — tap row body to expand members, separate checkbox to select
+    const renderGroupRow=function(g){
+      const chk=sel.indexOf(g.id)>-1;
+      const initials=g.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
+      const members=g.members.map(function(mid){return friendsList.find(function(f){return f.id===mid;});}).filter(Boolean);
+      const expandFn=`(function(){var m=document.getElementById('sfg-${g.id}');var ch=document.getElementById('sfch-${g.id}');var open=m.style.display!=='none';m.style.display=open?'none':'block';ch.style.transform=open?'rotate(0deg)':'rotate(90deg)';})()`;
+      return`<div style="border-bottom:1px solid #F3F4F6">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 4px">
+          <button onclick="${expandFn}" style="display:flex;align-items:center;gap:12px;flex:1;background:none;border:none;cursor:pointer;text-align:left;padding:0;min-width:0">
+            <div style="width:40px;height:40px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:13px;font-weight:700;color:#0E4EF5">${initials}</span>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14px;font-weight:600;color:#111827">${g.name}</div>
+              <div style="font-size:12px;color:#9CA3AF;display:flex;align-items:center;gap:3px">
+                ${g.members.length} members
+                <svg id="sfch-${g.id}" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" style="transition:transform 0.2s;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+          </button>
+          <button onclick="${toggleF(g.id)}" style="background:none;border:none;padding:0;cursor:pointer;flex-shrink:0">
+            <div id="sfcb-${g.id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${chk?'#0E4EF5':'#D1D5DB'};background:${chk?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;pointer-events:none">
+              ${chk?chkSVG:''}
+            </div>
+          </button>
+        </div>
+        <div id="sfg-${g.id}" style="display:none;padding:0 4px 12px 56px">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${members.map(function(f){return`<div style="display:flex;align-items:center;gap:5px">
+              <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#1B2A4A,#374151);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <span style="font-size:8px;font-weight:700;color:#fff">${f.av}</span>
+              </div>
+              <span style="font-size:12px;color:#374151">${f.name.split(' ')[0]}</span>
+            </div>`;}).join('')}
+          </div>
+        </div>
+      </div>`;
+    };
+    const renderRow=function(item,type){return type==='group'?renderGroupRow(item):renderFriendRow(item);};
 
     mr.innerHTML=`<div class="modal-bg" onclick="S.shareSelected=[];modal('share-${idx}')"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;max-height:88vh;display:flex;flex-direction:column"><div class="mh"></div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
