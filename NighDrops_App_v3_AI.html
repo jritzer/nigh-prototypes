@@ -1458,7 +1458,14 @@ function renderTicketView(){
   const fullMonth=monthFull[dateParts[0]]||dateParts[0];
   const dateObj=new Date(rawDate+' 2026');
   const dayFullName=isNaN(dateObj.getDay())?'':fullDays[dateObj.getDay()];
-  const dayDateStr=dayFullName+' '+fullMonth+' '+dateParts[1];
+  const _tnow=new Date();
+  const _tmo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _todayStr=_tmo[_tnow.getMonth()]+' '+_tnow.getDate();
+  const _ttom=new Date(_tnow);_ttom.setDate(_ttom.getDate()+1);
+  const _tomStr=_tmo[_ttom.getMonth()]+' '+_ttom.getDate();
+  const tkDateRaw=dateParts[0]+' '+dateParts[1];
+  const dayPrefix=tkDateRaw===_todayStr?'Today':tkDateRaw===_tomStr?'Tomorrow':dayFullName;
+  const dayDateStr=dayPrefix+', '+fullMonth+' '+dateParts[1];
   const isWindow=tk.timing==='Arrival Window';
   const timeDisplay=isWindow&&tk.endTime?tk.time+' \u2013 '+tk.endTime:tk.time;
   const hostInitials=tk.host.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
