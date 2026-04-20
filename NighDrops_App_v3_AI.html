@@ -2196,19 +2196,46 @@ function renderSettingsPreferences(){
 function renderSettingsNotifications(){
   const toggle=(label,sub,key)=>{
     const on=S['notif_'+key]!==false;
-    return`<div style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:13px 14px;margin-bottom:6px">
-      <div style="flex:1"><div style="font-size:13px;font-weight:500;color:#374151">${label}</div>${sub?`<div style="font-size:11px;color:#9CA3AF;margin-top:2px">${sub}</div>`:''}</div>
-      <button onclick="S['notif_'+('${key}')]=!${on};render()" style="width:44px;height:26px;border-radius:13px;border:none;background:${on?'#0E4EF5':'#D1D5DB'};position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0">
-        <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;${on?'right:3px':'left:3px'};transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div>
+    return`<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6">
+      <div style="flex:1"><div style="font-size:13px;font-weight:500;color:#374151">${label}</div>${sub?`<div style="font-size:11px;color:#9CA3AF;margin-top:2px;line-height:1.4">${sub}</div>`:''}</div>
+      <button onclick="if(S['notif_'+('${key}')]===undefined)S['notif_'+('${key}')]=false;else S['notif_'+('${key}')]=!S['notif_'+('${key}')];render()" style="width:44px;height:26px;border-radius:13px;border:none;background:${on?'#0E4EF5':'#D1D5DB'};position:relative;cursor:pointer;flex-shrink:0">
+        <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;${on?'right:3px':'left:3px'};box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div>
       </button>
     </div>`;
   };
+  const lockedToggle=(label,sub)=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6;opacity:0.55">
+      <div style="flex:1"><div style="font-size:13px;font-weight:500;color:#374151">${label}</div>${sub?`<div style="font-size:11px;color:#9CA3AF;margin-top:2px;line-height:1.4">${sub}</div>`:''}</div>
+      <div style="width:44px;height:26px;border-radius:13px;background:#0E4EF5;position:relative;flex-shrink:0">
+        <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;right:3px;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></div>
+      </div>
+    </div>`;
+  const section=(label)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin:20px 0 4px">${label}</div>`;
+  const card=(content)=>`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px">${content}</div>`;
   return`${hdr('Notifications',null,"S.menuSub='settings';render()")}
-  <div style="padding:14px 16px">
-    ${toggle('New Drops','Notify me when a new drop goes live from a place I follow','dropAlerts')}
-    ${toggle('Friend Activity','When a friend reserves or attends a drop','friendActivity')}
-    ${toggle('Reminders','Remind me before a drop I\'m attending starts','reminders')}
-    ${toggle('Nigh Updates','News and announcements from Nigh','updates')}
+  <div style="padding:14px 16px;overflow-y:auto">
+
+    ${section('Places')}
+    ${card(`
+      ${lockedToggle('Drop Tickets','Reminders, check-in updates, and changes to drops you have a ticket for')}
+      ${toggle('New Drops','When a place you follow posts a new drop','placesNewDrops')}
+    `)}
+
+    ${section('Friends')}
+    ${card(`
+      ${toggle('Drop Tickets','When a friend gets a ticket to a drop','friendsTickets')}
+      ${toggle('Check-ins','When a friend checks in to a drop','friendsCheckins')}
+      ${toggle('Shared Drops','When a friend sends you a drop','friendsShares')}
+      ${toggle('Group Messages','New messages in your group chats','friendsGroups')}
+    `)}
+
+    ${section('Nigh')}
+    ${card(`
+      ${toggle('System & Account','Security alerts, account changes, and service updates','lighSystem')}
+      ${toggle('Support','Updates on support requests you\'ve submitted','nighSupport')}
+      ${toggle('News & Culture','New features, product updates, and community highlights','nighCulture')}
+    `)}
+
   </div>`;
 }
 
