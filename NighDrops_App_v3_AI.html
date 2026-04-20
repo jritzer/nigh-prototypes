@@ -1333,6 +1333,7 @@ function renderPlaceOrder(){
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
         ${[
           'All sales are final — no refunds or exchanges. One person per spot.',
+          'Your ticket is non-transferable. Any additional tickets purchased for friends may be transferred.',
           'Must arrive within the arrival window — too early or late arrivals may result in a loss of spot at the host\'s discretion.',
           'Any questions, you must contact the host directly. Nigh is a booking system and can\'t modify a host\'s drop.',
           ...(d.age21?['Valid ID required at check-in.']:[]),
@@ -1610,7 +1611,7 @@ function renderTicketView(){
     </div>`;
 
   // ── Shared back sections (all tickets get these) ──
-  const termsList=['All sales are final \u2014 no refunds or exchanges. One person per spot.','Must arrive within the arrival window \u2014 late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
+  const termsList=['All sales are final \u2014 no refunds or exchanges. One person per spot.','Your ticket is non-transferable. Any additional tickets purchased for friends may be transferred.','Must arrive within the arrival window \u2014 late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
   const sharedBack=`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:10px">
       <div style="font-size:16px;font-weight:800;color:#fff;flex:1;line-height:1.25">${tk.title}</div>
