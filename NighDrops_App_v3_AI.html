@@ -2232,10 +2232,10 @@ function renderSettingsNotifications(){
 
     ${section('Nigh')}
     ${card(`
-      ${toggle('Niya','Tips, suggestions, and proactive heads-ups from your Nigh concierge','nighNiya')}
-      ${toggle('Culture & Community','Local stories, spotlight drops, and what\'s trending in your city','nighCulture')}
-      ${toggle('Product & Updates','New features, improvements, and announcements from Nigh','nighProduct')}
-      ${toggle('Support & System','Support request updates, security alerts, and account notices','nighSupport')}
+      ${toggle('Niya','Tips, suggestions, and notices from your Nigh concierge','nighNiya')}
+      ${toggle('Community & Culture','Stories, spotlights, and what\'s trending nearby','nighCulture')}
+      ${toggle('Product & Updates','New features and announcements from Nigh','nighProduct')}
+      ${lockedToggle('Support & System','Support updates, security alerts, and account notices')}
     `)}
 
   </div>`;
