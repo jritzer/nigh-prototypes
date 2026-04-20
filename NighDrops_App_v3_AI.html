@@ -2032,7 +2032,7 @@ function renderMenu(){
   return`${hdr('Menu')}
   <div style="padding:14px 16px">
     ${row('users','Friends',`${friendsList.length} friends · ${socialGroups.length+eventGroups.length} groups`,"S.menuSub='friends';render()")}
-    ${row('heart','Following',`${followingList.length} places`,"S.menuSub='following';render()")}
+    ${row('heart','Following',`${followingList.length} Places · ${followingBrands.length} Brands`,"S.menuSub='following';render()")}
     ${row('apay','Payment','Apple Pay · Visa ···· 4821',"modal('payment')")}
     ${row('settings','Settings',null,"S.menuSub='settings';render()")}
   </div>`;
@@ -2339,9 +2339,8 @@ const followingBrands=[
 ];
 function renderFollowing(){
   const tab=S.followingTab||'places';
-  const totalCount=followingList.length+followingBrands.length;
   const tabBtn=(label,key)=>`<button onclick="S.followingTab='${key}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:${tab===key?'700':'500'};color:${tab===key?'#111827':'#9CA3AF'};background:${tab===key?'#fff':'none'};border:${tab===key?'1px solid #E5E7EB':'1px solid transparent'};cursor:pointer;font-family:inherit">${label}</button>`;
-  return`${hdr('Following',`${totalCount} total`,"S.menuSub=null;render()")}
+  return`${hdr('Following',`${followingList.length} Places · ${followingBrands.length} Brands`,"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <!-- Tabs -->
     <div style="display:flex;gap:4px;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:16px">
