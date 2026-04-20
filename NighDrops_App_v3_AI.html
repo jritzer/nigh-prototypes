@@ -2443,6 +2443,23 @@ function renderUserAccount(){
       <button onclick="modal('editField-locVisiting')" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Edit</button>
     </div>
 
+    <!-- Identity Verification -->
+    <div onclick="modal('verifyId')" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <div style="width:40px;height:40px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/><circle cx="9" cy="9" r="2" stroke="#D97706"/></svg>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#111827">Identity Verification</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+            <div style="width:6px;height:6px;border-radius:50%;background:#F59E0B;flex-shrink:0"></div>
+            <div style="font-size:11px;color:#92400E;font-weight:500">Not verified</div>
+          </div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
   </div>`;
 }
 
@@ -2813,6 +2830,86 @@ function renderModal(){
   if(!S.modal){mr.innerHTML='';return;}
 
   // ── Account modals ──────────────────────────────────────
+  if(S.modal==='verifyId'){
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Verify Your Identity</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">A government-issued ID is required to access age-restricted drops and build trust with businesses.</div>
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px">Select ID Type</div>
+      ${[
+        ['🪪','Driver\'s License','Front &amp; back required'],
+        ['📘','Passport','Photo page only'],
+        ['🪪','State ID','Front &amp; back required'],
+      ].map(([icon,label,sub])=>`
+        <button onclick="S.verifyIdType='${label}';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
+          <span style="font-size:22px">${icon}</span>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;color:#111827">${label}</div>
+            <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${sub}</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>`).join('')}
+      <div style="display:flex;align-items:flex-start;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px;margin-top:4px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="font-size:11px;color:#166534;line-height:1.5">Your ID is encrypted and never shared with businesses. It's used only to confirm your identity.</div>
+      </div>
+    </div></div>`;return;
+  }
+  if(S.modal==='verifyIdScan'){
+    const idType=S.verifyIdType||"Driver's License";
+    const needsBack=idType!=='Passport';
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
+      <button onclick="modal('verifyId')" style="background:none;border:none;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span style="font-size:12px;color:#6B7280">Back</span>
+      </button>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">${idType}</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:20px">${needsBack?'Scan or upload the front and back of your ID.':'Scan or upload the photo page of your passport.'}</div>
+
+      <!-- Front -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Front</div>
+      <div style="border:2px dashed #D1D5DB;border-radius:14px;padding:28px 16px;text-align:center;margin-bottom:${needsBack?'16px':'20px'};background:#F9FAFB;position:relative">
+        <div style="width:48px;height:48px;border-radius:12px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/></svg>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px">Front of ${idType}</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#0E4EF5;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Take Photo
+          </button>
+          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#fff;color:#374151;border:1px solid #E5E7EB;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Upload</button>
+        </div>
+      </div>
+
+      ${needsBack?`<!-- Back -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Back</div>
+      <div style="border:2px dashed #D1D5DB;border-radius:14px;padding:28px 16px;text-align:center;margin-bottom:20px;background:#F9FAFB">
+        <div style="width:48px;height:48px;border-radius:12px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/></svg>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px">Back of ${idType}</div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#0E4EF5;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Take Photo
+          </button>
+          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#fff;color:#374151;border:1px solid #E5E7EB;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Upload</button>
+        </div>
+      </div>`:''}
+
+      <button onclick="modal('verifyIdProcessing')" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Submit for Verification</button>
+    </div></div>`;return;
+  }
+  if(S.modal==='verifyIdProcessing'){
+    mr.innerHTML=`<div class="modal-bg"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;text-align:center"><div class="mh"></div>
+      <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:8px auto 16px">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Submitted</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We're reviewing your ID. This usually takes just a few minutes. We'll notify you once verification is complete.</div>
+      <button onclick="modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
+    </div></div>`;return;
+  }
   if(S.modal==='changePhoto'){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:16px">Update Profile Photo</div>
