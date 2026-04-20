@@ -2032,7 +2032,7 @@ function renderMenu(){
   return`${hdr('Menu')}
   <div style="padding:14px 16px">
     ${row('users','Friends',`${friendsList.length} friends · ${socialGroups.length+eventGroups.length} groups`,"S.menuSub='friends';render()")}
-    ${row('heart','Following',`${followingList.length} accounts`,"S.menuSub='following';render()")}
+    ${row('heart','Following',`${followingList.length} places`,"S.menuSub='following';render()")}
     ${row('apay','Payment','Apple Pay · Visa ···· 4821',"modal('payment')")}
     ${row('settings','Settings',null,"S.menuSub='settings';render()")}
   </div>`;
@@ -2332,7 +2332,7 @@ function renderFriends(){
 
 // ── FOLLOWING ──────────────────────────────────────────
 function renderFollowing(){
-  return`${hdr('Following',`${followingList.length} accounts`,"S.menuSub=null;render()")}
+  return`${hdr('Following',`${followingList.length} places`,"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap a business to view their profile and manage your preferences.</div>
     ${followingList.map(p=>{
