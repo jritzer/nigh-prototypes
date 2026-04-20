@@ -1102,6 +1102,19 @@ function renderDropDetail(){
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
   const fullDate=d.date.replace(/^(\w+)/,m=>monthFull[m]||m);
 
+  // Day of week for detail page
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  let detailDay;
+  if(dateLabel==='Today') detailDay='Today';
+  else if(dateLabel==='Tomorrow') detailDay='Tomorrow';
+  else{
+    const pts=d.date.split(' ');
+    const mIdx=mo.indexOf(pts[0]);
+    const parsed=new Date(now.getFullYear(),mIdx,parseInt(pts[1]));
+    if(parsed<now) parsed.setFullYear(now.getFullYear()+1);
+    detailDay=days[parsed.getDay()];
+  }
+
   // Ticket selector label
   const pplLabel=qty===1?'Just Me':qty===2?'Me + 1':`Me + ${qty-1}`;
 
@@ -1150,7 +1163,7 @@ function renderDropDetail(){
     <!-- Date / Time pill — level 1 priority -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;margin-bottom:12px">
       <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
-        <span style="font-size:18px;font-weight:700;color:#fff">${dateLabel==='Today'||dateLabel==='Tomorrow'?dateLabel:fullDate}</span>
+        <span style="font-size:18px;font-weight:700;color:#fff">${detailDay==='Today'||detailDay==='Tomorrow'?`${detailDay}, ${fullDate}`:`${detailDay}, ${fullDate}`}</span>
       </div>
       <div style="font-size:15px;font-weight:300;color:#fff">${arrivalLine}</div>
     </div>
