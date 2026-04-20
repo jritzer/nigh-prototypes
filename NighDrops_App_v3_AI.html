@@ -2410,7 +2410,6 @@ function renderUserAccount(){
     </div>
 
     <!-- Name — editable -->
-    <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:4px">Profile</div>
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
       ${row('First Name','Alex',"modal('editField-firstName')")}
       ${row('Last Name','Rivera',"modal('editField-lastName')")}
@@ -2418,7 +2417,6 @@ function renderUserAccount(){
     </div>
 
     <!-- Contact — verified, change flow -->
-    <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:4px">Contact</div>
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
       ${verifiedRow('Mobile Phone',currentUser.phone,"modal('changePhone')")}
       ${verifiedRow('Email',currentUser.email,"modal('changeEmail')")}
