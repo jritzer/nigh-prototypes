@@ -2888,8 +2888,28 @@ function renderModal(){
   }
   if(S.modal&&S.modal.startsWith('editField-')){
     const field=S.modal.replace('editField-','');
-    const label=field==='firstName'?'First Name':'Last Name';
-    const current=field==='firstName'?'Alex':'Rivera';
+    const labelMap={firstName:'First Name',lastName:'Last Name',locPrimary:'Primary Location',locWork:'Work Location'};
+    const currentMap={firstName:'Alex',lastName:'Rivera',locPrimary:'Boulder, CO',locWork:'Denver, CO'};
+    if(field==='locVisiting'){
+      mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:16px">Edit Visiting Location</div>
+        <div style="font-size:11px;font-weight:600;color:#9CA3AF;margin-bottom:6px">CITY</div>
+        <input type="text" value="Chicago, IL" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:16px"/>
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <div style="flex:1">
+            <div style="font-size:11px;font-weight:600;color:#9CA3AF;margin-bottom:6px">FROM</div>
+            <input type="text" value="Jul 2, 2026" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:11px;font-weight:600;color:#9CA3AF;margin-bottom:6px">TO</div>
+            <input type="text" value="Jul 8, 2026" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+          </div>
+        </div>
+        <button onclick="modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+      </div></div>`;return;
+    }
+    const label=labelMap[field]||field;
+    const current=currentMap[field]||'';
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:16px">Edit ${label}</div>
       <input type="text" value="${current}" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:16px"/>
