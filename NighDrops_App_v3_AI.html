@@ -2400,13 +2400,14 @@ function renderUserAccount(){
 
     <!-- Profile photo -->
     <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:20px">
-      <div style="position:relative;cursor:pointer" onclick="modal('changePhoto')">
+      <div style="position:relative;cursor:pointer" onclick="modal('changePhoto')" title="Tap to change photo">
         ${av('AR',72,'135deg,#0E4EF5,#6226E9')}
         <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:#0E4EF5;border:2px solid #fff;display:flex;align-items:center;justify-content:center">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
         </div>
       </div>
-      <button onclick="modal('changePhoto')" style="margin-top:8px;background:none;border:none;font-size:12px;font-weight:600;color:#0E4EF5;cursor:pointer;font-family:inherit">Update photo</button>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:7px">Tap photo to update</div>
+      <div style="font-size:12px;color:#6B7280;margin-top:3px">Joined March 2025</div>
     </div>
 
     <!-- Name — editable -->
@@ -2423,14 +2424,28 @@ function renderUserAccount(){
     </div>
 
     <!-- Date of Birth — locked -->
-    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:24px">
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
       ${lockedRow('Date of Birth','June 14, 1992','Contact support to update')}
     </div>
 
-    <!-- Joined -->
-    <div style="text-align:center;margin-bottom:24px">
-      <span style="font-size:12px;color:#9CA3AF">Joined March 2025</span>
+    <!-- Locations -->
+    <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Locations</div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:6px">
+      ${row('Primary','Boulder, CO',"modal('editField-locPrimary')")}
+      ${row('Work','Denver, CO',"modal('editField-locWork')")}
     </div>
+
+    <!-- Visiting location -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:600;color:#9CA3AF;margin-bottom:2px">Visiting</div>
+        <div style="font-size:13px;font-weight:500;color:#111827">Chicago, IL</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">Jul 2 – Jul 8, 2026</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:4px;line-height:1.4">You'll see drops and heads-ups from businesses in Chicago during this trip.</div>
+      </div>
+      <button onclick="modal('editField-locVisiting')" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Edit</button>
+    </div>
+
   </div>`;
 }
 
