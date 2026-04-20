@@ -991,13 +991,38 @@ function renderFeed(){
       </div>
 
       <!-- CTA button -->
-      <div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
-        ${isMine
-          ?`<button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>`
-          :soldOut
-          ?`<button disabled style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700">Sold Out</button>`
-          :`<button onclick="go('dropDetail',{drop:${idx}})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;letter-spacing:0.01em;box-shadow:4px -4px 0px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;gap:8px">Secure your Spot →</button>`}
-      </div>
+      ${(()=>{
+        const ticketedSoldOut=isMine&&d.spotsLeft===0;
+        const canBuyMore=isMine&&d.spotsLeft>0&&d.maxPerUser>1;
+        if(ticketedSoldOut){
+          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px">
+            <div style="background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:5px">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.55)" stroke="none"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:0.04em">SOLD OUT</span>
+            </div>
+            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+          </div>`;
+        }
+        if(canBuyMore){
+          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px">
+            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+            <button onclick="go('dropDetail',{drop:${idx}})" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.25);border-radius:24px;padding:7px 20px;font-size:12px;font-weight:600">Get More for Friends →</button>
+          </div>`;
+        }
+        if(isMine){
+          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
+            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+          </div>`;
+        }
+        if(soldOut){
+          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
+            <button disabled style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700">Sold Out</button>
+          </div>`;
+        }
+        return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
+          <button onclick="go('dropDetail',{drop:${idx}})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;letter-spacing:0.01em;box-shadow:4px -4px 0px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;gap:8px">Secure your Spot →</button>
+        </div>`;
+      })()}
 
     </div>`;
   }).join('');
