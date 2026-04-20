@@ -2444,6 +2444,21 @@ function renderUserAccount(){
     </div>
 
     <!-- Identity Verification -->
+    ${S.idVerified?`
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;border-radius:10px;background:#FEFCE8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:#111827">Identity Verification</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+          <span style="display:inline-flex;align-items:center;gap:3px;background:#FEFCE8;border:1px solid #FDE68A;border-radius:20px;padding:1px 7px">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span style="font-size:9px;font-weight:700;color:#CA8A04;letter-spacing:0.02em">ID Verified</span>
+          </span>
+        </div>
+      </div>
+    </div>`:`
     <div onclick="modal('verifyId')" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer">
       <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
         <div style="width:40px;height:40px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -2458,7 +2473,7 @@ function renderUserAccount(){
         </div>
       </div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
+    </div>`}
 
   </div>`;
 }
@@ -2947,7 +2962,7 @@ function renderModal(){
       </div>
       <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Submitted</div>
       <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We're reviewing your ID. This usually takes just a few minutes. We'll notify you once verification is complete.</div>
-      <button onclick="modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
+      <button onclick="S.idVerified=true;modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
     </div></div>`;return;
   }
   if(S.modal==='changePhoto'){
