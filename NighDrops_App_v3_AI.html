@@ -3894,7 +3894,7 @@ function renderModal(){
           <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${name}</div><div style="font-size:11px;color:#9CA3AF">On Nigh</div></div>
           <button onclick="" style="padding:5px 14px;border-radius:20px;background:#0E4EF5;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
         </div>`).join('')}
-        <button onclick="S.contactsSynced=false;modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:20px">Done</button>
+        <button onclick="S.contactsSynced=false;modal(null)" style="width:180px;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:20px">Done</button>
       </div></div>`;return;
     }
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="text-align:center;padding-bottom:8px"><div class="mh"></div>
@@ -3903,8 +3903,10 @@ function renderModal(){
       </div>
       <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Sync Your Contacts</div>
       <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We'll check your contacts to find friends already on Nigh. Your contacts are never stored or shared.</div>
-      <button onclick="S.contactsSynced=true;modal('syncContacts')" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px">Allow Access to Contacts</button>
-      <button onclick="modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#F3F4F6;color:#374151;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Not Now</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <button onclick="S.contactsSynced=true;modal('syncContacts')" style="width:220px;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Allow Access to Contacts</button>
+        <button onclick="modal(null)" style="width:220px;padding:12px;border-radius:12px;background:#F3F4F6;color:#374151;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Not Now</button>
+      </div>
     </div></div>`;return;
   }
   if(S.modal==='inviteMobile'){
@@ -3917,18 +3919,20 @@ function renderModal(){
         </div>
         <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Invite Sent</div>
         <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We sent a text to <strong style="color:#111827">${num}</strong> with a link to join Nigh.</div>
-        <button onclick="S.inviteSent=false;S.inviteNumber=null;modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
+        <button onclick="S.inviteSent=false;S.inviteNumber=null;modal(null)" style="width:180px;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
       </div></div>`;return;
     }
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Invite by Mobile</div>
       <div style="font-size:13px;color:#6B7280;margin-bottom:20px">Send a friend a text invite to join Nigh.</div>
-      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px">Mobile Number</div>
-      <div style="position:relative;margin-bottom:20px">
-        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">+1</span>
-        <input id="invite-input" type="tel" placeholder="(303) 555-0000" oninput="S.inviteNumber=this.value" style="width:100%;padding:10px 12px 10px 36px;border-radius:8px;border:1.5px solid #E5E7EB;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;width:240px">Mobile Number</div>
+        <div style="position:relative;margin-bottom:16px;width:240px">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">+1</span>
+          <input id="invite-input" type="tel" placeholder="(303) 555-0000" oninput="S.inviteNumber=this.value" style="width:100%;padding:10px 12px 10px 36px;border-radius:8px;border:1.5px solid #E5E7EB;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+        </div>
+        <button onclick="var v=(S.inviteNumber||'').trim();if(v){S.inviteSent=true;modal('inviteMobile')}" style="width:240px;padding:12px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Send Invite</button>
       </div>
-      <button onclick="var v=(S.inviteNumber||'').trim();if(v){S.inviteSent=true;modal('inviteMobile')}" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Send Invite</button>
     </div></div>`;return;
   }
   if(S.modal==='feedback'){
