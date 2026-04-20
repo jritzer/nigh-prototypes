@@ -992,7 +992,7 @@ function renderFeed(){
         </div>
         <!-- Like -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-          <button onclick="event.stopPropagation();var d=feedDrops[${idx}];d.liked=!d.liked;d.likeCount=d.liked?d.likeCount+1:d.likeCount-1;render()" style="background:none;border:none;padding:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))"><svg width="32" height="32" viewBox="0 0 24 24" fill="${d.liked?'#EC1977':'#fff'}" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
+          <button onclick="event.stopPropagation();var dr=feedDrops[${idx}];dr.liked=!dr.liked;dr.likeCount=dr.liked?dr.likeCount+1:dr.likeCount-1;document.getElementById('like-svg-${idx}').setAttribute('fill',dr.liked?'#EC1977':'#fff');" style="background:none;border:none;padding:0;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))"><svg id="like-svg-${idx}" width="32" height="32" viewBox="0 0 24 24" fill="${d.liked?'#EC1977':'#fff'}" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></button>
         </div>
         <!-- Share -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
