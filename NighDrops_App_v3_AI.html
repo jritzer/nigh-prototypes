@@ -1004,9 +1004,9 @@ function renderFeed(){
           </div>`;
         }
         if(canBuyMore){
-          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;flex-direction:column;align-items:center;gap:7px">
-            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
-            <button onclick="go('dropDetail',{drop:${idx}})" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.25);border-radius:24px;padding:7px 20px;font-size:12px;font-weight:600">Get More for Friends →</button>
+          return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;gap:8px">
+            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="flex:1;background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',14)} View Your Ticket</button>
+            <button onclick="go('dropDetail',{drop:${idx}})" style="flex:1;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.25);border-radius:24px;padding:10px 12px;font-size:13px;font-weight:600">Get Spots for Friends</button>
           </div>`;
         }
         if(isMine){
