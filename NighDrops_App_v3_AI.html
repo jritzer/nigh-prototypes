@@ -2833,7 +2833,7 @@ function renderModal(){
   if(S.modal==='verifyId'){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Verify Your Identity</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">A government-issued ID is required to access age-restricted drops and build trust with businesses.</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">A government-issued ID is required to access age-restricted drops.</div>
       <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px">Select ID Type</div>
       ${[
         ['🪪','Driver\'s License','Front &amp; back required'],
@@ -2848,10 +2848,6 @@ function renderModal(){
           </div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>`).join('')}
-      <div style="display:flex;align-items:flex-start;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px;margin-top:4px">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <div style="font-size:11px;color:#166534;line-height:1.5">Your ID is encrypted and never shared with businesses. It's used only to confirm your identity.</div>
-      </div>
     </div></div>`;return;
   }
   if(S.modal==='verifyIdScan'){
