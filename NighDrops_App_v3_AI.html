@@ -911,11 +911,31 @@ function renderNiyaOnboarding(){
 
 // ── FEED ───────────────────────────────────────────────
 function renderFeed(){
+  const _now=new Date();
+  const _mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const _todayStr=_mo[_now.getMonth()]+' '+_now.getDate();
+  const _tom=new Date(_now);_tom.setDate(_tom.getDate()+1);
+  const _tomStr=_mo[_tom.getMonth()]+' '+_tom.getDate();
+
   const cards=feedDrops.map((d,idx)=>{
     const isMine=!!d.myTicket;
     const soldOut=d.spotsLeft===0&&!isMine;
     const friendsOn=friendsGoingForDrop(d.id);
     const urgent=d.closesIn.includes('m')&&!d.closesIn.includes('h');
+
+    // Date/time label for feed card
+    let feedDay;
+    if(d.date===_todayStr) feedDay='Today';
+    else if(d.date===_tomStr) feedDay='Tomorrow';
+    else{
+      const pts=d.date.split(' ');
+      const mIdx=_mo.indexOf(pts[0]);
+      const parsed=new Date(_now.getFullYear(),mIdx,parseInt(pts[1]));
+      if(parsed<_now) parsed.setFullYear(_now.getFullYear()+1);
+      feedDay=_days[parsed.getDay()];
+    }
+    const feedTime=d.timing==='Arrival Window'?`${d.start} – ${d.endTime}`:d.start;
     // Vibrant brand gradients per card
     const bgGrad=idx===0
       ?'to bottom,#0a0a1a,#0d1b4a'
@@ -982,7 +1002,8 @@ function renderFeed(){
 
       <!-- Bottom left: title + host -->
       <div style="position:absolute;left:16px;right:78px;bottom:66px;z-index:10">
-        <div style="font-size:21px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px;text-shadow:0 2px 8px rgba(0,0,0,0.5)">${d.title}</div>
+        <div style="font-size:21px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,0.5)">${d.title}</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:6px;letter-spacing:0.01em">${feedDay} · ${feedTime}</div>
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
           <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.9)">${d.host.name}</span>
         </div>
