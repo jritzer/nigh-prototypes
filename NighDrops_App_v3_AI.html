@@ -3841,13 +3841,35 @@ function renderModal(){
     </div></div>`;return;
   }
   if(S.modal==='payment'){
+    const showRemove=S.paymentShowRemove===true;
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:14px">Payment Methods</div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F9FAFB;border-radius:10px;border:1px solid #E5E7EB;margin-bottom:10px">
-        <div style="width:40px;height:26px;background:#000;border-radius:5px;display:flex;align-items:center;justify-content:center"><span style="font-size:9px;font-weight:700;color:#fff">PAY</span></div>
+
+      <!-- Apple Pay -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F9FAFB;border-radius:10px;border:1px solid #E5E7EB;margin-bottom:8px">
+        <div style="width:40px;height:26px;background:#000;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:9px;font-weight:700;color:#fff">PAY</span></div>
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Apple Pay</div><div style="font-size:11px;color:#9CA3AF">Visa ···· 4821 · Default</div></div>
         <div style="color:#22C55E">${ic('check',16)}</div>
       </div>
+
+      <!-- Visa card -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F9FAFB;border-radius:10px;border:1px solid ${showRemove?'#FCA5A5':'#E5E7EB'};margin-bottom:${showRemove?'0':'10px'}">
+        <div style="width:40px;height:26px;background:#1A1F71;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:8px;font-weight:800;color:#fff;letter-spacing:0.02em">VISA</span></div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Visa ···· 2947</div><div style="font-size:11px;color:#9CA3AF">Expires 09/27</div></div>
+        <button onclick="S.paymentShowRemove=!${showRemove};modal('payment')" style="background:none;border:none;padding:4px;cursor:pointer;font-family:inherit;display:flex;align-items:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+      </div>
+
+      <!-- Remove confirmation -->
+      ${showRemove?`<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-top:none;border-radius:0 0 10px 10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:12px;color:#DC2626;font-weight:500">Remove this card?</span>
+        <div style="display:flex;gap:8px">
+          <button onclick="S.paymentShowRemove=false;modal('payment')" style="padding:5px 12px;border-radius:7px;background:#fff;border:1px solid #E5E7EB;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Cancel</button>
+          <button onclick="S.paymentShowRemove=false;modal('payment')" style="padding:5px 12px;border-radius:7px;background:#DC2626;border:none;font-size:12px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit">Remove</button>
+        </div>
+      </div>`:''}
+
       <button onclick="modal('addPayment')" style="width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1.5px dashed #D1D5DB;background:none;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:inherit">${ic('plus',14)} Add Payment Method</button>
     </div></div>`;return;
   }
