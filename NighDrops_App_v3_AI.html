@@ -1180,7 +1180,7 @@ function renderDropDetail(){
 
     <!-- Friends section -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:10px">FRIENDS</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:10px">FRIENDS GOING</div>
       ${d.myTicket&&(S.ticketPrivacy[d.myTicket]||'friends')==='only_me'?`
       <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px;margin-bottom:10px">
         <svg width="12" height="12" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
@@ -1193,7 +1193,6 @@ function renderDropDetail(){
         <div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${f.av}</div>
           <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.8);white-space:nowrap">${f.name.split(' ')[0]}</div>
-          <div style="font-size:9px;color:rgba(34,197,94,0.8);font-weight:600">Going</div>
         </div>`).join('')}
 
       </div>
