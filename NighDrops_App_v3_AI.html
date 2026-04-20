@@ -3848,7 +3848,41 @@ function renderModal(){
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Apple Pay</div><div style="font-size:11px;color:#9CA3AF">Visa ···· 4821 · Default</div></div>
         <div style="color:#22C55E">${ic('check',16)}</div>
       </div>
-      <button style="width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1.5px dashed #D1D5DB;background:none;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px">${ic('apay',16)} Add Payment Method</button>
+      <button onclick="modal('addPayment')" style="width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1.5px dashed #D1D5DB;background:none;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:inherit">${ic('plus',14)} Add Payment Method</button>
+    </div></div>`;return;
+  }
+  if(S.modal==='addPayment'){
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <button onclick="modal('payment')" style="background:none;border:none;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span style="font-size:12px;color:#6B7280">Back</span>
+      </button>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:20px">Add Payment Method</div>
+
+      <!-- Digital wallets -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Digital Wallet</div>
+      <div style="display:flex;gap:8px;margin-bottom:20px">
+        <button onclick="modal('payment')" style="flex:1;padding:12px;border-radius:10px;background:#F9FAFB;border:1px solid #E5E7EB;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit">
+          <div style="width:40px;height:26px;background:#000;border-radius:5px;display:flex;align-items:center;justify-content:center"><span style="font-size:9px;font-weight:700;color:#fff">PAY</span></div>
+          <span style="font-size:11px;font-weight:600;color:#374151">Apple Pay</span>
+        </button>
+        <button onclick="modal('payment')" style="flex:1;padding:12px;border-radius:10px;background:#F9FAFB;border:1px solid #E5E7EB;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit">
+          <div style="width:40px;height:26px;background:#1A73E8;border-radius:5px;display:flex;align-items:center;justify-content:center"><span style="font-size:8px;font-weight:700;color:#fff">G Pay</span></div>
+          <span style="font-size:11px;font-weight:600;color:#374151">Google Pay</span>
+        </button>
+      </div>
+
+      <!-- Card -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Credit or Debit Card</div>
+      <div style="margin-bottom:12px">
+        <input type="text" placeholder="Card number" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:8px"/>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" placeholder="MM / YY" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+          <input type="text" placeholder="CVC" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+        </div>
+        <input type="text" placeholder="Name on card" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+      </div>
+      <button onclick="modal('payment')" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Add Card</button>
     </div></div>`;return;
   }
   if(S.modal&&S.modal.startsWith('groupSettings_')){
