@@ -2331,12 +2331,27 @@ function renderFriends(){
 }
 
 // ── FOLLOWING ──────────────────────────────────────────
+const followingBrands=[
+  {handle:'@nike',name:'Nike',short:'NK',cat:'Apparel & Footwear',bio:'Members-only drops, early access launches, and exclusive collabs.'},
+  {handle:'@patagonia',name:'Patagonia',short:'PAT',cat:'Outdoor & Apparel',bio:'Worn Wear events, sustainability drops, and end-of-season sales.'},
+  {handle:'@rei',name:'REI Co-op',short:'REI',cat:'Outdoor & Sports',bio:'Gear drops, member dividends, and garage sale events near you.'},
+  {handle:'@wholefoodsmarket',name:'Whole Foods Market',short:'WFM',cat:'Food & Grocery',bio:'Flash deals, local vendor spotlights, and seasonal drops.'},
+];
 function renderFollowing(){
-  return`${hdr('Following',`${followingList.length} places`,"S.menuSub=null;render()")}
+  const tab=S.followingTab||'places';
+  const totalCount=followingList.length+followingBrands.length;
+  const tabBtn=(label,key)=>`<button onclick="S.followingTab='${key}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:${tab===key?'700':'500'};color:${tab===key?'#111827':'#9CA3AF'};background:${tab===key?'#fff':'none'};border:${tab===key?'1px solid #E5E7EB':'1px solid transparent'};cursor:pointer;font-family:inherit">${label}</button>`;
+  return`${hdr('Following',`${totalCount} total`,"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
-    <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap to view a place's profile and manage your preferences.</div>
-    ${followingList.map(p=>{
-      return`<div onclick="S.proHandle='${p.handle}';S.scr='proProfile';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
+    <!-- Tabs -->
+    <div style="display:flex;gap:4px;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:16px">
+      ${tabBtn('Places','places')}
+      ${tabBtn('Brands','brands')}
+    </div>
+    <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap to view a ${tab==='places'?'place':'brand'}'s profile and manage your preferences.</div>
+
+    ${tab==='places'?followingList.map(p=>`
+      <div onclick="S.proHandle='${p.handle}';S.scr='proProfile';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
         <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${p.short.charAt(0)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:700;color:#111827">${p.name}</div>
@@ -2344,8 +2359,16 @@ function renderFollowing(){
         </div>
         ${p.hasLive?`<span style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:8px;background:#DCFCE7;color:#166534;display:flex;align-items:center;gap:3px;flex-shrink:0"><span style="width:5px;height:5px;border-radius:50%;background:#22C55E;display:inline-block"></span>LIVE</span>`:''}
         <span style="color:#D1D5DB;flex-shrink:0">${ic('right',16)}</span>
-      </div>`;
-    }).join('')}
+      </div>`).join('')
+    :followingBrands.map(p=>`
+      <div onclick="S.proHandle='${p.handle}';S.scr='proProfile';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <div style="width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#111827,#374151);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${p.short.charAt(0)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;color:#111827">${p.name}</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${p.handle} · ${p.cat}</div>
+        </div>
+        <span style="color:#D1D5DB;flex-shrink:0">${ic('right',16)}</span>
+      </div>`).join('')}
 
   </div>`;
 }
