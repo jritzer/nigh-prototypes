@@ -162,14 +162,14 @@ const feedDrops=[
    liked:false,likeCount:34,
    desc:"REI members get exclusive early access to Arc'teryx's new spring collection. Try on and demo gear with brand experts before it hits the floor. Free event — ticket required. REI membership required at door. Limited to 30 guests.",
    slug:'reiboulder/GEAR24'},
-  {id:'D007',title:"The Sink: 50% Off Burger Night",
+  {id:'D007',title:"The Sink: Burger Night",
    host:{name:'The Sink',handle:'@thesinkboulder',short:'SINK',addr:'1165 13th St, Boulder, CO'},
    partners:[],
    status:'Live',timing:'Arrival Window',start:'5:30 PM',endTime:'8:00 PM',date:'Apr 2',
-   closesIn:'4h 20m',price:0,cap:0,spotsLeft:null,age21:false,
-   media:'photo',maxPerUser:null,noTicket:true,
+   closesIn:'4h 20m',price:0,cap:120,spotsLeft:44,age21:false,
+   media:'photo',maxPerUser:4,
    liked:true,likeCount:178,
-   desc:"Boulder's most iconic dive bar is doing 50% off all burgers tonight 5:30–8 PM. Show this drop at the counter. First come, first served — no ticket needed, just be here. Cash and card accepted.",
+   desc:"Boulder's most iconic dive bar is doing half-price burgers tonight 5:30–8 PM. Grab your ticket and show it at the counter. Cash and card accepted.",
    slug:'thesinkboulder/BRGRNG'},
   {id:'D008',title:'Chautauqua Sunrise Yoga',
    host:{name:'Chautauqua Park',handle:'@chautauqua',short:'CHA',addr:'900 Baseline Rd, Boulder, CO'},
@@ -193,10 +193,10 @@ const feedDrops=[
    host:{name:"Illegal Pete's",handle:'@illegalpetes',short:'IP',addr:'1447 Pearl St, Boulder, CO'},
    partners:[],
    status:'Live',timing:'Arrival Window',start:'11:00 AM',endTime:'3:00 PM',date:'Apr 2',
-   closesIn:'2h 10m',price:0,cap:0,spotsLeft:null,age21:false,
-   media:'photo',maxPerUser:null,noTicket:true,
+   closesIn:'2h 10m',price:0,cap:200,spotsLeft:81,age21:false,
+   media:'photo',maxPerUser:2,
    liked:false,likeCount:93,
-   desc:'Buy one Mission-style burrito, get one free every Monday. Show this drop at the counter. Valid 11 AM–3 PM only. Cannot be combined with other offers. Pearl St location only.',
+   desc:'Buy one Mission-style burrito, get one free every Monday. Grab your ticket and show it at the counter. Valid 11 AM–3 PM only. Pearl St location only.',
    slug:'illegalpetes/BOGO1'},
   {id:'D011',title:'Patagonia Worn Wear + Repair Clinic',
    host:{name:'Patagonia Boulder',handle:'@patagoniabouldercO',short:'PAT',addr:'1630 30th St, Boulder, CO'},
@@ -211,10 +211,10 @@ const feedDrops=[
    host:{name:'Spruce Confections',handle:'@spruceboulder',short:'SC',addr:'767 Pearl St, Boulder, CO'},
    partners:[],
    status:'Live',timing:'While Supplies Last',start:'8:00 AM',date:'Apr 3',
-   closesIn:'6h',price:0,cap:0,spotsLeft:null,age21:false,
-   media:'photo',maxPerUser:null,noTicket:true,
+   closesIn:'6h',price:0,cap:60,spotsLeft:23,age21:false,
+   media:'photo',maxPerUser:2,
    liked:true,likeCount:112,
-   desc:'Saturday morning fresh-baked pastry drop. This week: cardamom morning buns, pistachio croissants, and rhubarb tarts. First come, first served — when they\'re gone, they\'re gone. No ticket needed.',
+   desc:'Saturday morning fresh-baked pastry drop. This week: cardamom morning buns, pistachio croissants, and rhubarb tarts. Ticket required — limited quantities available.',
    slug:'spruceboulder/PAS34'},
   {id:'D013',title:'Fox Theatre: CU Buffs Watch Party',
    host:{name:'Fox Theatre',handle:'@foxtheatreboulder',short:'FOX',addr:'1135 13th St, Boulder, CO'},
@@ -543,7 +543,7 @@ const proProfiles={
     bio:"Boulder's original dive bar, serving the Hill since 1949. Famous burgers, cold beer, and CU energy. Flash deals and local events weekly.",
     cat:'Food & Drink',following:false,
     friendsFollowing:[{name:'Aisha Johnson',av:'AJ'},{name:'Tyler Brooks',av:'TB'}],
-    recentDrops:["The Sink: 50% Off Burger Night"]},
+    recentDrops:["The Sink: Burger Night"]},
   '@illegalpetes':{name:"Illegal Pete's",handle:'@illegalpetes',short:'IP',
     addr:'1447 Pearl St, Boulder, CO 80302',phone:'(303) 440-3955',email:'boulder@illegalpetes.com',
     bio:"Boulder's home of Mission-style burritos. Flash deals, local music partnerships, and community events on Pearl Street.",
@@ -627,7 +627,7 @@ const socialGroups=[
      {name:'Chris Park',uname:'@chrisp',av:'CP',role:'member'},
    ],
    lastMsg:{text:'The Sink burger night is on tonight!',sender:'Aisha Johnson',time:'22m ago'},
-   drops:["The Sink: 50% Off Burger Night","Spruce Confections: Weekend Pastry Drop"],
+   drops:["The Sink: Burger Night","Spruce Confections: Weekend Pastry Drop"],
    chat:[
      {av:'AJ',text:'The Sink burger night is on tonight!',time:'22m ago',mine:false,name:'Aisha'},
      {av:'JR',text:'In! Meeting at 6?',time:'18m ago',mine:true,name:'You'},
@@ -996,8 +996,6 @@ function renderFeed(){
           ?`<button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>`
           :soldOut
           ?`<button disabled style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700">Sold Out</button>`
-          :d.noTicket
-          ?`<button onclick="go('dropDetail',{drop:${idx}})" style="background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700">See Deal →</button>`
           :`<button onclick="go('dropDetail',{drop:${idx}})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;letter-spacing:0.01em;box-shadow:4px -4px 0px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;gap:8px">Secure your Spot →</button>`}
       </div>
 
@@ -1168,9 +1166,6 @@ function renderDropDetail(){
 
   <!-- Fixed bottom bar -->
   <div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-    ${d.noTicket
-      ?`<button style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700" onclick="modal('showdrop-${S.drop}')">Show This Drop at the Door</button>`
-      :`
       <!-- Ticket selector + label — constrained to button width -->
       <div style="display:flex;align-items:center;gap:12px">
         ${d.maxPerUser>1?`
@@ -1187,7 +1182,6 @@ function renderDropDetail(){
       <!-- CTA -->
       <button onclick="go('placeOrder',{drop:S.drop,orderQty:S.orderQty})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">Review Order${d.price>0?` · $${total.toFixed(2)}`:''}</button>
       ${d.spotsLeft>0&&d.spotsLeft<=5?`<div style="font-size:11px;font-weight:600;color:#fff">Hurry — only ${d.spotsLeft} spot${d.spotsLeft!==1?'s':''} remaining!</div>`:''}
-    `}
   </div>`;
 }
 
@@ -4254,26 +4248,6 @@ function renderModal(){
           ${d.date?`<div style="font-size:12px;color:#6B7280;margin-bottom:10px">${d.date}</div>`:''}
           <div style="font-size:13px;color:#374151;line-height:1.5;margin-bottom:20px">${d.description||d.message||''}</div>
           <button onclick="S.modal=null;render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700">Got it</button>
-        </div>
-      </div>`;return;
-    }
-  }
-  if(S.modal&&S.modal.startsWith('showdrop-')){
-    const d=feedDrops[parseInt(S.modal.replace('showdrop-',''))];
-    if(d){
-      mr.innerHTML=`<div class="modal-bg" onclick="S.modal=null;render()">
-        <div class="modal fi" onclick="event.stopPropagation()">
-          <div class="mh"></div>
-          <div style="text-align:center;margin-bottom:16px">
-            <div style="font-size:13px;font-weight:600;color:#6B7280;margin-bottom:4px">Show at door or counter</div>
-            <div style="font-size:18px;font-weight:800;color:#111827">${d.title}</div>
-          </div>
-          <div style="background:#0E4EF5;border-radius:16px;padding:24px;text-align:center;margin-bottom:16px">
-            <div style="font-size:48px;margin-bottom:8px">📱</div>
-            <div style="font-size:14px;font-weight:700;color:#fff">Show this screen</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:4px">${d.host.name} · ${d.timing||'Today'}</div>
-          </div>
-          <button onclick="S.modal=null;render()" style="width:100%;background:#F3F4F6;color:#374151;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:600">Done</button>
         </div>
       </div>`;return;
     }
