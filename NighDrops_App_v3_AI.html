@@ -94,7 +94,7 @@ link:'<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path 
 send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 };
-function ic(n,s=20){return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
+function ic(n,s=20,c='currentColor'){return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
 
 // ── Open Maps ───────────────────────────────────────────
 function openMaps(address){
@@ -139,7 +139,7 @@ const feedDrops=[
    host:{name:'Best Buy Boulder',handle:'@bestbuyboulder',short:'BBY',addr:'1855 29th St, Boulder, CO'},
    partners:[{handle:'@samsung',name:'Samsung'}],
    status:'Live',timing:'Start Time',start:'11:00 AM',date:'Apr 2',
-   closesIn:'1h 45m',startsIn:'30m',price:0,cap:50,spotsLeft:18,age21:false,
+   closesIn:'1h 45m',startsIn:'30m',price:0,cap:50,spotsLeft:0,age21:false,
    media:'video',maxPerUser:1,myTicket:'TK004',
    liked:false,likeCount:89,
    desc:'Be among the first to get hands-on with the Samsung Galaxy S25 Ultra before its official retail launch. Demo the new AI camera features, try the new S Pen, and get entered to win one. Free to attend — ticket required for entry. Best Buy Totaltech members get priority access.',
@@ -1166,8 +1166,75 @@ function renderDropDetail(){
   </div>
 
   <!-- Fixed bottom bar -->
-  <div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-      <!-- Ticket selector + label — constrained to button width -->
+  ${(()=>{
+    const isMine=!!d.myTicket;
+    const isSoldOut=d.spotsLeft===0;
+    const maxFriends=d.maxPerUser>1?d.maxPerUser-1:0;
+    const canBuyForFriends=isMine&&!isSoldOut&&maxFriends>0;
+    const friendsQty=Math.min(Math.max(qty,1),maxFriends);
+    const friendsTotal=d.price*friendsQty;
+
+    if(isMine&&isSoldOut){
+      // User has ticket, drop is sold out
+      return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:6px 14px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.45)">This drop is sold out — your spot is secured</span>
+        </div>
+        <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+      </div>`;
+    }
+
+    if(canBuyForFriends){
+      // User has ticket + spots still available + maxPerUser > 1 → show ticket + buy-more-for-friends
+      return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;gap:10px">
+        <!-- Existing ticket row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(14,78,245,0.12);border:1px solid rgba(14,78,245,0.3);border-radius:12px;padding:10px 14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            ${ic('ticket',16,'#93C5FD')}
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#93C5FD">You're going</div>
+              <div style="font-size:11px;color:rgba(147,197,253,0.65)">You have a ticket for this drop</div>
+            </div>
+          </div>
+          <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:rgba(14,78,245,0.25);border:1px solid rgba(14,78,245,0.5);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">View</button>
+        </div>
+        <!-- Divider -->
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+          <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:0.07em">GET MORE FOR FRIENDS</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+        </div>
+        <!-- Friends ticket selector -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+          <div style="display:flex;align-items:center;border:2px solid rgba(255,255,255,0.7);border-radius:24px">
+            <button onclick="if(S.orderQty>1){S.orderQty--;render()}" style="background:none;border:none;padding:8px 12px;font-size:17px;color:rgba(255,255,255,${friendsQty>1?'0.8':'0.25'});line-height:1">−</button>
+            <span style="font-size:13px;font-weight:700;color:#fff;min-width:52px;text-align:center">${friendsQty} Friend${friendsQty!==1?'s':''}</span>
+            <button onclick="if(S.orderQty<${maxFriends}){S.orderQty++;render()}" style="background:none;border:none;padding:8px 12px;font-size:17px;color:rgba(255,255,255,${friendsQty<maxFriends?'0.8':'0.25'});line-height:1">+</button>
+          </div>
+          <span style="font-size:12px;color:rgba(255,255,255,0.4)">up to ${maxFriends} more</span>
+        </div>
+        <button onclick="go('placeOrder',{drop:S.drop,orderQty:S.orderQty})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">Review Order${d.price>0?` · $${(d.price*friendsQty).toFixed(2)}`:''}</button>
+        ${d.spotsLeft>0&&d.spotsLeft<=5?`<div style="font-size:11px;font-weight:600;color:#fff;text-align:center">Hurry — only ${d.spotsLeft} spot${d.spotsLeft!==1?'s':''} remaining!</div>`:''}
+      </div>`;
+    }
+
+    if(isMine){
+      // User has ticket, maxPerUser:1, nothing more to buy
+      return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+      </div>`;
+    }
+
+    if(isSoldOut){
+      // Sold out, user has no ticket
+      return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
+        <button disabled style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700">Sold Out</button>
+      </div>`;
+    }
+
+    // Normal flow — no ticket yet, spots available
+    return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
       <div style="display:flex;align-items:center;gap:12px">
         ${d.maxPerUser>1?`
         <div style="display:flex;align-items:center;border:2px solid rgba(255,255,255,0.7);border-radius:24px">
@@ -1180,10 +1247,10 @@ function renderDropDetail(){
         </div>`}
         <span style="font-size:14px;font-weight:500;color:rgba(255,255,255,0.6)">${pplLabel}</span>
       </div>
-      <!-- CTA -->
       <button onclick="go('placeOrder',{drop:S.drop,orderQty:S.orderQty})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">Review Order${d.price>0?` · $${total.toFixed(2)}`:''}</button>
       ${d.spotsLeft>0&&d.spotsLeft<=5?`<div style="font-size:11px;font-weight:600;color:#fff">Hurry — only ${d.spotsLeft} spot${d.spotsLeft!==1?'s':''} remaining!</div>`:''}
-  </div>`;
+    </div>`;
+  })()}`;
 }
 
 // ── PLACE ORDER ────────────────────────────────────────
