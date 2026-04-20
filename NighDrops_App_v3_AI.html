@@ -1205,12 +1205,8 @@ function renderDropDetail(){
     const friendsTotal=d.price*friendsQty;
 
     if(isMine&&isSoldOut){
-      // User has ticket, drop is sold out
+      // User has ticket, drop is sold out — sold out shown at top, just show ticket button here
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:6px 14px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-          <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.45)">This drop is sold out — your spot is secured</span>
-        </div>
         <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
       </div>`;
     }
