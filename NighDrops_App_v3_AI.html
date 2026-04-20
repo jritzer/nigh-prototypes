@@ -2835,23 +2835,30 @@ function renderModal(){
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Verify Your Identity</div>
       <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">A government-issued ID is required to access age-restricted drops.</div>
       <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px">Select ID Type</div>
-      ${[
-        ['🪪','Driver\'s License','Front &amp; back required'],
-        ['📘','Passport','Photo page only'],
-        ['🪪','State ID','Front &amp; back required'],
-      ].map(([icon,label,sub])=>`
-        <button onclick="S.verifyIdType='${label}';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
-          <span style="font-size:22px">${icon}</span>
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:600;color:#111827">${label}</div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${sub}</div>
-          </div>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>`).join('')}
+      <button onclick="S.verifyIdType='Drivers License';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
+        <span style="font-size:22px">🪪</span>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Driver's License</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button onclick="S.verifyIdType='Passport';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
+        <span style="font-size:22px">📘</span>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Passport</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Photo page only</div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button onclick="S.verifyIdType='State ID';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
+        <span style="font-size:22px">🪪</span>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">State ID</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button onclick="S.verifyIdType='Military ID';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
+        <span style="font-size:22px">🎖️</span>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Military ID</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div></div>`;return;
   }
   if(S.modal==='verifyIdScan'){
-    const idType=S.verifyIdType||"Driver's License";
+    const idType=(S.verifyIdType==='Drivers License'?"Driver's License":S.verifyIdType)||"Driver's License";
     const needsBack=idType!=='Passport';
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <button onclick="modal('verifyId')" style="background:none;border:none;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit">
