@@ -568,6 +568,22 @@ const proProfiles={
     cat:'Food & Drink',following:true,
     friendsFollowing:[{name:'Maya Torres',av:'MT'},{name:'Sarah Mitchell',av:'SM'}],
     recentDrops:['Friday Night Jazz & Tapas']},
+  '@nike':{name:'Nike',handle:'@nike',short:'NK',cat:'Apparel & Footwear',brand:true,
+    bio:'Members-only drops, early access launches, and exclusive collabs. Be first when Nike goes live near you.',
+    following:true,friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'James Kim',av:'JK'}],
+    recentDrops:['Air Max 2026 Member Launch','Boulder Run Club x Nike Drop','Nike By You Studio Pop-Up']},
+  '@patagonia':{name:'Patagonia',handle:'@patagonia',short:'PAT',cat:'Outdoor & Apparel',brand:true,
+    bio:'Worn Wear repair events, sustainability workshops, and end-of-season sample sales. For the long haul.',
+    following:true,friendsFollowing:[{name:'Maya Torres',av:'MT'}],
+    recentDrops:['Worn Wear Repair Clinic — Boulder','End-of-Season Sample Sale']},
+  '@rei':{name:'REI Co-op',handle:'@rei',short:'REI',cat:'Outdoor & Sports',brand:true,
+    bio:'Gear drops, member dividend events, and REI Garage Sale near you. Member-exclusive access on Nigh.',
+    following:true,friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Zoe Martinez',av:'ZM'}],
+    recentDrops:['REI Garage Sale — Denver','Member Early Access: Spring Gear']},
+  '@wholefoodsmarket':{name:'Whole Foods Market',handle:'@wholefoodsmarket',short:'WFM',cat:'Food & Grocery',brand:true,
+    bio:'Flash deals, local vendor spotlights, and seasonal drops at your nearest store.',
+    following:true,friendsFollowing:[{name:'Aisha Johnson',av:'AJ'}],
+    recentDrops:["Chef's Table Tasting — Pearl St",'Local Vendor Market Pop-Up']},
 };
 
 // ── Groups Data ────────────────────────────────────────
@@ -2381,7 +2397,7 @@ function renderProProfile(){
   return`${hdr(p.name,p.cat,"go('feed')",bizMenuBtn)}
   <div style="padding:14px 16px">
     <!-- Header card -->
-    <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;position:relative">
+    <div style="background:${p.brand?'linear-gradient(135deg,#111827,#374151)':'linear-gradient(135deg,#1B2A4A,#0E4EF5)'};border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;position:relative">
       <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px">${p.short.charAt(0)}</div>
       <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:2px">${p.name}</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px">${p.handle}</div>
@@ -2402,8 +2418,8 @@ function renderProProfile(){
 
     <!-- Contact info -->
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;margin-bottom:14px">
-      ${[['map',p.addr],['phone',p.phone],['mail',p.email]].map(([i,v])=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F9FAFB"><span style="color:#9CA3AF">${ic(i,15)}</span><span style="font-size:12px;color:#374151">${v}</span></div>`).join('')}
-      <div style="padding:12px 14px"><div style="font-size:11px;color:#9CA3AF;margin-bottom:5px">About</div><div style="font-size:12px;color:#374151;line-height:1.5">${p.bio}</div></div>
+      ${p.brand?'':[['map',p.addr],['phone',p.phone],['mail',p.email]].map(([i,v])=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F9FAFB"><span style="color:#9CA3AF">${ic(i,15)}</span><span style="font-size:12px;color:#374151">${v}</span></div>`).join('')}
+      <div style="padding:12px 14px">${p.brand?'':' <div style="font-size:11px;color:#9CA3AF;margin-bottom:5px">About</div>'}<div style="font-size:12px;color:#374151;line-height:1.5">${p.bio}</div></div>
     </div>
 
     <!-- Recent drops -->
