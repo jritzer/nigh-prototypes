@@ -4175,6 +4175,10 @@ function renderModal(){
       ${opt('All Friends','Visible to all your friends on Nigh','friends',ic('users',18))}
       ${socialGroups.map(g=>opt(g.name,`${g.members.length} member${g.members.length!==1?'s':''}`,g.id,ic('groups',18))).join('')}
       ${opt('Only Me','Visible only to you','only_me',ic('lock',18))}
+      <div style="display:flex;align-items:flex-start;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:11px 13px;margin-top:4px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div style="font-size:11px;color:#6B7280;line-height:1.5">The host of this drop can always see your information to manage your experience.</div>
+      </div>
     </div></div>`;return;
   }
   if(S.modal==='tos'||S.modal==='privacy'){
