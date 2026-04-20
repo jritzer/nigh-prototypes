@@ -2414,7 +2414,7 @@ function renderUserAccount(){
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
       ${row('First Name','Alex',"modal('editField-firstName')")}
       ${row('Last Name','Rivera',"modal('editField-lastName')")}
-      ${lockedRow('Username','@alexr','Usernames can only be changed once every 6 months')}
+      ${row('Username','@alexr',"modal('changeUsername')","Edit",'Can be changed once every 6 months')}
     </div>
 
     <!-- Contact — verified, change flow -->
@@ -2812,6 +2812,35 @@ function renderModal(){
           <span style="font-size:20px">${icon}</span>
           <span style="font-size:14px;font-weight:500;color:${i===2?'#EF4444':'#111827'}">${label}</span>
         </button>`).join('')}
+    </div></div>`;return;
+  }
+  if(S.modal==='changeUsername'){
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Change Username</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">Your old username <span style="font-weight:600;color:#374151">@alexr</span> will be released and available for others to claim after 30 days. You won't be able to change it again for 6 months.</div>
+
+      <label style="font-size:10px;font-weight:600;color:#9CA3AF;display:block;margin-bottom:6px">New Username</label>
+      <div style="position:relative;margin-bottom:6px">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#9CA3AF;font-weight:500">@</span>
+        <input id="uname-input" type="text" placeholder="newusername" oninput="(function(){
+          var v=document.getElementById('uname-input').value.trim();
+          var status=document.getElementById('uname-status');
+          var btn=document.getElementById('uname-save');
+          if(!v){status.innerHTML='';btn.disabled=true;btn.style.background='#E5E7EB';btn.style.color='#9CA3AF';return;}
+          if(v==='alexr'){status.innerHTML='<span style=\\'color:#EF4444;font-size:11px\\'>That\\'s your current username</span>';btn.disabled=true;btn.style.background='#E5E7EB';btn.style.color='#9CA3AF';return;}
+          if(v==='joshr'||v==='sarahm'||v==='jamesk'){status.innerHTML='<span style=\\'color:#EF4444;font-size:11px\\'>@'+v+' is already taken</span>';btn.disabled=true;btn.style.background='#E5E7EB';btn.style.color='#9CA3AF';return;}
+          status.innerHTML='<span style=\\'color:#059669;font-size:11px\\'>✓ @'+v+' is available</span>';
+          btn.disabled=false;btn.style.background='#0E4EF5';btn.style.color='#fff';
+        })()" style="width:100%;padding:10px 12px 10px 28px;border-radius:8px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none"/>
+      </div>
+      <div id="uname-status" style="min-height:18px;margin-bottom:16px"></div>
+
+      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:10px;padding:10px 12px;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start">
+        <span style="font-size:14px;flex-shrink:0">⚠️</span>
+        <span style="font-size:12px;color:#92400E;line-height:1.5">After changing, you won't be able to update your username again until <strong>March 2026</strong>.</span>
+      </div>
+
+      <button id="uname-save" onclick="modal(null)" disabled style="width:100%;padding:13px;border-radius:12px;background:#E5E7EB;color:#9CA3AF;border:none;font-size:14px;font-weight:700;cursor:default;font-family:inherit">Choose a username first</button>
     </div></div>`;return;
   }
   if(S.modal==='changePhone'||S.modal==='changeEmail'){
