@@ -3840,6 +3840,42 @@ function renderModal(){
       </div>`).join('')}
     </div></div>`;return;
   }
+  if(S.modal==='feedback'){
+    const types=['General Feedback','Bug or Problem','Feature Request','Drop or Business Issue','Account & Billing','Other'];
+    const sel=S.feedbackType||'';
+    const txt=S.feedbackText||'';
+    const submitted=S.feedbackSubmitted===true;
+    if(submitted){
+      mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="text-align:center;padding-bottom:8px"><div class="mh"></div>
+        <div style="width:56px;height:56px;border-radius:14px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin:8px auto 16px">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Thanks for your feedback</div>
+        <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We read every submission and use it to make Nigh better.</div>
+        <button onclick="S.feedbackSubmitted=false;S.feedbackType=null;S.feedbackText=null;modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Done</button>
+      </div></div>`;return;
+    }
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Send Feedback</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:20px">We'd love to hear from you.</div>
+
+      <!-- Type dropdown -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px">Type</div>
+      <div style="position:relative;margin-bottom:16px">
+        <select onchange="S.feedbackType=this.value;modal('feedback')" style="width:100%;padding:10px 32px 10px 12px;border-radius:8px;border:1px solid ${sel?'#0E4EF5':'#E5E7EB'};font-size:13px;color:${sel?'#111827':'#9CA3AF'};background:#fff;appearance:none;-webkit-appearance:none;font-family:inherit;outline:none;cursor:pointer">
+          <option value="" disabled ${!sel?'selected':''}>Select a type…</option>
+          ${types.map(t=>`<option value="${t}" ${sel===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+
+      <!-- Message -->
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px">Message</div>
+      <textarea oninput="S.feedbackText=this.value" placeholder="Tell us what's on your mind…" style="width:100%;height:120px;padding:10px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;resize:none;box-sizing:border-box;font-family:inherit;outline:none;line-height:1.5;margin-bottom:20px">${txt}</textarea>
+
+      <button onclick="if(S.feedbackType&&(S.feedbackText||'').trim()){S.feedbackSubmitted=true;modal('feedback')}" style="width:100%;padding:13px;border-radius:12px;background:${sel&&txt.trim()?'#0E4EF5':'#E5E7EB'};color:${sel&&txt.trim()?'#fff':'#9CA3AF'};border:none;font-size:14px;font-weight:700;cursor:${sel&&txt.trim()?'pointer':'default'};font-family:inherit">Submit</button>
+    </div></div>`;return;
+  }
   if(S.modal==='payment'){
     const showRemove=S.paymentShowRemove===true;
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
