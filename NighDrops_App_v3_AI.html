@@ -2363,7 +2363,7 @@ function renderFollowing(){
       ${tabBtn('Places','places')}
       ${tabBtn('Brands','brands')}
     </div>
-    <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap to view a ${tab==='places'?'place':'brand'}'s profile and manage your preferences.</div>
+    <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap to view a ${tab==='places'?'place':'brand'}'s profile and manage your preferences. Ask Niya to help you add more places and brands.</div>
 
     ${tab==='places'?followingList.map(p=>`
       <div onclick="S.proHandle='${p.handle}';S.scr='proProfile';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
