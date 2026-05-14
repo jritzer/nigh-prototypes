@@ -417,7 +417,7 @@
             <div class="progress-dot" id="dot3"></div>
         </div>
 
-        <!-- Step 1: Email -->
+        <!-- Step 1: Phone -->
         <div class="wl-step active" id="step1">
             <div class="question-text" id="q1text"></div>
             <div id="step1-body"></div>
@@ -427,15 +427,15 @@
         <div class="wl-step" id="step2">
             <div class="question-text" id="q2text"></div>
             <div class="options-grid">
-                <div class="option-card" id="opt-individual" onclick="selectType('individual', this)">
+                <div class="option-card" id="opt-person" onclick="selectType('person', this)">
                     <div class="option-icon">🧑</div>
-                    <div class="option-label">Individual</div>
-                    <div class="option-sub">Joining for yourself</div>
+                    <div class="option-label">Discover</div>
+                    <div class="option-sub">I want to find Drops</div>
                 </div>
-                <div class="option-card" id="opt-business" onclick="selectType('business', this)">
-                    <div class="option-icon">🏢</div>
-                    <div class="option-label">Business</div>
-                    <div class="option-sub">Joining for your business</div>
+                <div class="option-card" id="opt-host" onclick="selectType('host', this)">
+                    <div class="option-icon">✨</div>
+                    <div class="option-label">Host</div>
+                    <div class="option-sub">I want to host Drops</div>
                 </div>
             </div>
         </div>
@@ -461,7 +461,7 @@
                 <div class="confirm-check">✓</div>
                 <div class="confirm-heading">You're on the list.</div>
                 <p class="confirm-sub">
-                    We'll reach out when a spot opens — keep an eye on <strong id="confirmEmail"></strong>.
+                    We'll text you when a spot opens at <strong id="confirmPhone"></strong>.
                 </p>
                 <div class="confirm-meta">
                     <span class="confirm-tag" id="confirmType"></span>
@@ -476,13 +476,13 @@
 
 <script>
     // ── State ──────────────────────────────────────────────────────────
-    let state = { email: '', type: '', city: '' };
+    let state = { phone: '', type: '', city: '' };
     let currentStep = 1;
 
-    // Pull email from URL param if passed from main pages
+    // Pull phone from URL param if passed from main pages
     const urlParams = new URLSearchParams(window.location.search);
-    const urlEmail  = (urlParams.get('email') || '').trim();
-    const urlType   = (urlParams.get('type')  || '').trim(); // 'business' if coming from for-businesses.html
+    const urlPhone  = (urlParams.get('phone') || '').trim();
+    const urlType   = (urlParams.get('type')  || '').trim(); // 'host' if coming from for-hosts.html
 
     // ── Typewriter ────────────────────────────────────────────────────
     function typewrite(el, text, onDone) {
@@ -533,20 +533,20 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ── Step 1: Email ─────────────────────────────────────────────────
+    // ── Step 1: Phone ─────────────────────────────────────────────────
     function initStep1() {
         const body = document.getElementById('step1-body');
         const qEl  = document.getElementById('q1text');
 
-        if (urlEmail) {
+        if (urlPhone) {
             // Pre-filled — just confirm and continue
-            state.email = urlEmail;
+            state.phone = urlPhone;
             typewrite(qEl, 'A couple quick\nquestions.', () => {
                 const row = document.createElement('div');
                 row.className = 'prefill-row';
                 row.innerHTML = `
-                    <span class="prefill-email">${escHtml(urlEmail)}</span>
-                    <button class="prefill-change" onclick="clearEmail()">Change</button>
+                    <span class="prefill-email">${escHtml(urlPhone)}</span>
+                    <button class="prefill-change" onclick="clearPhone()">Change</button>
                 `;
 
                 const btn = document.createElement('button');
@@ -559,22 +559,22 @@
                 body.appendChild(btn);
             });
         } else {
-            // No email — ask for it
-            typewrite(qEl, "What's your\nemail address?", () => {
+            // No phone — ask for it
+            typewrite(qEl, "What's your\nphone number?", () => {
                 const input = document.createElement('input');
-                input.type = 'email';
+                input.type = 'tel';
                 input.className = 'wl-input';
-                input.id = 'emailInput';
-                input.placeholder = 'you@example.com';
-                input.autocomplete = 'email';
+                input.id = 'phoneInput';
+                input.placeholder = '(555) 555-5555';
+                input.autocomplete = 'tel';
                 input.addEventListener('keydown', e => {
-                    if (e.key === 'Enter') continueEmail();
+                    if (e.key === 'Enter') continuePhone();
                 });
 
                 const btn = document.createElement('button');
                 btn.className = 'btn-primary';
                 btn.textContent = 'Continue →';
-                btn.onclick = continueEmail;
+                btn.onclick = continuePhone;
 
                 body.appendChild(input);
                 body.appendChild(btn);
@@ -583,21 +583,21 @@
         }
     }
 
-    function clearEmail() {
-        // Strip email param and reload
+    function clearPhone() {
+        // Strip phone param and reload
         const url = new URL(window.location.href);
-        url.searchParams.delete('email');
+        url.searchParams.delete('phone');
         url.searchParams.delete('type');
         window.location.href = url.toString();
     }
 
-    function continueEmail() {
-        const input = document.getElementById('emailInput');
+    function continuePhone() {
+        const input = document.getElementById('phoneInput');
         if (!input || !input.value.trim()) {
             input && (input.style.borderColor = 'rgba(236,25,119,0.6)');
             return;
         }
-        state.email = input.value.trim();
+        state.phone = input.value.trim();
         goToStep2();
     }
 
@@ -606,11 +606,11 @@
         showStep(2);
         typewrite(
             document.getElementById('q2text'),
-            'Are you joining as an\nindividual or a business?',
+            'Are you here to\ndiscover or host?',
             () => {
-                // If type hinted via URL (coming from for-businesses.html), pre-select but still show
-                if (urlType === 'business') {
-                    document.getElementById('opt-business').classList.add('selected');
+                // If type hinted via URL (coming from for-hosts.html), pre-select but still show
+                if (urlType === 'host') {
+                    document.getElementById('opt-host').classList.add('selected');
                 }
             }
         );
@@ -653,9 +653,9 @@
         state.city = city;
 
         // Populate confirmation
-        document.getElementById('confirmEmail').textContent = state.email;
+        document.getElementById('confirmPhone').textContent = state.phone;
         document.getElementById('confirmType').textContent  =
-            state.type === 'business' ? '🏢 Business' : '🧑 Individual';
+            state.type === 'host' ? '✨ Host' : '🧑 Discover';
         document.getElementById('confirmCity').textContent  = '📍 ' + state.city;
 
         showStep(4);
@@ -664,7 +664,7 @@
         // fetch('/api/waitlist', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ email: state.email, type: state.type, city: state.city })
+        //   body: JSON.stringify({ phone: state.phone, type: state.type, city: state.city })
         // });
         console.log('Waitlist signup:', state);
     }
