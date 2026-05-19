@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh Drops — Feed</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a14;--card:#1c1c28;--border:rgba(255,255,255,0.08);
+  --text:#fff;--text2:rgba(255,255,255,0.60);--text3:rgba(255,255,255,0.38);
+  --blue:#0E4EF5;--purple:#6226E9;--teal:#41EFF9;--magenta:#EC1977;--green:#4ADE80;
+  --nav-h:64px;--sb-w:240px;
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Roboto,sans-serif;background:#000;color:var(--text)}
+#app{display:flex;height:100vh}
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+/* ── Feed ── */
+#feed-outer{flex:1;overflow:hidden;position:relative;display:flex;justify-content:center;background:#000}
+#feed-deck{width:100%;max-width:460px;position:relative;display:flex;flex-direction:column}
+#feed-inner{flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;-webkit-overflow-scrolling:touch}
+#feed-inner::-webkit-scrollbar{display:none}
+.feed-card{height:100svh;scroll-snap-align:start;position:relative;overflow:hidden}
+/* Card visuals */
+.card-bg{position:absolute;inset:0}
+.card-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,transparent 30%,transparent 40%,rgba(0,0,0,0.70) 70%,rgba(0,0,0,0.92) 100%)}
+.card-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,#41EFF9,#0E4EF5,#6226E9,#EC1977);z-index:5}
+/* Timer */
+.timer-pill{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.10);padding:8px 20px;border-radius:14px;text-align:center;z-index:10;white-space:nowrap;pointer-events:none}
+.timer-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;margin-bottom:4px}
+.timer-val{display:flex;align-items:baseline;gap:2px;justify-content:center}
+.t-num{font-size:18px;font-weight:400;color:#EC1977;line-height:1}
+.t-unit{font-size:12px;color:rgba(255,255,255,0.65);margin-right:4px}
+/* Scroll indicator dots */
+#feed-dots{position:absolute;left:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:20;pointer-events:none}
+.feed-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.25);transition:background .3s,transform .3s}
+.feed-dot.active{background:#fff;transform:scaleY(2.5);border-radius:2px}
+/* Right actions */
+.card-actions{position:absolute;right:14px;bottom:100px;display:flex;flex-direction:column;align-items:center;gap:18px;z-index:10}
+.host-av-wrap{display:flex;flex-direction:column;align-items:center}
+.host-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#fff,#E5E7EB);border:2px solid rgba(255,255,255,0.9);box-shadow:0 2px 10px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--blue);text-decoration:none}
+.host-av-plus{width:20px;height:20px;border-radius:50%;background:var(--blue);border:2px solid rgba(255,255,255,0.9);display:flex;align-items:center;justify-content:center;margin-top:-10px;color:#fff;font-size:13px;font-weight:700;line-height:1}
+.action-btn{background:none;border:none;padding:0;cursor:pointer;color:rgba(255,255,255,0.9);filter:drop-shadow(0 1px 3px rgba(0,0,0,0.4))}
+/* Bottom info */
+.card-info{position:absolute;left:16px;right:78px;bottom:70px;z-index:10}
+.card-title{font-size:21px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:10px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}
+.card-host{font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);margin-bottom:7px}
+.partner-pill{background:rgba(14,78,245,0.35);border:1px solid rgba(14,78,245,0.6);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:#93C5FD;display:inline-block;margin-right:4px;margin-bottom:4px}
+.friends-row{display:flex;align-items:center;gap:7px;margin-top:5px}
+.friend-chip{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+/* CTA */
+.card-cta{position:absolute;bottom:16px;left:16px;right:16px;z-index:10;display:flex;justify-content:center}
+.cta-btn{background:var(--blue);color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;box-shadow:4px -4px 0 rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-decoration:none}
+.cta-sold{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.2);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700}
+/* ── Tab bar ── */
+#tabbar{height:var(--nav-h);background:#0d0d1a;border-top:1px solid var(--border);display:flex;flex-shrink:0}
+.tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--text3);font-size:9px;font-weight:600;letter-spacing:0.04em;cursor:pointer;text-decoration:none;padding:4px 0;position:relative}
+.tb-btn.active{color:var(--blue)}
+.tb-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb-badge{position:absolute;top:4px;right:calc(50% - 18px);width:16px;height:16px;border-radius:50%;background:#EF4444;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+/* ── Sidebar ── */
+#sidebar{display:none}
+@media(min-width:900px){
+  #sidebar{display:flex;flex-direction:column;width:var(--sb-w);background:#0d0d1a;border-right:1px solid var(--border);flex-shrink:0}
+  #tabbar{display:none}
+  .sb-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:8px}
+  .sb-wordmark{font-size:17px;font-weight:700;color:var(--blue);letter-spacing:-0.01em}
+  .sb-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 8px;border-radius:10px;color:var(--text3);font-size:13px;font-weight:600;text-decoration:none;border:none;background:none;cursor:pointer;transition:background .15s,color .15s;width:calc(100% - 16px)}
+  .sb-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  .sb-item.active{background:rgba(14,78,245,0.14);color:#fff}
+  .sb-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+  .sb-badge{margin-left:auto;background:#EF4444;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px}
+  .sb-nigh-icon{width:14px !important;height:21px !important;stroke:none !important;fill:currentColor !important;flex-shrink:0}
+  .sb-app-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;text-decoration:none;transition:background .15s}
+  .sb-app-link:hover{background:rgba(255,255,255,0.06)}
+  /* Desktop nav arrows */
+  .feed-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.10);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;z-index:20;transition:background .15s}
+  .feed-nav:hover{background:rgba(255,255,255,0.20)}
+  .feed-nav.disabled{opacity:0.25;cursor:default;pointer-events:none}
+  .feed-nav.prev{left:calc(50% + var(--sb-w)/2 - 230px - 64px);position:fixed;top:50%}
+  .feed-nav.next{right:calc(50% - var(--sb-w)/2 - 230px - 64px);position:fixed;top:50%}
+  .feed-card{height:100vh}
+}
+button,input,a{font-family:inherit}
+/* Video play placeholder */
+.vid-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.play-circle{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Desktop Sidebar -->
+  <aside id="sidebar">
+    <div class="sb-brand">
+      <svg width="18" height="28" viewBox="86 40 180 285" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0">
+        <path fill="#6226E9" d="M242.8,82.1c-0.2-4-1.7-7.8-4.1-10.7c-0.4-0.5-0.8-0.9-1.2-1.3c-3.3-3.3-7.8-5.3-12.9-5.3h-94.1c-0.3,0-0.6,0-0.9,0h-0.1c-7.9,0.1-15.3,2.5-21.4,6.6c-10.5,7-17.5,19.1-17.5,32.7V71.4C90.7,56.3,103,44,118.2,44h86.6c17,0.5,31.4,11.9,36.2,27.5C242.1,74.8,242.7,78.4,242.8,82.1z"/>
+        <path fill="#0E4EF5" d="M264.5,143.9v43c0,6.9-2.8,13.4-7.7,18.2l-79.2,76.4l-50.7-48.9c0,0,0,0,0,0l-3.6-5.2c-7.1-10.1-10.9-22.2-10.9-34.5v-12c0.1,5.2,2.2,10.1,6,13.7l59.2,56.7l-0.3,0.2h0.5l-0.3-0.2l59.3-56.8l7.2-6.9c8.2-7.9,14-17.9,16.8-28.9L264.5,143.9z"/>
+        <path fill="#41EFF9" d="M123.3,227.4l3.6,5.2c0,0,0,0,0,0l-28.5-27.5c-4.9-4.8-7.7-11.3-7.7-18.2v-82.7c0-13.6,6.9-25.7,17.5-32.7c6.1-4.1,13.5-6.5,21.4-6.6c-5.3,0.3-9.9,2.8-13.1,6.6c-2.6,3.1-4.1,7.2-4.1,11.5v97.6c0,0.1,0,0.2,0,0.3v12C112.4,205.2,116.2,217.3,123.3,227.4z"/>
+        <path fill="#FFFFFF" d="M242.8,83v97.6c0,5.3-2.1,10.3-6,14l-59.3,56.8l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-97.9,0-97.9c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6h0.1c0.3,0,95,0,95,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7C242.8,82.4,242.8,82.7,242.8,83z"/>
+        <path fill="#EC1977" d="M264.5,71.4v72.5l-3.7,14.8c-2.8,11-8.6,21-16.8,28.9l-7.2,6.9c3.8-3.7,6-8.7,6-14V85.5h0v-2.2c0-0.1,0-0.2,0-0.3c0-0.3,0-0.6,0-0.9c-0.1-3.7-0.7-7.3-1.8-10.7c-4.9-15.6-19.2-26.9-36.2-27.5H237c7.6,0,14.5,3.1,19.4,8C261.4,57,264.5,63.8,264.5,71.4z"/>
+        <polygon fill="#0E4EF5" points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5"/>
+        <path fill="#0E4EF5" d="M171.2,214.8c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6c-3.5-3.5-9.1-3.5-12.6,0C167.7,205.7,167.7,211.3,171.2,214.8z"/>
+        <ellipse fill="#0E4EF5" cx="177.5" cy="308.4" rx="33.6" ry="8.4"/>
+      </svg>
+      <span class="sb-wordmark">Nigh Drops</span>
+    </div>
+    <a href="nigh-feed.html" class="sb-item active">
+      <svg class="sb-nigh-icon" viewBox="80 36 200 294" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon fill="currentColor" points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5"/><ellipse fill="currentColor" cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path fill="currentColor" d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>
+      Drops
+    </a>
+    <a href="nigh-tickets.html" class="sb-item">
+      <svg viewBox="0 0 24 24"><path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/></svg>
+      Tickets
+    </a>
+    <a href="nigh-alerts.html" class="sb-item">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Alerts <span class="sb-badge">2</span>
+    </a>
+    <a href="nigh-menu.html" class="sb-item">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      Menu
+    </a>
+    <div style="flex:1"></div>
+    <div style="border-top:1px solid rgba(255,255,255,0.08);padding:10px 8px">
+      <a href="#" class="sb-app-link" onclick="showAppModal();return false;">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;color:#fff">Get the Nigh Drops App</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.40);margin-top:1px">iOS &amp; Android</div>
+        </div>
+        <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.30);color:#F5A623;font-size:8px;font-weight:700;padding:3px 6px;border-radius:5px;letter-spacing:0.05em;flex-shrink:0;text-align:center;line-height:1.4">EARLY<br>ACCESS</span>
+      </a>
+    </div>
+  </aside>
+
+  <div id="main">
+    <div id="feed-outer">
+      <div id="feed-deck">
+        <div id="feed-inner"><!-- injected by JS --></div>
+        <div id="feed-dots"></div>
+      </div>
+      <!-- Desktop prev/next arrows -->
+      <button id="nav-prev" class="feed-nav prev disabled" onclick="scrollFeed(-1)" aria-label="Previous drop">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+      <button id="nav-next" class="feed-nav next" onclick="scrollFeed(1)" aria-label="Next drop">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+
+    <!-- Mobile tab bar -->
+    <nav id="tabbar">
+      <a href="nigh-feed.html" class="tb-btn active">
+        <svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 012 2v9.5L12 22 5 13.5V4a2 2 0 012-2z"/><line x1="9" y1="6" x2="9" y2="13"/><line x1="15" y1="6" x2="15" y2="13"/><line x1="9" y1="6" x2="15" y2="13"/></svg>
+        Drops
+      </a>
+      <a href="nigh-tickets.html" class="tb-btn">
+        <svg viewBox="0 0 24 24"><path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/></svg>
+        Tickets
+      </a>
+      <a href="nigh-alerts.html" class="tb-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="tb-badge">2</span>
+        Alerts
+      </a>
+      <a href="nigh-menu.html" class="tb-btn">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menu
+      </a>
+    </nav>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+var liked = [true, false, false];
+var drops = [
+  {id:'D001', title:'Nike Air Max Day Access', host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike'}, partners:["Tito's Vodka"], closesIn:'14m', price:0, spotsLeft:0, media:'video', myTicket:'TK001', friends:['SM','JK'], bgGrad:'to bottom,#0a0a1a,#0d1b4a'},
+  {id:'D003', title:"Whole Foods Chef's Table", host:{name:'Whole Foods Market',handle:'@wholefoodsboulder',short:'WFM'}, partners:['Kendall Jenner'], closesIn:'4h 12m', price:45, spotsLeft:3, media:'photo', myTicket:null, friends:['MT'], bgGrad:'to bottom,#0a0a1a,#1a0a2e'},
+  {id:'D005', title:'Friday Night Jazz & Tapas', host:{name:'Centro Mexican Kitchen',handle:'@centroboulder',short:'Centro'}, partners:[], closesIn:'2h 45m', price:35, spotsLeft:4, media:'photo', myTicket:null, friends:[], bgGrad:'to bottom,#0a0a12,#0d2218'},
+];
+var secs = [14*60+8, 4*60*60+12*60+8, 2*60*60+45*60+8];
+
+function buildFeed() {
+  var html = '';
+  drops.forEach(function(d, i) {
+    var isMine = !!d.myTicket;
+    var soldOut = d.spotsLeft === 0 && !isMine;
+    var hPart = d.closesIn.includes('h') ? d.closesIn.split(' ')[0] : null;
+    var mPart = d.closesIn.includes('h') ? d.closesIn.split(' ')[1] : d.closesIn;
+    var hrs = hPart ? hPart.replace('h','') : '';
+    var mins = mPart ? mPart.replace('m','') : '14';
+    var timerHtml = (hrs ? '<span class="t-num">'+hrs+'</span><span class="t-unit">h</span>' : '') +
+      '<span class="t-num" id="tm-'+i+'">'+mins+'</span><span class="t-unit">m</span>' +
+      '<span class="t-num" id="ts-'+i+'">08</span><span class="t-unit">s</span>';
+    var partners = d.partners.map(function(p){return '<div style="font-size:12px;font-weight:500;color:rgba(255,255,255,0.75);margin-top:2px">Partnering with <span style="color:#93C5FD;font-weight:600">'+p+'</span></div>';}).join('');
+    var friendsHtml = d.friends.length ? '<div class="friends-row"><div style="display:flex">' +
+      d.friends.map(function(av,fi){return '<div class="friend-chip" style="margin-left:'+(fi>0?'-6px':'0')+'">'+av+'</div>';}).join('') +
+      '</div><span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">'+(d.friends.length===1?'A friend is going':'Friends are going')+'</span></div>' : '';
+    var mediaBg = d.media === 'video'
+      ? '<div class="vid-play"><div class="play-circle"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'
+      : '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0.10"><svg width="60" height="60" viewBox="0 0 24 24" stroke="#fff" stroke-width="1.5" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>';
+    var ctaHtml = isMine
+      ? '<a href="nigh-ticket-view.html?id='+d.myTicket+'" class="cta-btn"><svg width="15" height="15" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/></svg> View Your Ticket</a>'
+      : soldOut
+      ? '<div class="cta-sold">Sold Out</div>'
+      : '<a href="NighDrops_Landing_v1.html?from=app" class="cta-btn">Secure your Spot &rarr;</a>';
+    var priceHtml = (!isMine && !soldOut && d.price > 0)
+      ? '<div style="display:flex;align-items:center;gap:5px;margin-top:6px;margin-bottom:4px"><span style="font-size:15px;font-weight:800;color:#4ADE80">$'+d.price+'</span><span style="font-size:11px;color:rgba(255,255,255,0.55);font-weight:500">per person</span></div>'
+      : '';
+    var heartFill = liked[i] ? '#EC1977' : 'none';
+    var heartStroke = liked[i] ? 'none' : 'rgba(255,255,255,0.9)';
+
+    html += '<div class="feed-card">' +
+      '<div class="card-bg" style="background:linear-gradient('+d.bgGrad+')">' + mediaBg + '</div>' +
+      '<div class="card-overlay"></div>' +
+      '<div class="card-accent"></div>' +
+      '<div class="timer-pill"><div class="timer-lbl">TIME REMAINING TO BUY</div><div class="timer-val">'+timerHtml+'</div></div>' +
+      '<div class="card-actions">' +
+        '<div class="host-av-wrap"><a href="nigh-pro-profile.html?handle='+d.host.handle+'" class="host-av">'+d.host.short.charAt(0)+'</a><div class="host-av-plus">+</div></div>' +
+        '<button class="action-btn" onclick="toggleLike('+i+',this)" aria-label="Like">' +
+          '<svg width="32" height="32" viewBox="0 0 24 24" fill="'+heartFill+'" stroke="'+heartStroke+'" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>' +
+        '</button>' +
+        '<button class="action-btn" aria-label="Share">' +
+          '<svg width="28" height="28" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.9)" stroke-width="2" fill="none" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="card-info"><div class="card-title">'+d.title+'</div><div class="card-host">Hosted by '+d.host.name+'</div>'+partners+priceHtml+friendsHtml+'</div>' +
+      '<div class="card-cta">'+ctaHtml+'</div>' +
+    '</div>';
+  });
+  document.getElementById('feed-inner').innerHTML = html;
+}
+
+function toggleLike(i, btn) {
+  liked[i] = !liked[i];
+  var fill = liked[i] ? '#EC1977' : 'none';
+  var stroke = liked[i] ? 'none' : 'rgba(255,255,255,0.9)';
+  btn.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>';
+}
+
+function updateNavState() {
+  var el = document.getElementById('feed-inner');
+  var idx = Math.round(el.scrollTop / el.clientHeight);
+  var prev = document.getElementById('nav-prev');
+  var next = document.getElementById('nav-next');
+  if (prev) prev.classList.toggle('disabled', idx === 0);
+  if (next) next.classList.toggle('disabled', idx >= drops.length - 1);
+  // Update dots
+  document.querySelectorAll('.feed-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i === idx);
+  });
+}
+
+function buildDots() {
+  var container = document.getElementById('feed-dots');
+  if (!container || drops.length < 2) return;
+  container.innerHTML = drops.map(function(_, i) {
+    return '<div class="feed-dot' + (i === 0 ? ' active' : '') + '"></div>';
+  }).join('');
+}
+
+function scrollFeed(dir) {
+  var el = document.getElementById('feed-inner');
+  el.scrollBy({top: dir * el.clientHeight, behavior: 'smooth'});
+  setTimeout(updateNavState, 500);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var el = document.getElementById('feed-inner');
+  if (el) el.addEventListener('scroll', updateNavState, {passive: true});
+});
+
+// Countdown timers
+setInterval(function() {
+  drops.forEach(function(d, i) {
+    if (secs[i] <= 0) return;
+    secs[i]--;
+    var m = Math.floor(secs[i] / 60);
+    var s = secs[i] % 60;
+    var ss = s < 10 ? '0' + s : '' + s;
+    var em = document.getElementById('tm-'+i);
+    var es = document.getElementById('ts-'+i);
+    if (em) em.textContent = m;
+    if (es) es.textContent = ss;
+  });
+}, 1000);
+
+buildFeed();
+buildDots();
+
+// App modal
+var _qrGenerated = false;
+function showAppModal() {
+  var modal = document.getElementById('app-modal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  if (!_qrGenerated && typeof QRCode !== 'undefined') {
+    new QRCode(document.getElementById('app-qr-code'), {
+      text: 'https://nighdrops.com/app',
+      width: 160,
+      height: 160,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    _qrGenerated = true;
+  }
+}
+function closeAppModal() {
+  document.getElementById('app-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeAppModal();
+});
+</script>
+
+<!-- App Download Modal -->
+<div id="app-modal" onclick="if(event.target===this)closeAppModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.80);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#1c1c28;border:1px solid rgba(255,255,255,0.12);border-radius:22px;padding:28px 24px 22px;max-width:290px;width:88%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.6)">
+    <button onclick="closeAppModal()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.08);border:none;width:30px;height:30px;border-radius:50%;color:rgba(255,255,255,0.55);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit">&times;</button>
+    <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+      <svg width="18" height="18" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+    </div>
+    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">Get the Nigh Drops App</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px;line-height:1.5">Scan with your phone's camera<br>to download on iOS or Android</div>
+    <div style="background:#fff;border-radius:14px;padding:14px;display:inline-block;margin-bottom:16px">
+      <div id="app-qr-code"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px">
+      <span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:5px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.60)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.6)" style="vertical-align:middle;margin-right:4px"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        App Store
+      </span>
+      <span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:5px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.60)">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.6)" style="vertical-align:middle;margin-right:4px"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-12.12L12.9 8.49 3.18 23.76zm17.89-10.98l-2.54-1.47-3.22 3.22 3.22 3.22 2.57-1.48c.73-.42.73-1.48-.03-1.49zM2.08 1.28C2.03 1.44 2 1.62 2 1.82v20.36c0 .2.03.38.08.54L14.09 12 2.08 1.28zm10.82 10.72l3.3-3.3L4.08.49c-.36-.21-.75-.25-1.08-.12L12.9 12z"/></svg>
+        Google Play
+      </span>
+    </div>
+    <div style="font-size:9px;font-weight:700;color:rgba(245,166,35,0.75);letter-spacing:0.10em">EARLY ACCESS · INVITE ONLY</div>
+  </div>
+</div>
+
+</body>
+</html>

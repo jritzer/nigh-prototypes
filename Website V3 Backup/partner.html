@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh — Partner Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9; --blue: #0E4EF5;
+            --teal: #41EFF9; --pink: #EC1977;
+            --bg: #0B0B1A; --surface: #12122A; --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.13);
+            --text: #F5F5F7; --text-secondary: #A8A8C0;
+            --radius: 20px; --radius-sm: 12px;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(11,11,26,0.85); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { display: flex; align-items: center; text-decoration: none; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta { background: var(--pink) !important; color: #fff !important; padding: 10px 24px !important; border-radius: var(--radius-sm) !important; font-weight: 700 !important; }
+
+        /* ===== HERO ===== */
+        .hero { padding: 160px 24px 100px; text-align: center; position: relative; overflow: hidden; margin-top: 72px; }
+        .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 90% 60% at 50% 0%, rgba(65,239,249,0.07), transparent 65%); pointer-events: none; }
+        .hero .container { position: relative; z-index: 2; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(65,239,249,0.07); border: 1px solid rgba(65,239,249,0.16); border-radius: 100px; padding: 8px 20px; font-size: 0.75rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 32px; }
+        .hero h1 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 24px; }
+        .gradient-text { background: linear-gradient(135deg, var(--teal), var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-sub { font-size: 1.1rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 44px; line-height: 1.75; }
+        .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--teal); color: var(--bg); padding: 16px 36px; border-radius: var(--radius-sm); font-size: 1rem; font-weight: 800; text-decoration: none; transition: all 0.25s; }
+        .hero-cta:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(65,239,249,0.22); }
+        .hero-note { margin-top: 16px; font-size: 0.78rem; color: var(--text-secondary); opacity: 0.45; }
+
+        /* ===== WAYS TO PARTNER ===== */
+        .ways { padding: 80px 24px 100px; }
+        .ways-header { text-align: center; margin-bottom: 48px; }
+        .ways-header .label { font-size: 0.72rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; }
+        .ways-header h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.15; }
+        .ways-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+        .way-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 28px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
+        .way-card:hover { border-color: var(--border-light); transform: translateY(-3px); }
+        .way-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .way-card.promote::before { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+        .way-card.sponsor::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+        .way-card.collaborate::before { background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue)); }
+
+        .way-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+        .way-type { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+        .promote .way-type { color: var(--teal); }
+        .sponsor .way-type { color: var(--purple); }
+        .collaborate .way-type { color: var(--pink); }
+        .way-card h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; line-height: 1.3; }
+        .way-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+        .way-detail { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.55; border-top: 1px solid var(--border); padding-top: 16px; line-height: 1.6; }
+        .way-detail strong { color: var(--text); opacity: 1; font-weight: 600; }
+
+        /* ===== HOW IT WORKS ===== */
+        .how { background: var(--surface); padding: 80px 24px; }
+        .how-header { text-align: center; margin-bottom: 48px; }
+        .how-header .label { font-size: 0.72rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 14px; }
+        .how-header h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.03em; }
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+        .step { padding: 36px 32px; position: relative; }
+        .step:not(:last-child)::after { content: '→'; position: absolute; top: 40px; right: -10px; color: var(--border-light); font-size: 1.2rem; z-index: 2; }
+        .step-num { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.14em; color: var(--teal); opacity: 0.7; margin-bottom: 14px; }
+        .step h3 { font-size: 1rem; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+        .step p { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ===== WHAT'S FREE ===== */
+        .free-section { padding: 80px 24px; text-align: center; }
+        .free-inner { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 56px 48px; max-width: 700px; margin: 0 auto; position: relative; overflow: hidden; }
+        .free-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--purple), var(--blue), var(--teal)); }
+        .free-inner .label { font-size: 0.72rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; display: block; }
+        .free-inner h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 12px; }
+        .free-inner p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+        .free-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 36px; }
+        .free-pill { background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); border-radius: 100px; padding: 8px 18px; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+        .free-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--teal); color: var(--bg); padding: 15px 32px; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 800; text-decoration: none; transition: all 0.25s; }
+        .free-cta:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .free-note { margin-top: 16px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.45; }
+
+        /* ===== FOOTER ===== */
+        footer { border-top: 1px solid var(--border); padding: 32px 24px; }
+        .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .footer-inner p { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.4; }
+        .footer-inner a { font-size: 0.78rem; color: var(--text-secondary); text-decoration: none; opacity: 0.45; transition: opacity 0.2s; }
+        .footer-inner a:hover { opacity: 0.8; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 800px) {
+            .ways-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; }
+            .step:not(:last-child)::after { display: none; }
+            .free-inner { padding: 36px 24px; }
+        }
+        @media (max-width: 520px) {
+            .free-pills { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <img src="nigh_logo.svg" alt="Nigh" style="height: 100px;">
+        </a>
+        <div class="nav-links">
+            <a href="index.html">For Businesses</a>
+            <a href="pricing-mockup-v2.html">Pricing</a>
+            <a href="#get-started" class="nav-cta">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">✦ Nigh Partner Program</div>
+        <h1>The best Drops happen<br>when great people<br><span class="gradient-text">team up.</span></h1>
+        <p class="hero-sub">Collaborate with local businesses on Drops — whether you're promoting, sponsoring, or co-hosting. Every partnership makes the experience better for everyone.</p>
+        <a href="#get-started" class="hero-cta">Become a Partner →</a>
+        <p class="hero-note">Free to join. No subscription required.</p>
+    </div>
+</section>
+
+<!-- THREE WAYS TO PARTNER -->
+<section class="ways">
+    <div class="container">
+        <div class="ways-header">
+            <div class="label">Three ways to partner</div>
+            <h2>Find your fit.</h2>
+        </div>
+        <div class="ways-grid">
+
+            <div class="way-card promote">
+                <span class="way-icon">📣</span>
+                <div class="way-type">Promote</div>
+                <h3>Share a Drop with your audience</h3>
+                <p>You have an audience that trusts you. Co-promote a Drop, drive tickets, and earn from every sale through your link.</p>
+                <div class="way-detail"><strong>Best for:</strong> Local influencers, creators, community newsletters, and anyone with a following that loves local experiences.</div>
+            </div>
+
+            <div class="way-card sponsor">
+                <span class="way-icon">🏷️</span>
+                <div class="way-type">Sponsor</div>
+                <h3>Back a Drop and get in front of the right crowd</h3>
+                <p>Partner with a local business by funding or subsidizing their Drop. Your brand gets featured — they get a better offer to share.</p>
+                <div class="way-detail"><strong>Best for:</strong> Brands and businesses looking for authentic, hyperlocal exposure at the right moment.</div>
+            </div>
+
+            <div class="way-card collaborate">
+                <span class="way-icon">🤝</span>
+                <div class="way-type">Co-host</div>
+                <h3>Drop together with another business</h3>
+                <p>Two businesses. One Drop. Double the audience. Co-host an experience that neither of you could pull off alone.</p>
+                <div class="way-detail"><strong>Best for:</strong> Complementary local businesses — think coffee + bakery, gym + nutrition shop, bar + food truck.</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+    <div class="container">
+        <div class="how-header">
+            <div class="label">How it works</div>
+            <h2>Simple from day one.</h2>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h3>Join as a Partner</h3>
+                <p>Sign up and tell us a little about yourself — your audience, your brand, or the business you run. You'll get a free Nigh account to get started.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h3>Connect directly</h3>
+                <p>Share your partner link with a business you already know — or get a direct collaboration invite from a business that wants to work with you. No browsing required.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h3>Drop it together</h3>
+                <p>Co-create the Drop, set terms, and launch. Both sides reach new people. Customers get a better experience. Everyone wins.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT'S FREE -->
+<section class="free-section" id="get-started">
+    <div class="container">
+        <div class="free-inner">
+            <span class="label">Free to join</span>
+            <h2>No subscription.<br>Just collaboration.</h2>
+            <p>Every Partner gets a free Nigh account with everything you need to collaborate, promote, and track your Drops.</p>
+            <div class="free-pills">
+                <span class="free-pill">Partner profile</span>
+                <span class="free-pill">Collaboration tools</span>
+                <span class="free-pill">Real-time analytics</span>
+                <span class="free-pill">Revenue tracking</span>
+                <span class="free-pill">Drop promotion tools</span>
+                <span class="free-pill">Shareable partner link</span>
+            </div>
+            <a href="#" class="free-cta">Become a Partner →</a>
+            <p class="free-note">Takes less than 5 minutes. No credit card needed.</p>
+            <p style="margin-top: 20px; font-size: 0.75rem; color: var(--text-secondary); opacity: 0.4; line-height: 1.6;">Partner accounts collaborate on existing Drops.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-inner">
+            <a href="index.html">← Back to nigh.com</a>
+            <p>© 2025 Nigh. All rights reserved.</p>
+            <a href="pricing-mockup-v2.html">Business pricing</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

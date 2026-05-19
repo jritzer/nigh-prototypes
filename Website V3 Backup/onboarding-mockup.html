@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh — Business Onboarding (Mockup)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --purple: #6226E9; --blue: #0E4EF5; --teal: #41EFF9; --pink: #EC1977;
+            --bg: #0B0B1A; --surface: #12122A; --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.14);
+            --text: #F5F5F7; --text-secondary: #A8A8C0;
+            --radius: 20px; --radius-sm: 12px;
+        }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 48px 24px; -webkit-font-smoothing: antialiased; }
+
+        .shell { width: 100%; max-width: 560px; }
+
+        /* ===== MOCKUP LABEL ===== */
+        .mockup-label { text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); opacity: 0.4; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 24px; }
+
+        /* ===== CARD ===== */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; overflow: hidden; }
+
+        /* ===== WELCOME BANNER ===== */
+        .welcome-banner { background: linear-gradient(135deg, rgba(98,38,233,0.25), rgba(14,78,245,0.15)); border-bottom: 1px solid var(--border); padding: 32px 36px; }
+        .welcome-banner .logo { height: 28px; margin-bottom: 20px; opacity: 0.9; }
+        .welcome-banner h1 { font-size: 1.45rem; font-weight: 900; letter-spacing: -0.03em; margin-bottom: 6px; }
+        .welcome-banner p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+        .welcome-banner .biz-name { display: inline-block; margin-top: 14px; background: rgba(65,239,249,0.1); color: var(--teal); font-size: 0.75rem; font-weight: 700; padding: 4px 14px; border-radius: 100px; letter-spacing: 0.04em; }
+
+        /* ===== PROGRESS ===== */
+        .progress-wrap { padding: 24px 36px 0; }
+        .progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-meta span { font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); }
+        .progress-meta strong { font-size: 0.78rem; font-weight: 800; color: var(--teal); }
+        .progress-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--purple), var(--teal)); transition: width 0.5s ease; }
+
+        /* ===== STEPS ===== */
+        .steps { padding: 20px 24px 28px; display: flex; flex-direction: column; gap: 8px; }
+
+        .step-row { display: flex; align-items: flex-start; gap: 16px; padding: 18px 16px; border-radius: 16px; border: 1px solid transparent; transition: all 0.25s; cursor: pointer; position: relative; }
+        .step-row.active { background: rgba(255,255,255,0.03); border-color: var(--border-light); }
+        .step-row.done { opacity: 0.6; }
+        .step-row.locked { opacity: 0.35; cursor: default; }
+
+        .step-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+        .step-row.done .step-icon { background: rgba(65,239,249,0.1); }
+        .step-row.active .step-icon { background: rgba(98,38,233,0.2); }
+        .step-row.locked .step-icon { background: rgba(255,255,255,0.04); }
+
+        .step-check { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; background: rgba(65,239,249,0.12); color: var(--teal); font-size: 1.1rem; font-weight: 900; }
+
+        .step-body { flex: 1; min-width: 0; }
+        .step-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .step-title { font-size: 0.95rem; font-weight: 800; line-height: 1.3; }
+        .step-row.done .step-title { text-decoration: line-through; opacity: 0.6; }
+        .step-badge { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 100px; }
+        .badge-active { background: rgba(98,38,233,0.2); color: #a78bfa; }
+        .badge-done { background: rgba(65,239,249,0.1); color: var(--teal); }
+        .step-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; font-weight: 400; }
+        .step-time { font-size: 0.72rem; color: var(--text-secondary); opacity: 0.45; margin-top: 6px; font-weight: 500; }
+
+        .step-action { margin-top: 14px; }
+        .btn-step { display: inline-flex; align-items: center; gap: 6px; background: var(--pink); color: #fff; font-family: inherit; font-size: 0.82rem; font-weight: 700; padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-step:hover { filter: brightness(1.12); transform: translateY(-1px); }
+        .btn-step-outline { background: transparent; border: 1px solid var(--border-light); color: var(--text-secondary); }
+        .btn-step-outline:hover { border-color: var(--text-secondary); color: var(--text); filter: none; transform: translateY(-1px); }
+
+        .step-divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+        /* ===== FOOTER NOTE ===== */
+        .card-footer { border-top: 1px solid var(--border); padding: 20px 36px; display: flex; align-items: center; justify-content: space-between; }
+        .card-footer span { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.45; }
+        .card-footer a { font-size: 0.78rem; color: var(--text-secondary); text-decoration: none; font-weight: 600; opacity: 0.55; transition: opacity 0.2s; }
+        .card-footer a:hover { opacity: 1; }
+
+        /* ===== STATE TOGGLE (demo only) ===== */
+        .demo-controls { margin-top: 24px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .demo-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); font-family: inherit; font-size: 0.75rem; font-weight: 600; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .demo-btn:hover { background: rgba(255,255,255,0.09); color: var(--text); }
+        .demo-btn.selected { border-color: var(--teal); color: var(--teal); background: rgba(65,239,249,0.06); }
+        .demo-note { font-size: 0.7rem; color: var(--text-secondary); opacity: 0.35; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <p class="mockup-label">Concept mockup — Business onboarding</p>
+
+    <div class="card" id="onboardingCard">
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <img src="Nigh_Logo.svg" alt="Nigh" class="logo">
+            <h1>Let's get your first Drop live. 🎯</h1>
+            <p>You're a few steps away from bringing customers in exactly when you want them.</p>
+            <span class="biz-name">Cozy Corner Café</span>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap">
+            <div class="progress-meta">
+                <span>Getting started</span>
+                <strong id="progressLabel">1 of 5 complete</strong>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 20%"></div>
+            </div>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps">
+
+            <!-- Step 1 — Done -->
+            <div class="step-row done">
+                <div class="step-check">✓</div>
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <span class="step-title">Set up your business profile</span>
+                        <span class="step-badge badge-done">Done</span>
+                    </div>
+                    <p class="step-desc">Your name, type, and location are all set.</p>
+                </div>
+            </div>
+
+            <div class="step-divider"></div>
+
+            <!-- Step 2 — Active -->
+            <div class="step-row active">
+                <div class="step-icon">✦</div>
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <span class="step-title">Create your first Drop</span>
+                        <span class="step-badge badge-active">Up next</span>
+                    </div>
+                    <p class="step-desc">Pick a time you want customers, set an exclusive offer, and choose how many spots are available.</p>
+                    <p class="step-time">⏱ About 5 minutes</p>
+                    <div class="step-action">
+                        <button class="btn-step" onclick="advanceDemo()">Create a Drop →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-divider"></div>
+
+            <!-- Step 3 — Locked -->
+            <div class="step-row locked">
+                <div class="step-icon">👁</div>
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <span class="step-title">Preview and publish</span>
+                    </div>
+                    <p class="step-desc">See exactly what customers will see before you go live.</p>
+                    <p class="step-time">⏱ 2 minutes</p>
+                </div>
+            </div>
+
+            <div class="step-divider"></div>
+
+            <!-- Step 4 — Locked -->
+            <div class="step-row locked">
+                <div class="step-icon">📣</div>
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <span class="step-title">Spread the word</span>
+                    </div>
+                    <p class="step-desc">Share via link, QR code, or directly to your followers. No algorithm needed.</p>
+                    <p class="step-time">⏱ 2 minutes</p>
+                </div>
+            </div>
+
+            <div class="step-divider"></div>
+
+            <!-- Step 5 — Locked -->
+            <div class="step-row locked">
+                <div class="step-icon">🎉</div>
+                <div class="step-body">
+                    <div class="step-title-row">
+                        <span class="step-title">Run your Drop and see results</span>
+                    </div>
+                    <p class="step-desc">Check in attendees on Drop day and see a real-time recap of who showed up.</p>
+                    <p class="step-time">⏱ On Drop day</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+            <span>Need help? We're here.</span>
+            <a href="#">Skip for now →</a>
+        </div>
+
+    </div>
+
+    <!-- Demo controls (for mockup only) -->
+    <div class="demo-controls">
+        <button class="demo-btn selected" onclick="setStep(1)">Step 1 of 5</button>
+        <button class="demo-btn" onclick="setStep(2)">Step 2 of 5</button>
+        <button class="demo-btn" onclick="setStep(3)">Step 3 of 5</button>
+        <button class="demo-btn" onclick="setStep(4)">All done 🎉</button>
+    </div>
+    <p class="demo-note">← Toggle states above to preview different moments in the onboarding flow</p>
+</div>
+
+<script>
+const states = [
+    {
+        progress: '1 of 5 complete', fill: '20%',
+        steps: [
+            { state: 'done',   icon: '✓',  check: true,  title: 'Set up your business profile',    badge: 'done',   desc: 'Your name, type, and location are all set.',                                                                         time: null,           cta: null },
+            { state: 'active', icon: '✦',  check: false, title: 'Create your first Drop',          badge: 'active', desc: 'Pick a time you want customers, set an exclusive offer, and choose how many spots are available.',                   time: '⏱ About 5 minutes', cta: 'Create a Drop →' },
+            { state: 'locked', icon: '👁', check: false, title: 'Preview and publish',             badge: null,     desc: 'See exactly what customers will see before you go live.',                                                            time: '⏱ 2 minutes',  cta: null },
+            { state: 'locked', icon: '📣', check: false, title: 'Spread the word',                 badge: null,     desc: 'Share via link, QR code, or directly to your followers. No algorithm needed.',                                       time: '⏱ 2 minutes',  cta: null },
+            { state: 'locked', icon: '🎉', check: false, title: 'Run your Drop and see results',   badge: null,     desc: 'Check in attendees on Drop day and see a real-time recap of who showed up.',                                          time: '⏱ On Drop day', cta: null },
+        ]
+    },
+    {
+        progress: '2 of 5 complete', fill: '40%',
+        steps: [
+            { state: 'done',   icon: '✓',  check: true,  title: 'Set up your business profile',    badge: 'done',   desc: 'Your name, type, and location are all set.',                                time: null,           cta: null },
+            { state: 'done',   icon: '✓',  check: true,  title: 'Create your first Drop',          badge: 'done',   desc: 'Tuesday 7pm, guest chef dinner for 12. Looking great.',                    time: null,           cta: null },
+            { state: 'active', icon: '👁', check: false, title: 'Preview and publish',             badge: 'active', desc: 'See exactly what customers will see — then go live with one tap.',           time: '⏱ 2 minutes',  cta: 'Preview your Drop →' },
+            { state: 'locked', icon: '📣', check: false, title: 'Spread the word',                 badge: null,     desc: 'Share via link, QR code, or directly to your followers.',                   time: '⏱ 2 minutes',  cta: null },
+            { state: 'locked', icon: '🎉', check: false, title: 'Run your Drop and see results',   badge: null,     desc: 'Check in attendees on Drop day and see a real-time recap of who showed up.', time: '⏱ On Drop day', cta: null },
+        ]
+    },
+    {
+        progress: '3 of 5 complete', fill: '60%',
+        steps: [
+            { state: 'done',   icon: '✓',  check: true,  title: 'Set up your business profile',    badge: 'done',   desc: 'Your name, type, and location are all set.',                                time: null,           cta: null },
+            { state: 'done',   icon: '✓',  check: true,  title: 'Create your first Drop',          badge: 'done',   desc: 'Tuesday 7pm, guest chef dinner for 12. Looking great.',                    time: null,           cta: null },
+            { state: 'done',   icon: '✓',  check: true,  title: 'Preview and publish',             badge: 'done',   desc: 'Your Drop is live. 3 spots claimed already.',                               time: null,           cta: null },
+            { state: 'active', icon: '📣', check: false, title: 'Spread the word',                 badge: 'active', desc: 'Your link is ready — share it with your regulars, post it to social, or print the QR code for your counter.', time: '⏱ 2 minutes', cta: 'Share your Drop →' },
+            { state: 'locked', icon: '🎉', check: false, title: 'Run your Drop and see results',   badge: null,     desc: 'Check in attendees on Drop day and see a real-time recap of who showed up.', time: '⏱ On Drop day', cta: null },
+        ]
+    },
+    {
+        progress: '5 of 5 — you did it!', fill: '100%',
+        steps: [
+            { state: 'done', icon: '✓', check: true, title: 'Set up your business profile',  badge: 'done', desc: 'Your name, type, and location are all set.',         time: null, cta: null },
+            { state: 'done', icon: '✓', check: true, title: 'Create your first Drop',        badge: 'done', desc: 'Tuesday 7pm, guest chef dinner for 12.',             time: null, cta: null },
+            { state: 'done', icon: '✓', check: true, title: 'Preview and publish',           badge: 'done', desc: 'Your Drop went live and filled up.',                 time: null, cta: null },
+            { state: 'done', icon: '✓', check: true, title: 'Spread the word',               badge: 'done', desc: 'Link shared. QR code printed. Word is out.',        time: null, cta: null },
+            { state: 'done', icon: '✓', check: true, title: 'Run your Drop and see results', badge: 'done', desc: '11 of 12 spots showed up. Your first Drop is done.', time: null, cta: null },
+        ]
+    }
+];
+
+let currentState = 0;
+
+function setStep(n) {
+    currentState = n - 1;
+    render();
+    document.querySelectorAll('.demo-btn').forEach((b, i) => b.classList.toggle('selected', i === currentState));
+}
+
+function advanceDemo() {
+    if (currentState < states.length - 1) {
+        currentState++;
+        render();
+        document.querySelectorAll('.demo-btn').forEach((b, i) => b.classList.toggle('selected', i === currentState));
+    }
+}
+
+function render() {
+    const s = states[currentState];
+    document.getElementById('progressLabel').textContent = s.progress;
+    document.getElementById('progressFill').style.width = s.fill;
+
+    const stepsEl = document.querySelector('.steps');
+    stepsEl.innerHTML = s.steps.map((step, i) => `
+        <div class="step-row ${step.state}" ${step.state === 'active' ? 'onclick="advanceDemo()"' : ''}>
+            ${step.check
+                ? `<div class="step-check">✓</div>`
+                : `<div class="step-icon">${step.icon}</div>`
+            }
+            <div class="step-body">
+                <div class="step-title-row">
+                    <span class="step-title">${step.title}</span>
+                    ${step.badge === 'active' ? `<span class="step-badge badge-active">Up next</span>` : ''}
+                    ${step.badge === 'done'   ? `<span class="step-badge badge-done">Done</span>` : ''}
+                </div>
+                <p class="step-desc">${step.desc}</p>
+                ${step.time ? `<p class="step-time">${step.time}</p>` : ''}
+                ${step.cta  ? `<div class="step-action"><button class="btn-step" onclick="event.stopPropagation();advanceDemo()">${step.cta}</button></div>` : ''}
+            </div>
+        </div>
+        ${i < s.steps.length - 1 ? '<div class="step-divider"></div>' : ''}
+    `).join('');
+
+    // Completed state — swap welcome banner
+    const banner = document.querySelector('.welcome-banner');
+    if (currentState === 3) {
+        banner.style.background = 'linear-gradient(135deg, rgba(65,239,249,0.12), rgba(14,78,245,0.1))';
+        banner.querySelector('h1').textContent = 'Your first Drop is done. 🎉';
+        banner.querySelector('p').textContent = 'Real customers showed up — exactly when you wanted them. That\'s what Nigh is built for.';
+    } else {
+        banner.style.background = 'linear-gradient(135deg, rgba(98,38,233,0.25), rgba(14,78,245,0.15))';
+        banner.querySelector('h1').textContent = 'Let\'s get your first Drop live. 🎯';
+        banner.querySelector('p').textContent = 'You\'re a few steps away from bringing customers in exactly when you want them.';
+    }
+}
+</script>
+
+</body>
+</html>

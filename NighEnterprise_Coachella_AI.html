@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coachella 2026 &middot; Nigh Enterprise</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8f9fb;overflow:hidden;height:100vh;}
+#app{display:flex;height:100vh;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:10px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+
+// ── ICONS ────────────────────────────────────────────────────────────────
+const I={
+  dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+  locations:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+  drops:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
+  customers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  collections:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7z"/><path d="M12 3v18"/><path d="M3 7l9 4 9-4"/></svg>',
+  analytics:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  billing:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12H4M20 12h2M5.64 18.36l1.41-1.41M16.95 7.05l1.41-1.41"/></svg>',
+};
+function ic(name,size=16){return `<svg width="${size}" height="${size}" style="display:inline-block;vertical-align:middle;">${I[name]||''}</svg>`;}
+function nighBug(size=30){return `<svg width="${size}" height="${size}" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#111"/><ellipse cx="50" cy="42" rx="22" ry="26" fill="#fff"/><circle cx="50" cy="52" r="11" fill="#111"/><circle cx="43" cy="30" r="4" fill="#111"/><circle cx="57" cy="30" r="4" fill="#111"/><line x1="28" y1="38" x2="12" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="28" y1="44" x2="10" y2="44" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="72" y1="38" x2="88" y2="28" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="72" y1="44" x2="90" y2="44" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+const S={
+  page:'dashboard',
+  selectedWeekend:'W1',
+  selectedDay:'D2',
+  hierarchyView:'stage',
+  selectedStage:null,
+  locationDetail:null,
+  collectionDetail:null,
+  showNewColl:false,
+  newCollStep:1,
+  newCollType:'venue',
+  newCollGeo:'stage',
+  newCollDay:null,
+  showPush:false,
+  pushStep:1,
+  pushDrop:null,
+  pushScope:null,
+  pushDay:null,
+};
+
+// ── FESTIVAL DATA ─────────────────────────────────────────────────────────
+const FESTIVAL={
+  name:'Coachella Valley Music and Arts Festival',
+  short:'Coachella 2026',
+  color:'#E8502A',
+  purple:'#2D1B69',
+  gold:'#F5C518',
+  abbr:'CVMA',
+  location:'Empire Polo Club, Indio, CA',
+  capacity:125000,
+};
+
+const WEEKENDS=[
+  {id:'W1',label:'Weekend 1',dates:'Apr 11\u201313, 2026',color:'#E8502A'},
+  {id:'W2',label:'Weekend 2',dates:'Apr 18\u201320, 2026',color:'#6B2D8B'},
+];
+
+const DAYS=[
+  {id:'D1',label:'Friday',  short:'Fri',weekend:'W1',date:'Apr 11',color:'#E8502A'},
+  {id:'D2',label:'Saturday',short:'Sat',weekend:'W1',date:'Apr 12',color:'#E8502A'},
+  {id:'D3',label:'Sunday',  short:'Sun',weekend:'W1',date:'Apr 13',color:'#E8502A'},
+  {id:'D4',label:'Friday',  short:'Fri',weekend:'W2',date:'Apr 18',color:'#6B2D8B'},
+  {id:'D5',label:'Saturday',short:'Sat',weekend:'W2',date:'Apr 19',color:'#6B2D8B'},
+  {id:'D6',label:'Sunday',  short:'Sun',weekend:'W2',date:'Apr 20',color:'#6B2D8B'},
+];
+
+const STAGES=[
+  {id:'S01',name:'Coachella Stage', color:'#E8502A',abbr:'MAIN',area:'Main Field'},
+  {id:'S02',name:'Sahara Tent',     color:'#6B2D8B',abbr:'SAH', area:'North Field'},
+  {id:'S03',name:'Outdoor Theatre', color:'#0891b2',abbr:'OT',  area:'South Field'},
+  {id:'S04',name:'Gobi Tent',       color:'#16a34a',abbr:'GOBI',area:'East Field'},
+  {id:'S05',name:'Mojave Tent',     color:'#f59e0b',abbr:'MOJ', area:'East Field'},
+  {id:'S06',name:'Sonora Stage',    color:'#ec4899',abbr:'SON', area:'West Field'},
+  {id:'S07',name:'Heineken House',  color:'#00722A',abbr:'HH',  area:'Sponsor Row'},
+  {id:'S08',name:'Do LaB',          color:'#8B5CF6',abbr:'LAB', area:'North Field'},
+];
+
+const LOCATIONS=[
+  {id:'L01',name:'Main Stage Merch Stand',      stage:'S01',vendorType:'festival',status:'active'},
+  {id:'L02',name:'Coachella Photo Pass Booth',  stage:'S01',vendorType:'festival',status:'active'},
+  {id:'L03',name:'Premier VIP Lounge',          stage:'S01',vendorType:'festival',status:'active'},
+  {id:'L04',name:'Sahara Merch Kiosk',          stage:'S02',vendorType:'festival',status:'active'},
+  {id:'L05',name:'Heineken Sahara Bar',         stage:'S02',vendorType:'sponsor', status:'active'},
+  {id:'L06',name:'Desert After Dark Lounge',    stage:'S02',vendorType:'sponsor', status:'active'},
+  {id:'L07',name:'OT Artisan Craft Market',     stage:'S03',vendorType:'vendor',  status:'active'},
+  {id:'L08',name:'Sunset Sessions Bar',         stage:'S03',vendorType:'festival',status:'active'},
+  {id:'L09',name:'Gobi Green Room Experience',  stage:'S04',vendorType:'artist',  status:'active'},
+  {id:'L10',name:'Gobi Food Row \u2014 Spicy Boys', stage:'S04',vendorType:'vendor', status:'active'},
+  {id:'L11',name:'Mojave Merch Drop',           stage:'S05',vendorType:'festival',status:'active'},
+  {id:'L12',name:'American Express Lounge',     stage:'S05',vendorType:'sponsor', status:'active'},
+  {id:'L13',name:'T-Mobile Fan Zone',           stage:'S05',vendorType:'sponsor', status:'active'},
+  {id:'L14',name:'Sonora Artisan Market',       stage:'S06',vendorType:'vendor',  status:'active'},
+  {id:'L15',name:'Sonora Sunset Bar',           stage:'S06',vendorType:'vendor',  status:'active'},
+  {id:'L16',name:'Heineken Draft Station A',    stage:'S07',vendorType:'sponsor', status:'active'},
+  {id:'L17',name:'Heineken Draft Station B',    stage:'S07',vendorType:'sponsor', status:'active'},
+  {id:'L18',name:'Heineken House Meet &amp; Greet',stage:'S07',vendorType:'sponsor',status:'active'},
+  {id:'L19',name:'Do LaB Immersive Merch',      stage:'S08',vendorType:'festival',status:'active'},
+  {id:'L20',name:'Do LaB Art Installation',     stage:'S08',vendorType:'vendor',  status:'active'},
+  {id:'L21',name:'Festival Main Merch Tent',    stage:'S01',vendorType:'festival',status:'active'},
+  {id:'L22',name:'Rose Garden VIP',             stage:'S01',vendorType:'festival',status:'active'},
+  {id:'L23',name:'Artist Village Access Point', stage:'S04',vendorType:'artist',  status:'active'},
+  {id:'L24',name:'H&amp;M Desert Oasis',        stage:'S05',vendorType:'sponsor', status:'active'},
+];
+
+const FESTIVAL_DROPS=[
+  {id:'FD01',title:'Weekend 1 Limited Drop Tee',           type:'merch',     status:'live',      stage:'S01',day:'D1',cap:300,res:289,checkins:241,showRate:83,price:65, vendorType:'festival',broadcastHrs:8},
+  {id:'FD02',title:'Sahara VIP Lounge Upgrade',            type:'vip',       status:'live',      stage:'S02',day:'D2',cap:120,res:114,checkins:98, showRate:86,price:150,vendorType:'festival',broadcastHrs:6},
+  {id:'FD03',title:'Heineken Backstage Access Pass',       type:'vip',       status:'live',      stage:'S07',day:'D3',cap:200,res:187,checkins:162,showRate:87,price:0,  vendorType:'sponsor', broadcastHrs:4},
+  {id:'FD04',title:'Artist Signed Vinyl Drop',             type:'merch',     status:'live',      stage:'S04',day:'D1',cap:150,res:143,checkins:118,showRate:83,price:85, vendorType:'artist',  broadcastHrs:3},
+  {id:'FD05',title:'Amex Platinum Cardholder Brunch',      type:'food',      status:'live',      stage:'S05',day:'D2',cap:80, res:76, checkins:71, showRate:93,price:0,  vendorType:'sponsor', broadcastHrs:4},
+  {id:'FD06',title:'Do LaB Sunrise Rave Kit Drop',         type:'merch',     status:'scheduled', stage:'S08',day:'D3',cap:200,res:156,checkins:0,  showRate:0, price:40, vendorType:'festival',broadcastHrs:6},
+  {id:'FD07',title:'Weekend 2 Collab Hoodie Drop',         type:'merch',     status:'live',      stage:'S01',day:'D4',cap:350,res:318,checkins:276,showRate:87,price:95, vendorType:'festival',broadcastHrs:8},
+  {id:'FD08',title:'Sonora Artisan Pottery Pack',          type:'merch',     status:'live',      stage:'S06',day:'D5',cap:60, res:54, checkins:47, showRate:87,price:120,vendorType:'vendor',  broadcastHrs:10},
+  {id:'FD09',title:'T-Mobile Fan Pit Upgrade',             type:'vip',       status:'live',      stage:'S05',day:'D5',cap:400,res:367,checkins:321,showRate:87,price:0,  vendorType:'sponsor', broadcastHrs:6},
+  {id:'FD10',title:'Meet &amp; Greet: Afternoon Artist',   type:'meet-greet',status:'live',      stage:'S03',day:'D6',cap:50, res:50, checkins:42, showRate:84,price:200,vendorType:'artist',  broadcastHrs:2},
+  {id:'FD11',title:'Craft Food Truck Festival Pack',       type:'food',      status:'live',      stage:'S04',day:'D4',cap:500,res:471,checkins:398,showRate:85,price:35, vendorType:'vendor',  broadcastHrs:12},
+  {id:'FD12',title:'Rose Garden VIP Package \u2014 W2',    type:'vip',       status:'draft',     stage:'S01',day:'D6',cap:100,res:0,  checkins:0,  showRate:0, price:500,vendorType:'festival',broadcastHrs:0},
+];
+
+const GEO_TIERS={
+  booth:   {label:'Specific Booth / Stand (~100 ft)',   short:'~100 ft'  },
+  stage:   {label:'Stage Area (~500 ft)',               short:'~500 ft'  },
+  grounds: {label:'Full Festival Grounds (~2,000 ft)',  short:'~2,000 ft'},
+  camping: {label:'Grounds &amp; Camping (~3,500 ft)',  short:'~3,500 ft'},
+};
+
+let CUSTOMER_DATA=[];
+let COLLECTIONS_DATA=[];
+let USERS_DATA=[];
+
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function stageById(id){return STAGES.find(s=>s.id===id);}
+function dayById(id){return DAYS.find(d=>d.id===id);}
+function badge(status){
+  const map={live:'#dcfce7:#16a34a:Live',scheduled:'#fef9c3:#854d0e:Scheduled',draft:'#f1f5f9:#64748b:Draft',ended:'#fee2e2:#b91c1c:Ended',active:'#dcfce7:#16a34a:Active',paused:'#fef3c7:#b45309:Paused'};
+  const [bg,color,label]=(map[status]||'#f1f5f9:#64748b:Unknown').split(':');
+  return `<span style="background:${bg};color:${color};font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:20px;">${label}</span>`;
+}
+function vendorBadge(type){
+  if(type==='festival') return `<span style="background:#e8f5e9;color:#2e7d32;font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#127914; Goldenvoice</span>`;
+  if(type==='sponsor')  return `<span style="background:#fffde7;color:#f57f17;font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#10022; Sponsor</span>`;
+  if(type==='vendor')   return `<span style="background:#e3f2fd;color:#1565c0;font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#128722; Vendor</span>`;
+  if(type==='artist')   return `<span style="background:#f3e5f5;color:#6a1b9a;font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">&#127908; Artist</span>`;
+  return '';
+}
+function dayBadge(dayId){
+  const d=dayById(dayId);
+  if(!d) return '';
+  const w=WEEKENDS.find(wk=>wk.id===d.weekend);
+  return `<span style="background:${d.color}18;color:${d.color};font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${w?w.label:''} &middot; ${d.label}</span>`;
+}
+function catBadge(type){
+  const map={
+    'merch':      {bg:'#fce7f3',c:'#9d174d',label:'&#127903; Merch'},
+    'food':       {bg:'#fef3c7',c:'#92400e',label:'&#127829; F&amp;B'},
+    'meet-greet': {bg:'#f3e8ff',c:'#5b21b6',label:'&#127908; Meet &amp; Greet'},
+    'vip':        {bg:'#fef9c3',c:'#713f12',label:'&#11088; VIP'},
+  };
+  const t=map[type]||{bg:'#f1f5f9',c:'#475569',label:type};
+  return `<span style="background:${t.bg};color:${t.c};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${t.label}</span>`;
+}
+function pct(a,b){return b>0?Math.round(a/b*100):0;}
+function fmtMoney(n){return '$'+n.toLocaleString();}
+function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
+function infoRow(label,val){return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${label}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${val}</span></div>`;}
+
+// ── LAYOUT ────────────────────────────────────────────────────────────────
+function layout(){
+  return `<div style="display:flex;height:100vh;overflow:hidden;">
+    ${sidebar()}
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      ${topbar()}
+      <div style="flex:1;overflow-y:auto;">${renderPage()}</div>
+    </div>
+  </div>`;
+}
+
+function sidebar(){
+  const nav=[
+    {id:'dashboard', label:'Dashboard',  icon:'dashboard'},
+    {id:'locations', label:'Locations',  icon:'locations'},
+    {id:'drops',     label:'Drops',      icon:'drops'},
+    {id:'customers', label:'Attendees',  icon:'customers'},
+    {id:'collections',label:'Collections',icon:'collections'},
+    {id:'analytics', label:'Analytics',  icon:'analytics'},
+    {id:'users',     label:'Team',       icon:'users'},
+    {id:'billing',   label:'Billing',    icon:'billing'},
+    {id:'settings',  label:'Settings',   icon:'settings'},
+  ];
+  return `<div style="width:210px;min-width:210px;background:linear-gradient(180deg,#2D1B69 0%,#E8502A 100%);display:flex;flex-direction:column;padding:20px 0;overflow-y:auto;">
+    <div style="padding:0 18px 24px;display:flex;align-items:center;gap:10px;">
+      ${nighBug(30)}
+      <div>
+        <div style="color:#fff;font-weight:900;font-size:0.82rem;line-height:1.1;">Coachella 2026</div>
+        <div style="color:rgba(255,255,255,0.65);font-size:0.6rem;margin-top:1px;">24 Locations &middot; 8 Stages &middot; 2 Weekends</div>
+      </div>
+    </div>
+    ${nav.map(n=>`<button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 18px;background:${S.page===n.id?'rgba(255,255,255,0.18)':'transparent'};border:none;border-left:3px solid ${S.page===n.id?'#fff':'transparent'};color:${S.page===n.id?'#fff':'rgba(255,255,255,0.65)'};font-size:0.8rem;font-weight:${S.page===n.id?'700':'500'};cursor:pointer;text-align:left;">
+      <span style="opacity:0.9;">${ic(n.icon,15)}</span>${n.label}
+    </button>`).join('')}
+  </div>`;
+}
+
+function topbar(){
+  const wDays=DAYS.filter(d=>d.weekend===S.selectedWeekend);
+  return `<div style="background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;">
+    <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:8px;padding:3px;">
+      ${WEEKENDS.map(w=>`<button onclick="ss({selectedWeekend:'${w.id}',selectedDay:'${DAYS.find(d=>d.weekend===w.id).id}'})" style="padding:5px 12px;border-radius:6px;border:none;font-size:0.72rem;font-weight:700;cursor:pointer;background:${S.selectedWeekend===w.id?w.color:'transparent'};color:${S.selectedWeekend===w.id?'#fff':'#64748b'};">${w.label}</button>`).join('')}
+    </div>
+    <div style="width:1px;height:24px;background:#e5e7eb;"></div>
+    <div style="display:flex;gap:4px;">
+      ${wDays.map(d=>`<button onclick="ss({selectedDay:'${d.id}'})" style="padding:5px 10px;border-radius:6px;border:2px solid ${S.selectedDay===d.id?d.color:'#e5e7eb'};background:${S.selectedDay===d.id?d.color+'12':'#fff'};font-size:0.72rem;font-weight:700;cursor:pointer;color:${S.selectedDay===d.id?d.color:'#64748b'};">${d.short} <span style="font-weight:400;font-size:0.66rem;">${d.date}</span></button>`).join('')}
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div style="display:flex;gap:3px;background:#f1f5f9;border-radius:8px;padding:3px;">
+        ${[{v:'stage',l:'By Stage'},{v:'location',l:'By Location'}].map(h=>`<button onclick="ss({hierarchyView:'${h.v}'})" style="padding:4px 10px;border-radius:5px;border:none;font-size:0.7rem;font-weight:700;cursor:pointer;background:${S.hierarchyView===h.v?'#E8502A':'transparent'};color:${S.hierarchyView===h.v?'#fff':'#64748b'};">${h.l}</button>`).join('')}
+      </div>
+      <button onclick="ss({showPush:true,pushStep:1})" style="background:#E8502A;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('drops',13)} Push Drop</button>
+    </div>
+  </div>`;
+}
+
+function renderPage(){
+  const pages={dashboard:rDashboard,locations:rLocations,drops:rDrops,customers:rCustomers,collections:rCollections,analytics:rAnalytics,users:rUsers,billing:rBilling,settings:rSettings};
+  return (pages[S.page]||rDashboard)();
+}
+
+// ── DASHBOARD KPI HELPERS ─────────────────────────────────────────────────
+function kpi(label,val,sub,color='#0f172a'){
+  return `<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+    <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:4px;">${label}</div>
+    <div style="font-size:1.6rem;font-weight:900;color:${color};">${val}</div>
+    <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${sub}</div>
+  </div>`;
+}
+function statusBar(label,val,max,color,sub){
+  const p=max>0?Math.min(Math.round(val/max*100),100):0;
+  return `<div style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+      <span style="font-size:0.75rem;font-weight:600;color:#0f172a;">${label}</span>
+      <span style="font-size:0.75rem;font-weight:700;color:${color};">${val.toLocaleString()}${sub?' &middot; '+sub:''}</span>
+    </div>
+    <div style="background:#f1f5f9;border-radius:20px;height:6px;overflow:hidden;">
+      <div style="height:6px;border-radius:20px;background:${color};width:${p}%;"></div>
+    </div>
+  </div>`;
+}
+function miniStat(label,val,color){
+  return `<div style="background:#f8f9fb;border-radius:8px;padding:8px 10px;">
+    <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:2px;">${label}</div>
+    <div style="font-size:0.88rem;font-weight:800;color:${color||'#0f172a'};">${val}</div>
+  </div>`;
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────
+function rDashboard(){
+  const liveDrops=FESTIVAL_DROPS.filter(d=>d.status==='live');
+  const allActive=FESTIVAL_DROPS.filter(d=>d.status!=='draft');
+  const totalCI=allActive.reduce((s,d)=>s+(d.checkins||0),0);
+  const totalRes=allActive.reduce((s,d)=>s+(d.res||0),0);
+  const overallConv=pct(totalCI,totalRes);
+  const maxCI=Math.max(...FESTIVAL_DROPS.map(d=>d.checkins||0),1);
+
+  const w1Drops=FESTIVAL_DROPS.filter(d=>dayById(d.day)&&dayById(d.day).weekend==='W1');
+  const w2Drops=FESTIVAL_DROPS.filter(d=>dayById(d.day)&&dayById(d.day).weekend==='W2');
+  const w1CI=w1Drops.reduce((s,d)=>s+(d.checkins||0),0);
+  const w2CI=w2Drops.reduce((s,d)=>s+(d.checkins||0),0);
+  const w1Res=w1Drops.reduce((s,d)=>s+(d.res||0),0);
+  const w2Res=w2Drops.reduce((s,d)=>s+(d.res||0),0);
+
+  const stageStats=STAGES.map(st=>{
+    const stDrops=FESTIVAL_DROPS.filter(d=>d.stage===st.id);
+    const ci=stDrops.reduce((s,d)=>s+(d.checkins||0),0);
+    return {...st,ci,dropCount:stDrops.length};
+  }).sort((a,b)=>b.ci-a.ci);
+  const maxStageCI=Math.max(...stageStats.map(s=>s.ci),1);
+
+  const vendorCI=[
+    {vt:'festival',label:'Goldenvoice',color:'#16a34a'},
+    {vt:'sponsor', label:'Sponsors',   color:'#f57f17'},
+    {vt:'vendor',  label:'Vendors',    color:'#1565c0'},
+    {vt:'artist',  label:'Artists',    color:'#6a1b9a'},
+  ].map(v=>({...v,ci:FESTIVAL_DROPS.filter(d=>d.vendorType===v.vt).reduce((s,d)=>s+(d.checkins||0),0)}));
+  const maxVCI=Math.max(...vendorCI.map(v=>v.ci),1);
+
+  const sorted=[...allActive].sort((a,b)=>(b.checkins||0)-(a.checkins||0));
+
+  return `<div style="padding:28px 32px;">
+    <div style="margin-bottom:20px;">
+      <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Dashboard</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${liveDrops.length} drops live &middot; ${totalCI.toLocaleString()} total check-ins &middot; Empire Polo Club, Indio CA</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+      ${kpi('Drops Live',liveDrops.length,`${FESTIVAL_DROPS.length} total drops`,'#E8502A')}
+      ${kpi('Total Check-ins',fmtNum(totalCI),'Both weekends combined')}
+      ${kpi('Total Reserved',fmtNum(totalRes),'Across all drops')}
+      ${kpi('Overall Conv %',overallConv+'%','Reserved \u2192 Check-in',showColor(overallConv))}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;margin-bottom:20px;">
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+        <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">Top Drops by Check-ins</div>
+          <div style="font-size:0.72rem;color:#64748b;">${sorted.length} active drops</div>
+        </div>
+        ${sorted.slice(0,7).map((d,i)=>{
+          const conv=d.res>0?pct(d.checkins,d.res):0;
+          const stage=stageById(d.stage)||STAGES[0];
+          return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="font-size:0.72rem;font-weight:900;color:#94a3b8;width:18px;">#${i+1}</span>
+              <div style="font-weight:700;font-size:0.82rem;color:#0f172a;flex:1;">${d.title}</div>
+              ${catBadge(d.type)}
+              ${vendorBadge(d.vendorType)}
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding-left:26px;">
+              <span style="background:${stage.color}20;color:${stage.color};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${stage.abbr}</span>
+              ${dayBadge(d.day)}
+              <div style="flex:1;background:#f1f5f9;border-radius:20px;height:5px;overflow:hidden;">
+                <div style="height:5px;border-radius:20px;background:${FESTIVAL.color};width:${Math.round((d.checkins||0)/maxCI*100)}%;"></div>
+              </div>
+              <span style="font-size:0.78rem;font-weight:800;color:#0f172a;min-width:42px;text-align:right;">${fmtNum(d.checkins)}</span>
+              <span style="font-size:0.75rem;font-weight:700;color:${showColor(conv)};min-width:34px;text-align:right;">${conv}%</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px;">
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Weekend Comparison</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div style="background:#fff8f5;border-radius:10px;border:1px solid #fed7aa;padding:10px 12px;">
+              <div style="font-size:0.62rem;font-weight:800;color:#E8502A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Weekend 1</div>
+              <div style="font-size:1.3rem;font-weight:900;color:#E8502A;">${fmtNum(w1CI)}</div>
+              <div style="font-size:0.68rem;color:#64748b;margin-top:2px;">${w1Drops.filter(d=>d.status==='live').length} drops &middot; ${pct(w1CI,w1Res)}% conv</div>
+            </div>
+            <div style="background:#f5f3ff;border-radius:10px;border:1px solid #ddd6fe;padding:10px 12px;">
+              <div style="font-size:0.62rem;font-weight:800;color:#6B2D8B;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Weekend 2</div>
+              <div style="font-size:1.3rem;font-weight:900;color:#6B2D8B;">${fmtNum(w2CI)}</div>
+              <div style="font-size:0.68rem;color:#64748b;margin-top:2px;">${w2Drops.filter(d=>d.status==='live').length} drops &middot; ${pct(w2CI,w2Res)}% conv</div>
+            </div>
+          </div>
+          <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-bottom:8px;">Weekend Split</div>
+          ${statusBar('Weekend 1',w1CI,totalCI||1,'#E8502A','')}
+          ${statusBar('Weekend 2',w2CI,totalCI||1,'#6B2D8B','')}
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px;">
+          <div style="font-size:0.82rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Vendor Type Split</div>
+          ${vendorCI.map(v=>statusBar(v.label,v.ci,maxVCI,v.color,'')).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:18px 20px;">
+      <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:14px;">Stage Breakdown</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${stageStats.map(s=>statusBar(s.name,s.ci,maxStageCI,s.color,`${s.dropCount} drops`)).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── LOCATIONS ─────────────────────────────────────────────────────────────
+function filterBar(options,selectedKey,stateKey){
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <button onclick="ss({${stateKey}:null})" style="padding:6px 14px;border-radius:20px;border:2px solid ${!S[stateKey]?'#E8502A':'#e5e7eb'};background:${!S[stateKey]?'#fff8f5':'#fff'};font-size:0.75rem;font-weight:700;cursor:pointer;color:${!S[stateKey]?'#E8502A':'#475569'};">All</button>
+    ${options.map(o=>`<button onclick="ss({${stateKey}:'${o.id}'})" style="padding:6px 14px;border-radius:20px;border:2px solid ${S[stateKey]===o.id?o.color||'#E8502A':'#e5e7eb'};background:${S[stateKey]===o.id?(o.color||'#E8502A')+'12':'#fff'};font-size:0.75rem;font-weight:700;cursor:pointer;color:${S[stateKey]===o.id?o.color||'#E8502A':'#475569'};">${o.abbr||o.name}</button>`).join('')}
+  </div>`;
+}
+
+function rLocations(){
+  if(S.locationDetail) return locationDetail(S.locationDetail);
+  return S.hierarchyView==='stage'?rLocByStage():rLocByLocation();
+}
+
+function rLocByStage(){
+  const filteredStages=STAGES.filter(st=>!S.selectedStage||S.selectedStage===st.id);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Locations</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">24 locations across 8 stages</div>
+      </div>
+    </div>
+    ${filterBar(STAGES,'selectedStage','selectedStage')}
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      ${filteredStages.map(st=>{
+        const stLocs=LOCATIONS.filter(l=>l.stage===st.id);
+        const stDrops=FESTIVAL_DROPS.filter(d=>d.stage===st.id&&d.status==='live');
+        return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+          <div style="padding:14px 18px;background:${st.color}10;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="background:${st.color};color:#fff;font-size:0.68rem;font-weight:800;padding:4px 10px;border-radius:20px;">${st.abbr}</span>
+              <div>
+                <div style="font-weight:800;font-size:0.9rem;color:#0f172a;">${st.name}</div>
+                <div style="font-size:0.7rem;color:#64748b;">${st.area} &middot; ${stLocs.length} locations</div>
+              </div>
+            </div>
+            <div style="font-size:0.75rem;font-weight:700;color:${st.color};">${stDrops.length} live drops</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+            ${stLocs.map((loc,i)=>locationCard(loc,i,stLocs.length)).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function rLocByLocation(){
+  const locs=LOCATIONS.filter(l=>!S.selectedStage||l.stage===S.selectedStage);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Locations</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${locs.length} locations</div>
+      </div>
+    </div>
+    ${filterBar(STAGES,'selectedStage','selectedStage')}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      ${locs.map((loc,i)=>{
+        const st=stageById(loc.stage);
+        const drops=FESTIVAL_DROPS.filter(d=>d.stage===loc.stage&&d.status==='live');
+        return `<div onclick="ss({locationDetail:'${loc.id}'})" style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="background:${st?st.color:'#64748b'}20;color:${st?st.color:'#64748b'};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${st?st.abbr:'—'}</span>
+            ${vendorBadge(loc.vendorType)}
+          </div>
+          <div style="font-weight:700;font-size:0.85rem;color:#0f172a;margin-bottom:6px;">${loc.name}</div>
+          <div style="font-size:0.72rem;color:#64748b;">${st?st.name:'—'} &middot; ${drops.length} live drop${drops.length!==1?'s':''}</div>
+          <div style="margin-top:10px;">${badge(loc.status)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function locationCard(loc,i,total){
+  const st=stageById(loc.stage);
+  const drops=FESTIVAL_DROPS.filter(d=>d.stage===loc.stage&&d.status==='live');
+  const isLast=i===total-1;
+  const isLastRow=i>=total-3;
+  return `<div onclick="ss({locationDetail:'${loc.id}'})" style="padding:14px 16px;border-right:${(i+1)%3===0?'none':'1px solid #e5e7eb'};border-bottom:${isLastRow?'none':'1px solid #e5e7eb'};cursor:pointer;background:#fff;transition:background 0.1s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='#fff'">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+      ${vendorBadge(loc.vendorType)}
+      ${badge(loc.status)}
+    </div>
+    <div style="font-weight:700;font-size:0.8rem;color:#0f172a;">${loc.name}</div>
+    <div style="font-size:0.68rem;color:#64748b;margin-top:3px;">${drops.length} live drop${drops.length!==1?'s':''}</div>
+  </div>`;
+}
+
+function locationDetail(locId){
+  const loc=LOCATIONS.find(l=>l.id===locId);
+  if(!loc) return '';
+  const st=stageById(loc.stage);
+  const drops=FESTIVAL_DROPS.filter(d=>d.stage===loc.stage);
+  const liveDrops=drops.filter(d=>d.status==='live');
+  const totalCI=drops.reduce((s,d)=>s+(d.checkins||0),0);
+  const totalRes=drops.reduce((s,d)=>s+(d.res||0),0);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="ss({locationDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
+      <div>
+        <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${loc.name}</div>
+        <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${st?st.name+' &middot; ':''} ${loc.vendorType}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${miniStat('Stage',st?st.name:'—','#0f172a')}
+      ${miniStat('Live Drops',liveDrops.length,'#16a34a')}
+      ${miniStat('Check-ins',fmtNum(totalCI),'#E8502A')}
+      ${miniStat('Conv %',pct(totalCI,totalRes)+'%',showColor(pct(totalCI,totalRes)))}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.85rem;font-weight:800;color:#0f172a;">Drops at ${st?st.name:'this stage'}</div>
+      ${drops.length?drops.map((d,i)=>`<div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+          ${badge(d.status)}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${catBadge(d.type)}
+          ${vendorBadge(d.vendorType)}
+          ${dayBadge(d.day)}
+          <span style="font-size:0.72rem;color:#64748b;">${d.checkins} check-ins &middot; ${pct(d.checkins,d.res)}% conv</span>
+        </div>
+      </div>`).join(''):'<div style="padding:20px;text-align:center;color:#94a3b8;font-size:0.82rem;">No drops at this location yet.</div>'}
+    </div>
+  </div>`;
+}
+
+// ── DROPS ─────────────────────────────────────────────────────────────────
+function rDrops(){
+  const selDay=dayById(S.selectedDay);
+  const wDays=DAYS.filter(d=>d.weekend===S.selectedWeekend);
+  const dayDrops=FESTIVAL_DROPS.filter(d=>d.day===S.selectedDay);
+  const allLive=FESTIVAL_DROPS.filter(d=>d.status==='live');
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Drops</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Showing ${selDay?selDay.label+', '+selDay.date:'all'} &middot; ${dayDrops.length} drops this day &middot; ${allLive.length} live total</div>
+      </div>
+      <button style="background:#E8502A;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ New Drop</button>
+    </div>
+
+    <div style="background:#fff3ec;border:1px solid #fed7aa;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      ${wDays.map(d=>{
+        const dDrops=FESTIVAL_DROPS.filter(dd=>dd.day===d.id);
+        const dLive=dDrops.filter(dd=>dd.status==='live');
+        const dCI=dDrops.reduce((s,dd)=>s+(dd.checkins||0),0);
+        return `<div onclick="ss({selectedDay:'${d.id}'})" style="cursor:pointer;padding:10px 12px;border-radius:8px;background:${S.selectedDay===d.id?d.color:'transparent'};color:${S.selectedDay===d.id?'#fff':'#0f172a'};">
+          <div style="font-size:0.7rem;font-weight:700;opacity:0.8;margin-bottom:2px;">${d.label} &middot; ${d.date}</div>
+          <div style="font-size:1rem;font-weight:900;">${dLive.length} live &middot; ${fmtNum(dCI)} CI</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 1fr 80px 80px 80px;gap:8px;">
+        ${['Drop','Type','Vendor','Stage &middot; Day','Cap','Check-ins','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${FESTIVAL_DROPS.filter(d=>!S.selectedDay||d.day===S.selectedDay).map((d,i)=>{
+        const conv=d.res>0?pct(d.checkins,d.res):0;
+        const st=stageById(d.stage)||STAGES[0];
+        return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 1fr 80px 80px 80px;gap:8px;align-items:center;">
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+            <div style="margin-top:3px;">${badge(d.status)}</div>
+          </div>
+          <div>${catBadge(d.type)}</div>
+          <div>${vendorBadge(d.vendorType)}</div>
+          <div>
+            <span style="background:${st.color}20;color:${st.color};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${st.abbr}</span>
+            <div style="margin-top:3px;">${dayBadge(d.day)}</div>
+          </div>
+          <div style="font-size:0.82rem;font-weight:700;">${d.cap}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
+          <div style="font-size:0.88rem;font-weight:800;color:${d.checkins>0?showColor(conv):'#94a3b8'};">${d.checkins>0?conv+'%':'—'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ── CUSTOMERS ─────────────────────────────────────────────────────────────
+CUSTOMER_DATA=[
+  {id:'C01',name:'Zoe Harmon',     tier:'VIP Platinum',  weekend:'Both',   checkins:8,  drops:5,spend:1240,lastSeen:'Today'},
+  {id:'C02',name:'Liam Torres',    tier:'VIP Gold',       weekend:'W1',     checkins:5,  drops:3,spend:450, lastSeen:'Apr 12'},
+  {id:'C03',name:'Maya Okafor',    tier:'VIP Platinum',  weekend:'Both',   checkins:11, drops:7,spend:1880,lastSeen:'Today'},
+  {id:'C04',name:'Jake Svensson',  tier:'Weekend Pass',  weekend:'W1',     checkins:3,  drops:2,spend:150, lastSeen:'Apr 11'},
+  {id:'C05',name:'Priya Shah',     tier:'VIP Gold',       weekend:'Both',   checkins:7,  drops:4,spend:680, lastSeen:'Today'},
+  {id:'C06',name:'Marcus Bell',    tier:'Weekend Pass',  weekend:'W2',     checkins:4,  drops:3,spend:210, lastSeen:'Apr 18'},
+  {id:'C07',name:'Sofia Reyes',    tier:'Single Day',    weekend:'W1',     checkins:2,  drops:1,spend:65,  lastSeen:'Apr 12'},
+  {id:'C08',name:'Elijah Cross',   tier:'VIP Platinum',  weekend:'Both',   checkins:9,  drops:6,spend:1540,lastSeen:'Today'},
+  {id:'C09',name:'Naomi Patel',    tier:'Weekend Pass',  weekend:'W2',     checkins:4,  drops:2,spend:195, lastSeen:'Apr 19'},
+  {id:'C10',name:'Drew Kimura',    tier:'Single Day',    weekend:'W2',     checkins:1,  drops:1,spend:40,  lastSeen:'Apr 18'},
+  {id:'C11',name:'Isabelle Chen',  tier:'VIP Gold',       weekend:'Both',   checkins:6,  drops:4,spend:570, lastSeen:'Today'},
+  {id:'C12',name:'Omar Diallo',    tier:'Weekend Pass',  weekend:'W1',     checkins:3,  drops:2,spend:130, lastSeen:'Apr 13'},
+];
+
+function rCustomers(){
+  const tierColors={'VIP Platinum':'#F5C518','VIP Gold':'#E8502A','Weekend Pass':'#6B2D8B','Single Day':'#0891b2'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Attendees</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${CUSTOMER_DATA.length} attendees &middot; 4 pass tiers</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${[
+        {tier:'VIP Platinum',color:'#F5C518'},
+        {tier:'VIP Gold',color:'#E8502A'},
+        {tier:'Weekend Pass',color:'#6B2D8B'},
+        {tier:'Single Day',color:'#0891b2'},
+      ].map(t=>{
+        const count=CUSTOMER_DATA.filter(c=>c.tier===t.tier).length;
+        const avgCI=count>0?Math.round(CUSTOMER_DATA.filter(c=>c.tier===t.tier).reduce((s,c)=>s+c.checkins,0)/count):0;
+        return `<div style="background:#fff;border-radius:12px;border:2px solid ${t.color}25;padding:14px 16px;">
+          <div style="font-size:0.65rem;font-weight:800;color:${t.color};text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">${t.tier}</div>
+          <div style="font-size:1.6rem;font-weight:900;color:#0f172a;">${count}</div>
+          <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">${avgCI} avg check-ins</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1fr 1fr 60px 60px 80px 100px;gap:8px;">
+        ${['Name','Tier','Weekends','Drops','CI','Spend','Last Seen'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${CUSTOMER_DATA.map((c,i)=>`<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1fr 1fr 60px 60px 80px 100px;gap:8px;align-items:center;">
+        <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${c.name}</div>
+        <div><span style="background:${tierColors[c.tier]||'#f1f5f9'}18;color:${tierColors[c.tier]||'#64748b'};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${c.tier}</span></div>
+        <div style="font-size:0.75rem;color:#475569;">${c.weekend==='Both'?'W1 &amp; W2':c.weekend}</div>
+        <div style="font-size:0.82rem;font-weight:700;">${c.drops}</div>
+        <div style="font-size:0.82rem;font-weight:800;color:#E8502A;">${c.checkins}</div>
+        <div style="font-size:0.82rem;font-weight:700;">${fmtMoney(c.spend)}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${c.lastSeen}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── COLLECTIONS ────────────────────────────────────────────────────────────
+COLLECTIONS_DATA=[
+  {id:'CO01',name:'Weekend 1 All-Drop Pass',  type:'weekend',status:'live',   weekend:'W1',geo:'grounds',participants:8, bizName:'Goldenvoice',      bizCategory:'Festival Org',   dropTitle:'W1 Full Access',cap:400,res:367,ci:318},
+  {id:'CO02',name:'Sahara Night Collab',       type:'stage',  status:'live',   weekend:'W1',geo:'stage',  participants:3, bizName:'Heineken',          bizCategory:'Beverage Sponsor',dropTitle:'Sahara VIP Upgrade',cap:200,res:182,ci:161},
+  {id:'CO03',name:'Artist Merch Weekend Drop', type:'artist', status:'live',   weekend:'Both',geo:'booth', participants:4, bizName:'Artist Collective',bizCategory:'Artist Mgmt',    dropTitle:'Signed Vinyl Bundle',cap:150,res:143,ci:118},
+  {id:'CO04',name:'W2 Sponsor Brand Blast',    type:'sponsor',status:'live',   weekend:'W2',geo:'grounds',participants:5, bizName:'T-Mobile / Amex',  bizCategory:'Brand Sponsors',  dropTitle:'Fan Pit + Brunch',cap:480,res:443,ci:392},
+  {id:'CO05',name:'Festival Artisan Market',   type:'vendor', status:'ended',  weekend:'W1',geo:'stage',  participants:6, bizName:'Local Vendors',     bizCategory:'Independent',     dropTitle:'Artisan Bundle',  cap:120,res:98, ci:81},
+];
+
+function collStat(label,val,color){
+  return `<div style="text-align:center;padding:10px 8px;">
+    <div style="font-size:1.2rem;font-weight:900;color:${color||'#0f172a'};">${val}</div>
+    <div style="font-size:0.65rem;color:#94a3b8;margin-top:2px;">${label}</div>
+  </div>`;
+}
+
+function rCollections(){
+  if(S.collectionDetail) return collectionDetailPanel(S.collectionDetail);
+  const typeColors={weekend:'#E8502A',stage:'#6B2D8B',artist:'#8B5CF6',sponsor:'#f57f17',vendor:'#0891b2'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Collections</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${COLLECTIONS_DATA.filter(c=>c.status==='live').length} live &middot; ${COLLECTIONS_DATA.length} total collections</div>
+      </div>
+      <button onclick="ss({showNewColl:true,newCollStep:1})" style="background:#E8502A;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ New Collection</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      ${COLLECTIONS_DATA.map(col=>{
+        const conv=col.res>0?pct(col.ci,col.res):0;
+        const tc=typeColors[col.type]||'#64748b';
+        return `<div onclick="ss({collectionDetail:'${col.id}'})" style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="height:5px;background:${tc};"></div>
+          <div style="padding:16px 18px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="background:${tc}15;color:${tc};font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;text-transform:uppercase;">${col.type}</span>
+              ${badge(col.status)}
+            </div>
+            <div style="font-weight:800;font-size:0.9rem;color:#0f172a;margin-bottom:4px;">${col.name}</div>
+            <div style="font-size:0.72rem;color:#64748b;margin-bottom:12px;">${col.bizName} &middot; ${col.participants} participants &middot; ${col.weekend==='Both'?'Both Weekends':WEEKENDS.find(w=>w.id===col.weekend)?.label||col.weekend}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #f1f5f9;">
+              ${collStat('Reserved',col.res,'#0f172a')}
+              ${collStat('Check-ins',col.ci,tc)}
+              ${collStat('Conv %',conv+'%',showColor(conv))}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function collectionDetailPanel(colId){
+  const col=COLLECTIONS_DATA.find(c=>c.id===colId);
+  if(!col) return '';
+  const conv=col.res>0?pct(col.ci,col.res):0;
+  const typeColors={weekend:'#E8502A',stage:'#6B2D8B',artist:'#8B5CF6',sponsor:'#f57f17',vendor:'#0891b2'};
+  const tc=typeColors[col.type]||'#64748b';
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;color:#475569;">&larr; Back</button>
+      <div>
+        <div style="font-size:1.2rem;font-weight:800;color:#0f172a;">${col.name}</div>
+        <div style="font-size:0.8rem;color:#64748b;margin-top:2px;">${col.bizName} &middot; ${col.bizCategory}</div>
+      </div>
+      ${badge(col.status)}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${miniStat('Type',col.type,'#0f172a')}
+      ${miniStat('Weekend',col.weekend==='Both'?'Both Weekends':WEEKENDS.find(w=>w.id===col.weekend)?.label||col.weekend,tc)}
+      ${miniStat('Geo-Fence',GEO_TIERS[col.geo]?GEO_TIERS[col.geo].short:'—','#0f172a')}
+      ${miniStat('Conv %',conv+'%',showColor(conv))}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:16px;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.85rem;font-weight:800;color:#0f172a;">Collection Performance</div>
+      <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        ${[['Cap',col.cap,'#64748b'],['Reserved',col.res,'#0f172a'],['Check-ins',col.ci,tc]].map(([l,v,c])=>`<div style="text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:${c};">${v}</div>
+          <div style="font-size:0.72rem;color:#94a3b8;margin-top:2px;">${l}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      ${col.status!=='ended'?`<button style="flex:1;background:#E8502A;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Push Reminder</button>`:''}
+      <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+    </div>
+  </div>`;
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────────
+function rAnalytics(){
+  const drops=FESTIVAL_DROPS.filter(d=>d.status!=='draft');
+  const sorted=[...drops].sort((a,b)=>(b.checkins||0)-(a.checkins||0));
+  const stageStats=STAGES.map(st=>{
+    const stDrops=drops.filter(d=>d.stage===st.id);
+    const ci=stDrops.reduce((s,d)=>s+(d.checkins||0),0);
+    const res=stDrops.reduce((s,d)=>s+(d.res||0),0);
+    return {...st,dropCount:stDrops.length,ci,res,conv:res>0?pct(ci,res):0};
+  }).sort((a,b)=>b.ci-a.ci);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Analytics</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${drops.length} active drops &middot; ${drops.reduce((s,d)=>s+(d.checkins||0),0).toLocaleString()} total check-ins</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({hierarchyView:'stage'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='stage'?'#E8502A':'#f1f5f9'};color:${S.hierarchyView==='stage'?'#fff':'#475569'};">By Stage</button>
+        <button onclick="ss({hierarchyView:'location'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='location'?'#E8502A':'#f1f5f9'};color:${S.hierarchyView==='location'?'#fff':'#475569'};">By Drop</button>
+      </div>
+    </div>
+    ${S.hierarchyView==='stage'?rAnalyticsByStage(stageStats):`
+    <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;">
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+        <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 80px 80px 80px;gap:8px;">
+          ${['Drop','Type','Vendor','Stage','Check-ins','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+        </div>
+        ${sorted.map((d,i)=>{
+          const conv=d.res>0?pct(d.checkins,d.res):0;
+          const st=stageById(d.stage)||STAGES[0];
+          return `<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px 80px;gap:8px;align-items:center;">
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+              <div style="margin-top:2px;">${dayBadge(d.day)}</div>
+            </div>
+            <div>${catBadge(d.type)}</div>
+            <div>${vendorBadge(d.vendorType)}</div>
+            <div><span style="background:${st.color}20;color:${st.color};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${st.abbr}</span></div>
+            <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
+            <div style="font-size:0.88rem;font-weight:800;color:${showColor(conv)};">${conv}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${stageStats.slice(0,5).map(s=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="background:${s.color};color:#fff;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${s.abbr}</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${s.name}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${miniStat('Check-ins',fmtNum(s.ci),'#0f172a')}
+            ${miniStat('Conv %',s.conv+'%',showColor(s.conv))}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`}
+  </div>`;
+}
+
+function rAnalyticsByStage(stageStats){
+  return `<div style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      ${stageStats.map(s=>`<div style="background:#fff;border-radius:12px;border:2px solid ${s.color}30;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:${s.color};color:#fff;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${s.abbr}</span>
+          <span style="font-size:0.75rem;font-weight:700;color:#0f172a;">${s.name}</span>
+        </div>
+        <div style="font-size:1.6rem;font-weight:900;color:${s.color};">${fmtNum(s.ci)}</div>
+        <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">${s.conv}% conv &middot; ${s.dropCount} drops</div>
+        <div style="margin-top:8px;background:#f1f5f9;border-radius:20px;height:5px;overflow:hidden;">
+          <div style="height:5px;border-radius:20px;background:${s.color};width:${Math.min(s.conv,100)}%;"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;">
+        ${['Stage','Drops','Reserved','Check-ins','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${stageStats.map((s,i)=>`<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="background:${s.color}20;color:${s.color};font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${s.abbr}</span>
+          <span style="font-size:0.82rem;font-weight:700;color:#0f172a;">${s.name}</span>
+        </div>
+        <div style="font-size:0.85rem;font-weight:700;">${s.dropCount}</div>
+        <div style="font-size:0.85rem;font-weight:700;">${fmtNum(s.res)}</div>
+        <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">${fmtNum(s.ci)}</div>
+        <div style="font-size:0.85rem;font-weight:800;color:${showColor(s.conv)};">${s.conv}%</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── USERS ──────────────────────────────────────────────────────────────────
+USERS_DATA=[
+  {id:'U01',name:'Chloe Park',    email:'c.park@goldenvoice.com',  role:'Corporate Admin',  team:'Goldenvoice HQ',   lastLogin:'Today 8:52 AM', status:'active'},
+  {id:'U02',name:'Aaron Greer',   email:'a.greer@goldenvoice.com', role:'Festival Director',team:'Goldenvoice HQ',   lastLogin:'Today 10:20 AM',status:'active'},
+  {id:'U03',name:'Marissa Lee',   email:'m.lee@goldenvoice.com',   role:'Stage Manager',    team:'Coachella Stage',  lastLogin:'Today 9:05 AM', status:'active'},
+  {id:'U04',name:'Kevin Osei',    email:'k.osei@goldenvoice.com',  role:'Stage Manager',    team:'Sahara Tent',      lastLogin:'Yesterday',     status:'active'},
+  {id:'U05',name:'Tanya Bell',    email:'t.bell@goldenvoice.com',  role:'Stage Manager',    team:'Gobi Tent',        lastLogin:'Today 11:00 AM',status:'active'},
+  {id:'U06',name:'Sam Wolff',     email:'s.wolff@goldenvoice.com', role:'Stage Manager',    team:'Do LaB',           lastLogin:'Today 7:30 AM', status:'active'},
+  {id:'U07',name:'Jen Nakamura',  email:'j.naka@goldenvoice.com',  role:'Location Manager', team:'Main Stage Merch', lastLogin:'Today 9:45 AM', status:'active'},
+  {id:'U08',name:'Luis Fuentes',  email:'l.fuentes@goldenvoice.com',role:'Location Manager',team:'Rose Garden VIP',  lastLogin:'Today 8:10 AM', status:'active'},
+  {id:'U09',name:'Raj Menon',     email:'r.menon@heineken.com',    role:'Sponsor Manager',  team:'Heineken',         lastLogin:'Today 11:30 AM',status:'active'},
+  {id:'U10',name:'Dana Walsh',    email:'d.walsh@americanexpress.com',role:'Sponsor Manager',team:'American Express',lastLogin:'2 days ago',    status:'active'},
+  {id:'U11',name:'Troy Kim',      email:'t.kim@t-mobile.com',      role:'Sponsor Manager',  team:'T-Mobile',         lastLogin:'Today 8:40 AM', status:'active'},
+  {id:'U12',name:'Nia Roberts',   email:'n.roberts@goldenvoice.com',role:'Corporate Admin', team:'Goldenvoice HQ',   lastLogin:'1 week ago',    status:'inactive'},
+];
+
+function rUsers(){
+  const roleColors={'Corporate Admin':'#7c3aed','Festival Director':'#E8502A','Stage Manager':'#6B2D8B','Location Manager':'#16a34a','Sponsor Manager':'#f57f17'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Team &amp; Access</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${USERS_DATA.filter(u=>u.status==='active').length} active users &middot; 5 roles</div>
+      </div>
+      <button style="background:#E8502A;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ Invite User</button>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1.5fr 1fr 1.2fr 120px 80px;gap:8px;">
+        ${['Name','Email','Role','Team','Last Login','Status'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${USERS_DATA.map((u,i)=>`<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1.5fr 1fr 1.2fr 120px 80px;gap:8px;align-items:center;">
+        <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${u.name}</div>
+        <div style="font-size:0.72rem;color:#64748b;">${u.email}</div>
+        <div><span style="background:${roleColors[u.role]||'#64748b'}15;color:${roleColors[u.role]||'#64748b'};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${u.role}</span></div>
+        <div style="font-size:0.75rem;color:#475569;">${u.team}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${u.lastLogin}</div>
+        <div><span style="background:${u.status==='active'?'#dcfce7':'#f1f5f9'};color:${u.status==='active'?'#16a34a':'#94a3b8'};font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${u.status}</span></div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">Access Hierarchy</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${[
+          {role:'Corporate Admin',    color:'#7c3aed',can:['All festival data','All stages','All locations','All sponsors','Billing &amp; settings']},
+          {role:'Festival Director',  color:'#E8502A',can:['Festival-wide view','All stages','All locations','Sponsor overviews','View billing']},
+          {role:'Stage Manager',      color:'#6B2D8B',can:['Assigned stage only','Stage locations','Stage drops','Stage analytics','No billing']},
+          {role:'Location Manager',   color:'#16a34a',can:['Assigned location','Location drops','Check-in data','No stage data','No billing']},
+          {role:'Sponsor Manager',    color:'#f57f17',can:['Own drops only','Sponsor analytics','Fan check-ins','No other data','No billing']},
+        ].map(r=>`<div style="padding:14px;border-right:1px solid #e5e7eb;">
+          <div style="font-size:0.72rem;font-weight:800;color:${r.color};margin-bottom:8px;">${r.role}</div>
+          ${r.can.map(c=>`<div style="font-size:0.68rem;color:#475569;padding:3px 0;border-bottom:1px solid #f8f9fb;">&#10003; ${c}</div>`).join('')}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── BILLING ────────────────────────────────────────────────────────────────
+function rBilling(){
+  const locs=24,ppL=199,monthly=locs*ppL;
+  const invoices=[
+    {date:'Mar 1, 2026',desc:'Festival Pro &middot; 24 locations',amt:monthly,status:'paid'},
+    {date:'Feb 1, 2026',desc:'Festival Pro &middot; 24 locations',amt:monthly,status:'paid'},
+    {date:'Jan 1, 2026',desc:'Festival Pro &middot; 24 locations',amt:monthly,status:'paid'},
+  ];
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Billing &amp; Plan</div>
+    <div style="background:linear-gradient(135deg,#2D1B69 0%,#E8502A 100%);border-radius:16px;padding:24px 28px;color:#fff;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;opacity:0.8;letter-spacing:0.08em;margin-bottom:6px;">CURRENT PLAN</div>
+        <div style="font-size:1.8rem;font-weight:900;">Festival Pro</div>
+        <div style="font-size:0.85rem;opacity:0.85;margin-top:4px;">Multi-weekend event management &middot; Unlimited drops &middot; Full analytics</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.75rem;opacity:0.8;margin-bottom:4px;">MONTHLY TOTAL</div>
+        <div style="font-size:2.8rem;font-weight:900;">${fmtMoney(monthly)}</div>
+        <div style="font-size:0.8rem;opacity:0.75;">${locs} locations &times; ${fmtMoney(ppL)}/loc/mo</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+      ${[
+        {label:'Active Locations',val:'24',sub:'Empire Polo Club'},
+        {label:'Monthly Cost',val:fmtMoney(monthly),sub:'Covers both weekends'},
+        {label:'Cost per Drop',val:fmtMoney(Math.round(monthly/FESTIVAL_DROPS.length)),sub:`${FESTIVAL_DROPS.length} total drops`},
+        {label:'Est. ROI',val:'11.4x',sub:'Based on attendee spend lift'},
+      ].map(s=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:4px;">${s.label}</div>
+        <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${s.val}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${s.sub}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;font-size:0.82rem;font-weight:800;color:#0f172a;">Invoice History</div>
+      ${invoices.map((inv,i)=>`<div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:0.82rem;">${inv.desc}</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">${inv.date}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-weight:800;font-size:0.9rem;">${fmtMoney(inv.amt)}</div>
+          <span style="background:#dcfce7;color:#16a34a;font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${inv.status}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+function rSettings(){
+  function sCard(title,content){
+    return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;margin-bottom:16px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">${title}</div>
+      ${content}
+    </div>`;
+  }
+  function sRow(label,val,sub){
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+      <div><div style="font-size:0.82rem;font-weight:600;color:#0f172a;">${label}</div>${sub?`<div style="font-size:0.7rem;color:#94a3b8;margin-top:1px;">${sub}</div>`:''}</div>
+      <div style="font-size:0.82rem;font-weight:700;color:#475569;">${val}</div>
+    </div>`;
+  }
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Settings</div>
+    ${sCard('Festival Settings',
+      sRow('Festival Name','Coachella Valley Music and Arts Festival')+
+      sRow('Short Name','Coachella 2026')+
+      sRow('Venue','Empire Polo Club, Indio, CA')+
+      sRow('Primary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#E8502A;display:inline-block;"></span>#E8502A Desert Orange</span>')+
+      sRow('Secondary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#2D1B69;display:inline-block;"></span>#2D1B69 Deep Purple</span>')+
+      sRow('Timezone','Pacific Time (PT)')
+    )}
+    ${sCard('Festival Schedule',
+      WEEKENDS.map(w=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="background:${w.color}18;color:${w.color};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${w.label}</span>
+          <span style="font-size:0.8rem;color:#0f172a;">${w.dates}</span>
+        </div>
+        <div style="font-size:0.75rem;color:#64748b;">3 days &middot; Fri / Sat / Sun</div>
+      </div>`).join('')
+    )}
+    ${sCard('Drop Policies',
+      sRow('Max Simultaneous Drops','15 per stage','Across all drop types')+
+      sRow('Min Geo-Fence Radius','~100 ft (Booth tier)','Tightest pinpoint accuracy')+
+      sRow('Default Broadcast Window','8 hours','Full festival day')+
+      sRow('Drop auto-expire','Enabled','Drops close at end of each day')+
+      sRow('Sponsor drop approval','Required','All partner drops need festival review')
+    )}
+    ${sCard('Hierarchy: Festival &rarr; Weekend &rarr; Day &rarr; Stage &rarr; Location',`
+      <div style="display:flex;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${['Coachella 2026','2 Weekends','6 Days','8 Stages','24 Locations'].map((l,i)=>`<div style="flex:1;padding:10px 12px;background:${i%2?'#f8f9fb':'#fff'};border-right:1px solid #e5e7eb;text-align:center;">
+          <div style="font-size:0.65rem;font-weight:800;color:#64748b;text-transform:uppercase;">L${i+1}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-top:3px;">${l}</div>
+        </div>`).join('')}
+      </div>
+    `)}
+    ${sCard('Geo-Fence Tiers',
+      Object.entries(GEO_TIERS).map(([k,v])=>sRow(v.short,v.label)).join('')
+    )}
+    ${sCard('Alerts &amp; Notifications',
+      sRow('Check-in spike alerts','Enabled','Notify when stage check-ins +30% in 15 min')+
+      sRow('Capacity warnings','Enabled','Alert at 85% and 95% of drop cap')+
+      sRow('Day transition reminders','Enabled','30 min before gates open each day')+
+      sRow('Sponsor drop pending','Enabled','New sponsor drops awaiting approval')
+    )}
+  </div>`;
+}
+
+// ── NEW COLLECTION MODAL ────────────────────────────────────────────────────
+function newCollModal(){
+  const step=S.newCollStep||1;
+  const steps=['Details','Geo-Fence','Review'];
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false,newCollStep:1})">
+    <div style="background:#fff;border-radius:18px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:linear-gradient(135deg,#2D1B69 0%,#E8502A 100%);padding:20px 24px;border-radius:18px 18px 0 0;">
+        <div style="color:#fff;font-size:1.1rem;font-weight:800;">New Collection</div>
+        <div style="display:flex;gap:6px;margin-top:14px;">
+          ${steps.map((s,i)=>`<div style="flex:1;">
+            <div style="height:4px;border-radius:2px;background:${i+1<=step?'#fff':'rgba(255,255,255,0.3)'};margin-bottom:5px;"></div>
+            <div style="font-size:0.65rem;font-weight:700;color:${i+1<=step?'#fff':'rgba(255,255,255,0.5)'};">Step ${i+1}: ${s}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Collection Name</label>
+            <input placeholder="e.g. Weekend 1 VIP Experience Bundle" style="width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:0.85rem;box-sizing:border-box;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Weekend</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+              ${[...WEEKENDS,{id:'both',label:'Both Weekends',color:'#0f172a'}].map(w=>`<div onclick="ss({newCollType:'${w.id}'})" style="border:2px solid ${S.newCollType===w.id?w.color:'#e5e7eb'};border-radius:10px;padding:10px 12px;cursor:pointer;background:${S.newCollType===w.id?w.color+'10':'#fff'};text-align:center;">
+                <div style="font-weight:700;font-size:0.78rem;color:#0f172a;">${w.label}</div>
+                ${w.dates?`<div style="font-size:0.65rem;color:#64748b;margin-top:2px;">${w.dates}</div>`:''}
+              </div>`).join('')}
+            </div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Stage Focus</label>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <div onclick="ss({selectedStage:null})" style="padding:6px 12px;border-radius:20px;border:2px solid ${!S.selectedStage?'#E8502A':'#e5e7eb'};font-size:0.72rem;font-weight:700;cursor:pointer;color:${!S.selectedStage?'#E8502A':'#475569'};">All Stages</div>
+              ${STAGES.map(st=>`<div onclick="ss({selectedStage:'${st.id}'})" style="padding:6px 12px;border-radius:20px;border:2px solid ${S.selectedStage===st.id?st.color:'#e5e7eb'};font-size:0.72rem;font-weight:700;cursor:pointer;color:${S.selectedStage===st.id?st.color:'#475569'};">${st.abbr}</div>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===2?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Geo-Fence Tier</label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#E8502A':'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fff8f5':'#fff'};">
+                <input type="radio" name="collGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
+                <div>
+                  <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${v.short}</div>
+                  <div style="font-size:0.7rem;color:#64748b;">${v.label}</div>
+                </div>
+              </label>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===3?`
+          <div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
+            ${infoRow('Weekend',S.newCollType==='both'?'Both Weekends':WEEKENDS.find(w=>w.id===S.newCollType)?.label||'Not set')}
+            ${infoRow('Stage Focus',S.selectedStage?STAGES.find(s=>s.id===S.selectedStage)?.name||'—':'All Stages')}
+            ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+          </div>
+          <div style="background:#fff3ec;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#9a3412;">
+            This collection will broadcast to attendees in the selected stage area and geo-fence range. Drops can be added after creation.
+          </div>
+        `:''}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({newCollStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({newCollStep:${step+1}})" style="flex:2;background:#E8502A;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next: ${steps[step]}</button>`:`<button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:2;background:#2D1B69;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Create Collection</button>`}
+          <button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── PUSH MODAL ──────────────────────────────────────────────────────────────
+function pushModal(){
+  const step=S.pushStep||1;
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showPush:false,pushStep:1})">
+    <div style="background:#fff;border-radius:18px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:#E8502A;padding:20px 24px;border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Push Drop</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:0.78rem;margin-top:2px;">Step ${step} of 3</div>
+        </div>
+        <button onclick="ss({showPush:false,pushStep:1})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;">X</button>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?pushStep1():step===2?pushStep2():pushStep3()}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({pushStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({pushStep:${step+1}})" style="flex:2;background:#E8502A;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next</button>`:`<button onclick="ss({showPush:false,pushStep:1})" style="flex:2;background:#2D1B69;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Push</button>`}
+          ${step===1?`<button onclick="ss({showPush:false,pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>`:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function pushStep1(){
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Select a Drop to Push</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;">
+      ${FESTIVAL_DROPS.filter(d=>d.status==='live').map(d=>{
+        const st=stageById(d.stage)||STAGES[0];
+        return `<div style="border:2px solid ${S.pushDrop===d.id?'#E8502A':'#e5e7eb'};border-radius:10px;padding:12px 14px;cursor:pointer;background:${S.pushDrop===d.id?'#fff8f5':'#fff'};" onclick="ss({pushDrop:'${d.id}'})">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+            ${catBadge(d.type)}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="background:${st.color}20;color:${st.color};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${st.abbr}</span>
+            ${dayBadge(d.day)}
+            <span style="font-size:0.7rem;color:#64748b;">${d.checkins} check-ins</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep2(){
+  const scopes=['All Attendees','Weekend 1 Only','Weekend 2 Only','VIP Platinum','VIP Gold',...STAGES.map(s=>s.abbr+' Area')];
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Notification Scope</div>
+    <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Which attendees receive this push notification?</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      ${scopes.map(sc=>`<div onclick="ss({pushScope:'${sc}'})" style="padding:7px 13px;border-radius:20px;border:2px solid ${S.pushScope===sc?'#E8502A':'#e5e7eb'};background:${S.pushScope===sc?'#fff8f5':'#fff'};font-size:0.75rem;font-weight:700;cursor:pointer;color:${S.pushScope===sc?'#E8502A':'#475569'};">${sc}</div>`).join('')}
+    </div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Day Target</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      ${DAYS.map(d=>`<label style="display:flex;align-items:center;gap:6px;border:2px solid ${S.pushDay===d.id?d.color:'#e5e7eb'};border-radius:8px;padding:7px 12px;cursor:pointer;background:${S.pushDay===d.id?d.color+'10':'#fff'};">
+        <input type="radio" name="pushDay" ${S.pushDay===d.id?'checked':''} onclick="ss({pushDay:'${d.id}'})">
+        <span style="font-size:0.75rem;font-weight:700;color:${S.pushDay===d.id?d.color:'#475569'};">${WEEKENDS.find(w=>w.id===d.weekend)?.label} ${d.short}</span>
+      </label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep3(){
+  const drop=FESTIVAL_DROPS.find(d=>d.id===S.pushDrop);
+  const selDay=dayById(S.pushDay);
+  const wknd=selDay?WEEKENDS.find(w=>w.id===selDay.weekend):null;
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Preview &amp; Confirm</div>
+    <div style="background:#0f172a;border-radius:16px;padding:16px;margin-bottom:16px;">
+      <div style="background:#1e293b;border-radius:12px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#2D1B69,#E8502A);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:0.72rem;">CVF</div>
+          <div>
+            <div style="color:#fff;font-size:0.78rem;font-weight:700;">Coachella 2026 &middot; Nigh</div>
+            <div style="color:#94a3b8;font-size:0.7rem;">now</div>
+          </div>
+        </div>
+        <div style="color:#fff;font-weight:800;font-size:0.88rem;margin-bottom:4px;">${drop?drop.title:'Drop Selected'}</div>
+        <div style="color:#cbd5e1;font-size:0.78rem;">${S.pushScope||'All Attendees'} &middot; Tap to redeem</div>
+      </div>
+    </div>
+    <div style="background:#f8f9fb;border-radius:10px;padding:14px 16px;">
+      ${infoRow('Drop',drop?drop.title:'Not selected')}
+      ${infoRow('Scope',S.pushScope||'Not set')}
+      ${infoRow('Day Target',selDay?`${wknd?wknd.label+' ':''} ${selDay.label} ${selDay.date}`:'Not set')}
+      ${infoRow('Est. Reach',S.pushScope==='All Attendees'?'~125,000':S.pushScope==='VIP Platinum'?'~8,200':S.pushScope==='Weekend 1 Only'?'~62,500':'~22,000')}
+    </div>
+  </div>`;
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('app').innerHTML=`
+    ${layout()}
+    ${S.showNewColl?newCollModal():''}
+    ${S.showPush?pushModal():''}
+  `;
+}
+
+window.ss=function(patch){Object.assign(S,patch);render();};
+window.go=function(page){S.page=page;render();};
+window.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>

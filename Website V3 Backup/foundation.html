@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh Foundation — Change is Nigh.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --purple-deep: #4A1BB5;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --pink-light: #FCC3C4;
+            --white: #FFFFFF;
+            --off-white: #F7F5FF;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --gradient-brand: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+            --gradient-warm: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+            --gradient-glow: linear-gradient(135deg, var(--teal), var(--blue), var(--purple), var(--pink));
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(11,11,26,0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 72px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo img, .nav-logo svg { height: 36px; width: auto; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta {
+            background: var(--pink) !important; color: #fff !important;
+            padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; transition: all 0.2s !important;
+        }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+        .mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
+
+        /* ===== SECTION BASE ===== */
+        section { padding: 120px 24px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+        }
+
+        /* ===== HERO ===== */
+        .hero-section {
+            padding: 160px 24px 120px; text-align: center;
+            position: relative; overflow: hidden; margin-top: 72px;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(98,38,233,0.14), transparent 70%);
+            pointer-events: none;
+        }
+        .hero-section .container { position: relative; z-index: 2; }
+        .hero-section h1 { margin-bottom: 24px; }
+        .cin-display {
+            display: block;
+            margin-bottom: 32px;
+            font-size: clamp(2rem, 5.5vw, 4.5rem);
+            font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+            color: var(--text);
+        }
+        .cin-colored {
+            color: var(--pink);
+        }
+        .hero-subhead {
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em;
+            color: var(--blue); margin-bottom: 32px; line-height: 1.15;
+        }
+        .hero-intro {
+            font-size: 1.1rem; color: var(--text-secondary);
+            max-width: 640px; margin: 0 auto; line-height: 1.8; font-weight: 400;
+        }
+
+        /* ===== WHY WE EXIST ===== */
+        .why-section { border-top: 1px solid var(--border); background: var(--surface); border-bottom: 1px solid var(--border); }
+        .why-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+        .why-inner h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em; margin-bottom: 32px; line-height: 1.15;
+        }
+        .why-inner p {
+            font-size: 1.05rem; color: var(--text-secondary);
+            line-height: 1.85; margin-bottom: 22px; font-weight: 400; text-align: left;
+        }
+
+        /* ===== PILLARS ===== */
+        .pillars-section { border-top: 1px solid var(--border); }
+        .pillars-section h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.15;
+            text-align: center;
+        }
+        .pillars-section .section-intro {
+            font-size: 1.05rem; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto 56px; line-height: 1.75;
+            text-align: center; font-weight: 400;
+        }
+        .foundation-pillars {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 20px; max-width: 900px; margin: 0 auto;
+        }
+        .pillar {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 40px 36px;
+            transition: all 0.35s;
+        }
+        .pillar:hover { border-color: var(--purple); transform: translateY(-4px); }
+        .pillar h4 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+        .pillar p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; font-weight: 400; }
+        .pillar-icon { font-size: 1.8rem; margin-bottom: 16px; display: block; }
+
+        /* ===== MISSION ===== */
+        .mission-section { border-top: 1px solid var(--border); background: var(--surface); border-bottom: 1px solid var(--border); }
+        .mission-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+        .mission-inner h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em; margin-bottom: 32px; line-height: 1.15;
+        }
+        .mission-inner p {
+            font-size: 1.05rem; color: var(--text-secondary);
+            line-height: 1.85; margin-bottom: 22px; font-weight: 400; text-align: left;
+        }
+        .mission-items { list-style: none; text-align: left; margin: 8px 0 28px; }
+        .mission-items li {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 10px 0; border-bottom: 1px solid var(--border);
+            font-size: 1rem; color: var(--text-secondary); line-height: 1.7;
+        }
+        .mission-items li:last-child { border-bottom: none; }
+        .mission-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--teal); flex-shrink: 0; margin-top: 9px;
+        }
+
+        /* ===== CLOSING CTA ===== */
+        .cta-section { border-top: 1px solid var(--border); text-align: center; }
+        .cta-inner { max-width: 680px; margin: 0 auto; }
+        .cta-inner h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em; margin-bottom: 20px; line-height: 1.15;
+        }
+        .cta-inner p {
+            font-size: 1.05rem; color: var(--text-secondary);
+            line-height: 1.8; margin-bottom: 40px; font-weight: 400;
+        }
+        .btn {
+            padding: 16px 36px; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: inherit;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-teal { background: var(--teal); color: var(--bg); }
+        .btn-teal:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(65,239,249,0.25); }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-blue:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(14,78,245,0.35); }
+        .closing-echo {
+            margin-top: 48px; font-size: clamp(1.6rem, 3vw, 2rem);
+            font-weight: 900; letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px;
+        }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col h4 {
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 18px; color: var(--text-secondary);
+        }
+        .footer-col a {
+            display: block; color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400;
+        }
+        .footer-col a:hover { color: var(--text); }
+        .footer-app-links { display: flex; gap: 12px; margin-top: 16px; }
+        .footer-app-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.78rem; font-weight: 600;
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .footer-app-link:hover { border-color: var(--teal); color: var(--teal); }
+        .footer-bottom {
+            max-width: 1200px; margin: 48px auto 0;
+            padding-top: 24px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; color: #555; font-weight: 400;
+        }
+        .footer-bottom a { color: #555; text-decoration: none; }
+        .footer-bottom a:hover { color: var(--text-secondary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .foundation-pillars { grid-template-columns: 1fr; max-width: 560px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            section { padding: 80px 20px; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" style="text-decoration: none; display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; transition: color 0.2s;">
+            <span style="font-size: 1rem;">←</span> nigh.com
+        </a>
+        <span style="font-size: 0.8rem; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: 0.12em;">Nigh Foundation</span>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <div class="container">
+        <div class="section-label fade-up">Nigh Foundation</div>
+        <h1 class="fade-up">
+            <div class="cin-display">Change is <span class="cin-colored">Nigh.</span></div>
+        </h1>
+        <div class="hero-subhead fade-up">It's Time to Bring Back Local.</div>
+        <p class="hero-intro fade-up">The Nigh Foundation advances innovations that strengthen local communities, real-life belonging, and shared prosperity in a rapidly changing world. We believe what matters most in life should feel close — close to home, close to opportunity, close to community.</p>
+    </div>
+</section>
+
+<!-- ===== WHY WE EXIST ===== -->
+<section class="why-section">
+    <div class="container">
+        <div class="why-inner fade-up">
+            <div class="section-label">Why We Exist</div>
+            <h2>Real connection and community happens in person.</h2>
+            <p>It happens across tables, in classrooms, in community centers, and at local stores, restaurants, studios, and venues. We build trust through shared space, conversation, laughter, eye contact, and collaboration. Technology can enhance that connection — but it cannot replace it.</p>
+            <p>Over time, opportunity, economic power, and decision-making have drifted away from local communities. Many families feel stretched. Many young people feel uncertain about their future. Many local businesses struggle to compete in systems optimized for scale rather than shared prosperity.</p>
+            <p>Strong local economies are the bedrock of thriving societies. When local businesses succeed, communities gain stability, dignity, and hope. When more value circulates locally, society becomes stronger from the ground up.</p>
+            <p>Rebuilding strong local economies is not a rejection of innovation. It is the next step in human advancement — aligning technology and investment with broader prosperity and collective well-being.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PILLARS ===== -->
+<section class="pillars-section">
+    <div class="container">
+        <div class="fade-up" style="text-align:center; max-width: 700px; margin: 0 auto 56px;">
+            <div class="section-label">Our Focus Areas</div>
+            <h2>What we're building toward</h2>
+            <p class="section-intro">The Foundation works across four interconnected areas — because strong communities require strong businesses, real belonging, economic resilience, and earned trust.</p>
+        </div>
+        <div class="foundation-pillars">
+            <div class="pillar fade-up">
+                <span class="pillar-icon">🏪</span>
+                <h4>Local Business Vitality</h4>
+                <p>Support innovations that help local businesses become more profitable, more connected to their communities, and more resilient to economic disruption. When local businesses thrive, everyone nearby benefits.</p>
+            </div>
+            <div class="pillar fade-up">
+                <span class="pillar-icon">🤝</span>
+                <h4>Real World Belonging</h4>
+                <p>Fund initiatives that foster real-world community and give people genuine reasons to show up in-real-life. Real-world connection and belonging are not a feature — they are a critical foundation.</p>
+            </div>
+            <div class="pillar fade-up">
+                <span class="pillar-icon">🌱</span>
+                <h4>Community Resilience</h4>
+                <p>The same technological forces reshaping the economy can either hollow out local communities or strengthen them. The Foundation is focused on ensuring that progress — including AI — is directed toward broader prosperity, not concentrated at the top.</p>
+            </div>
+            <div class="pillar fade-up">
+                <span class="pillar-icon">🛡</span>
+                <h4>Safety &amp; Trust</h4>
+                <p>Design community initiatives with privacy-first principles and real-world accountability at their core. Trust is built in person, over time — and technology should protect it, not exploit it.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== OUR MISSION ===== -->
+<section class="mission-section">
+    <div class="container">
+        <div class="mission-inner fade-up">
+            <div class="section-label">Our Mission</div>
+            <h2>Technology that works for everyone.</h2>
+            <p>Nigh Foundation works to ensure technological progress benefits everyone by prioritizing the strengthening of local economies and communities. We do this by:</p>
+            <ul class="mission-items">
+                <li><div class="mission-dot"></div><span>Supporting innovations that help local businesses become more profitable and sustainable</span></li>
+                <li><div class="mission-dot"></div><span>Funding programs and research that demonstrate how technology can reinforce real-world human connection</span></li>
+                <li><div class="mission-dot"></div><span>Promoting solutions that circulate more economic value back into local communities</span></li>
+            </ul>
+            <p>We believe society flourishes when prosperity is reinvested locally — where families thrive, small businesses grow, and young people see a positive path forward.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CLOSING CTA ===== -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-inner fade-up">
+            <div class="section-label">Help Make Real Change Happen</div>
+            <h2>Invest in a healthier and more resilient future together.</h2>
+            <p>Every contribution to the Nigh Foundation goes directly toward programs, research, partnerships, and educational initiatives that strengthen local economies and real-world human connection. Whether you're an individual, a family, a small business, or a large organization —<br>this is a future worth building together.</p>
+            <a href="#" class="btn btn-blue">Donate to the Nigh Foundation →</a>
+            <div class="closing-echo">Change is <span class="cin-colored">Nigh.</span></div>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 520px; margin: 24px auto 0; line-height: 1.75;"><strong>Nigh</strong> means near, in place, in time, and in relationship.<br><span style="display: inline-block; max-width: 46ch;">Grounded in Boulder, Colorado — on a mission to help strengthen local communities everywhere.</span></p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <p style="font-size: 0.95rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;">Nigh Foundation</p>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; font-weight: 400;">Advancing innovations that strengthen local communities, real-life belonging, and shared prosperity.</p>
+        </div>
+        <div class="footer-col" style="text-align: right;">
+            <h4 style="font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">Support Mission</h4>
+            <a href="#">Donate</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh Foundation. All rights reserved.</span>
+        <div style="display:flex;gap:24px;">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

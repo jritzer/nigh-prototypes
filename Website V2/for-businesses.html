@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Businesses — Nigh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --purple-deep: #4A1BB5;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --pink-light: #FCC3C4;
+            --white: #FFFFFF;
+            --off-white: #F7F5FF;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --gradient-brand: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+            --gradient-warm: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+            --gradient-glow: linear-gradient(135deg, var(--teal), var(--blue), var(--purple), var(--pink));
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(11,11,26,0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 72px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo img, .nav-logo svg { height: 36px; width: auto; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta {
+            background: var(--pink) !important; color: #fff !important;
+            padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; transition: all 0.2s !important;
+        }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+        .mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
+
+        /* ===== SECTION BASE ===== */
+        section { padding: 120px 24px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+        }
+        .section-header { text-align: center; max-width: 680px; margin: 0 auto 72px; }
+        .section-header h2 {
+            font-size: clamp(2rem, 4.5vw, 2.8rem);
+            font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.15;
+        }
+        .section-header p { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 16px 36px; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: inherit;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-pink { background: var(--pink); color: #fff; }
+        .btn-pink:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(236,25,119,0.3); }
+
+        /* ===== HERO ===== */
+        .hero-section {
+            padding: 160px 24px 100px;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(98,38,233,0.15), transparent 70%);
+            pointer-events: none;
+        }
+        .hero-section .container { position: relative; z-index: 2; }
+        .hero-section h1 {
+            font-size: clamp(2.8rem, 6vw, 4.2rem);
+            font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 24px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-section .subtitle {
+            font-size: 1.15rem; color: var(--text-secondary);
+            max-width: 600px; margin: 0 auto 40px; line-height: 1.7; font-weight: 400;
+        }
+        .hero-tags {
+            display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px;
+        }
+        .hero-tag {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 100px; padding: 8px 20px; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary);
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .step-card {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px 24px; transition: all 0.3s;
+        }
+        .step-card:hover { border-color: var(--pink); transform: translateY(-4px); }
+        .step-num {
+            font-size: 0.68rem; font-weight: 800; color: var(--pink);
+            text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 12px; display: block;
+        }
+        .step-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+        .step-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; font-weight: 400; }
+        .optional-tag {
+            font-size: 0.6rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            background: rgba(65,239,249,0.1); padding: 2px 8px;
+            border-radius: 4px; vertical-align: middle; margin-left: 6px;
+        }
+
+        /* ===== CTA STRIP ===== */
+        .cta-strip { text-align: center; padding: 100px 24px; }
+        .cta-strip h2 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900;
+            letter-spacing: -0.03em; margin-bottom: 14px; line-height: 1.2;
+        }
+        .cta-strip p { font-size: 1rem; color: var(--text-secondary); margin-bottom: 36px; font-weight: 400; }
+
+        /* ===== PRICING ===== */
+        .pricing-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+        .price-card {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 24px; padding: 40px 32px;
+            position: relative; transition: all 0.35s;
+        }
+        .price-card:hover { transform: translateY(-4px); }
+        .price-card.featured { border-color: var(--pink); box-shadow: 0 0 50px rgba(236,25,119,0.08); }
+        .featured-badge {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            background: var(--pink); color: #fff;
+            padding: 6px 20px; border-radius: 100px;
+            font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .price-tier { font-size: 0.8rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+        .price-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 24px; }
+        .price-card ul { list-style: none; margin-bottom: 32px; }
+        .price-card li {
+            padding: 10px 0; font-size: 0.88rem; color: var(--text-secondary);
+            display: flex; align-items: flex-start; gap: 10px;
+            border-bottom: 1px solid var(--border); font-weight: 400;
+        }
+        .price-card li:last-child { border-bottom: none; }
+        .price-card li::before { content: '\2192'; color: var(--blue); font-weight: 700; flex-shrink: 0; }
+        .price-btn {
+            display: block; width: 100%; padding: 14px;
+            border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 700;
+            text-align: center; text-decoration: none; cursor: pointer;
+            border: none; transition: all 0.2s; font-family: inherit;
+        }
+        .price-btn-ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+        .price-btn-ghost:hover { border-color: var(--teal); }
+        .price-btn-pink { background: var(--pink); color: #fff; }
+        .price-btn-pink:hover { filter: brightness(1.15); }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px;
+        }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col h4 {
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 18px; color: var(--text-secondary);
+        }
+        .footer-col a {
+            display: block; color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400;
+        }
+        .footer-col a:hover { color: var(--text); }
+        .footer-app-links { display: flex; gap: 12px; margin-top: 16px; }
+        .footer-app-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.78rem; font-weight: 600;
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .footer-app-link:hover { border-color: var(--teal); color: var(--teal); }
+        .footer-app-link svg { width: 14px; height: 14px; }
+        .footer-bottom {
+            max-width: 1200px; margin: 48px auto 0;
+            padding-top: 24px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; color: #555; font-weight: 400;
+        }
+        .footer-bottom a { color: #555; text-decoration: none; }
+        .footer-bottom a:hover { color: var(--text-secondary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .steps-grid { grid-template-columns: 1fr 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            section { padding: 80px 20px; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <div class="nav-inner">
+        <a href="nigh-drops.html" class="nav-logo">
+            <img src="Nigh_Logo.svg" alt="Nigh" style="height: 36px; width: auto; display: block;">
+        </a>
+        <div class="nav-links">
+            <a href="nigh-drops.html#drops">Nigh Drops</a>
+            <a href="nigh-drops.html#how">How It Works</a>
+            <a href="about.html">About</a>
+            <a href="foundation.html">Foundation</a>
+            <a href="for-businesses.html">For Businesses</a>
+            <a href="for-businesses.html" class="nav-cta">Host a Drop</a>
+        </div>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section" style="margin-top: 72px;">
+    <div class="container">
+        <div class="section-label fade-up">For Businesses</div>
+        <h1 class="fade-up">Get customers<br><span class="gradient-text">when you choose</span> — in real life.</h1>
+        <p class="subtitle fade-up" style="text-align: center;">Nigh gives businesses control over when customers show up through simple, time-bound moments. Turn quiet times into real-life presence.</p>
+        <div class="hero-tags fade-up">
+            <span class="hero-tag">No algorithm</span>
+            <span class="hero-tag">No public feed</span>
+            <span class="hero-tag">Verified real-world attendance</span>
+        </div>
+        <a href="#pricing" class="btn btn-pink fade-up">Start Your First Drop →</a>
+    </div>
+</section>
+
+<!-- ===== WHAT ARE NIGH DROPS ===== -->
+<section style="padding: 100px 24px; text-align: center; border-top: 1px solid var(--border);">
+    <div class="container" style="max-width: 720px;">
+        <div class="section-header fade-up" style="margin-bottom: 0;">
+            <div class="section-label">Nigh Drops</div>
+            <h2 style="font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px;">Intentional, time-bound moments<br>worth showing up for</h2>
+            <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.75;">You choose the offer and timing. Nigh handles the ticketing, verification, and real-world attendance tracking.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how-section" id="how">
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">How It Works</div>
+            <h2>Four steps to real-world turnout</h2>
+            <p>Simple by design. Powerful in practice.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card fade-up">
+                <span class="step-num">Step 01</span>
+                <h3>Choose the Moment</h3>
+                <p>Pick the day and time when you want people to walk through your door. You decide — not an algorithm.</p>
+            </div>
+            <div class="step-card fade-up">
+                <span class="step-num">Step 02</span>
+                <h3>Set the Offering</h3>
+                <p>An exclusive offer, special perks, or a ticketed experience. Create the reason worth showing up for.</p>
+            </div>
+            <div class="step-card fade-up">
+                <span class="step-num">Step 03</span>
+                <h3>Share Your Drop</h3>
+                <p>Share via link, QR code, or directly to your followers. Get customers there, when you want them.</p>
+            </div>
+            <div class="step-card fade-up">
+                <span class="step-num">Step 04</span>
+                <h3>See Real Results</h3>
+                <p>Know who got a ticket and who actually showed up. Real-world accountability, not vanity metrics.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="pricing-section" id="pricing">
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">Pricing</div>
+            <h2>Try it for free. One simple plan.</h2>
+            <p>Everything you need to bring people to you when you want more customers — for $29/month.</p>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <div class="price-card featured fade-up" style="max-width: 420px; width: 100%;">
+                <div class="price-tier">Nigh Pro</div>
+                <div style="display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px;">
+                    <span style="font-size: 3rem; font-weight: 900; color: var(--text);">$29</span>
+                    <span style="font-size: 1rem; color: var(--text-secondary); font-weight: 500;">/ month</span>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 28px;">Create moments worth showing up for — and know who did.</p>
+                <ul>
+                    <li>AI-assisted Drop creation — go live daily</li>
+                    <li>Capacity controls and real-time tracking</li>
+                    <li>Check-in and ticket management</li>
+                    <li>Share via link, QR code, and social</li>
+                    
+                    
+                    <li>Real-world results and insights</li>
+                    
+                </ul>
+                <a href="#" class="price-btn price-btn-pink">Get Started</a>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-top: 20px; opacity: 0.55; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.6;">"Free" means no subscription needed for your first 5 Drops. Transaction fee of 3% + $0.75/ticket applies on priced Drops. No fee on $0.00 Drops.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="nigh-drops.html" class="nav-logo" style="margin-bottom:4px">
+                <img src="Nigh_Logo.svg" alt="Nigh" style="height: 30px; width: auto; display: block;">
+            </a>
+            <p>Making real life worth showing up for again. The IRL Human Network.</p>
+            <div class="footer-app-links">
+                <a href="#" class="footer-app-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.99 2.97 12.5 4.7 9.56C5.55 8.1 7.04 7.18 8.67 7.16C9.95 7.14 11.17 8.02 11.95 8.02C12.73 8.02 14.23 6.96 15.79 7.13C16.44 7.16 18.12 7.4 19.17 8.98C19.08 9.04 16.95 10.29 16.97 12.87C17 15.96 19.64 16.96 19.67 16.97C19.64 17.05 19.23 18.39 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+                    App Store
+                </a>
+                <a href="#" class="footer-app-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M3.18 23.04L13.22 12.99L3.17 2.95C2.87 3.39 2.71 3.91 2.71 4.48V21.52C2.71 22.09 2.87 22.61 3.18 23.04ZM14.63 11.59L17.35 8.87L5.27 2.04L14.63 11.59ZM14.63 14.4L5.27 23.96L17.35 17.13L14.63 14.4ZM21.29 11.59C21.29 11.12 21.06 10.65 20.6 10.41L18.57 9.28L15.63 12.22L18.57 15.16L20.6 14.03C21.06 13.79 21.29 13.32 21.29 12.85V11.59Z"/></svg>
+                    Google Play
+                </a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Product</h4>
+            <a href="nigh-drops.html#drops">Nigh Drops</a>
+            <a href="nigh-drops.html#how">How It Works</a>
+            <a href="for-businesses.html">For Businesses</a>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="about.html">About Nigh</a>
+            <a href="foundation.html">The Nigh Foundation</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Community</a>
+            <a href="#">Careers</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh. All rights reserved.</span>
+        <div style="display:flex;gap:24px;">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

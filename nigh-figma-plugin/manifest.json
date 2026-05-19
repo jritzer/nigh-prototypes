@@ -1,0 +1,8 @@
+{
+  "name": "Nigh Drops 2026 Setup",
+  "id": "nigh-drops-2026-setup",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"]
+}

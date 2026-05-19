@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh — Collaboration Flow Mockup</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#D1D5DB;display:flex;flex-direction:column;align-items:center;padding:24px 16px;min-height:100vh;gap:16px}
+h1{color:#374151;font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;opacity:0.7}
+
+/* Screen selector */
+.screen-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:700px}
+.snav-btn{background:#fff;border:1px solid #D1D5DB;border-radius:100px;padding:7px 16px;font-size:11px;font-weight:700;color:#6B7280;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.snav-btn.a{background:#0E4EF5;border-color:#0E4EF5;color:#fff}
+.snav-btn:hover:not(.a){background:#F3F4F6;border-color:#9CA3AF}
+
+/* Phone shell */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:0}
+.browser-bar{width:375px;background:#1C1C1E;border-radius:16px 16px 0 0;padding:10px 14px;display:flex;align-items:center;gap:8px}
+.browser-url{background:#2C2C2E;border-radius:8px;padding:6px 12px;flex:1;display:flex;align-items:center;gap:6px}
+.browser-url span{font-size:11px;color:#A1A1AA;font-weight:500}
+.browser-url .url-text{color:#E4E4E7;font-weight:600}
+.browser-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;flex-shrink:0}
+.phone{width:375px;height:780px;border-radius:0 0 24px 24px;border:1px solid #D1D5DB;border-top:none;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;background:#F9FAFB;position:relative}
+.no-browser .phone{height:812px;border-radius:24px;border:1px solid #D1D5DB}
+.scr{flex:1;overflow-y:auto;position:relative}
+.scr::-webkit-scrollbar{width:0}
+.tb{display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:6px 0 10px;flex-shrink:0}
+.tt{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 10px;min-width:50px;color:#9CA3AF;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
+.tt.a{color:#0E4EF5;font-weight:700}
+
+/* Screen label */
+.screen-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:#9CA3AF;margin-bottom:4px;text-align:center}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn 0.2s ease-out}
+</style>
+</head>
+<body>
+
+<h1>Nigh — Collaboration Flow</h1>
+
+<div class="screen-nav">
+  <button class="snav-btn a" onclick="show('profile-consumer')">A · Profile (Consumer)</button>
+  <button class="snav-btn" onclick="show('profile-partner')">B · Profile (Partner view)</button>
+  <button class="snav-btn" onclick="show('invite-send')">C · Send Invite (Pro)</button>
+  <button class="snav-btn" onclick="show('invite-receive')">D · Invite Received</button>
+  <button class="snav-btn" onclick="show('collab-tab')">E · Collaborations Tab</button>
+  <button class="snav-btn" onclick="show('tier-model')">F · Account Tiers</button>
+  <button class="snav-btn" onclick="show('partner-profile-own')">G · Partner Profile (Own)</button>
+  <button class="snav-btn" onclick="show('partner-profile-host')">H · Partner Profile (Host view)</button>
+  <button class="snav-btn" onclick="show('biz-invite')">I · Business as Partner</button>
+</div>
+
+<div id="mount"></div>
+
+<script>
+function ic(path,s=20){return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`}
+const Ic={
+  left:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  right:'<polyline points="9 18 15 12 9 6"/>',
+  map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  heart:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>',
+  share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+  link:'<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  mail:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  dollar:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  bell:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  home:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  ticket:'<path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/>',
+  menu:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  collab:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+};
+
+// ─── Shared profile header ────────────────────────────────────────────────────
+function profileHeader(partnerView){
+  return`
+    <!-- Cover -->
+    <div style="height:130px;background:linear-gradient(135deg,#1E3A2F,#2D5A40);position:relative;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(65,239,249,0.15),transparent 60%)"></div>
+      ${partnerView
+        ? `<div style="position:absolute;top:10px;left:12px;background:rgba(14,78,245,0.85);border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:#fff;letter-spacing:0.04em">Viewing as Partner</div>`
+        : `<div style="position:absolute;bottom:12px;right:14px;display:flex;gap:8px">
+             <button style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 14px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px">${ic(Ic.heart,13)} Follow</button>
+             <button style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;color:#fff">${ic(Ic.share,14)}</button>
+           </div>`
+      }
+    </div>
+    <!-- Identity -->
+    <div style="padding:0 16px;margin-top:-28px;margin-bottom:14px;position:relative;z-index:2">
+      <div style="width:56px;height:56px;border-radius:14px;background:#1E3A2F;border:3px solid #F9FAFB;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">☕</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:18px;font-weight:800;color:#111827;letter-spacing:-0.02em">Boulder Coffee Co.</div>
+          <div style="display:flex;align-items:center;gap:4px;color:#6B7280;font-size:12px;margin-top:3px">${ic(Ic.map,13)} Pearl St · Boulder, CO</div>
+        </div>
+        ${partnerView
+          ? `<button style="background:rgba(255,255,255,0.15);border:1px solid #E5E7EB;border-radius:8px;padding:6px 10px;color:#6B7280">${ic(Ic.share,14)}</button>`
+          : ''
+        }
+      </div>
+      ${!partnerView ? `<p style="font-size:12px;color:#6B7280;margin-top:8px;line-height:1.5">Specialty coffee on Pearl St. We drop exclusive early-morning tastings, brewing classes, and pop-ups.</p>` : ''}
+    </div>`
+}
+
+// ─── SCREEN A: Pro Profile — Consumer view ───────────────────────────────────
+function screenProfileConsumer(){
+  return{
+    hasBrowser: true,
+    urlText: 'nigh.com/boulder-coffee-co',
+    tabBar: consumerTabBar(),
+    html:`
+    <div class="fi">
+      ${profileHeader(false)}
+      <div style="padding:0 16px 24px">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:10px">Drop</div>
+        ${liveDropCard()}
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN B: Pro Profile — Partner view ────────────────────────────────────
+// Simple: same profile, same live drop, one clean "Collaborate" row beneath it.
+// No big card, no category labels. Partner decides what they offer in the flow.
+function screenProfilePartner(){
+  return{
+    hasBrowser: true,
+    urlText: 'nigh.com/boulder-coffee-co',
+    tabBar: partnerTabBar('home'),
+    html:`
+    <div class="fi">
+      ${profileHeader(true)}
+      <!-- Live Drop -->
+      <div style="padding:0 16px 12px">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:10px">Drop</div>
+        ${liveDropCard()}
+      </div>
+      <!-- Collaborate row — clean, unobtrusive -->
+      <div style="margin:0 16px 24px;border-top:1px solid #F3F4F6;padding-top:14px">
+        <button onclick="show('invite-send')" style="width:100%;background:#0E4EF5;border:none;border-radius:12px;padding:13px 16px;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px">
+          ${ic(Ic.zap,15)} Propose a Collaboration
+        </button>
+        <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:8px;line-height:1.5">Promote, sponsor, or co-host a Drop with Boulder Coffee Co.</div>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN C: Send Invite — from inside Pro app (single screen) ──────────────
+// Simplified from 3 steps to one focused screen.
+// Host picks type, optionally adds a note, gets a shareable link instantly.
+function screenInviteSend(){
+  return{
+    hasBrowser: false,
+    tabBar: proTabBar('drops'),
+    html:`
+    <div class="fi">
+      <!-- Header -->
+      <div style="padding:16px 16px 12px;background:#fff;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:12px">
+        <button style="background:none;border:none;color:#6B7280;padding:0">${ic(Ic.left,20)}</button>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#111827">Invite a Partner</div>
+          <div style="font-size:11px;color:#9CA3AF">Morning Tasting — Single Origin Kenya · Live Now</div>
+        </div>
+      </div>
+
+      <div style="padding:16px">
+
+        <!-- Collaboration type — simple pill selector -->
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">What kind of collaboration?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px">
+          ${typepill('📣','Promote','#0E4EF5',true)}
+          ${typepill('🏷️','Sponsor','#6226E9',false)}
+          ${typehill('🤝','Co-host','#EC1977',false)}
+        </div>
+
+        <!-- Description of selected type -->
+        <div style="background:#EFF6FF;border-radius:10px;padding:10px 12px;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start">
+          <span style="font-size:15px;flex-shrink:0">📣</span>
+          <div style="font-size:11px;color:#1D4ED8;line-height:1.55">They share this Drop with their audience. Every ticket sold through their link is tracked and credited to them.</div>
+        </div>
+
+        <!-- Who to invite -->
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Send to</div>
+        <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+          <div style="color:#9CA3AF">${ic(Ic.mail,16)}</div>
+          <div style="font-size:13px;color:#9CA3AF">Email or Nigh handle...</div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#9CA3AF;margin-bottom:8px">— or —</div>
+        <button onclick="show('invite-send-link')" style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;padding:12px;width:100%;display:flex;align-items:center;gap:10px;color:#374151">
+          <div style="color:#6B7280">${ic(Ic.link,16)}</div>
+          <div style="font-size:13px;font-weight:600;text-align:left;flex:1">Generate a shareable link<div style="font-size:11px;color:#9CA3AF;font-weight:400;margin-top:1px">Share via text, DM, or in person</div></div>
+          <div style="color:#D1D5DB">${ic(Ic.right,14)}</div>
+        </button>
+
+        <!-- Optional note -->
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin:16px 0 8px">Add a note (optional)</div>
+        <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:10px;padding:12px;font-size:13px;color:#9CA3AF;min-height:64px;line-height:1.5">Hey! Would love to have you promote this Drop...</div>
+
+        <button onclick="show('invite-send-link')" style="background:#0E4EF5;border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:700;width:100%;margin-top:16px">Send Invite →</button>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN C2: Invite link generated ────────────────────────────────────────
+function screenInviteSendLink(){
+  return{
+    hasBrowser: false,
+    tabBar: proTabBar('drops'),
+    html:`
+    <div class="fi">
+      <div style="padding:16px 16px 12px;background:#fff;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:12px">
+        <button onclick="show('invite-send')" style="background:none;border:none;color:#6B7280;padding:0">${ic(Ic.left,20)}</button>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#111827">Invite a Partner</div>
+          <div style="font-size:11px;color:#9CA3AF">Morning Tasting — Single Origin Kenya · Live Now</div>
+        </div>
+      </div>
+      <div style="padding:24px 16px">
+        <!-- Success -->
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="width:52px;height:52px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px">🔗</div>
+          <div style="font-size:16px;font-weight:800;color:#111827;margin-bottom:6px">Invite link ready</div>
+          <div style="font-size:12px;color:#6B7280;line-height:1.6;max-width:260px;margin:0 auto">Share this however you reach them — text, DM, or in person.</div>
+        </div>
+
+        <!-- Link box -->
+        <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px">Invite link · Promote</div>
+            <div style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">nigh.com/invite/k9x2mP4q</div>
+          </div>
+          <button style="background:#0E4EF5;border:none;border-radius:8px;padding:8px 14px;color:#fff;font-size:12px;font-weight:700;white-space:nowrap">Copy</button>
+        </div>
+
+        <!-- Share row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+          <button style="background:#fff;border:1.5px solid #E5E7EB;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#374151">📱 Text</button>
+          <button style="background:#fff;border:1.5px solid #E5E7EB;border-radius:10px;padding:11px;font-size:12px;font-weight:700;color:#374151">✉️ Email</button>
+        </div>
+
+        <!-- Expiry note -->
+        <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:10px 12px;display:flex;gap:8px;margin-bottom:20px">
+          <div style="color:#F97316;flex-shrink:0;margin-top:1px">${ic(Ic.clock,14)}</div>
+          <div style="font-size:11px;color:#92400E;line-height:1.5">Link expires when the Drop ends. One partner per invite link.</div>
+        </div>
+
+        <button style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:13px;color:#374151;font-size:13px;font-weight:700;width:100%">Done</button>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN D: Invite received ────────────────────────────────────────────────
+// Partner lands on nigh.com/invite/[token]. Ultra clean.
+// They see who's inviting them, the Drop, and what they're being asked to do.
+// One action: Accept. That's it.
+function screenInviteReceive(){
+  return{
+    hasBrowser: true,
+    urlText: 'nigh.com/invite/k9x2mP4q',
+    tabBar: null,
+    html:`
+    <div class="fi" style="padding:20px 16px;min-height:100%;display:flex;flex-direction:column">
+
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:20px;font-weight:900;letter-spacing:-0.03em;color:#111827">nigh</div>
+      </div>
+
+      <div style="background:#fff;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:14px">
+        <!-- Business header -->
+        <div style="background:linear-gradient(135deg,#1E3A2F,#2D5A40);padding:18px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:19px">☕</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#fff">Boulder Coffee Co.</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">Pearl St · Boulder, CO</div>
+          </div>
+        </div>
+
+        <div style="padding:16px">
+          <!-- What they want -->
+          <div style="font-size:12px;color:#6B7280;margin-bottom:14px;line-height:1.55">
+            <strong style="color:#111827">Boulder Coffee Co.</strong> is inviting you to collaborate on a live Drop.
+          </div>
+
+          <!-- Drop -->
+          <div style="background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:800;color:#111827;margin-bottom:6px">☕ Morning Tasting — Single Origin Kenya</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;color:#16A34A;font-weight:600;display:flex;align-items:center;gap:5px">${ic(Ic.zap,12)} Live Now · until 9am · 3 spots left</div>
+              <div style="font-size:12px;color:#6B7280;display:flex;align-items:center;gap:5px">${ic(Ic.map,12)} Pearl St · Boulder, CO</div>
+            </div>
+          </div>
+
+          <!-- Role — simple label, no jargon -->
+          <div style="background:#EFF6FF;border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">📣</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#0E4EF5;margin-bottom:2px">Promote</div>
+              <div style="font-size:11px;color:#1D4ED8;line-height:1.5">Share this Drop with your audience. Every ticket sold through your link is tracked.</div>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div style="font-size:11px;color:#9CA3AF;font-style:italic;line-height:1.6;margin-bottom:16px;padding:0 2px">"Hey! We'd love to have you promote this Drop to your followers. Our Kenya single origin is exceptional."</div>
+
+          <!-- Actions -->
+          <button onclick="show('invite-accepted')" style="background:#0E4EF5;border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:700;width:100%;margin-bottom:8px">Accept &amp; Get My Link</button>
+          <button style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px;color:#6B7280;font-size:13px;font-weight:600;width:100%">Decline</button>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#9CA3AF;line-height:1.6">No Nigh account? <span style="color:#0E4EF5;font-weight:600">Create a free one to accept →</span></div>
+    </div>`
+  }
+}
+
+// ─── SCREEN D2: Accepted — partner link ready ─────────────────────────────────
+function screenInviteAccepted(){
+  return{
+    hasBrowser: true,
+    urlText: 'nigh.com/invite/k9x2mP4q',
+    tabBar: null,
+    html:`
+    <div class="fi" style="padding:40px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;min-height:100%">
+      <div style="font-size:20px;font-weight:900;letter-spacing:-0.03em;color:#111827;margin-bottom:28px">nigh</div>
+      <div style="font-size:44px;margin-bottom:14px">🤝</div>
+      <div style="font-size:20px;font-weight:900;color:#111827;letter-spacing:-0.02em;margin-bottom:6px">You're in!</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.65;max-width:260px;margin-bottom:24px">You're now promoting a Drop with <strong style="color:#111827">Boulder Coffee Co.</strong> Share your link to start earning.</div>
+
+      <!-- Partner link -->
+      <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;width:100%;display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px">Your link</div>
+          <div style="font-size:12px;font-weight:600;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">nigh.com/boulder-coffee-co?ref=samj</div>
+        </div>
+        <button style="background:#0E4EF5;border:none;border-radius:8px;padding:8px 14px;color:#fff;font-size:12px;font-weight:700">Copy</button>
+      </div>
+
+      <div style="font-size:11px;color:#9CA3AF;line-height:1.6;margin-bottom:24px">Every ticket sold through this link is tracked and credited to you.</div>
+
+      <button onclick="show('collab-tab')" style="background:#0E4EF5;border:none;border-radius:12px;padding:14px 32px;color:#fff;font-size:14px;font-weight:700;width:100%">View in Collaborations →</button>
+    </div>`
+  }
+}
+
+// ─── SCREEN E: Collaborations Tab ────────────────────────────────────────────
+// Works for all partner types. Just: your link, your earnings, your collabs.
+function screenCollabTab(){
+  return{
+    hasBrowser: false,
+    tabBar: partnerTabBar('collab'),
+    html:`
+    <div class="fi">
+      <div style="padding:20px 16px 14px;background:#fff;border-bottom:1px solid #F3F4F6">
+        <div style="font-size:20px;font-weight:900;color:#111827;letter-spacing:-0.02em">Collaborations</div>
+        <div style="font-size:12px;color:#9CA3AF;margin-top:2px">Your active Drop partnerships</div>
+      </div>
+
+      <div style="padding:14px 16px">
+        <!-- Earnings card -->
+        <div style="background:linear-gradient(135deg,#0E4EF5,#6226E9);border-radius:14px;padding:16px;margin-bottom:16px">
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">This Month</div>
+          <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.03em;margin-bottom:2px">$142.50</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6)">19 tickets across 3 active collabs</div>
+        </div>
+
+        <!-- Pending -->
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:8px">Pending</div>
+        <div style="background:#fff;border-radius:12px;border:1.5px solid #BFDBFE;padding:14px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">🧘</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:800;color:#111827">Boulder Yoga Studio</div>
+              <div style="font-size:11px;color:#6B7280;margin-top:1px">Sunset Flow Session · Promote</div>
+            </div>
+            <button onclick="show('invite-receive')" style="background:#0E4EF5;border:none;border-radius:8px;padding:7px 12px;color:#fff;font-size:11px;font-weight:700;white-space:nowrap">View</button>
+          </div>
+        </div>
+
+        <!-- Active -->
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#9CA3AF;margin-bottom:8px">Active</div>
+        ${collabRow('☕','Boulder Coffee Co.','Morning Tasting — Kenya','Promote','$37.50','5 tickets','#0E4EF5')}
+        ${collabRow('🍕','Ash\'s Pizza','Late Night Pop-Up Drop','Co-host','$62.00','8 tickets','#EC1977')}
+        ${collabRow('🏋️','Peak Performance Gym','January Challenge Kickoff','Sponsor','$43.00','6 tickets','#6226E9')}
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN F: Account Tier Model ────────────────────────────────────────────
+function screenTierModel(){
+  function row(check,text){
+    return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      <div style="width:16px;height:16px;border-radius:50%;background:${check?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:${check?'#16A34A':'#D1D5DB'};flex-shrink:0">${check?'✓':'—'}</div>
+      <div style="font-size:12px;color:${check?'#111827':'#9CA3AF'}">${text}</div>
+    </div>`
+  }
+  function tier(name,color,badge,rows){
+    return`<div style="background:#fff;border-radius:14px;border:2px solid ${color}33;padding:14px 14px 8px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <div style="background:${color}18;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:800;color:${color}">${name}</div>
+        <div style="font-size:10px;color:#9CA3AF">${badge}</div>
+      </div>
+      ${rows.map(([c,t])=>row(c,t)).join('')}
+    </div>`
+  }
+  return{
+    hasBrowser:false,
+    tabBar:null,
+    html:`
+    <div class="fi">
+      <div style="padding:18px 16px 12px;background:#fff;border-bottom:1px solid #F3F4F6">
+        <div style="font-size:18px;font-weight:900;color:#111827;letter-spacing:-0.02em">Account Tiers</div>
+        <div style="font-size:12px;color:#9CA3AF;margin-top:2px">What each level can do</div>
+      </div>
+      <div style="padding:14px 16px 24px">
+        ${tier('Free','#6B7280','Any verified user',[
+          [true,'Attend & discover drops'],
+          [true,'Follow hosts'],
+          [true,'Signal open to collabs'],
+          [true,'Accept a collab invite'],
+          [false,'Host drops'],
+          [false,'Initiate / invite partners'],
+        ])}
+        ${tier('Starter','#22C55E','Basic hosting',[
+          [true,'Everything in Free'],
+          [true,'Host drops (basic)'],
+          [true,'Schedule up to 24hrs ahead'],
+          [false,'Initiate collaborations'],
+          [false,'Invite partners to drops'],
+        ])}
+        ${tier('Growth','#0E4EF5','Full collaboration',[
+          [true,'Everything in Starter'],
+          [true,'Initiate collaborations'],
+          [true,'Invite partners to your drops'],
+          [true,'Schedule up to 72hrs ahead'],
+          [false,'Pro app (ticketing / CRM)'],
+        ])}
+        ${tier('Pro','#6226E9','Full suite',[
+          [true,'Everything in Growth'],
+          [true,'Pro app access'],
+          [true,'Ticketing & check-in'],
+          [true,'CRM & team members'],
+          [true,'Advanced analytics'],
+        ])}
+        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:10px 12px;font-size:11px;color:#92400E;line-height:1.6">
+          <strong>Key insight:</strong> Any verified account (Free or above) can accept a collab invite. Only Growth+ hosts can <em>send</em> one.
+        </div>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN G: Individual profile — own view with "Open to Collabs" ───────────
+function screenPartnerProfileOwn(){
+  return{
+    hasBrowser:false,
+    tabBar:consumerTabBar(),
+    html:`
+    <div class="fi">
+      <!-- Cover -->
+      <div style="height:100px;background:linear-gradient(135deg,#1E1B4B,#3730A3);position:relative;">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,rgba(139,92,246,0.3),transparent 60%)"></div>
+      </div>
+      <!-- Identity -->
+      <div style="padding:0 16px;margin-top:-28px;margin-bottom:14px;position:relative;z-index:2">
+        <div style="width:56px;height:56px;border-radius:50%;background:#3730A3;border:3px solid #F9FAFB;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">😊</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-size:18px;font-weight:800;color:#111827;letter-spacing:-0.02em">Sam Johnson</div>
+          <div style="background:#DCFCE7;border-radius:100px;padding:2px 8px;font-size:10px;font-weight:700;color:#16A34A">✓ Verified</div>
+        </div>
+        <div style="font-size:12px;color:#6B7280;margin-top:2px">@samj · Boulder, CO</div>
+        <p style="font-size:12px;color:#6B7280;margin-top:6px;line-height:1.5">Coffee lover, local explorer. I attend a lot of Drops around Boulder.</p>
+      </div>
+      <!-- Partner settings panel -->
+      <div style="margin:0 16px 14px;background:#EFF6FF;border-radius:14px;border:1.5px solid #BFDBFE;padding:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:13px;font-weight:800;color:#1D4ED8">Open to Collaborations</div>
+            <div style="font-size:11px;color:#3B82F6;margin-top:2px">Hosts can invite you to partner on Drops</div>
+          </div>
+          <!-- Toggle: ON -->
+          <div style="width:38px;height:22px;background:#0E4EF5;border-radius:100px;padding:2px;display:flex;align-items:center;justify-content:flex-end;cursor:pointer">
+            <div style="width:18px;height:18px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.2)"></div>
+          </div>
+        </div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6B7280;margin-bottom:8px">I'm open to</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="background:#EFF6FF;border:1.5px solid #0E4EF5;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#0E4EF5">📣 Promote</div>
+          <div style="background:#F5F3FF;border:1.5px solid #6226E9;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;color:#6226E9">🏷️ Sponsor</div>
+          <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:#9CA3AF">🤝 Co-host</div>
+        </div>
+      </div>
+      <!-- Share partner profile -->
+      <div style="margin:0 16px 24px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:8px">Your partner profile link</div>
+        <div style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:#374151">nigh.com/samj</div>
+            <div style="font-size:10px;color:#9CA3AF;margin-top:2px">Share with hosts you want to work with</div>
+          </div>
+          <button style="background:#0E4EF5;border:none;border-radius:8px;padding:8px 14px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px">${ic(Ic.share,12)} Share</button>
+        </div>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN H: Individual profile — as seen by a Growth host ──────────────────
+function screenPartnerProfileHost(){
+  return{
+    hasBrowser:true,
+    urlText:'nigh.com/samj',
+    tabBar:proTabBar('home'),
+    html:`
+    <div class="fi">
+      <!-- Cover -->
+      <div style="height:100px;background:linear-gradient(135deg,#1E1B4B,#3730A3);position:relative;">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,rgba(139,92,246,0.3),transparent 60%)"></div>
+        <div style="position:absolute;bottom:12px;right:14px">
+          <button style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;color:#fff">${ic(Ic.share,14)}</button>
+        </div>
+      </div>
+      <!-- Identity -->
+      <div style="padding:0 16px;margin-top:-28px;margin-bottom:14px;position:relative;z-index:2">
+        <div style="width:56px;height:56px;border-radius:50%;background:#3730A3;border:3px solid #F9FAFB;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15)">😊</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="font-size:18px;font-weight:800;color:#111827;letter-spacing:-0.02em">Sam Johnson</div>
+          <div style="background:#DCFCE7;border-radius:100px;padding:2px 8px;font-size:10px;font-weight:700;color:#16A34A">✓ Verified</div>
+        </div>
+        <div style="font-size:12px;color:#6B7280;margin-top:2px">@samj · Boulder, CO</div>
+        <!-- Open to collabs badge -->
+        <div style="display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:100px;padding:4px 10px;margin-top:8px">
+          <div style="width:6px;height:6px;border-radius:50%;background:#0E4EF5;flex-shrink:0"></div>
+          <div style="font-size:10px;font-weight:700;color:#1D4ED8">Open to collabs · Promote &amp; Sponsor</div>
+        </div>
+        <p style="font-size:12px;color:#6B7280;margin-top:8px;line-height:1.5">Coffee lover, local explorer. I attend a lot of Drops around Boulder.</p>
+      </div>
+      <!-- Invite button — visible because Sam signals open to collabs -->
+      <div style="margin:0 16px 24px;border-top:1px solid #F3F4F6;padding-top:14px">
+        <button onclick="show('invite-send')" style="width:100%;background:#0E4EF5;border:none;border-radius:12px;padding:13px 16px;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px">
+          ${ic(Ic.zap,15)} Invite to Collaborate
+        </button>
+        <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:8px;line-height:1.5">Promote or sponsor one of your active Drops</div>
+      </div>
+    </div>`
+  }
+}
+
+// ─── SCREEN I: Business (Starter) receiving a collab invite ───────────────────
+// Use case: Growth host invites a Starter-tier brand to sponsor their Drop.
+function screenBizInvite(){
+  return{
+    hasBrowser:true,
+    urlText:'nigh.com/invite/mX7kP2',
+    tabBar:null,
+    html:`
+    <div class="fi" style="padding:20px 16px;min-height:100%;display:flex;flex-direction:column">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:20px;font-weight:900;letter-spacing:-0.03em;color:#111827">nigh</div>
+      </div>
+      <div style="background:#fff;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:12px">
+        <!-- Inviting host header -->
+        <div style="background:linear-gradient(135deg,#1E3A2F,#2D5A40);padding:18px 16px;display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:19px">☕</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#fff">Boulder Coffee Co.</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">Pearl St · Boulder, CO</div>
+          </div>
+        </div>
+        <div style="padding:16px">
+          <div style="font-size:12px;color:#6B7280;margin-bottom:14px;line-height:1.55">
+            <strong style="color:#111827">Boulder Coffee Co.</strong> is inviting <strong style="color:#111827">Rocky Mtn Honey</strong> to sponsor a live Drop.
+          </div>
+          <!-- Drop -->
+          <div style="background:#F9FAFB;border-radius:10px;padding:12px;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:800;color:#111827;margin-bottom:6px">☕ Morning Tasting — Single Origin Kenya</div>
+            <div style="font-size:12px;color:#16A34A;font-weight:600;display:flex;align-items:center;gap:5px">${ic(Ic.zap,12)} Live Now · until 9am · 3 spots left</div>
+          </div>
+          <!-- Role -->
+          <div style="background:#F5F3FF;border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">🏷️</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#6226E9;margin-bottom:2px">Sponsor</div>
+              <div style="font-size:11px;color:#7C3AED;opacity:0.85;line-height:1.5">Your brand gets featured in this Drop. Tracked ticket sales and exposure to Boulder Coffee Co.'s audience.</div>
+            </div>
+          </div>
+          <!-- Note -->
+          <div style="font-size:11px;color:#9CA3AF;font-style:italic;line-height:1.6;margin-bottom:16px;padding:0 2px">"We'd love to feature Rocky Mtn Honey — great alignment with our morning crowd."</div>
+          <!-- Actions -->
+          <button onclick="show('invite-accepted')" style="background:#6226E9;border:none;border-radius:12px;padding:14px;color:#fff;font-size:14px;font-weight:700;width:100%;margin-bottom:8px">Accept &amp; Get Our Link</button>
+          <button style="background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px;color:#6B7280;font-size:13px;font-weight:600;width:100%">Decline</button>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#9CA3AF;line-height:1.6">Signed in as <span style="color:#111827;font-weight:700">Rocky Mtn Honey</span> · Starter account</div>
+    </div>`
+  }
+}
+
+// ─── Helper components ────────────────────────────────────────────────────────
+
+function liveDropCard(){
+  return`<div style="background:#fff;border-radius:12px;border:1px solid #BBF7D0;padding:12px 14px;display:flex;align-items:center;gap:12px">
+    <div style="position:relative;width:40px;height:40px;flex-shrink:0">
+      <div style="width:40px;height:40px;border-radius:10px;background:#1E3A2F22;display:flex;align-items:center;justify-content:center;font-size:18px">☕</div>
+      <div style="position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:#22C55E;border:2px solid #fff"></div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#16A34A;margin-bottom:2px">● Live Now</div>
+      <div style="font-size:13px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Morning Tasting — Single Origin Kenya</div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Until 9am · 3 spots left</div>
+    </div>
+    <div style="color:#D1D5DB;flex-shrink:0">${ic(Ic.right,16)}</div>
+  </div>`
+}
+
+function typeill(emoji,label,color,selected){
+  return`<button style="background:${selected?color+'12':'#fff'};border:${selected?`1.5px solid ${color}`:'1.5px solid #E5E7EB'};border-radius:10px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">
+    <span style="font-size:16px">${emoji}</span>
+    <span style="font-size:11px;font-weight:700;color:${selected?color:'#6B7280'}">${label}</span>
+  </button>`
+}
+
+function typehill(emoji,label,color,selected){
+  return typeill(emoji,label,color,selected)
+}
+
+function typeill2(emoji,label,color,selected){
+  return typeill(emoji,label,color,selected)
+}
+
+// Alias for the type pill — single consistent function
+function typepill(e,l,c,s){ return typeill(e,l,c,s) }
+
+function collabRow(emoji,biz,drop,type,earned,tickets,color){
+  return`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+    <div style="width:36px;height:36px;border-radius:9px;background:${color}18;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${emoji}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:800;color:#111827">${biz}</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${drop}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;font-weight:700;color:#111827">${earned}</div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:1px">${tickets}</div>
+    </div>
+  </div>`
+}
+
+// ─── Tab bars ─────────────────────────────────────────────────────────────────
+function consumerTabBar(){
+  return`
+    <button class="tt a">${ic(Ic.home,20)}<span>Drops</span></button>
+    <button class="tt">${ic(Ic.ticket,20)}<span>Tickets</span></button>
+    <button class="tt">${ic(Ic.bell,20)}<span>Inbox</span></button>
+    <button class="tt">${ic(Ic.menu,20)}<span>Menu</span></button>`
+}
+
+function partnerTabBar(active){
+  return`
+    <button class="tt ${active==='home'?'a':''}">${ic(Ic.home,20)}<span>Home</span></button>
+    <button class="tt ${active==='collab'?'a':''}" onclick="show('collab-tab')">${ic(Ic.collab,20)}<span>Collabs</span></button>
+    <button class="tt">${ic(Ic.dollar,20)}<span>Earnings</span></button>
+    <button class="tt">${ic(Ic.menu,20)}<span>Menu</span></button>`
+}
+
+function proTabBar(active){
+  return`
+    <button class="tt ${active==='home'?'a':''}">${ic(Ic.home,20)}<span>Home</span></button>
+    <button class="tt ${active==='drops'?'a':''}">${ic(Ic.ticket,20)}<span>Drops</span></button>
+    <button class="tt ${active==='collab'?'a':''}" onclick="show('collab-tab')">${ic(Ic.collab,20)}<span>Collabs</span></button>
+    <button class="tt">${ic(Ic.menu,20)}<span>Menu</span></button>`
+}
+
+// ─── Screen router ────────────────────────────────────────────────────────────
+const screens = {
+  'profile-consumer': screenProfileConsumer,
+  'profile-partner': screenProfilePartner,
+  'invite-send': screenInviteSend,
+  'invite-send-link': screenInviteSendLink,
+  'invite-receive': screenInviteReceive,
+  'invite-accepted': screenInviteAccepted,
+  'collab-tab': screenCollabTab,
+  'tier-model': screenTierModel,
+  'partner-profile-own': screenPartnerProfileOwn,
+  'partner-profile-host': screenPartnerProfileHost,
+  'biz-invite': screenBizInvite,
+};
+
+const navMap = {
+  'profile-consumer': 'profile-consumer',
+  'profile-partner': 'profile-partner',
+  'invite-send': 'invite-send',
+  'invite-send-link': 'invite-send',
+  'invite-receive': 'invite-receive',
+  'invite-accepted': 'invite-receive',
+  'collab-tab': 'collab-tab',
+  'tier-model': 'tier-model',
+  'partner-profile-own': 'partner-profile-own',
+  'partner-profile-host': 'partner-profile-host',
+  'biz-invite': 'biz-invite',
+};
+
+const labels = {
+  'profile-consumer': 'A · Profile (Consumer) — nigh.com/boulder-coffee-co',
+  'profile-partner':  'B · Profile (Partner view) — same URL, different context',
+  'invite-send':      'C · Send Invite — inside Nigh Pro app',
+  'invite-send-link': 'C · Send Invite — link generated',
+  'invite-receive':   'D · Invite Received — nigh.com/invite/k9x2mP4q',
+  'invite-accepted':  'D · Accepted — partner link ready',
+  'collab-tab':       'E · Collaborations Tab — partner\'s view',
+  'tier-model':            'F · Account Tiers — what each level unlocks',
+  'partner-profile-own':   'G · Individual profile (own view) — Open to Collabs enabled',
+  'partner-profile-host':  'H · Individual profile (Growth host\'s view) — Invite button visible',
+  'biz-invite':            'I · Business as Partner — Starter brand receiving a Sponsor invite',
+};
+
+function show(id){
+  document.querySelectorAll('.snav-btn').forEach(b => b.classList.remove('a'));
+  const activeNavId = navMap[id] || id;
+  document.querySelectorAll('.snav-btn').forEach(b => {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${activeNavId}'`)) b.classList.add('a');
+  });
+
+  const s = screens[id] ? screens[id]() : screens['profile-consumer']();
+  const label = labels[id] || '';
+
+  document.getElementById('mount').innerHTML = `
+    <div class="screen-label">${label}</div>
+    <div class="phone-wrap ${s.hasBrowser ? '' : 'no-browser'}">
+      ${s.hasBrowser ? `
+      <div class="browser-bar">
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <div style="width:10px;height:10px;border-radius:50%;background:#FF5F57"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#FFBD2E"></div>
+          <div style="width:10px;height:10px;border-radius:50%;background:#28C840"></div>
+        </div>
+        <div class="browser-url">
+          <div class="browser-dot"></div>
+          <span class="url-text">${s.urlText}</span>
+        </div>
+      </div>` : ''}
+      <div class="phone">
+        <div class="scr">${s.html}</div>
+        ${s.tabBar ? `<div class="tb">${s.tabBar}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+show('profile-consumer');
+</script>
+</body>
+</html>

@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigh Pro — App Screens v2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#E5E7EB;display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
+#app{width:375px;height:812px;border-radius:24px;border:1px solid #D1D5DB;box-shadow:0 8px 32px rgba(0,0,0,0.12);overflow:hidden;display:flex;flex-direction:column;background:#F9FAFB;position:relative}
+#scr{flex:1;overflow-y:auto}
+#scr::-webkit-scrollbar{width:0}
+button,input,textarea,select{font-family:inherit}
+button{cursor:pointer}
+@keyframes scanLine{0%,100%{top:15%}50%{top:75%}}
+.scanL{animation:scanLine 2s ease-in-out infinite}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn 0.25s ease-out}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.pulse{animation:pulse 2s ease-in-out infinite}
+.card{background:#fff;border-radius:14px;border:1px solid #E5E7EB;overflow:hidden}
+.cb{padding:14px}
+/* Badges */
+.bg{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:0.01em}
+.bg-s{font-size:10px;padding:2px 7px}
+.bg .dt{width:6px;height:6px;border-radius:50%}
+.bg-live{background:#DCFCE7;color:#166534}.bg-live .dt{background:#22C55E}
+.bg-sold{background:#FEF3C7;color:#92400E}.bg-sold .dt{background:#F59E0B}
+.bg-draft{background:#F3F4F6;color:#4B5563}.bg-draft .dt{background:#9CA3AF}
+.bg-ended{background:#F3F4F6;color:#6B7280}.bg-ended .dt{background:#9CA3AF}
+.bg-ci{background:#DCFCE7;color:#166534}.bg-ci .dt{background:#22C55E}
+.bg-res{background:#DBEAFE;color:#1E40AF}.bg-res .dt{background:#3B82F6}
+.bg-ns{background:#FEE2E2;color:#991B1B}.bg-ns .dt{background:#EF4444}
+.bg-sched{background:#EDE9FE;color:#5B21B6}.bg-sched .dt{background:#8B5CF6}
+/* Tab bar */
+.tb{display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:6px 0 10px;flex-shrink:0}
+.tt{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:4px 10px;min-width:50px;color:#9CA3AF;transition:color 0.15s;font-size:10px;font-weight:500}
+.tt.a{color:#3B82F6;font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="scr"></div>
+<div class="tb" id="tb"></div>
+</div>
+<script>
+// ── State ──
+let S = {
+  scr: 'home', drop: null, cStep: 1, ciMode: 'scan', rFilter: 'All', rSel: null,
+  calDay: new Date(), showAcctPicker: false, menuSub: null, cloneFrom: null,
+  formTiming: 'start', formPrice: 'free', formPartners: []
+};
+function go(scr, extra) {
+  S.scr = scr;
+  if (extra) Object.assign(S, extra);
+  if (scr === 'create') { S.cStep = 1; S.cloneFrom = null; }
+  if (scr === 'checkin') S.ciMode = 'scan';
+  if (scr === 'guests') { S.rFilter = 'All'; S.rSel = null; }
+  if (scr === 'menu') S.menuSub = null;
+  S.showAcctPicker = false;
+  render();
+}
+
+// ── Icons (SVG) ──
+const I = {
+  home:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  qr:'<rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z"/>',
+  users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+  menu2:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  dollar:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  left:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  right:'<polyline points="9 18 15 12 9 6"/>',
+  down:'<polyline points="6 9 12 15 18 9"/>',
+  bell:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>',
+  upload:'<polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
+  alert:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+  pause:'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',
+  cam:'<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>',
+  more:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',
+  trend:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>',
+  play:'<polygon points="5 3 19 12 5 21 5 3"/>',
+  printer:'<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  chart:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  msgCircle:'<path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>',
+  file:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  link:'<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>',
+  switchH:'<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>',
+  userPlus:'<path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>',
+};
+function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
+
+// ── Data ──
+const accts = [
+  { name: 'Centro Boulder', role: 'Owner', cat: 'Food & Drink', subCat: 'Restaurant / Bar', addr: '1125 Pearl St, Boulder, CO 80302' },
+  { name: 'Nike Boulder', role: 'Staff', cat: 'Retail', subCat: 'Footwear / Apparel', addr: '1800 29th St, Boulder, CO 80301' }
+];
+let acctIdx = 0;
+const acct = () => accts[acctIdx];
+
+const team = [
+  { name: 'Josh R.', role: 'Owner', active: true },
+  { name: 'Maria S.', role: 'Admin', active: true },
+  { name: 'Alex T.', role: 'Staff', active: true },
+  { name: 'Sam K.', role: 'Staff', active: false },
+];
+
+const drops = [
+  { id:'D001', title:'Nike Air Max Day Access', timing:'Start Time',
+    start:'2:00 PM', date:'2026-03-05', cap:8, res:8, ci:5, ns:1,
+    price:'Free', status:'Live - Sold Out', venue:'Nike Boulder',
+    hosts:['Josh R.','Alex T.'], partners:["Tito's Vodka"], media:'video',
+    desc:'Exclusive early access to the Air Max Day collection.' },
+  { id:'D002', title:'Starbucks Secret Menu Tasting', timing:'Arrival Window',
+    start:'5:00 - 7:00 PM', date:'2026-03-05', cap:50, res:38, ci:22, ns:0,
+    price:'Free', status:'Live', venue:'Starbucks Pearl St',
+    hosts:['Maria S.'], partners:[], media:'photo',
+    desc:'Try 5 secret menu drinks crafted by our head barista.' },
+  { id:'D003', title:"Whole Foods Chef's Table", timing:'Start Time',
+    start:'6:30 PM', date:'2026-03-06', cap:12, res:9, ci:0, ns:0,
+    price:'$45', status:'Scheduled', venue:'Whole Foods Boulder',
+    hosts:['Josh R.'], partners:['Kendall Jenner'], media:'photo',
+    desc:'5-course tasting menu featuring seasonal organic ingredients.' },
+  { id:'D004', title:'Williams-Sonoma Cooking Class', timing:'Start Time',
+    start:'11:00 AM', date:'2026-03-08', cap:10, res:4, ci:0, ns:0,
+    price:'$75', status:'Draft', venue:'Williams-Sonoma Flatiron',
+    hosts:['Josh R.','Maria S.'], partners:[], media:'photo',
+    desc:'Hands-on pasta making with Chef Maria.' },
+  { id:'D005', title:'Friday Night Jazz & Tapas', timing:'Arrival Window',
+    start:'7:00 - 10:00 PM', date:'2026-02-28', cap:30, res:28, ci:26, ns:2,
+    price:'$25', status:'Ended', venue:'Centro Boulder',
+    hosts:['Josh R.'], partners:["Tito's Vodka"], media:'video',
+    desc:'Live jazz trio with curated tapas menu. Past event.' },
+];
+
+const reservations = [
+  { id:'R001', phone:'(303) 555-0101', name:'Sarah M.', tix:2, status:'Checked-In', pay:'Free', time:'2:03 PM', drop:'D001' },
+  { id:'R002', phone:'(303) 555-0142', name:'James K.', tix:1, status:'Checked-In', pay:'Free', time:'2:05 PM', drop:'D001' },
+  { id:'R003', phone:'(303) 555-0188', name:'Alex R.', tix:2, status:'Checked-In', pay:'Free', time:'2:08 PM', drop:'D001' },
+  { id:'R004', phone:'(303) 555-0234', name:'Maya T.', tix:1, status:'Reserved', pay:'Pre-auth', time:'1:45 PM', drop:'D001' },
+  { id:'R005', phone:'(303) 555-0301', name:'Chris P.', tix:1, status:'No-Show', pay:'Captured', time:'1:30 PM', drop:'D001' },
+  { id:'R006', phone:'(303) 555-0377', name:'Lin W.', tix:1, status:'Reserved', pay:'Pre-auth', time:'1:52 PM', drop:'D001' },
+];
+
+// ── Helpers ──
+function bg(st,sm){
+  const m={'Live':'bg-live','Live - Sold Out':'bg-sold','Draft':'bg-draft','Ended':'bg-ended','Scheduled':'bg-sched',
+    'Checked-In':'bg-ci','Reserved':'bg-res','No-Show':'bg-ns'};
+  return `<span class="bg ${m[st]||'bg-draft'}${sm?' bg-s':''}""><span class="dt"></span>${st}</span>`;
+}
+function fmtDate(d){const dt=new Date(d+'T12:00:00');return dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})}
+function sameDay(a,b){return a.toDateString()===b.toDateString()}
+function dayKey(d){return d.toISOString().slice(0,10)}
+function mc(l,v,sub,icn,col,bgc){
+  return `<div style="background:#fff;border-radius:12px;padding:14px;border:1px solid #E5E7EB;flex:1 1 45%;min-width:130px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div style="font-size:11px;color:#6B7280;font-weight:500;margin-bottom:3px">${l}</div>
+      <div style="font-size:20px;font-weight:700;color:#111827">${v}</div>
+      ${sub?`<div style="font-size:10px;color:${col||'#0D9488'};margin-top:2px">${sub}</div>`:''}</div>
+      <div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:${bgc||'#EFF6FF'};color:${col||'#3B82F6'}">${ic(icn,16)}</div>
+    </div></div>`;
+}
+function hdr(title,sub,back,right){
+  return `<div style="background:#fff;padding:12px 16px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99">
+    <div style="display:flex;align-items:center;gap:10px">
+      ${back?`<button onclick="${back}" style="background:none;border:none;padding:4px;display:flex;color:#374151">${ic('left',20)}</button>`:''}
+      <div><div style="font-size:17px;font-weight:700;color:#111827;line-height:1.2">${title}</div>
+      ${sub?`<div style="font-size:12px;color:#6B7280;margin-top:1px">${sub}</div>`:''}</div>
+    </div>
+    ${right||''}
+  </div>`;
+}
+
+// ── Tab Bar ──
+function renderTB(){
+  const tabs=[{id:'home',ic:'home',l:'Home'},{id:'create',ic:'plus',l:'Create'},{id:'checkin',ic:'qr',l:'Check-In'},{id:'guests',ic:'users',l:'Guests'},{id:'menu',ic:'menu2',l:'Menu'}];
+  const bar=document.getElementById('tb');
+  bar.style.display=(S.scr==='liveview')?'none':'flex';
+  bar.innerHTML=tabs.map(t=>`<button class="tt${S.scr===t.id?' a':''}" onclick="go('${t.id}')">${ic(t.ic,22)}<span>${t.l}</span></button>`).join('');
+}
+
+// ═══════════ HOME SCREEN ═══════════
+function renderHome(){
+  const today=S.calDay;
+  const dayStr=dayKey(today);
+  const isToday=sameDay(today,new Date());
+
+  // Week strip
+  const weekStart=new Date(today);
+  weekStart.setDate(weekStart.getDate()-3);
+  let weekDays=[];
+  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(d.getDate()+i);weekDays.push(d);}
+
+  const dayDrops=drops.filter(d=>d.date===dayStr);
+  const draftDrops=drops.filter(d=>d.status==='Draft');
+
+  return `
+  <!-- Top: Account Switcher -->
+  <div style="background:#1B2A4A;padding:14px 16px 12px;color:#fff">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button onclick="S.showAcctPicker=!S.showAcctPicker;render()" style="background:none;border:none;color:#fff;display:flex;align-items:center;gap:8px;cursor:pointer">
+        <div style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">${acct().name.charAt(0)}</div>
+        <div style="text-align:left">
+          <div style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:4px">${acct().name} ${ic('down',14)}</div>
+          <div style="font-size:11px;opacity:0.6">${acct().role}</div>
+        </div>
+      </button>
+      <div style="display:flex;gap:8px">
+        <button style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;color:#fff">${ic('bell',18)}</button>
+      </div>
+    </div>
+    ${S.showAcctPicker?`
+    <div class="fi" style="margin-top:10px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden">
+      ${accts.map((a,i)=>`
+        <button onclick="acctIdx=${i};S.showAcctPicker=false;render()" style="width:100%;padding:10px 14px;background:${i===acctIdx?'rgba(255,255,255,0.15)':'transparent'};border:none;color:#fff;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid rgba(255,255,255,0.1)':'none'}">
+          <div style="width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${a.name.charAt(0)}</div>
+          <div><div style="font-size:13px;font-weight:600">${a.name}</div><div style="font-size:10px;opacity:0.6">${a.role} — ${a.cat}</div></div>
+          ${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}
+        </button>
+      `).join('')}
+    </div>
+    `:''}
+  </div>
+
+  <!-- Calendar Week Strip -->
+  <div style="background:#fff;padding:10px 0 6px;border-bottom:1px solid #E5E7EB">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:8px">
+      <button onclick="S.calDay.setDate(S.calDay.getDate()-7);render()" style="background:none;border:none;color:#374151;padding:4px">${ic('left',18)}</button>
+      <span style="font-size:14px;font-weight:700;color:#111827">${today.toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>
+      <button onclick="S.calDay.setDate(S.calDay.getDate()+7);render()" style="background:none;border:none;color:#374151;padding:4px">${ic('right',18)}</button>
+    </div>
+    <div style="display:flex;justify-content:space-around;padding:0 8px">
+      ${weekDays.map(d=>{
+        const sel=sameDay(d,today);
+        const isT=sameDay(d,new Date());
+        const hasDrops=drops.some(dr=>dr.date===dayKey(d));
+        return `<button onclick="S.calDay=new Date('${d.toISOString()}');render()" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:12px;border:none;background:${sel?'#3B82F6':'transparent'};cursor:pointer;min-width:40px">
+          <span style="font-size:10px;font-weight:500;color:${sel?'rgba(255,255,255,0.7)':isT?'#3B82F6':'#9CA3AF'}">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</span>
+          <span style="font-size:16px;font-weight:${sel||isT?700:500};color:${sel?'#fff':isT?'#3B82F6':'#374151'}">${d.getDate()}</span>
+          ${hasDrops?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'rgba(255,255,255,0.8)':'#3B82F6'}"></span>`:'<span style="width:5px;height:5px"></span>'}
+        </button>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div style="padding:14px 16px">
+    <!-- Selected day label -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:14px;font-weight:700;color:#111827">
+        ${isToday?'Today':today.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}
+        ${dayDrops.length>0?` — ${dayDrops.length} Drop${dayDrops.length>1?'s':''}`:''}
+      </span>
+      ${isToday?`<button onclick="S.calDay=new Date();render()" style="font-size:11px;color:#3B82F6;background:none;border:none;font-weight:600">Today</button>`:''}
+    </div>
+
+    ${dayDrops.length===0?`
+      <div style="text-align:center;padding:30px 16px;color:#9CA3AF">
+        <div style="margin-bottom:8px">${ic('cal',32)}</div>
+        <div style="font-size:14px;font-weight:500;margin-bottom:4px">No Drops on this day</div>
+        <button onclick="go('create')" style="margin-top:8px;padding:8px 20px;border-radius:8px;background:#3B82F6;color:#fff;border:none;font-size:13px;font-weight:600">${ic('plus',14)} Create Drop</button>
+      </div>
+    `:`
+      ${dayDrops.map((d,i)=>`
+        <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px">
+          <div style="height:100px;background:linear-gradient(135deg,#1B2A4A 0%,#3B82F6 100%);display:flex;align-items:center;justify-content:center;position:relative">
+            ${d.media==='video'?`
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">
+                ${ic('play',22)}
+              </div>
+              <div style="position:absolute;bottom:8px;left:10px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">0:32</div>
+            `:`
+              <div style="color:rgba(255,255,255,0.25)">${ic('image',36)}</div>
+            `}
+            <div style="position:absolute;top:8px;right:8px">${bg(d.status)}</div>
+          </div>
+          <div class="cb">
+            <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:3px">${d.title}</div>
+            <div style="display:flex;gap:10px;font-size:11px;color:#6B7280;margin-bottom:8px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:3px">${ic('clock',11)} ${d.start}</span>
+              <span style="display:flex;align-items:center;gap:3px">${ic('map',11)} ${d.venue}</span>
+              ${d.hosts.length?`<span style="display:flex;align-items:center;gap:3px">${ic('user',11)} ${d.hosts.join(', ')}</span>`:''}
+            </div>
+            ${d.status!=='Draft'&&d.status!=='Ended'?`
+            <div style="margin-bottom:6px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:#6B7280;margin-bottom:3px">
+                <span>Capacity</span><span style="font-weight:600;color:${d.res>=d.cap?'#F59E0B':'#0D9488'}">${d.res}/${d.cap}</span>
+              </div>
+              <div style="height:5px;background:#E5E7EB;border-radius:3px">
+                <div style="height:100%;border-radius:3px;width:${(d.res/d.cap)*100}%;background:${d.res>=d.cap?'#F59E0B':'#0D9488'}"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;padding:6px 0 0;border-top:1px solid #F3F4F6;font-size:10px">
+              <span style="color:#0D9488;font-weight:600">${d.ci} checked in</span>
+              <span style="color:#3B82F6;font-weight:600">${d.res-d.ci-d.ns} pending</span>
+              ${d.ns?`<span style="color:#EF4444;font-weight:600">${d.ns} no-show</span>`:''}
+            </div>
+            `:''}
+            ${d.status==='Ended'?`
+              <div style="display:flex;gap:6px;padding:6px 0 0;border-top:1px solid #F3F4F6">
+                <button onclick="event.stopPropagation();go('create',{cloneFrom:${drops.indexOf(d)}})" style="flex:1;padding:7px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;display:flex;align-items:center;justify-content:center;gap:4px">${ic('copy',13)} Duplicate Drop</button>
+              </div>
+            `:''}
+          </div>
+        </div>
+      `).join('')}
+    `}
+
+    <!-- Drafts section -->
+    ${draftDrops.length?`
+      <div style="margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:#6B7280;margin-bottom:8px">DRAFTS</div>
+        ${draftDrops.map(d=>`
+          <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:8px">
+            <div class="cb" style="display:flex;align-items:center;gap:10px">
+              <div style="width:40px;height:40px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#9CA3AF">${ic('file',18)}</div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:#111827">${d.title}</div>
+                <div style="font-size:11px;color:#6B7280">${fmtDate(d.date)}, ${d.start}</div>
+              </div>
+              ${bg('Draft',true)}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `:''}
+
+    <!-- Create CTA -->
+    <button onclick="go('create')" style="width:100%;background:#3B82F6;color:#fff;border:none;border-radius:12px;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:600;margin-top:16px;box-shadow:0 2px 8px rgba(59,130,246,0.25)">
+      ${ic('plus',18)} Create New Drop
+    </button>
+  </div>`;
+}
+
+// ═══════════ CREATE DROP ═══════════
+function renderCreate(){
+  const clone=S.cloneFrom!==null?drops[S.cloneFrom]:null;
+  const steps=['Date & Location','Drop Details','Capacity & Pricing','Review'];
+  const canChangeAddr = acct().subCat && acct().subCat.includes('Food Truck');
+
+  const inp=(l,ph,type,req,val)=>`<div style="margin-bottom:14px">
+    <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">${l}${req?' <span style="color:#EF4444">*</span>':''}</label>
+    <input type="${type||'text'}" placeholder="${ph}" ${val?`value="${val}"`:''} style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#3B82F6'" onblur="this.style.borderColor='#E5E7EB'"/>
+  </div>`;
+
+  let content='';
+
+  // STEP 1: Date & Location
+  if(S.cStep===1){
+    content=`
+    ${clone?`<div style="background:#EDE9FE;border-radius:10px;padding:10px 14px;display:flex;gap:8px;margin-bottom:14px;align-items:center">
+      <span style="color:#7C3AED">${ic('copy',16)}</span>
+      <div style="font-size:12px;color:#5B21B6;font-weight:500">Duplicating: <strong>${clone.title}</strong> — update date & time below</div>
+    </div>`:''}
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Timing Mode <span style="color:#EF4444">*</span></label>
+      <div style="display:flex;gap:8px">
+        ${[{id:'start',l:'Start Time',d:'Specific start',i:'clock'},{id:'window',l:'Arrival Window',d:'Flexible range',i:'cal'}].map(o=>`
+          <button onclick="S.formTiming='${o.id}';render()" style="flex:1;padding:12px;border-radius:10px;border:2px solid ${S.formTiming===o.id?'#3B82F6':'#E5E7EB'};background:${S.formTiming===o.id?'#EFF6FF':'#fff'};text-align:left">
+            <div style="color:${S.formTiming===o.id?'#3B82F6':'#9CA3AF'};margin-bottom:4px">${ic(o.i,18)}</div>
+            <div style="font-size:12px;font-weight:600;color:${S.formTiming===o.id?'#3B82F6':'#1F2937'}">${o.l}</div>
+            <div style="font-size:10px;color:#6B7280;margin-top:1px">${o.d}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    ${inp('Date','',`date`,true,clone?clone.date:'')}
+    ${S.formTiming==='start'?inp('Start Time','','time',true):
+      `<div style="display:flex;gap:10px">${['Window Start','Window End'].map(l=>`<div style="flex:1">${inp(l,'','time',true)}</div>`).join('')}</div>`}
+    ${inp('Broadcast Start','When the Drop becomes visible','time',true,clone?'':'')}
+    <div style="font-size:10px;color:#9CA3AF;margin-top:-10px;margin-bottom:14px">Broadcast ends 15 min before ${S.formTiming==='start'?'start time':'window close'} (purchase cutoff)</div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Address</label>
+      <div style="padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:${canChangeAddr?'#111827':'#6B7280'};background:${canChangeAddr?'#fff':'#F9FAFB'}">
+        ${acct().addr}
+      </div>
+      ${!canChangeAddr?`<div style="font-size:10px;color:#9CA3AF;margin-top:3px">Address is set from your business profile</div>`:''}
+    </div>
+    <div style="background:#EFF6FF;border-radius:10px;padding:9px 12px;display:flex;gap:7px;color:#3B82F6;font-size:11px;line-height:1.4">
+      ${ic('alert',14)} Drops can be scheduled up to 72 hours in advance. Purchase cutoff is 15 min before start.
+    </div>`;
+  }
+
+  // STEP 2: Drop Details
+  if(S.cStep===2){
+    content=`
+    ${inp('Drop Title','e.g. Friday Night Jazz & Tapas','text',true,clone?clone.title:'')}
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Description <span style="color:#EF4444">*</span></label>
+      <textarea placeholder="What makes this Drop special?" rows="3" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;resize:vertical;font-family:inherit;box-sizing:border-box">${clone?clone.desc:''}</textarea>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Video or Image <span style="color:#EF4444">*</span></label>
+      <div style="border:2px dashed #D1D5DB;border-radius:10px;padding:24px 16px;text-align:center;background:#F9FAFB">
+        <div style="color:#9CA3AF;margin-bottom:6px">${ic('upload',24)}</div>
+        <div style="font-size:12px;color:#6B7280;font-weight:500">Tap to upload or record</div>
+        <div style="font-size:10px;color:#9CA3AF;margin-top:3px">Photo or short video — Max 10MB</div>
+      </div>
+    </div>
+
+    <!-- Host Selection -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Event Host(s) <span style="color:#EF4444">*</span></label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${team.filter(t=>t.active).map(t=>{
+          const sel=clone?clone.hosts.includes(t.name):t.name==='Josh R.';
+          return `<button style="padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid ${sel?'#3B82F6':'#E5E7EB'};background:${sel?'#EFF6FF':'#fff'};color:${sel?'#3B82F6':'#4B5563'};display:flex;align-items:center;gap:4px">
+            ${ic('user',12)} ${t.name} ${sel?ic('check',12):''}
+          </button>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Partners -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Partners <span style="font-weight:400;color:#9CA3AF">(optional)</span></label>
+      ${clone&&clone.partners.length?`
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">
+          ${clone.partners.map((p,idx)=>{const status=idx%2===0?'Accepted':'Awaiting';return`
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:8px;background:${status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div style="display:flex;align-items:center;gap:6px">${ic('link',11)}<div style="font-size:11px;font-weight:600;color:#111827">${p}</div></div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:10px;font-weight:600;color:${status==='Accepted'?'#16A34A':'#D97706'}">${status}</span><span style="color:#9CA3AF">${ic('x',12)}</span></div></div>
+          `}).join('')}
+        </div>
+      `:''}
+      <div style="display:flex;gap:8px">
+        <input placeholder="Search Nigh Pro partners..." style="flex:1;padding:9px 12px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;background:#fff;outline:none"/>
+        <button style="padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;display:flex;align-items:center;gap:4px;white-space:nowrap">${ic('userPlus',13)} Invite</button>
+      </div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:3px">Partner must accept before they appear on the live Drop.</div>
+    </div>`;
+  }
+
+  // STEP 3: Capacity & Pricing
+  if(S.cStep===3){
+    const dual=S.dualPrice||false;
+    content=`
+    ${inp('Capacity','Max number of guests','number',true,clone?clone.cap:'')}
+    <div style="margin-bottom:14px">
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Pricing</label>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button onclick="S.dualPrice=false;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${!dual?'#3B82F6':'#E5E7EB'};background:${!dual?'#EFF6FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${!dual?'#3B82F6':'#6B7280'}">Single Price</div>
+          <div style="font-size:10px;color:${!dual?'#93C5FD':'#9CA3AF'};margin-top:1px">Same for all guests</div>
+        </button>
+        <button onclick="S.dualPrice=true;render()" style="flex:1;padding:9px 6px;border-radius:8px;border:1.5px solid ${dual?'#3B82F6':'#E5E7EB'};background:${dual?'#EFF6FF':'#fff'};cursor:pointer;text-align:center;">
+          <div style="font-size:12px;font-weight:700;color:${dual?'#3B82F6':'#6B7280'}">Dual Pricing</div>
+          <div style="font-size:10px;color:${dual?'#93C5FD':'#9CA3AF'};margin-top:1px">New vs. existing</div>
+        </button>
+      </div>
+      ${dual?`
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#15803d;line-height:1.5">
+        &#11088; <strong>Dual pricing on.</strong> Nigh checks your customer list at view time — each guest sees only their price.
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">New Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1.5px solid #3B82F6;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="margin-top:4px"><span style="font-size:10px;font-weight:700;background:#DCFCE7;color:#15803d;padding:2px 8px;border-radius:8px">First Visit Special</span></div>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block">Existing Customer</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+            <input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+          </div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:4px">In your customer list</div>
+        </div>
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 10px;font-size:11px;color:#78350F;line-height:1.45">
+        &#128161; Guests only see their own price. A "First Visit Special" label explains any difference if friends compare.
+      </div>`:`
+      <div style="position:relative;margin-bottom:8px">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+        <input type="number" placeholder="0.00 (leave blank for free)" ${clone&&clone.price>0?`value="${clone.price.replace('$','')}"`:''} style="width:100%;box-sizing:border-box;padding:9px 10px 9px 22px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit"/>
+      </div>
+      <div onclick="S.dualPrice=true;render()" style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:8px 10px;font-size:11px;color:#1D4ED8;line-height:1.45;cursor:pointer">
+        &#128161; <strong>Tip:</strong> Use <strong>Dual Pricing</strong> to offer a lower "First Visit Special" to new customers — most businesses discount more to win a first-time guest.
+      </div>`}
+    </div>
+    <div class="card"><div class="cb">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;color:#3B82F6">${ic('send',15)}<span style="font-size:13px;font-weight:600;color:#1F2937">Direct Offers</span></div>
+      <div style="font-size:11px;color:#6B7280;line-height:1.4;margin-bottom:8px">Reserve spots for VIPs via personal SMS links.</div>
+      <div style="display:flex;gap:6px">
+        <button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #E5E7EB;background:#F9FAFB;color:#4B5563">Shared Pool</button>
+        <button style="padding:6px 12px;border-radius:8px;font-size:11px;border:1px solid #3B82F6;background:#EFF6FF;color:#3B82F6">Separate Pool</button>
+      </div>
+    </div></div>`;
+  }
+
+  // STEP 4: Review
+  if(S.cStep===4){
+    const src=clone||{title:'Your New Drop',start:'6:30 PM',date:'2026-03-06',cap:12,price:'$45',venue:acct().addr,hosts:['Josh R.'],partners:["Tito's Vodka"],timing:'Start Time',desc:'5-course tasting menu...',media:'photo'};
+    content=`
+    <div class="card" style="margin-bottom:14px">
+      <div style="height:80px;background:linear-gradient(135deg,#1B2A4A,#3B82F6);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.25)">${ic('image',28)}</div>
+      <div class="cb">
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:10px">${src.title}</div>
+        ${[
+          ['cal','Date',fmtDate(src.date)],
+          ['clock','Time',src.start],
+          ['map','Venue',src.venue],
+          ['users','Capacity',src.cap],
+          ['dollar','Price',src.price==='Free'?'Free':src.price],
+          ['user','Host(s)',src.hosts.join(', ')],
+          ['link','Partners',src.partners.length?src.partners.join(', '):'None'],
+        ].map((r,i,a)=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;${i<a.length-1?'border-bottom:1px solid #F3F4F6':''}">
+            <span style="color:#9CA3AF">${ic(r[0],14)}</span>
+            <span style="font-size:11px;color:#6B7280;width:65px">${r[1]}</span>
+            <span style="font-size:12px;color:#111827;font-weight:500">${r[2]}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151">Save Draft</button>
+      <button style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#8B5CF6;color:#fff;box-shadow:0 2px 8px rgba(139,92,246,0.3)">Schedule</button>
+      <button style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#3B82F6;color:#fff;box-shadow:0 2px 8px rgba(59,130,246,0.3)">Publish</button>
+    </div>`;
+  }
+
+  return `${hdr('Create Drop',`Step ${S.cStep} of 4 — ${steps[S.cStep-1]}`,S.cStep>1?"S.cStep--;render()":"go('home')")}
+    <div style="padding:0 16px;margin-top:10px"><div style="display:flex;gap:3px">${[1,2,3,4].map(s=>`<div style="flex:1;height:3px;border-radius:2px;background:${s<=S.cStep?'#3B82F6':'#E5E7EB'}"></div>`).join('')}</div></div>
+    <div style="padding:16px" class="fi">${content}
+    ${S.cStep<4?`<button onclick="S.cStep++;render()" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:600;border:none;background:#3B82F6;color:#fff;margin-top:16px">Continue</button>`:''}</div>`;
+}
+
+// ═══════════ LIVE DROP VIEW ═══════════
+function renderLive(){
+  const d=drops[S.drop||0];
+  const rem=d.cap-d.res;
+  const pct=d.res>0?Math.round((d.ci/d.res)*100):0;
+  const dash=(d.res/d.cap)*213.6;
+
+  return `${hdr(d.title,d.venue,"go('home')",`<button style="background:none;border:none;color:#4B5563">${ic('more',20)}</button>`)}
+  <div style="padding:14px 16px">
+    <!-- Media viewer -->
+    <div class="card" style="margin-bottom:12px">
+      <div style="height:160px;background:linear-gradient(135deg,#1B2A4A,#3B82F6);display:flex;align-items:center;justify-content:center;position:relative">
+        ${d.media==='video'?`
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;backdrop-filter:blur(4px)">
+            ${ic('play',26)}
+          </div>
+          <div style="position:absolute;bottom:10px;left:12px;display:flex;gap:6px">
+            <span style="background:rgba(0,0,0,0.6);color:#fff;font-size:10px;padding:3px 8px;border-radius:4px">0:32</span>
+          </div>
+        `:`<div style="color:rgba(255,255,255,0.2)">${ic('image',40)}</div>`}
+        <div style="position:absolute;top:10px;right:10px">${bg(d.status)}</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="card" style="margin-bottom:10px"><div class="cb">
+      <div style="display:flex;gap:12px;font-size:11px;color:#6B7280;margin-bottom:10px;flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:3px">${ic('clock',12)} ${fmtDate(d.date)}, ${d.start}</span>
+        <span style="display:flex;align-items:center;gap:3px">${ic('map',12)} ${d.venue}</span>
+        <span style="display:flex;align-items:center;gap:3px">${ic('user',12)} ${d.hosts.join(', ')}</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center">
+        <div style="position:relative;width:72px;height:72px;flex-shrink:0">
+          <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="30" fill="none" stroke="#E5E7EB" stroke-width="7"/>
+          <circle cx="36" cy="36" r="30" fill="none" stroke="${rem===0?'#F59E0B':'#0D9488'}" stroke-width="7" stroke-dasharray="${dash*0.884} 188.5" stroke-linecap="round" transform="rotate(-90 36 36)"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+            <div style="font-size:16px;font-weight:700;color:#111827">${rem}</div><div style="font-size:8px;color:#6B7280">left</div>
+          </div>
+        </div>
+        <div style="flex:1">
+          ${[['Capacity',d.cap,'#1F2937'],['Reserved',d.res,'#3B82F6'],['Checked In',d.ci,'#0D9488'],['No-Shows',d.ns,'#EF4444']].map(r=>
+            `<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#6B7280">${r[0]}</span><span style="font-size:12px;font-weight:600;color:${r[2]}">${r[1]}</span></div>`
+          ).join('')}
+        </div>
+      </div>
+    </div></div>
+
+    ${d.partners.length?`<div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">${d.partners.map(p=>`<span style="padding:4px 10px;border-radius:16px;font-size:10px;font-weight:500;background:#F0FDFA;color:#0D9488;border:1px solid #99F6E4">${ic('link',10)} ${p}</span>`).join('')}</div>`:''}
+
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <button onclick="go('checkin')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px">${ic('qr',15)} Check In</button>
+      <button onclick="go('guests')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px">${ic('users',15)} Guests</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button style="flex:1;padding:9px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid #D1D5DB;background:#fff;color:#4B5563;display:flex;align-items:center;justify-content:center;gap:4px">${ic('send',13)} Direct Offer</button>
+      <button style="flex:1;padding:9px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid #D1D5DB;background:#fff;color:#4B5563;display:flex;align-items:center;justify-content:center;gap:4px">${ic('qr',13)} Show QR</button>
+      <button style="flex:1;padding:9px;border-radius:8px;font-size:11px;font-weight:500;border:1px solid #F59E0B;background:#FFFBEB;color:#92400E;display:flex;align-items:center;justify-content:center;gap:4px">${ic('pause',13)} Pause</button>
+    </div>
+
+    ${d.status==='Ended'?`
+      <button onclick="go('create',{cloneFrom:${S.drop}})" style="width:100%;margin-top:12px;padding:11px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #8B5CF6;background:#EDE9FE;color:#5B21B6;display:flex;align-items:center;justify-content:center;gap:6px">${ic('copy',15)} Duplicate This Drop</button>
+    `:''}
+  </div>`;
+}
+
+// ═══════════ CHECK-IN ═══════════
+function renderCheckIn(){
+  const modes = [
+    {id:'scan',l:'Scan Guest',i:'cam'},
+    {id:'biz',l:'Guest Scans Us',i:'qr'},
+    {id:'manual',l:'Manual',i:'search'}
+  ];
+
+  let content='';
+  if(S.ciMode==='scan'){
+    content=`
+    <div style="background:#111827;border-radius:14px;height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:14px">
+      <div style="width:180px;height:180px;border:3px solid rgba(255,255,255,0.25);border-radius:14px;position:relative">
+        <div style="position:absolute;top:-3px;left:-3px;width:22px;height:22px;border-top:4px solid #3B82F6;border-left:4px solid #3B82F6;border-radius:6px 0 0 0"></div>
+        <div style="position:absolute;top:-3px;right:-3px;width:22px;height:22px;border-top:4px solid #3B82F6;border-right:4px solid #3B82F6;border-radius:0 6px 0 0"></div>
+        <div style="position:absolute;bottom:-3px;left:-3px;width:22px;height:22px;border-bottom:4px solid #3B82F6;border-left:4px solid #3B82F6;border-radius:0 0 0 6px"></div>
+        <div style="position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;border-bottom:4px solid #3B82F6;border-right:4px solid #3B82F6;border-radius:0 0 6px 0"></div>
+        <div class="scanL" style="position:absolute;left:8px;right:8px;height:2px;background:#3B82F6;opacity:0.8;box-shadow:0 0 12px #3B82F6"></div>
+      </div>
+      <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:14px">Point camera at guest's QR code</div>
+    </div>
+    <button onclick="S.ciMode='success';render()" style="width:100%;padding:11px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0D9488;color:#fff">Simulate Scan</button>`;
+  } else if(S.ciMode==='biz'){
+    content=`
+    <div style="text-align:center;padding:16px 0">
+      <div style="background:#fff;border-radius:14px;border:1px solid #E5E7EB;padding:24px;display:inline-block;margin-bottom:14px">
+        <div style="width:180px;height:180px;background:#F3F4F6;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto">
+          <div style="color:#9CA3AF">${ic('qr',80)}</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#111827;margin-top:12px">Centro Boulder</div>
+        <div style="font-size:11px;color:#6B7280">Nike Air Max Day Access</div>
+      </div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:14px">Show this code to guests or display at your venue</div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button style="padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#3B82F6;color:#fff;display:flex;align-items:center;gap:6px">${ic('printer',15)} Print QR Code</button>
+        <button style="padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;display:flex;align-items:center;gap:6px">${ic('send',15)} Share</button>
+      </div>
+      <div style="background:#EFF6FF;border-radius:8px;padding:9px 12px;margin-top:14px;font-size:11px;color:#3B82F6;line-height:1.4;text-align:left;display:flex;gap:6px">
+        ${ic('alert',14)} Print this QR code so employees not on the Pro app can use it for check-ins.
+      </div>
+    </div>`;
+  } else if(S.ciMode==='manual'){
+    content=`
+    <div class="card" style="margin-bottom:14px"><div class="cb" style="padding:16px">
+      <div style="font-size:14px;font-weight:600;color:#1F2937;margin-bottom:10px">Manual Check-In</div>
+      <input placeholder="Phone number or Ticket ID" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;background:#F9FAFB;outline:none;margin-bottom:10px;box-sizing:border-box"/>
+      <button onclick="S.ciMode='success';render()" style="width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#3B82F6;color:#fff">Look Up Guest</button>
+    </div></div>
+    <div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:6px">Recent Check-Ins</div>
+    ${reservations.filter(r=>r.status==='Checked-In').slice(0,3).map(r=>`
+      <div style="background:#fff;border-radius:10px;padding:9px 12px;border:1px solid #E5E7EB;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:12px;font-weight:600;color:#111827">${r.name}</div><div style="font-size:10px;color:#6B7280">${r.tix} tix — ${r.time}</div></div>
+        ${bg('Checked-In',true)}
+      </div>
+    `).join('')}`;
+  } else if(S.ciMode==='success'){
+    content=`
+    <div class="fi" style="text-align:center;padding:16px 0">
+      <div style="width:88px;height:88px;border-radius:50%;background:#F0FDFA;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#0D9488">${ic('check',44)}</div>
+      <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:3px">Check-In Confirmed</div>
+      <div style="font-size:13px;color:#6B7280;margin-bottom:16px">Sarah M. — 2 tickets</div>
+      <div class="card" style="text-align:left;margin-bottom:16px"><div class="cb">
+        ${[['Ticket ID','T-8294-A, T-8294-B'],['Payment','Free'],['Time','2:03 PM']].map(r=>
+          `<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:11px;color:#6B7280">${r[0]}</span><span style="font-size:12px;font-weight:600;color:#111827">${r[1]}</span></div>`
+        ).join('')}
+      </div></div>
+      <button onclick="S.ciMode='scan';render()" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:600;border:none;background:#3B82F6;color:#fff">Scan Next Guest</button>
+    </div>`;
+  }
+
+  return `${hdr('Check-In','Nike Air Max Day Access')}
+  <div style="padding:14px 16px">
+    <div style="display:flex;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:14px">
+      ${modes.map(m=>{
+        const act=S.ciMode===m.id||(m.id==='scan'&&S.ciMode==='success');
+        return `<button onclick="S.ciMode='${m.id}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:4px;background:${act?'#fff':'transparent'};color:${act?'#1F2937':'#6B7280'};box-shadow:${act?'0 1px 2px rgba(0,0,0,0.06)':'none'}">${ic(m.i,14)} ${m.l}</button>`;
+      }).join('')}
+    </div>
+    ${content}
+    <div class="card" style="margin-top:14px"><div class="cb" style="display:flex;justify-content:space-around">
+      ${[['5','In','#0D9488'],['2','Pending','#3B82F6'],['1','No-Show','#EF4444'],['8','Total','#1F2937']].map((s,i)=>
+        `${i?'<div style="width:1px;background:#E5E7EB"></div>':''}
+        <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`
+      ).join('')}
+    </div></div>
+  </div>`;
+}
+
+// ═══════════ GUESTS ═══════════
+function renderGuests(){
+  const activeDrop=drops.find(d=>d.status.includes('Live'))||drops[0];
+  const filters=['All','Checked-In','Reserved','No-Show'];
+  const dropRes=reservations.filter(r=>r.drop===activeDrop.id);
+  const filtered=S.rFilter==='All'?dropRes:dropRes.filter(r=>r.status===S.rFilter);
+
+  return `${hdr('Guests','')}
+  <div style="padding:12px 16px">
+    <!-- Drop selector -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:12px;color:#6B7280;font-weight:500">Drop:</span>
+      <select style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid #E5E7EB;font-size:12px;color:#111827;background:#fff;font-weight:600">
+        ${drops.filter(d=>d.status!=='Draft').map(d=>`<option ${d.id===activeDrop.id?'selected':''}>${d.title} — ${fmtDate(d.date)}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:7px 10px;margin-bottom:10px">
+      <span style="color:#9CA3AF">${ic('search',15)}</span>
+      <input placeholder="Search by name or phone..." style="flex:1;border:none;outline:none;font-size:12px;color:#111827;background:transparent"/>
+    </div>
+    <div style="display:flex;gap:5px;margin-bottom:12px;overflow-x:auto">
+      ${filters.map(f=>{
+        const cnt=f==='All'?dropRes.length:dropRes.filter(r=>r.status===f).length;
+        return `<button onclick="S.rFilter='${f}';S.rSel=null;render()" style="padding:5px 12px;border-radius:18px;font-size:11px;font-weight:500;border:1px solid ${S.rFilter===f?'#3B82F6':'#E5E7EB'};background:${S.rFilter===f?'#EFF6FF':'#fff'};color:${S.rFilter===f?'#3B82F6':'#4B5563'};white-space:nowrap">${f} (${cnt})</button>`;
+      }).join('')}
+    </div>
+    ${filtered.map(r=>`
+      <div onclick="S.rSel=S.rSel==='${r.id}'?null:'${r.id}';render()" style="background:#fff;border-radius:10px;padding:10px 12px;border:1px solid ${S.rSel===r.id?'#3B82F6':'#E5E7EB'};margin-bottom:6px;cursor:pointer">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="width:34px;height:34px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#4B5563">${r.name.charAt(0)}</div>
+            <div><div style="font-size:13px;font-weight:600;color:#111827">${r.name}</div><div style="font-size:11px;color:#6B7280">${r.phone}</div></div>
+          </div>
+          <div style="text-align:right">${bg(r.status,true)}<div style="font-size:10px;color:#9CA3AF;margin-top:3px">${r.tix} tix</div></div>
+        </div>
+        ${S.rSel===r.id?`
+          <div class="fi" style="margin-top:8px;padding-top:8px;border-top:1px solid #F3F4F6;display:flex;gap:5px">
+            ${r.status==='Reserved'?`<button style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:500;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;justify-content:center;gap:3px">${ic('check',13)} Check In</button>`:''}
+            ${r.status==='No-Show'?`<button style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:500;border:none;background:#F59E0B;color:#fff;display:flex;align-items:center;justify-content:center;gap:3px">${ic('dollar',13)} Waive</button>`:''}
+            <button style="flex:1;padding:7px;border-radius:7px;font-size:11px;font-weight:500;border:1px solid #D1D5DB;background:#fff;color:#4B5563;display:flex;align-items:center;justify-content:center;gap:3px">${ic('send',13)} Msg</button>
+            <button style="padding:7px 10px;border-radius:7px;border:1px solid #EF4444;background:#FEF2F2;color:#EF4444">${ic('x',13)}</button>
+          </div>
+        `:''}
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+// ═══════════ MENU ═══════════
+function renderMenu(){
+  if(S.menuSub==='analytics') return renderAnalytics();
+  if(S.menuSub==='profile') return renderProfile();
+
+  const items=[
+    {ic:'users',l:'Team Management',d:'Manage staff & roles',act:"S.menuSub='team';render()"},
+    {ic:'chart',l:'Analytics',d:'Performance & metrics',act:"S.menuSub='analytics';render()"},
+    {ic:'dollar',l:'Payout',d:'Revenue & transaction history',act:"S.menuSub='payout';render()"},
+    {ic:'shield',l:'Pro Account',d:'Business profile & category',act:"S.menuSub='profile';render()"},
+  ];
+  const items2=[
+    {ic:'user',l:'User Account',d:'Personal settings'},
+    {ic:'msgCircle',l:'Send Feedback',d:'Help us improve'},
+    {ic:'file',l:'Terms of Service',d:'Legal'},
+    {ic:'shield',l:'Privacy Policy',d:'Data & privacy'},
+  ];
+
+  return `${hdr('Menu',acct().name)}
+  <div style="padding:14px 16px">
+    ${items.map(m=>`
+      <button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left">
+        <div style="width:36px;height:36px;border-radius:8px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;color:#3B82F6">${ic(m.ic,18)}</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div>
+        <span style="color:#9CA3AF">${ic('right',16)}</span>
+      </button>
+    `).join('')}
+
+    <div style="font-size:11px;font-weight:600;color:#9CA3AF;margin:16px 0 8px;text-transform:uppercase;letter-spacing:0.05em">Settings</div>
+    ${items2.map(m=>`
+      <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:11px 14px;margin-bottom:5px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <span style="color:#6B7280">${ic(m.ic,16)}</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:500;color:#374151">${m.l}</div></div>
+        <span style="color:#D1D5DB">${ic('right',14)}</span>
+      </div>
+    `).join('')}
+
+    <div style="text-align:center;margin-top:20px;font-size:11px;color:#9CA3AF">Nigh Pro v1.0</div>
+  </div>`;
+}
+
+function renderAnalytics(){
+  const bars=[{l:'Mon',v:12},{l:'Tue',v:28},{l:'Wed',v:8},{l:'Thu',v:35},{l:'Fri',v:42},{l:'Sat',v:18},{l:'Sun',v:5}];
+  const mx=Math.max(...bars.map(b=>b.v));
+  return `${hdr('Analytics','Last 7 days',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      ${mc('Reservations','148','+23%','users','#3B82F6','#EFF6FF')}
+      ${mc('Check-In Rate','72%','108/148','check','#0D9488','#F0FDFA')}
+      ${mc('Revenue','$2,340','After refunds','dollar','#3B82F6','#EFF6FF')}
+      ${mc('No-Show Rate','8.1%','12 no-shows','alert','#F59E0B','#FFFBEB')}
+    </div>
+    <div class="card" style="margin-bottom:14px"><div class="cb">
+      <div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Reservations by Day</div>
+      <div style="display:flex;gap:6px;align-items:flex-end;height:100px">
+        ${bars.map((b,i)=>`<div style="flex:1;text-align:center"><div style="height:${(b.v/mx)*85}px;background:${i===4?'#3B82F6':'#DBEAFE'};border-radius:3px 3px 0 0;margin-bottom:4px;position:relative"><span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:600;color:#4B5563">${b.v}</span></div><span style="font-size:9px;color:#6B7280">${b.l}</span></div>`).join('')}
+      </div>
+    </div></div>
+    <div class="card"><div class="cb">
+      <div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:10px">Per-Drop</div>
+      ${drops.filter(d=>d.status!=='Draft').map((d,i,a)=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;${i<a.length-1?'border-bottom:1px solid #F3F4F6':''}">
+          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.title}</div>
+          <div style="font-size:10px;color:#6B7280;margin-top:1px">${d.res} res — ${d.ci} in</div></div>
+          <div style="text-align:right;flex-shrink:0;margin-left:10px">
+            <div style="font-size:13px;font-weight:700;color:#111827">${d.price==='Free'?'Free':'$'+(parseInt(d.price.replace('$',''))*d.ci)}</div>
+            <div style="font-size:9px;color:#0D9488">${d.res>0?Math.round((d.ci/d.res)*100):0}%</div>
+          </div>
+        </div>
+      `).join('')}
+    </div></div>
+  </div>`;
+}
+
+function renderProfile(){
+  const a=acct();
+  return `${hdr('Pro Account','Business Profile',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <div class="card" style="margin-bottom:12px"><div class="cb">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:50px;height:50px;border-radius:12px;background:#1B2A4A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:700">${a.name.charAt(0)}</div>
+        <div><div style="font-size:16px;font-weight:700;color:#111827">${a.name}</div><div style="font-size:12px;color:#6B7280">${a.role}</div></div>
+      </div>
+      ${[['Category',a.cat],['Sub-Category',a.subCat],['Address',a.addr]].map((r,i,arr)=>`
+        <div style="display:flex;justify-content:space-between;padding:9px 0;${i<arr.length-1?'border-bottom:1px solid #F3F4F6':''}">
+          <span style="font-size:12px;color:#6B7280">${r[0]}</span>
+          <span style="font-size:12px;font-weight:500;color:#111827">${r[1]}</span>
+        </div>
+      `).join('')}
+      <div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;margin-top:10px;font-size:10px;color:#92400E;display:flex;gap:6px">
+        ${ic('alert',13)} Category is managed by Nigh Support. Contact us to update.
+      </div>
+    </div></div>
+
+    <div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:6px">TEAM</div>
+    ${team.map(t=>`
+      <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:50%;background:${t.active?'#EFF6FF':'#F3F4F6'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:${t.active?'#3B82F6':'#9CA3AF'}">${t.name.charAt(0)}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#111827">${t.name}</div><div style="font-size:10px;color:#6B7280">${t.role}</div></div>
+        <span class="bg ${t.active?'bg-ci':'bg-draft'} bg-s"><span class="dt"></span>${t.active?'Active':'Inactive'}</span>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+// ── Render ──
+function render(){
+  const c=document.getElementById('scr');
+  const map={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCheckIn,guests:renderGuests,menu:renderMenu};
+  c.innerHTML=(map[S.scr]||renderHome)();
+  renderTB();
+  c.scrollTop=0;
+}
+render();
+</script>
+</body>
+</html>
