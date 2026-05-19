@@ -1645,6 +1645,56 @@ const refundLog=[
   {id:'REF002',ticket:'T014-B',consumer:'Sam Ortiz',org:'Williams-Sonoma',amount:75,reason:'Org suspended — pre-auth released',date:'Mar 4, 2026',issuedBy:'System',status:'Completed'},
   {id:'REF003',ticket:'T021-A',consumer:'Dana Chen',org:'Centro Mexican Kitchen',amount:25,reason:'No-show reversal — host error',date:'Mar 3, 2026',issuedBy:'JR',status:'Completed'},
 ];
+
+// ── ORDERS DATA ──────────────────────────────────────────────────────────────
+// Each order = one checkout transaction. Links: user, host account, drop, tickets, payment.
+const orders=[
+  // Nike Air Max Day — Free orders
+  {id:'ORD-1001',userId:'U001',userName:'Sarah Mitchell',userHandle:'sarahm',orgId:'O003',orgName:'Nike Boulder',dropId:'D001',dropTitle:'Nike Air Max Day',tickets:['T001-A','T001-B'],qty:2,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 2, 2026',time:'10:14 AM'},
+  {id:'ORD-1002',userId:'U003',userName:'James Kim',userHandle:'jamesk',orgId:'O003',orgName:'Nike Boulder',dropId:'D001',dropTitle:'Nike Air Max Day',tickets:['T002-A'],qty:1,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 2, 2026',time:'10:22 AM'},
+  {id:'ORD-1003',userId:'U005',userName:'Alex Rivera',userHandle:'alexr',orgId:'O003',orgName:'Nike Boulder',dropId:'D001',dropTitle:'Nike Air Max Day',tickets:['T003-A','T003-B'],qty:2,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 2, 2026',time:'11:05 AM'},
+  {id:'ORD-1004',userId:'U007',userName:'Maya Torres',userHandle:'mayat',orgId:'O003',orgName:'Nike Boulder',dropId:'D001',dropTitle:'Nike Air Max Day',tickets:['T004-A'],qty:1,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 3, 2026',time:'9:30 AM'},
+  {id:'ORD-1005',userId:'U009',userName:'Chris Park',userHandle:'chrisp',orgId:'O003',orgName:'Nike Boulder',dropId:'D001',dropTitle:'Nike Air Max Day',tickets:['T005-A'],qty:1,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 3, 2026',time:'2:18 PM'},
+  // Whole Foods Chef's Table — $45 each
+  {id:'ORD-1006',userId:'U011',userName:'Taylor Adams',userHandle:'taylora',orgId:'O004',orgName:'Whole Foods Boulder',dropId:'D002',dropTitle:"Whole Foods Chef's Table",tickets:['T006-A','T006-B'],qty:2,subtotal:90,fees:4.50,credits:0,tax:6.75,total:101.25,payment:'Paid',paymentMethod:'Visa ••4821',stripeId:'pi_3OxK...8F2A',status:'Confirmed',date:'Mar 1, 2026',time:'6:42 PM'},
+  {id:'ORD-1007',userId:'U013',userName:'Jordan Lee',userHandle:'jordanl',orgId:'O004',orgName:'Whole Foods Boulder',dropId:'D002',dropTitle:"Whole Foods Chef's Table",tickets:['T007-A'],qty:1,subtotal:45,fees:2.25,credits:0,tax:3.38,total:50.63,payment:'Paid',paymentMethod:'Apple Pay (Visa ••1192)',stripeId:'pi_3OxK...9C8D',status:'Confirmed',date:'Mar 2, 2026',time:'8:10 AM'},
+  // Valentine's Chef's Dinner — $120 each
+  {id:'ORD-1008',userId:'U015',userName:'Aiden Park',userHandle:'aidenp',orgId:'O005',orgName:'Centerbar Boulder',dropId:'D003',dropTitle:"Valentine's Chef's Dinner",tickets:['T008-A'],qty:1,subtotal:120,fees:6.00,credits:0,tax:9.00,total:135.00,payment:'Paid',paymentMethod:'Mastercard ••7733',stripeId:'pi_3OxK...1D4E',status:'Confirmed',date:'Feb 8, 2026',time:'12:33 PM'},
+  {id:'ORD-1009',userId:'U016',userName:'Nina Rossi',userHandle:'ninar',orgId:'O005',orgName:'Centerbar Boulder',dropId:'D003',dropTitle:"Valentine's Chef's Dinner",tickets:['T008-B'],qty:1,subtotal:120,fees:6.00,credits:0,tax:9.00,total:135.00,payment:'Paid',paymentMethod:'Visa ••5501',stripeId:'pi_3OxK...3G5H',status:'Confirmed',date:'Feb 9, 2026',time:'9:01 AM'},
+  {id:'ORD-1010',userId:'U017',userName:'Brett Nakamura',userHandle:'brettn',orgId:'O005',orgName:'Centerbar Boulder',dropId:'D003',dropTitle:"Valentine's Chef's Dinner",tickets:['T009-A','T009-B'],qty:2,subtotal:240,fees:12.00,credits:0,tax:18.00,total:270.00,payment:'Paid',paymentMethod:'Amex ••9902',stripeId:'pi_3OxK...4J6K',status:'Confirmed',date:'Feb 8, 2026',time:'3:18 PM'},
+  {id:'ORD-1011',userId:'U018',userName:'Carmen Liu',userHandle:'carmenl',orgId:'O005',orgName:'Centerbar Boulder',dropId:'D003',dropTitle:"Valentine's Chef's Dinner",tickets:['T010-A'],qty:1,subtotal:120,fees:6.00,credits:0,tax:9.00,total:135.00,payment:'Refunded',paymentMethod:'Visa ••3344',stripeId:'pi_3OxK...5L7M',status:'Refunded',date:'Feb 10, 2026',time:'10:45 AM'},
+  // Private Whiskey Tasting — $65 each
+  {id:'ORD-1012',userId:'U019',userName:'Darnell Hayes',userHandle:'darnellh',orgId:'O009',orgName:'Bitter Bar',dropId:'D004',dropTitle:'Private Whiskey Tasting Flight',tickets:['T011-A'],qty:1,subtotal:65,fees:3.25,credits:0,tax:4.88,total:73.13,payment:'Paid',paymentMethod:'Visa ••2288',stripeId:'pi_3OxK...6N8P',status:'Confirmed',date:'Mar 1, 2026',time:'4:55 PM'},
+  {id:'ORD-1013',userId:'U020',userName:'Yuki Tanaka',userHandle:'yukit',orgId:'O009',orgName:'Bitter Bar',dropId:'D004',dropTitle:'Private Whiskey Tasting Flight',tickets:['T012-A'],qty:1,subtotal:65,fees:3.25,credits:0,tax:4.88,total:73.13,payment:'Paid',paymentMethod:'Apple Pay (Mastercard ••0077)',stripeId:'pi_3OxK...7Q9R',status:'Confirmed',date:'Mar 1, 2026',time:'5:12 PM'},
+  {id:'ORD-1014',userId:'U021',userName:'Rosa Brennan',userHandle:'rosab',orgId:'O009',orgName:'Bitter Bar',dropId:'D004',dropTitle:'Private Whiskey Tasting Flight',tickets:['T013-A'],qty:1,subtotal:65,fees:3.25,credits:0,tax:4.88,total:73.13,payment:'Paid',paymentMethod:'Visa ••6611',stripeId:'pi_3OxK...8S1T',status:'Confirmed',date:'Mar 2, 2026',time:'9:30 AM'},
+  {id:'ORD-1015',userId:'U022',userName:'Miles Cooper',userHandle:'milesc',orgId:'O009',orgName:'Bitter Bar',dropId:'D004',dropTitle:'Private Whiskey Tasting Flight',tickets:['T014-A'],qty:1,subtotal:65,fees:3.25,credits:0,tax:4.88,total:73.13,payment:'Paid',paymentMethod:'Mastercard ••4455',stripeId:'pi_3OxK...9U2V',status:'Confirmed',date:'Mar 2, 2026',time:'11:44 AM'},
+  // Gallery Opening — Free
+  {id:'ORD-1016',userId:'U023',userName:'Jade Williams',userHandle:'jadew',orgId:'O010',orgName:'Dairy Arts Center',dropId:'D005',dropTitle:'Gallery Opening: Local Artists Night',tickets:['T015-A'],qty:1,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 3, 2026',time:'2:00 PM'},
+  {id:'ORD-1017',userId:'U024',userName:'Owen Fletcher',userHandle:'owenf',orgId:'O010',orgName:'Dairy Arts Center',dropId:'D005',dropTitle:'Gallery Opening: Local Artists Night',tickets:['T016-A'],qty:1,subtotal:0,fees:0,credits:0,tax:0,total:0,payment:'Free',paymentMethod:'—',stripeId:'—',status:'Confirmed',date:'Mar 3, 2026',time:'2:15 PM'},
+  // Trivia Night VIP Booth — $20 each
+  {id:'ORD-1018',userId:'U025',userName:'Felix Grant',userHandle:'felixg',orgId:'O006',orgName:'West Flanders Brewing',dropId:'D006',dropTitle:'Trivia Night VIP Booth',tickets:['T018-A'],qty:1,subtotal:20,fees:1.00,credits:0,tax:1.50,total:22.50,payment:'Paid',paymentMethod:'Visa ••8800',stripeId:'pi_3OxK...1W3X',status:'Confirmed',date:'Mar 1, 2026',time:'3:22 PM'},
+  {id:'ORD-1019',userId:'U026',userName:'Zoe Hoffman',userHandle:'zoeh',orgId:'O006',orgName:'West Flanders Brewing',dropId:'D006',dropTitle:'Trivia Night VIP Booth',tickets:['T019-A'],qty:1,subtotal:20,fees:1.00,credits:0,tax:1.50,total:22.50,payment:'Paid',paymentMethod:'Apple Pay (Visa ••3399)',stripeId:'pi_3OxK...2Y4Z',status:'Confirmed',date:'Mar 1, 2026',time:'3:40 PM'},
+  // Yoga & Brunch — $35 each
+  {id:'ORD-1020',userId:'U027',userName:'Leo Abramowitz',userHandle:'leoa',orgId:'O007',orgName:'St Julien Hotel',dropId:'D007',dropTitle:'Yoga & Brunch Rooftop',tickets:['T021-A'],qty:1,subtotal:35,fees:1.75,credits:0,tax:2.63,total:39.38,payment:'Paid',paymentMethod:'Mastercard ••1177',stripeId:'pi_3OxK...3A5B',status:'Confirmed',date:'Mar 2, 2026',time:'7:15 AM'},
+  {id:'ORD-1021',userId:'U028',userName:'Nia Forsythe',userHandle:'niaf',orgId:'O007',orgName:'St Julien Hotel',dropId:'D007',dropTitle:'Yoga & Brunch Rooftop',tickets:['T022-A'],qty:1,subtotal:35,fees:1.75,credits:0,tax:2.63,total:39.38,payment:'Paid',paymentMethod:'Visa ••5566',stripeId:'pi_3OxK...4C6D',status:'Confirmed',date:'Mar 2, 2026',time:'8:02 AM'},
+  // Friday Night Jazz & Tapas — $25 each
+  {id:'ORD-1022',userId:'U029',userName:'Emma Davis',userHandle:'emmad',orgId:'O005',orgName:'Centro Mexican Kitchen',dropId:'D008',dropTitle:'Friday Night Jazz & Tapas',tickets:['T024-A'],qty:1,subtotal:25,fees:1.25,credits:0,tax:1.88,total:28.13,payment:'Paid',paymentMethod:'Visa ••7744',stripeId:'pi_3OxK...5E7F',status:'Confirmed',date:'Mar 3, 2026',time:'11:30 AM'},
+  {id:'ORD-1023',userId:'U030',userName:'Marcus Webb',userHandle:'marcusw',orgId:'O005',orgName:'Centro Mexican Kitchen',dropId:'D008',dropTitle:'Friday Night Jazz & Tapas',tickets:['T025-A','T025-B'],qty:2,subtotal:50,fees:2.50,credits:0,tax:3.75,total:56.25,payment:'Paid',paymentMethod:'Apple Pay (Amex ••2200)',stripeId:'pi_3OxK...6G8H',status:'Confirmed',date:'Mar 3, 2026',time:'12:15 PM'},
+  // Avery Brewing Tap Room — $35 each
+  {id:'ORD-1024',userId:'U031',userName:'Marcus Park',userHandle:'marcusp',orgId:'O008',orgName:'Avery Brewing',dropId:'D009',dropTitle:'Avery Brewing Tap Room Takeover',tickets:['T028-A'],qty:1,subtotal:35,fees:1.75,credits:0,tax:2.63,total:39.38,payment:'Paid',paymentMethod:'Visa ••9988',stripeId:'pi_3OxK...7I9J',status:'Confirmed',date:'Mar 4, 2026',time:'10:00 AM'},
+  {id:'ORD-1025',userId:'U032',userName:'Sofia Chen',userHandle:'sofiac',orgId:'O008',orgName:'Avery Brewing',dropId:'D009',dropTitle:'Avery Brewing Tap Room Takeover',tickets:['T029-A'],qty:1,subtotal:35,fees:1.75,credits:0,tax:2.63,total:39.38,payment:'Paid',paymentMethod:'Mastercard ••6677',stripeId:'pi_3OxK...8K1L',status:'Confirmed',date:'Mar 4, 2026',time:'10:22 AM'},
+  // Elixir Spa — $90
+  {id:'ORD-1026',userId:'U013',userName:'Jordan Lee',userHandle:'jordanl',orgId:'O012',orgName:'Elixir Spa',dropId:'D010',dropTitle:'Elixir Spa: Deep Tissue Massage',tickets:['T033-A'],qty:1,subtotal:90,fees:4.50,credits:10,tax:6.00,total:90.50,payment:'Paid',paymentMethod:'Visa ••1192',stripeId:'pi_3OxK...9M2N',status:'Confirmed',date:'Mar 4, 2026',time:'2:30 PM'},
+  // Cookie Decorating — $40
+  {id:'ORD-1027',userId:'U033',userName:'Tasha Drummond',userHandle:'tashad',orgId:'O013',orgName:'Spruce Confections',dropId:'D011',dropTitle:'Cookie Decorating Class',tickets:['T034-A'],qty:1,subtotal:40,fees:2.00,credits:0,tax:3.00,total:45.00,payment:'Paid',paymentMethod:'Visa ••4422',stripeId:'pi_3OxK...1P3Q',status:'Confirmed',date:'Mar 3, 2026',time:'9:45 AM'},
+  // Private Film Screening — $15 each
+  {id:'ORD-1028',userId:'U034',userName:'Priya Patel',userHandle:'priyap',orgId:'O014',orgName:'Alamo Drafthouse',dropId:'D012',dropTitle:'Private Film Screening',tickets:['T036-A'],qty:1,subtotal:15,fees:0.75,credits:0,tax:1.13,total:16.88,payment:'Paid',paymentMethod:'Apple Pay (Visa ••8811)',stripeId:'pi_3OxK...2R4S',status:'Confirmed',date:'Mar 2, 2026',time:'4:00 PM'},
+  {id:'ORD-1029',userId:'U035',userName:'Derek Nguyen',userHandle:'derekn',orgId:'O014',orgName:'Alamo Drafthouse',dropId:'D012',dropTitle:'Private Film Screening',tickets:['T037-A'],qty:1,subtotal:15,fees:0.75,credits:0,tax:1.13,total:16.88,payment:'Paid',paymentMethod:'Mastercard ••3300',stripeId:'pi_3OxK...3T5U',status:'Confirmed',date:'Mar 2, 2026',time:'4:30 PM'},
+  // The Kitchen Supper Club — $85 each
+  {id:'ORD-1030',userId:'U036',userName:'Aisha Carter',userHandle:'aishac',orgId:'O015',orgName:'The Kitchen Boulder',dropId:'D013',dropTitle:'The Kitchen Supper Club',tickets:['T040-A'],qty:1,subtotal:85,fees:4.25,credits:0,tax:6.38,total:95.63,payment:'Paid',paymentMethod:'Amex ••5500',stripeId:'pi_3OxK...4V6W',status:'Confirmed',date:'Mar 5, 2026',time:'11:00 AM'},
+  {id:'ORD-1031',userId:'U037',userName:'Ryan Kowalski',userHandle:'ryank',orgId:'O015',orgName:'The Kitchen Boulder',dropId:'D013',dropTitle:'The Kitchen Supper Club',tickets:['T041-A'],qty:1,subtotal:85,fees:4.25,credits:0,tax:6.38,total:95.63,payment:'Paid',paymentMethod:'Visa ••7722',stripeId:'pi_3OxK...5X7Y',status:'Confirmed',date:'Mar 5, 2026',time:'11:20 AM'},
+];
+
 const sessions=[
   {id:'S001',user:'Sarah Mitchell',type:'Consumer',device:'iPhone 15 Pro',ip:'67.182.x.x',city:'Boulder, CO',lastSeen:'2 min ago',status:'Active'},
   {id:'S002',user:'James Kim',type:'Consumer',device:'Samsung Galaxy S24',ip:'75.130.x.x',city:'Boulder, CO',lastSeen:'18 min ago',status:'Active'},
@@ -1754,11 +1804,11 @@ let niyaCurrentCase = null;
 function go(page,extra){
   S.page=page;if(extra)Object.assign(S,extra);S.modal=null;
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
-  const navKey=page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='orgOrgDetail'?'organizations':page==='dropDetail'?'drops':page;
+  const navKey=page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='orgOrgDetail'?'organizations':page==='dropDetail'?'drops':page==='orderDetail'?'orders':page;
   const nav=document.getElementById('nav-'+navKey);
   if(nav)nav.classList.add('active');
-  const titles={dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration',promos:'Subscription Promos'};
-  const subs={dashboard:'Welcome back, Josh',inbox:'Escalations, Pro messages, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all host accounts',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts'};
+  const titles={dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration',promos:'Subscription Promos'};
+  const subs={dashboard:'Welcome back, Josh',inbox:'Escalations, Pro messages, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all host accounts',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   document.getElementById('topbar-sub').textContent=subs[page]||'';
   document.getElementById('content').innerHTML=renderPage(page);
@@ -1795,6 +1845,8 @@ function renderPage(p){
   if(p==='drops')return rDrops();
   if(p==='dropDetail')return rDropDetail(S.dropId);
   if(p==='reservations')return rReservations();
+  if(p==='orders')return rOrders();
+  if(p==='orderDetail')return rOrderDetail(S.orderId);
   if(p==='credits')return rCredits();
   if(p==='promos')return rPromos();
   if(p==='refunds')return rRefunds();
@@ -2144,7 +2196,7 @@ function rUserDetail(uid){
   const tab=S.userDetailTab;
   const profileUrl='https://nigh.app/'+u.handle;
   const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+encodeURIComponent(profileUrl);
-  const TABS=[['account','Account'],['tickets','Tickets'],['following','Following'],['friends','Friends'],['payment','Payment'],['credits','Credits'],['orgs','Host Accounts'],['activity','Activity'],['comms','Messages']];
+  const TABS=[['account','Account'],['tickets','Tickets'],['orders','Orders'],['following','Following'],['friends','Friends'],['payment','Payment'],['credits','Credits'],['orgs','Host Accounts'],['activity','Activity'],['comms','Messages']];
 
   /* ── tab content ── */
   let tabContent='';
@@ -2304,6 +2356,26 @@ function rUserDetail(uid){
       <td>${bg(t.status==='Accepted'?'bg-green':t.status==='Pending'?'bg-amber':'bg-gray','',t.status)}</td>
     </tr>`).join('')}
   </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No ticket transfers.</div>`}
+</div>`;}
+
+  else if(tab==='orders'){
+    const userOrders=orders.filter(o=>o.userId===u.id);
+    tabContent=`
+<div class="card card-p">
+  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Orders <span style="font-size:12px;font-weight:400;color:#9CA3AF">(${userOrders.length})</span></div>
+  ${userOrders.length?`<table class="tbl"><thead><tr><th>Order ID</th><th>Drop</th><th>Host Account</th><th>Qty</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
+    ${userOrders.map(o=>`<tr>
+      <td><a class="tbl-link" style="font-size:12px" onclick="go('orderDetail',{orderId:'${o.id}'})">${o.id}</a></td>
+      <td><a class="tbl-link" style="font-size:12px" onclick="go('dropDetail',{dropId:'${o.dropId}'})">${o.dropTitle}</a></td>
+      <td><a class="tbl-link" style="font-size:12px" onclick="go('orgDetail',{orgId:'${o.orgId}'})">${o.orgName}</a></td>
+      <td style="text-align:center">${o.qty}</td>
+      <td style="font-weight:600">${o.total===0?'Free':'$'+o.total.toFixed(2)}</td>
+      <td style="font-size:11px;color:#6B7280">${o.paymentMethod}</td>
+      <td>${bg(o.status==='Confirmed'?'bg-green':o.status==='Refunded'?'bg-red':'bg-gray','',o.status)}</td>
+      <td style="font-size:12px;color:#6B7280;white-space:nowrap">${o.date}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="go('orderDetail',{orderId:'${o.id}'})">${svgI('eye',11)}</button></td>
+    </tr>`).join('')}
+  </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No orders found for this user.</div>`}
 </div>`;}
 
   else if(tab==='following'){tabContent=`
@@ -2931,7 +3003,7 @@ function rOrgDetail(id){
   const billingColor=o.billingStatus==='Current'?'#22C55E':o.billingStatus==='Past Due'?'#F59E0B':'#EF4444';
   const billingBg=o.billingStatus==='Current'?'#F0FDF4':o.billingStatus==='Past Due'?'#FFFBEB':'#FEF2F2';
   const hasCollections=featureFlags.find(f=>f.name==='Collections'&&(f.orgs.includes(o.id)||f.global));
-  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Overview'],['profile','Profile'],['billing','Subscription'],['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Guests'],['followers','Followers'],['payouts','Orders'],['analytics','Analytics'],['team','Team'],['partners','Partners'],['venues','Locations'],['credits','Credits'],['crm','CRM'],['comms','Messages'],['activity','Activity'],['config','Settings']];
+  const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Overview'],['profile','Profile'],['billing','Subscription'],['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Guests'],['followers','Followers'],['orgOrders','Orders'],['payouts','Payouts'],['analytics','Analytics'],['team','Team'],['partners','Partners'],['venues','Locations'],['credits','Credits'],['crm','CRM'],['comms','Messages'],['activity','Activity'],['config','Settings']];
   const secHdr=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
   const accessColor=(a)=>a==='Account Owner'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Admin'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Check-In Only'?{bg:'#F1F5F9',fg:'#64748b'}:{bg:'#F3F4F6',fg:'#4B5563'};
   return `
@@ -3515,6 +3587,35 @@ ${(()=>{
 </div>
 
 <!-- TAB: ORDERS (Revenue & Payouts) -->
+<!-- TAB: ORDERS -->
+<div id="od-tab-orgOrders" class="od-tc" style="padding:20px;display:${at==='orgOrders'?'block':'none'}">
+  ${(()=>{
+    const orgOrd=orders.filter(x=>x.orgId===o.id);
+    const paidOrd=orgOrd.filter(x=>x.total>0);
+    const totalRev=paidOrd.reduce((s,x)=>s+x.total,0);
+    return `
+    <div class="grid grid-3" style="margin-bottom:20px">
+      <div class="stat"><div class="stat-label">Total Orders</div><div class="stat-val">${orgOrd.length}</div><div class="stat-sub">${paidOrd.length} paid · ${orgOrd.length-paidOrd.length} free</div></div>
+      <div class="stat"><div class="stat-label">Order Revenue</div><div class="stat-val">$${totalRev.toLocaleString(undefined,{minimumFractionDigits:2})}</div><div class="stat-sub">All confirmed</div></div>
+      <div class="stat"><div class="stat-label">Avg Order Value</div><div class="stat-val">${paidOrd.length?'$'+(totalRev/paidOrd.length).toFixed(2):'—'}</div><div class="stat-sub">Paid orders only</div></div>
+    </div>
+    ${orgOrd.length?`<div class="card"><table class="tbl"><thead><tr><th>Order ID</th><th>Consumer</th><th>Drop</th><th>Qty</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
+    ${orgOrd.map(x=>`<tr>
+      <td><a class="tbl-link" style="font-size:12px" onclick="go('orderDetail',{orderId:'${x.id}'})">${x.id}</a></td>
+      <td><a class="tbl-link" onclick="go('userDetail',{userId:'${x.userId}'})">${x.userName}</a></td>
+      <td><a class="tbl-link" style="font-size:12px" onclick="go('dropDetail',{dropId:'${x.dropId}'})">${x.dropTitle}</a></td>
+      <td style="text-align:center">${x.qty}</td>
+      <td style="font-weight:600">${x.total===0?'Free':'$'+x.total.toFixed(2)}</td>
+      <td style="font-size:11px;color:#6B7280">${x.paymentMethod}</td>
+      <td>${bg(x.status==='Confirmed'?'bg-green':x.status==='Refunded'?'bg-red':'bg-gray','',x.status)}</td>
+      <td style="font-size:12px;color:#6B7280;white-space:nowrap">${x.date}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="go('orderDetail',{orderId:'${x.id}'})">${svgI('eye',11)}</button></td>
+    </tr>`).join('')}
+    </tbody></table></div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">No orders for this host account yet.</div>`}`;
+  })()}
+</div>
+
+<!-- TAB: PAYOUTS -->
 <div id="od-tab-payouts" class="od-tc" style="padding:20px;display:${at==='payouts'?'block':'none'}">
   <div class="grid grid-3" style="margin-bottom:20px">
     <div class="stat"><div class="stat-label">Available Balance</div><div class="stat-val">$${payout.balance.toLocaleString()}</div><div class="stat-sub">Ready to pay out</div></div>
@@ -4307,6 +4408,20 @@ function rDropDetail(id){
       </tbody></table>`:`<div style="font-size:12px;color:#9CA3AF">No guest data available.</div>`}
     </div>`;})()}
 
+    <!-- Orders card -->
+    ${(()=>{const dropOrders=orders.filter(x=>x.dropId===d.id);return`
+    <div class="card card-p">
+      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px">Orders <span style="font-weight:400;color:#9CA3AF">(${dropOrders.length})</span></div>
+      ${dropOrders.length?`<table class="tbl" style="font-size:12px"><thead><tr><th>Order</th><th>Consumer</th><th>Qty</th><th>Total</th></tr></thead><tbody>
+        ${dropOrders.map(x=>`<tr>
+          <td><a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${x.id}'})">${x.id}</a></td>
+          <td><a class="tbl-link" style="font-size:11px" onclick="go('userDetail',{userId:'${x.userId}'})">${x.userName}</a></td>
+          <td style="text-align:center">${x.qty}</td>
+          <td style="font-weight:600">${x.total===0?'Free':'$'+x.total.toFixed(2)}</td>
+        </tr>`).join('')}
+      </tbody></table>`:`<div style="font-size:12px;color:#9CA3AF">No orders for this drop.</div>`}
+    </div>`;})()}
+
   </div>
 </div>`;}
 
@@ -4317,7 +4432,7 @@ function rReservations(){return `
   <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search by ticket ID, consumer, or drop…" style="width:320px"/></div>
 </div>
 <div class="card">
-<table class="tbl"><thead><tr><th>Ticket ID</th><th>Consumer</th><th>Host Account</th><th>Drop</th><th>Status</th><th>Price</th><th>Actions</th></tr></thead><tbody>
+<table class="tbl"><thead><tr><th>Ticket ID</th><th>Order</th><th>Consumer</th><th>Host Account</th><th>Drop</th><th>Status</th><th>Price</th><th>Actions</th></tr></thead><tbody>
 ${[
   // Nike Air Max Day (Free, cap 8)
   {tid:'T001-A',consumer:'Sarah Mitchell',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
@@ -4379,8 +4494,9 @@ ${[
   // The Kitchen Supper Club ($85)
   {tid:'T040-A',consumer:'Aisha Carter',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
   {tid:'T041-A',consumer:'Ryan Kowalski',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
-].map(t=>`<tr>
+].map(t=>{const _ord=orders.find(o=>o.tickets&&o.tickets.includes(t.tid));return`<tr>
   <td style="font-weight:700;color:#0E4EF5;font-size:12px">${t.tid}</td>
+  <td>${_ord?`<a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${_ord.id}'})">${_ord.id}</a>`:'<span style="color:#9CA3AF;font-size:11px">—</span>'}</td>
   <td>${t.consumer}</td>
   <td style="color:#6B7280;font-size:12px">${t.org||'—'}</td>
   <td style="color:#374151;font-size:12px">${t.drop}</td>
@@ -4393,8 +4509,138 @@ ${[
       ${t.status==='Reserved'?`<button class="btn btn-ghost btn-sm" onclick="openModal('forcecheckin-${t.tid}')">${svgI('check',12)} Force Check In</button>`:''}
     </div>
   </td>
-</tr>`).join('')}
+</tr>`}).join('')}
 </tbody></table></div>`;}
+
+// ── ORDERS ────────────────────────────────────────────────────────────────
+function rOrders(){
+  const paid=orders.filter(o=>o.total>0);
+  const totalRev=paid.reduce((s,o)=>s+o.total,0);
+  const totalFees=paid.reduce((s,o)=>s+o.fees,0);
+  const refunded=orders.filter(o=>o.status==='Refunded');
+  return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Total Orders</div><div class="stat-val">${orders.length}</div><div class="stat-sub">${paid.length} paid · ${orders.length-paid.length} free</div></div>
+  <div class="stat"><div class="stat-label">Gross Revenue</div><div class="stat-val">$${totalRev.toLocaleString(undefined,{minimumFractionDigits:2})}</div><div class="stat-sub">All confirmed orders</div></div>
+  <div class="stat"><div class="stat-label">Platform Fees</div><div class="stat-val">$${totalFees.toLocaleString(undefined,{minimumFractionDigits:2})}</div><div class="stat-sub">Service + processing</div></div>
+  <div class="stat"><div class="stat-label">Refunded</div><div class="stat-val" style="color:#EF4444">${refunded.length}</div><div class="stat-sub">${refunded.length} order${refunded.length!==1?'s':''}</div></div>
+</div>
+<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+  <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search by order ID, consumer, host, or drop…" style="width:360px" id="order-search" oninput="filterOrders()"/></div>
+  <select class="select" style="width:140px" id="order-status-filter" onchange="filterOrders()"><option value="">All Statuses</option><option>Confirmed</option><option>Refunded</option></select>
+  <select class="select" style="width:140px" id="order-payment-filter" onchange="filterOrders()"><option value="">All Payment</option><option>Paid</option><option>Free</option><option>Refunded</option></select>
+</div>
+<div class="card">
+<table class="tbl"><thead><tr><th>Order ID</th><th>Consumer</th><th>Host Account</th><th>Drop</th><th>Tickets</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th></th></tr></thead>
+<tbody id="orders-tbody">
+${orders.map(o=>`<tr class="order-row" data-search="${(o.id+' '+o.userName+' '+o.orgName+' '+o.dropTitle).toLowerCase()}" data-status="${o.status}" data-payment="${o.payment}">
+  <td><a class="tbl-link" style="font-size:12px" onclick="go('orderDetail',{orderId:'${o.id}'})">${o.id}</a></td>
+  <td><a class="tbl-link" onclick="go('userDetail',{userId:'${o.userId}'})">${o.userName}</a></td>
+  <td><a class="tbl-link" style="font-size:12px" onclick="go('orgDetail',{orgId:'${o.orgId}'})">${o.orgName}</a></td>
+  <td><a class="tbl-link" style="font-size:12px" onclick="go('dropDetail',{dropId:'${o.dropId}'})">${o.dropTitle}</a></td>
+  <td style="font-size:12px;color:#6B7280">${o.qty} ticket${o.qty>1?'s':''}</td>
+  <td style="font-weight:600">${o.total===0?'Free':'$'+o.total.toFixed(2)}</td>
+  <td style="font-size:11px;color:#6B7280">${o.paymentMethod}</td>
+  <td>${bg(o.status==='Confirmed'?'bg-green':o.status==='Refunded'?'bg-red':'bg-gray','',o.status)}</td>
+  <td style="font-size:12px;color:#6B7280;white-space:nowrap">${o.date}</td>
+  <td><button class="btn btn-ghost btn-sm" onclick="go('orderDetail',{orderId:'${o.id}'})">${svgI('eye',11)}</button></td>
+</tr>`).join('')}
+</tbody></table></div>`;
+}
+function filterOrders(){
+  const q=(document.getElementById('order-search').value||'').toLowerCase();
+  const st=document.getElementById('order-status-filter').value;
+  const pm=document.getElementById('order-payment-filter').value;
+  document.querySelectorAll('.order-row').forEach(r=>{
+    const matchQ=!q||r.dataset.search.includes(q);
+    const matchSt=!st||r.dataset.status===st;
+    const matchPm=!pm||r.dataset.payment===pm;
+    r.style.display=(matchQ&&matchSt&&matchPm)?'':'none';
+  });
+}
+
+function rOrderDetail(id){
+  const o=orders.find(x=>x.id===id);if(!o)return '<p>Order not found</p>';
+  const relatedTickets=o.tickets||[];
+  const secH=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
+  return `
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+  <button class="btn btn-ghost btn-sm" onclick="go('orders')">${svgI('down',14)} Back to Orders</button>
+  <div style="font-size:16px;font-weight:800;flex:1">${o.id}</div>
+  ${bg(o.status==='Confirmed'?'bg-green':o.status==='Refunded'?'bg-red':'bg-gray','',o.status)}
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start">
+
+  <!-- LEFT: Order details -->
+  <div>
+    <!-- Order summary -->
+    <div class="card card-p" style="margin-bottom:16px">
+      ${secH('Order Summary')}
+      ${[['Order ID',o.id],['Date',o.date+' at '+o.time],['Quantity',o.qty+' ticket'+(o.qty>1?'s':'')]].map(([k,v])=>`
+      <div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+
+      ${secH('Linked Entities')}
+      <div class="detail-row"><span class="detail-key">Consumer</span><span class="detail-val"><a class="tbl-link" onclick="go('userDetail',{userId:'${o.userId}'})">${o.userName}</a> <span style="font-size:11px;color:#9CA3AF;font-family:monospace">@${o.userHandle}</span></span></div>
+      <div class="detail-row"><span class="detail-key">Host Account</span><span class="detail-val"><a class="tbl-link" onclick="go('orgDetail',{orgId:'${o.orgId}'})">${o.orgName}</a></span></div>
+      <div class="detail-row"><span class="detail-key">Drop</span><span class="detail-val"><a class="tbl-link" onclick="go('dropDetail',{dropId:'${o.dropId}'})">${o.dropTitle}</a></span></div>
+
+      ${secH('Tickets in This Order')}
+      <table class="tbl" style="font-size:12px"><thead><tr><th>Ticket ID</th><th>Status</th></tr></thead><tbody>
+      ${relatedTickets.map(tid=>{
+        return `<tr>
+          <td style="font-weight:700;color:#0E4EF5;font-size:12px">${tid}</td>
+          <td>${bg('bg-blue','','Active')}</td>
+        </tr>`;
+      }).join('')}
+      </tbody></table>
+    </div>
+
+    <!-- Payment breakdown -->
+    <div class="card card-p">
+      ${secH('Payment Breakdown')}
+      ${[['Subtotal',o.subtotal===0?'Free':'$'+o.subtotal.toFixed(2)],['Service Fee',o.fees===0?'—':'$'+o.fees.toFixed(2)],['N Credits Applied',o.credits>0?'-$'+o.credits.toFixed(2):'—'],['Tax',o.tax===0?'—':'$'+o.tax.toFixed(2)]].map(([k,v])=>`
+      <div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+      <div class="detail-row" style="border-top:2px solid #E2E8F0;padding-top:12px;margin-top:6px">
+        <span class="detail-key" style="font-weight:700;color:#111827">Total Charged</span>
+        <span class="detail-val" style="font-size:18px;font-weight:800;color:#111827">${o.total===0?'Free':'$'+o.total.toFixed(2)}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Payment & Actions -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <!-- Payment info -->
+    <div class="card card-p">
+      <div style="font-size:12px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Payment Info</div>
+      ${[['Method',o.paymentMethod],['Payment Type',o.payment],['Stripe ID',o.stripeId],['Status',o.status]].map(([k,v])=>`
+      <div class="detail-row"><span class="detail-key" style="font-size:11px">${k}</span><span class="detail-val" style="font-size:12px;${k==='Stripe ID'?'font-family:monospace;color:#6B7280':''}">${v}</span></div>`).join('')}
+    </div>
+
+    <!-- Quick navigation -->
+    <div class="card card-p">
+      <div style="font-size:12px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Quick Navigation</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <button class="btn btn-ghost btn-sm" onclick="go('userDetail',{userId:'${o.userId}'})" style="width:100%;justify-content:flex-start">${svgI('users',12)} View Consumer → ${o.userName}</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.orgId}'})" style="width:100%;justify-content:flex-start">${svgI('store',12)} View Host Account → ${o.orgName}</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${o.dropId}'})" style="width:100%;justify-content:flex-start">${svgI('ticket',12)} View Drop → ${o.dropTitle}</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('reservations')" style="width:100%;justify-content:flex-start">${svgI('ticket',12)} View All Tickets</button>
+      </div>
+    </div>
+
+    <!-- Support Actions -->
+    <div class="card card-p">
+      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:12px">Support Actions</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        ${o.total>0&&o.status!=='Refunded'?`<button class="btn btn-danger btn-sm" onclick="openModal('refund-order-${o.id}')" style="width:100%;justify-content:flex-start">${svgI('dollar',12)} Issue Refund</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="openModal('order-note-${o.id}')" style="width:100%;justify-content:flex-start">${svgI('edit',12)} Add Internal Note</button>
+      </div>
+      <div class="alert alert-amber" style="margin-top:12px;font-size:11px">${svgI('alert',11)} All actions are logged with your support ID.</div>
+    </div>
+  </div>
+
+</div>`;
+}
 
 // ── CREDITS ───────────────────────────────────────────────────────────────
 // ── PROMOS PAGE ────────────────────────────────────────────────────────
@@ -4542,9 +4788,10 @@ function rRefunds(){return `
   <button class="btn btn-danger" onclick="openModal('issue-refund')">${svgI('dollar',16)} Issue Refund Override</button>
 </div>
 <div class="card">
-<table class="tbl"><thead><tr><th>Ticket</th><th>Consumer</th><th>Host Account</th><th>Amount</th><th>Reason</th><th>Date</th><th>Status</th><th>By</th></tr></thead><tbody>
-${refundLog.map(r=>`<tr>
+<table class="tbl"><thead><tr><th>Ticket</th><th>Order</th><th>Consumer</th><th>Host Account</th><th>Amount</th><th>Reason</th><th>Date</th><th>Status</th><th>By</th></tr></thead><tbody>
+${refundLog.map(r=>{const _ro=orders.find(o=>o.tickets&&o.tickets.includes(r.ticket));return`<tr>
   <td style="font-weight:700;color:#0E4EF5;font-size:12px">${r.ticket}</td>
+  <td>${_ro?`<a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${_ro.id}'})">${_ro.id}</a>`:'<span style="color:#9CA3AF;font-size:11px">—</span>'}</td>
   <td style="font-weight:600">${r.consumer}</td>
   <td style="color:#6B7280;font-size:12px">${r.org}</td>
   <td style="font-weight:700;color:#EF4444">-$${r.amount}</td>
@@ -4552,7 +4799,7 @@ ${refundLog.map(r=>`<tr>
   <td style="color:#6B7280;font-size:12px">${r.date}</td>
   <td>${bg('bg-teal','','Completed')}</td>
   <td style="font-size:12px">${r.issuedBy}</td>
-</tr>`).join('')}
+</tr>`}).join('')}
 </tbody></table></div>`;}
 
 // ── FINANCIALS ────────────────────────────────────────────────────────────
@@ -4566,7 +4813,7 @@ function rFinancials(){return `
 <div class="alert alert-blue">${svgI('info',14)} <span>This view is read-only. Stripe transaction IDs are shown for dispute resolution. Direct modification of Stripe records is not permitted through this interface.</span></div>
 <div class="card">
 <div class="card-p" style="border-bottom:1px solid #F1F5F9;font-size:14px;font-weight:700">Payment Records</div>
-<table class="tbl"><thead><tr><th>Ticket</th><th>Consumer</th><th>Host Account</th><th>Amount</th><th>Type</th><th>Stripe ID</th><th>Status</th><th>Date</th></tr></thead><tbody>
+<table class="tbl"><thead><tr><th>Ticket</th><th>Order</th><th>Consumer</th><th>Host Account</th><th>Amount</th><th>Type</th><th>Stripe ID</th><th>Status</th><th>Date</th></tr></thead><tbody>
 ${[
   {t:'T001-A',con:'Sarah Mitchell',org:'Nike Boulder',amt:0,type:'Free',sid:'pi_3OxK...4A2B',status:'N/A',date:'Mar 5'},
   {t:'T003-A',con:'Alex Rivera',org:'Whole Foods',amt:45,type:'Pre-Auth',sid:'pi_3OxK...9C8D',status:'Captured',date:'Mar 5'},
@@ -4574,8 +4821,9 @@ ${[
   {t:'T005-A',con:'Chris Park',org:'Nike Boulder',amt:0,type:'Free',sid:'—',status:'No-Show',date:'Mar 5'},
   {t:'T006-A',con:'Jordan Lee',org:'Elixir Spa',amt:90,type:'Pre-Auth',sid:'pi_3OxK...7G4H',status:'Pending',date:'Mar 5'},
   {t:'T009-A',con:'Jordan Lee',org:'Whole Foods',amt:45,type:'Refund',sid:'re_3OxK...5I2J',status:'Refunded',date:'Mar 4'},
-].map(r=>`<tr>
+].map(r=>{const _fo=orders.find(o=>o.tickets&&o.tickets.includes(r.t));return`<tr>
   <td style="font-size:12px;font-weight:700;color:#0E4EF5">${r.t}</td>
+  <td>${_fo?`<a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${_fo.id}'})">${_fo.id}</a>`:'<span style="color:#9CA3AF;font-size:11px">—</span>'}</td>
   <td>${r.con}</td>
   <td style="font-size:12px;color:#6B7280">${r.org}</td>
   <td style="font-weight:600">${r.amt===0?'Free':'$'+r.amt}</td>
@@ -4583,7 +4831,7 @@ ${[
   <td style="font-size:11px;color:#6B7280;font-family:monospace">${r.sid}</td>
   <td>${bg(statusBg(r.status),'',r.status)}</td>
   <td style="font-size:12px;color:#6B7280">${r.date}</td>
-</tr>`).join('')}
+</tr>`}).join('')}
 </tbody></table></div>`;}
 
 // ── SUPPORT QUEUE ──────────────────────────────────────────────────────────
@@ -6101,6 +6349,7 @@ function renderSidebar(){
     <button class="sb-item" id="nav-pipeline" onclick="go('pipeline')">${svgI('chart')} Pipeline <span class="badge" style="background:#7C3AED">${orgs.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length+organizations.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length}</span></button>
     <button class="sb-item" id="nav-drops" onclick="go('drops')"><svg width="13" height="20" viewBox="82 36 196 292" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg> Drops</button>
     <button class="sb-item" id="nav-reservations" onclick="go('reservations')">${svgI('ticket')} Tickets</button>
+    <button class="sb-item" id="nav-orders" onclick="go('orders')">${svgI('dollar')} Orders</button>
     <button class="sb-item" id="nav-promos" onclick="go('promos')">${svgI('tag')} Promos</button>
     <div class="sb-section">FINANCIAL</div>
     <button class="sb-item" id="nav-credits" onclick="go('credits')">${svgI('star')} Credits</button>
