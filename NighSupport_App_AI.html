@@ -378,6 +378,13 @@ function svgI(n,s,vb){
     img:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
     receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/>',
     trending:'<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+    tag:'<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+    plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+    arrowLeft:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+    undo:'<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>',
+    briefcase:'<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>',
+    shoppingBag:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>',
+    percent:'<line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
   };
   return `<svg width="${s||20}" height="${s||20}" viewBox="${vb||'0 0 24 24'}" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`;
 }
@@ -1309,6 +1316,21 @@ const userBlockedHosts={
   ],
   'U006':[],
 };
+const userFollowing={
+  'U001':[{orgId:'O003',name:'Nike Boulder',category:'Retail',since:'Jan 15, 2026',notifications:true},{orgId:'O004',name:'Whole Foods Boulder',category:'Grocery',since:'Feb 1, 2026',notifications:true},{orgId:'O009',name:'Bitter Bar',category:'Bar',since:'Feb 18, 2026',notifications:false}],
+  'U003':[{orgId:'O003',name:'Nike Boulder',category:'Retail',since:'Jan 20, 2026',notifications:true},{orgId:'O006',name:'West Flanders Brewing',category:'Brewery',since:'Mar 1, 2026',notifications:true}],
+  'U005':[{orgId:'O003',name:'Nike Boulder',category:'Retail',since:'Feb 5, 2026',notifications:true},{orgId:'O005',name:'Centerbar Boulder',category:'Restaurant',since:'Feb 10, 2026',notifications:false},{orgId:'O007',name:'St Julien Hotel',category:'Hotel',since:'Feb 20, 2026',notifications:true},{orgId:'O010',name:'Dairy Arts Center',category:'Arts',since:'Mar 2, 2026',notifications:true}],
+  'U007':[{orgId:'O003',name:'Nike Boulder',category:'Retail',since:'Feb 8, 2026',notifications:true}],
+  'U011':[{orgId:'O004',name:'Whole Foods Boulder',category:'Grocery',since:'Feb 25, 2026',notifications:true},{orgId:'O005',name:'Centerbar Boulder',category:'Restaurant',since:'Mar 1, 2026',notifications:false}],
+  'U013':[{orgId:'O004',name:'Whole Foods Boulder',category:'Grocery',since:'Jan 30, 2026',notifications:true},{orgId:'O012',name:'Elixir Spa',category:'Wellness',since:'Mar 3, 2026',notifications:true}],
+};
+const userFriends={
+  'U001':[{userId:'U003',name:'James Kim',handle:'@jamesk',since:'Jan 10, 2026',status:'Active'},{userId:'U007',name:'Maya Torres',handle:'@mayat',since:'Feb 2, 2026',status:'Active'},{userId:'U013',name:'Jordan Lee',handle:'@jordanl',since:'Feb 15, 2026',status:'Active'}],
+  'U003':[{userId:'U001',name:'Sarah Mitchell',handle:'@sarahm',since:'Jan 10, 2026',status:'Active'},{userId:'U005',name:'Alex Rivera',handle:'@alexr',since:'Feb 12, 2026',status:'Active'}],
+  'U005':[{userId:'U003',name:'James Kim',handle:'@jamesk',since:'Feb 12, 2026',status:'Active'},{userId:'U011',name:'Taylor Adams',handle:'@taylora',since:'Mar 1, 2026',status:'Active'},{userId:'U007',name:'Maya Torres',handle:'@mayat',since:'Mar 5, 2026',status:'Active'}],
+  'U007':[{userId:'U001',name:'Sarah Mitchell',handle:'@sarahm',since:'Feb 2, 2026',status:'Active'},{userId:'U005',name:'Alex Rivera',handle:'@alexr',since:'Mar 5, 2026',status:'Active'}],
+  'U013':[{userId:'U001',name:'Sarah Mitchell',handle:'@sarahm',since:'Feb 15, 2026',status:'Active'}],
+};
 
 // ── PROMO GROUPS & CODES ──────────────────────────────────────────────
 const promoGroups=[
@@ -1644,6 +1666,11 @@ const refundLog=[
   {id:'REF001',ticket:'T009-A',consumer:'Jordan Lee',org:'Whole Foods Market',amount:45,reason:'Consumer dispute — host unresponsive',date:'Mar 4, 2026',issuedBy:'JR',status:'Completed'},
   {id:'REF002',ticket:'T014-B',consumer:'Sam Ortiz',org:'Williams-Sonoma',amount:75,reason:'Org suspended — pre-auth released',date:'Mar 4, 2026',issuedBy:'System',status:'Completed'},
   {id:'REF003',ticket:'T021-A',consumer:'Dana Chen',org:'Centro Mexican Kitchen',amount:25,reason:'No-show reversal — host error',date:'Mar 3, 2026',issuedBy:'JR',status:'Completed'},
+  {id:'REF004',ticket:'T010-A',consumer:'Carmen Liu',org:'Centerbar Boulder',amount:120,reason:'Event cancelled by host — full refund',date:'Feb 15, 2026',issuedBy:'System',status:'Completed'},
+  {id:'REF005',ticket:'T023-A',consumer:'Remy Bouchard',org:'St Julien Hotel',amount:35,reason:'Medical emergency — guest unable to attend',date:'Mar 8, 2026',issuedBy:'Marcus',status:'Completed'},
+  {id:'REF006',ticket:'T035-A',consumer:'Cody Ellison',org:'Spruce Confections',amount:40,reason:'No-show reversal — guest checked in late per host',date:'Mar 10, 2026',issuedBy:'JR',status:'Completed'},
+  {id:'REF007',ticket:'T032-A',consumer:'Nathan Brown',org:'Avery Brewing',amount:35,reason:'Duplicate charge — refund issued',date:'Mar 6, 2026',issuedBy:'System',status:'Completed'},
+  {id:'REF008',ticket:'T039-A',consumer:'Tyler Brooks',org:'Alamo Drafthouse',amount:15,reason:'Wrong event booked — guest support request',date:'Mar 12, 2026',issuedBy:'Priya',status:'Completed'},
 ];
 
 // ── ORDERS DATA ──────────────────────────────────────────────────────────────
@@ -1701,6 +1728,13 @@ const sessions=[
   {id:'S003',user:'Josh Ritzer',type:'Host · Centro',device:'MacBook Pro',ip:'67.182.x.x',city:'Boulder, CO',lastSeen:'1 min ago',status:'Active'},
   {id:'S004',user:'Chris Park',type:'Consumer',device:'iPhone 14',ip:'104.28.x.x',city:'Denver, CO',lastSeen:'4 hrs ago',status:'Flagged'},
   {id:'S005',user:'Unknown',type:'Consumer',device:'Android — Chrome',ip:'185.220.x.x',city:'Unknown',lastSeen:'6 hrs ago',status:'Suspicious'},
+  {id:'S006',user:'Taylor Adams',type:'Consumer',device:'iPhone 15',ip:'72.45.x.x',city:'Boulder, CO',lastSeen:'12 min ago',status:'Active'},
+  {id:'S007',user:'Devon Clarke',type:'Host · Nike Boulder',device:'iPad Air',ip:'67.182.x.x',city:'Boulder, CO',lastSeen:'35 min ago',status:'Active'},
+  {id:'S008',user:'Marco Reyes',type:'Host · Centro',device:'iPhone 16 Pro',ip:'75.130.x.x',city:'Boulder, CO',lastSeen:'5 min ago',status:'Active'},
+  {id:'S009',user:'Sandra Webb',type:'Host · Whole Foods',device:'MacBook Air',ip:'64.71.x.x',city:'Boulder, CO',lastSeen:'1 hr ago',status:'Active'},
+  {id:'S010',user:'Maya Torres',type:'Consumer',device:'Pixel 8',ip:'98.226.x.x',city:'Denver, CO',lastSeen:'2 hrs ago',status:'Active'},
+  {id:'S011',user:'Aiden Park',type:'Consumer',device:'iPhone 14 Plus',ip:'173.12.x.x',city:'Longmont, CO',lastSeen:'3 hrs ago',status:'Active'},
+  {id:'S012',user:'Jordan Lee',type:'Consumer',device:'Samsung Galaxy S23',ip:'204.93.x.x',city:'Boulder, CO',lastSeen:'45 min ago',status:'Flagged'},
 ];
 const supportCases=[
   {id:'SC001',orgId:'O005',title:'Disputed no-show charge — March drop',category:'Billing',priority:'High',status:'Open',assignedTo:'NT003',opened:'Mar 4, 2026',resolved:null,notes:'Org disputes the capture charge from the Mar 3 drop. Claims guests checked in but system shows no-show. Reviewing drop logs.'},
@@ -2080,25 +2114,25 @@ ${orgOrgR.length?`
 <div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Organizations (${orgOrgR.length})</div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Organization</th><th>Industry</th><th>Status</th><th>Host Accounts</th><th></th></tr></thead><tbody>
-${orgOrgR.map(o=>{const r=orgRollup(o.id);return `<tr><td><div style="font-weight:600">${o.name}</div></td><td style="color:#6B7280">${o.industry||'—'}</td><td>${bg(statusBg(o.status),'',o.status)}</td><td>${r.totalAccounts}</td><td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">View</button></td></tr>`;}).join('')}
+${orgOrgR.map(o=>{const r=orgRollup(o.id);return `<tr><td><div style="font-weight:600">${o.name}</div></td><td style="color:#6B7280">${o.industry||'—'}</td><td>${bg(statusBg(o.status),'',o.status)}</td><td>${r.totalAccounts}</td><td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">${svgI('eye',11)} View</button></td></tr>`;}).join('')}
 </tbody></table></div></div>`:''}
 ${orgR.length?`
 <div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Host Accounts (${orgR.length})</div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Name</th><th>Handle</th><th>Status</th><th>Plan</th><th></th></tr></thead><tbody>
-${orgR.map(o=>`<tr><td><div style="font-weight:600">${o.name}</div></td><td style="color:#6B7280">@${o.handle}</td><td>${bg(statusBg(o.status),'',o.status)}</td><td>${o.plan}</td><td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">View</button></td></tr>`).join('')}
+${orgR.map(o=>`<tr><td><div style="font-weight:600">${o.name}</div></td><td style="color:#6B7280">@${o.handle}</td><td>${bg(statusBg(o.status),'',o.status)}</td><td>${o.plan}</td><td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">${svgI('eye',11)} View</button></td></tr>`).join('')}
 </tbody></table></div></div>`:''}
 ${conR.length?`
 <div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Users (${conR.length})</div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Name</th><th>Phone</th><th>Status</th><th>Drops</th><th></th></tr></thead><tbody>
-${conR.map(c=>`<tr><td style="font-weight:600">${c.name}</td><td style="color:#6B7280">${c.phone}</td><td>${bg(statusBg(c.status),'',c.status)}</td><td>${c.drops}</td><td><button class="btn btn-ghost btn-sm" onclick="go('userDetail',{userId:'${c.id}'})">View</button></td></tr>`).join('')}
+${conR.map(c=>`<tr><td style="font-weight:600">${c.name}</td><td style="color:#6B7280">${c.phone}</td><td>${bg(statusBg(c.status),'',c.status)}</td><td>${c.drops}</td><td><button class="btn btn-ghost btn-sm" onclick="go('userDetail',{userId:'${c.id}'})">${svgI('eye',11)} View</button></td></tr>`).join('')}
 </tbody></table></div></div>`:''}
 ${dropR.length?`
 <div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Drops (${dropR.length})</div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Title</th><th>Org</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
-${dropR.map(d=>`<tr><td style="font-weight:600">${d.title}</td><td style="color:#6B7280">${d.org}</td><td>${bg(statusBg(d.status),'',d.status)}</td><td>${d.date}</td><td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">View</button></td></tr>`).join('')}
+${dropR.map(d=>`<tr><td style="font-weight:600">${d.title}</td><td style="color:#6B7280">${d.org}</td><td>${bg(statusBg(d.status),'',d.status)}</td><td>${d.date}</td><td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">${svgI('eye',11)} View</button></td></tr>`).join('')}
 </tbody></table></div></div>`:''}
 ${!orgOrgR.length&&!orgR.length&&!conR.length&&!dropR.length?`<div class="card card-p" style="text-align:center;color:#9CA3AF;padding:40px">No results for "${S.searchQ}"</div>`:''}
 `}`;}
@@ -2144,7 +2178,17 @@ function rUsers(){
     return 0;
   });
   function th(label,key){const active=sort===key;return `<th style="cursor:pointer;user-select:none;white-space:nowrap" onclick="S.userSort='${key}';document.getElementById('content').innerHTML=renderPage('users')">${label}${active?' ↑':''}</th>`;}
+  const _uActive=userAccounts.filter(u=>u.status==='Active').length;
+  const _uSusp=userAccounts.filter(u=>u.status==='Suspended').length;
+  const _uVerified=userAccounts.filter(u=>u.phoneVerified&&u.emailVerified).length;
+  const _uTotalCredits=userAccounts.reduce((s,u)=>s+(u.credits||0),0);
   return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Total Users</div><div class="stat-val">${userAccounts.length}</div><div class="stat-sub">${_uActive} active · ${_uSusp} suspended</div></div>
+  <div class="stat"><div class="stat-label">Fully Verified</div><div class="stat-val" style="color:#16A34A">${_uVerified}</div><div class="stat-sub">${Math.round(_uVerified/userAccounts.length*100)}% of all users</div></div>
+  <div class="stat"><div class="stat-label">Outstanding Credits</div><div class="stat-val">$${_uTotalCredits}</div><div class="stat-sub">Across all user wallets</div></div>
+  <div class="stat"><div class="stat-label">Avg Drops / User</div><div class="stat-val">${(userAccounts.reduce((s,u)=>s+u.drops,0)/userAccounts.length).toFixed(1)}</div><div class="stat-sub">All-time average</div></div>
+</div>
 <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
   <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span>
     <input class="input" placeholder="Search by name, handle, mobile, email, zip…" style="width:340px" value="${S.userQ||''}"
@@ -2182,7 +2226,7 @@ ${list.map(u=>{
   </td>
   <td>${bg(statusBg(u.status),'',u.status)}</td>
   <td>
-    <button class="btn btn-ghost btn-sm" onclick="go('userDetail',{userId:'${u.id}'})">${svgI('edit',12)} View</button>
+    <button class="btn btn-ghost btn-sm" onclick="go('userDetail',{userId:'${u.id}'})">${svgI('eye',12)} View</button>
   </td>
 </tr>`;}).join('')}
 </tbody></table></div>`;}
@@ -2316,7 +2360,7 @@ function rUserDetail(uid){
         <td><span style="font-size:12px;font-weight:600;color:#374151">${o.plan||'—'}</span></td>
         <td>${bg(statusBg(o.status),'',o.status)}</td>
         <td style="font-size:12px;color:#6B7280">${o.joined||'—'}</td>
-        <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">${svgI('eye',11)} View Org</button></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">${svgI('eye',11)} View</button></td>
       </tr>`).join('')}
     </tbody></table>
   </div>`:`<div class="card card-p" style="color:#9CA3AF;font-size:13px">Not a current member of any host account.</div>`}
@@ -2378,12 +2422,12 @@ function rUserDetail(uid){
   </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No orders found for this user.</div>`}
 </div>`;}
 
-  else if(tab==='following'){tabContent=`
+  else if(tab==='following'){const _uf=userFollowing[u.id]||[];tabContent=`
 <div class="card card-p">
-  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Following</div>
-  <table class="tbl"><thead><tr><th>Host Account</th><th>Category</th><th>Followed Since</th><th>Notifications</th></tr></thead><tbody>
-    <tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">Not following any host accounts.</td></tr>
-  </tbody></table>
+  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Following <span style="font-size:12px;font-weight:400;color:#9CA3AF">(${_uf.length})</span></div>
+  ${_uf.length?`<table class="tbl"><thead><tr><th>Host Account</th><th>Category</th><th>Followed Since</th><th>Notifications</th></tr></thead><tbody>
+    ${_uf.map(f=>`<tr><td><a class="tbl-link" onclick="go('orgDetail',{orgId:'${f.orgId}'})">${f.name}</a></td><td style="color:#6B7280">${f.category}</td><td style="color:#6B7280">${f.since}</td><td>${f.notifications?'<span style="color:#22C55E;font-weight:600">On</span>':'<span style="color:#9CA3AF">Off</span>'}</td></tr>`).join('')}
+  </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">Not following any host accounts.</div>`}
 </div>
 <div class="card card-p">
   <div style="margin-bottom:12px">
@@ -2393,15 +2437,15 @@ function rUserDetail(uid){
   ${(()=>{const bh=userBlockedHosts[u.id]||[];return bh.length?'<table class="tbl"><thead><tr><th>Host</th><th>Handle</th><th>Category</th><th>Blocked Date</th><th>Status</th></tr></thead><tbody>'+bh.map(b=>'<tr><td>'+b.name+'</td><td style="color:#6B7280">'+b.handle+'</td><td style="color:#6B7280">'+b.category+'</td><td style="color:#6B7280">'+b.blockedDate+'</td><td>'+bg('bg-red','','Blocked')+'</td></tr>').join('')+'</tbody></table>':'<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No blocked hosts.</div>';})()}
 </div>`;}
 
-  else if(tab==='friends'){tabContent=`
+  else if(tab==='friends'){const _uFr=userFriends[u.id]||[];tabContent=`
 <div class="card card-p" style="margin-bottom:20px">
   <div style="margin-bottom:12px">
-    <div style="font-size:13px;font-weight:700;color:#111827">Nigh Friends</div>
+    <div style="font-size:13px;font-weight:700;color:#111827">Nigh Friends <span style="font-size:12px;font-weight:400;color:#9CA3AF">(${_uFr.length})</span></div>
     <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Users mutually connected on Nigh</div>
   </div>
-  <table class="tbl"><thead><tr><th>User</th><th>Handle</th><th>Connected Since</th><th>Account Status</th></tr></thead><tbody>
-    <tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No Nigh friend connections.</td></tr>
-  </tbody></table>
+  ${_uFr.length?`<table class="tbl"><thead><tr><th>User</th><th>Handle</th><th>Connected Since</th><th>Account Status</th></tr></thead><tbody>
+    ${_uFr.map(f=>`<tr><td><a class="tbl-link" onclick="go('userDetail',{userId:'${f.userId}'})">${f.name}</a></td><td style="color:#6B7280">${f.handle}</td><td style="color:#6B7280">${f.since}</td><td>${bg(statusBg(f.status),'',f.status)}</td></tr>`).join('')}
+  </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No Nigh friend connections.</div>`}
 </div>
 <div class="card card-p">
   <div style="margin-bottom:12px">
@@ -2420,13 +2464,15 @@ function rUserDetail(uid){
   ${(()=>{const bf=userBlockedFriends[u.id]||[];return bf.length?'<table class="tbl"><thead><tr><th>User</th><th>Handle</th><th>Blocked Date</th><th>Status</th></tr></thead><tbody>'+bf.map(b=>'<tr><td>'+b.name+'</td><td style="color:#6B7280">'+b.handle+'</td><td style="color:#6B7280">'+b.blockedDate+'</td><td>'+bg('bg-red','','Blocked')+'</td></tr>').join('')+'</tbody></table>':'<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No blocked friends.</div>';})()}
 </div>`;}
 
-  else if(tab==='payment'){tabContent=`
+  else if(tab==='payment'){const _uPay=[...new Set(orders.filter(o=>o.userId===u.id&&o.paymentMethod!=='—').map(o=>o.paymentMethod))];tabContent=`
 <div class="card card-p">
-  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Payment Methods</div>
-  <div style="font-size:13px;color:#9CA3AF;padding:8px 0">No payment methods on file.</div>
+  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Payment Methods <span style="font-size:12px;font-weight:400;color:#9CA3AF">(${_uPay.length})</span></div>
+  ${_uPay.length?`<table class="tbl"><thead><tr><th>Method</th><th>Type</th><th>Status</th></tr></thead><tbody>
+    ${_uPay.map(pm=>`<tr><td style="font-size:13px;font-weight:600">${pm}</td><td style="font-size:12px;color:#6B7280">${pm.includes('Apple Pay')?'Apple Pay':pm.includes('Visa')?'Visa':pm.includes('Mastercard')?'Mastercard':pm.includes('Amex')?'Amex':'Other'}</td><td>${bg('bg-green','','Active')}</td></tr>`).join('')}
+  </tbody></table>`:`<div style="font-size:13px;color:#9CA3AF;padding:8px 0">No payment methods on file.</div>`}
 </div>`;}
 
-  else if(tab==='credits'){tabContent=`
+  else if(tab==='credits'){const _uCreds=creditLog.filter(c=>c.recipient===u.name||c.recipient===u.handle);tabContent=`
 <div style="display:flex;gap:20px;align-items:start;flex-wrap:wrap">
   <div style="flex:1;min-width:220px">
     <div class="card card-p" style="margin-bottom:16px">
@@ -2435,10 +2481,10 @@ function rUserDetail(uid){
       <div style="font-size:12px;color:#9CA3AF">N Credits available</div>
     </div>
     <div class="card card-p">
-      <div style="font-size:13px;font-weight:700;margin-bottom:12px">Credit History</div>
-      <table class="tbl"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody>
-        <tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No credit history.</td></tr>
-      </tbody></table>
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px">Credit History <span style="font-size:12px;font-weight:400;color:#9CA3AF">(${_uCreds.length})</span></div>
+      ${_uCreds.length?`<table class="tbl"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th><th>Status</th></tr></thead><tbody>
+        ${_uCreds.map(c=>`<tr><td style="font-size:12px;color:#6B7280;white-space:nowrap">${c.issued}</td><td style="font-size:12px">${c.type}</td><td style="font-weight:600;color:#0E4EF5">$${c.amount}</td><td style="font-size:12px;color:#6B7280">${c.reason}</td><td>${bg(statusBg(c.status),'',c.status)}</td></tr>`).join('')}
+      </tbody></table>`:`<div style="text-align:center;color:#9CA3AF;padding:24px 0;font-size:13px">No credit history.</div>`}
     </div>
   </div>
   <div style="width:240px;flex-shrink:0">
@@ -2534,7 +2580,7 @@ function rUserDetail(uid){
   return `
 <!-- Header -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-  <button class="btn btn-ghost btn-sm" onclick="go('users')">${svgI('down',12)} Back to User Accounts</button>
+  <button class="btn btn-ghost btn-sm" onclick="go('users')">${svgI('arrowLeft',12)} Back to User Accounts</button>
   <div style="display:flex;gap:8px">
     <button class="btn btn-ghost btn-sm" onclick="openModal('user-changelog-${u.id}')">${svgI('clock',12)} Change History${u.changeLog&&u.changeLog.length?` <span style="background:#EEF2FF;color:#1D4ED8;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:2px">${u.changeLog.length}</span>`:''}</button>
     <button class="btn btn-ghost btn-sm" id="user-link-btn-hdr" onclick="copyLink('${profileUrl}',document.getElementById('user-link-btn-hdr'))">${svgI('send',12)} Copy Profile Link</button>
@@ -2614,7 +2660,7 @@ ${organizations.map(o=>{
   <td style="font-size:13px;font-weight:600;color:#374151">$${r.totalRevenue.toLocaleString()}</td>
   <td><span style="font-size:11px;font-weight:600;color:${stColor.fg};background:${stColor.bg};padding:2px 8px;border-radius:6px">${o.status}</span></td>
   <td style="font-size:12px;color:#374151">${rep?rep.name:'—'}</td>
-  <td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">View</button></td>
+  <td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">${svgI('eye',11)} View</button></td>
 </tr>`}).join('')}
 </tbody></table></div>`;}
 
@@ -2642,7 +2688,7 @@ function rOrgOrgDetail(id){
   const TABS=[['overview','Overview'],['accounts','Host Accounts'],['crm','CRM'],['activity','Activity']];
   return `
 <div style="margin-bottom:16px">
-  <button class="btn btn-ghost btn-sm" onclick="go('organizations')">${svgI('down',12)} Back to Orgs</button>
+  <button class="btn btn-ghost btn-sm" onclick="go('organizations')">${svgI('arrowLeft',12)} Back to Orgs</button>
 </div>
 
 <!-- ORG HEADER -->
@@ -2722,7 +2768,7 @@ ${at==='accounts'?`
     <td style="font-size:12px;font-weight:600;color:#5B21B6">${a.plan||'—'}</td>
     <td style="font-size:13px;font-weight:600">${a.drops||0}</td>
     <td style="font-size:13px;font-weight:600">$${(a.revenue||0).toLocaleString()}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${a.id}'})">View</button></td>
+    <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${a.id}'})">${svgI('eye',11)} View</button></td>
   </tr>`}).join('')}
   </tbody></table>
   `:`<div style="text-align:center;padding:40px;color:#9CA3AF;font-size:13px">No host accounts linked to this org yet.</div>`}
@@ -2760,7 +2806,17 @@ ${at==='activity'?`
 function rOrgs(){
 const cats=Object.keys(CAT_SUBS);
 const activeOrgs=orgs.filter(o=>o.status!=='Prospect');
+const _oActive=activeOrgs.filter(o=>o.status==='Active').length;
+const _oSusp=activeOrgs.filter(o=>o.status==='Suspended').length;
+const _oPastDue=activeOrgs.filter(o=>o.billingStatus==='Past Due').length;
+const _oRevenue=activeOrgs.reduce((s,o)=>s+(o.revenue||0),0);
 return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Host Accounts</div><div class="stat-val">${activeOrgs.length}</div><div class="stat-sub">${_oActive} active · ${_oSusp} suspended</div></div>
+  <div class="stat"><div class="stat-label">Total Revenue</div><div class="stat-val">$${_oRevenue.toLocaleString()}</div><div class="stat-sub">Across all accounts</div></div>
+  <div class="stat"><div class="stat-label">Past Due</div><div class="stat-val" style="color:${_oPastDue>0?'#EF4444':'#16A34A'}">${_oPastDue}</div><div class="stat-sub">${_oPastDue===0?'All billing current':'Needs attention'}</div></div>
+  <div class="stat"><div class="stat-label">Total Drops</div><div class="stat-val">${activeOrgs.reduce((s,o)=>s+(o.drops||0),0)}</div><div class="stat-sub">Across all accounts</div></div>
+</div>
 <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
   <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input id="org-search" class="input" placeholder="Search by name, handle, or city…" style="width:260px" oninput="filterOrgs()"/></div>
   <select id="org-f-status" class="select" style="width:148px" onchange="filterOrgs()"><option value="">All Statuses</option><option>Active</option><option>Suspended</option><option>Banned</option></select>
@@ -2778,7 +2834,7 @@ ${activeOrgs.map(o=>{const ht=o.hostType||'Place';const linkedOrg=o.orgId?getOrg
   <td><span style="font-size:11px;font-weight:600;color:${ht==='Personal'?'#9333EA':ht==='Brand'?'#0369A1':ht==='Mobile'?'#C2410C':'#374151'};background:${ht==='Personal'?'#F5F3FF':ht==='Brand'?'#E0F2FE':ht==='Mobile'?'#FFF7ED':'#F0F9FF'};padding:2px 8px;border-radius:6px">${ht==='Personal'?'👤 Personal':ht==='Brand'?'🏷️ Brand':ht==='Mobile'?'🚚 Mobile':'📍 Place'}</span></td>
   <td style="font-size:12px;color:#6B7280">${o.city?o.city+', '+o.state:'—'}</td>
   <td>${bg(statusBg(o.status),'',o.status)}</td>
-  <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">View</button></td>
+  <td><button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">${svgI('eye',11)} View</button></td>
 </tr>`}).join('')}
 </tbody></table></div>`;}
 
@@ -2836,7 +2892,7 @@ ${orgProspects.length?`
       <td><span style="font-size:11px;font-weight:600;color:${sc.fg};background:${sc.bg};padding:2px 8px;border-radius:6px;white-space:nowrap">${o.pipelineStage}</span></td>
       <td style="font-size:12px;color:#374151">${rep?rep.name:'—'}</td>
       <td style="font-size:11px;color:#6B7280;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${lastOut?lastOut.type+' · '+lastOut.ts.split(' · ')[0]:'No contact yet'}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">View</button></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="go('orgOrgDetail',{orgOrgId:'${o.id}'})">${svgI('eye',11)} View</button></td>
     </tr>`}).join('')}
   </tbody></table>
   </div>
@@ -2887,7 +2943,7 @@ ${orgProspects.length?`
       <td style="font-size:11px;${ciStyle}">${o.checkInDate||'—'}</td>
       <td style="font-size:11px;color:#6B7280;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${lastOut?lastOut.type+' · '+lastOut.ts.split(' · ')[0]:'No contact yet'}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">View</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('orgDetail',{orgId:'${o.id}'})">${svgI('eye',11)} View</button>
         ${isActive?`<button class="btn btn-primary btn-sm" onclick="openModal('convert-to-account-${o.id}')" style="margin-left:4px">${svgI('zap',11)} Convert</button>`:''}
       </td>
     </tr>`;
@@ -3008,7 +3064,7 @@ function rOrgDetail(id){
   const accessColor=(a)=>a==='Account Owner'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Admin'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Check-In Only'?{bg:'#F1F5F9',fg:'#64748b'}:{bg:'#F3F4F6',fg:'#4B5563'};
   return `
 <div style="margin-bottom:16px">
-  <button class="btn btn-ghost btn-sm" onclick="go(o.status==='Prospect'?'pipeline':'orgs')">${svgI('down',12)} ${o.status==='Prospect'?'Back to Pipeline':'Back to Host Accounts'}</button>
+  <button class="btn btn-ghost btn-sm" onclick="go(o.status==='Prospect'?'pipeline':'orgs')">${svgI('arrowLeft',12)} ${o.status==='Prospect'?'Back to Pipeline':'Back to Host Accounts'}</button>
 </div>
 
 <!-- ── ORG HEADER (always visible) ── -->
@@ -3197,7 +3253,7 @@ ${(()=>{
             <td>${bg(statusBg(c.status),'',c.status)}</td>
             <td style="font-size:13px;font-weight:600">${c.drops}</td>
             <td style="font-size:13px;font-weight:600">$${c.revenue.toLocaleString()}</td>
-            <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')">View →</button></td>
+            <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')"> ${svgI('eye',11)} View</button></td>
           </tr>`).join('')}</tbody>
           </table>
         </div>`;
@@ -3213,7 +3269,7 @@ ${(()=>{
           <td style="font-size:13px;font-weight:600">${c.drops}</td>
           <td style="font-size:13px;font-weight:600">$${c.revenue.toLocaleString()}</td>
           <td style="font-size:12px;color:#6B7280">${c.joined}</td>
-          <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')">View →</button></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="go('org-${c.id}')"> ${svgI('eye',11)} View</button></td>
         </tr>`).join('')}</tbody>
       </table></div>`;
     }
@@ -4211,7 +4267,19 @@ ${(()=>{
 </div>`;}
 
 // ── DROPS ─────────────────────────────────────────────────────────────────
-function rDrops(){return `
+function rDrops(){
+  const _dLive=drops.filter(d=>d.status==='Live').length;
+  const _dSched=drops.filter(d=>d.status==='Scheduled').length;
+  const _dEnded=drops.filter(d=>d.status==='Ended').length;
+  const _dRev=drops.reduce((s,d)=>s+(d.revenue||0),0);
+  const _dFill=drops.length?Math.round(drops.reduce((s,d)=>s+(d.res/d.cap*100),0)/drops.length):0;
+  return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Total Drops</div><div class="stat-val">${drops.length}</div><div class="stat-sub">${_dLive} live · ${_dSched} scheduled</div></div>
+  <div class="stat"><div class="stat-label">Avg Fill Rate</div><div class="stat-val">${_dFill}%</div><div class="stat-sub">Across all drops</div></div>
+  <div class="stat"><div class="stat-label">Total Revenue</div><div class="stat-val">$${_dRev.toLocaleString()}</div><div class="stat-sub">From ticket sales</div></div>
+  <div class="stat"><div class="stat-label">Ended</div><div class="stat-val">${_dEnded}</div><div class="stat-sub">${drops.filter(d=>d.status==='Draft').length} drafts</div></div>
+</div>
 <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
   <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search drops…" style="width:280px"/></div>
   <select class="select" style="width:160px"><option>All Statuses</option><option>Live</option><option>Scheduled</option><option>Draft</option><option>Ended</option></select>
@@ -4227,7 +4295,7 @@ ${drops.map(d=>`<tr>
   <td>${d.res}/${d.cap} <span style="color:#9CA3AF;font-size:11px">(${Math.round(d.res/d.cap*100)}%)</span></td>
   <td>${d.segmentPricing?'$'+d.price+' <span style="color:#9CA3AF;font-size:10px" title="'+d.segmentPricing.map(t=>t.segment+': $'+t.price).join(', ')+'">(tiered)</span>':(d.price===0?'Free':'$'+d.price)}</td>
   <td style="font-weight:600">$${d.revenue}</td>
-  <td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">View</button></td>
+  <td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">${svgI('eye',11)} View</button></td>
 </tr>`).join('')}
 </tbody></table></div>`;}
 
@@ -4237,7 +4305,7 @@ function rDropDetail(id){
   const secH=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
   return `
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-  <button class="btn btn-ghost btn-sm" onclick="go('drops')">${svgI('down',14)} Back to Drops</button>
+  <button class="btn btn-ghost btn-sm" onclick="go('drops')">${svgI('arrowLeft',14)} Back to Drops</button>
   <div style="font-size:16px;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.title}</div>
   <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
     ${bg(statusBg(d.status),'',d.status)}
@@ -4426,75 +4494,76 @@ function rDropDetail(id){
 </div>`;}
 
 // ── RESERVATIONS ──────────────────────────────────────────────────────────
-function rReservations(){return `
+function rReservations(){
+  const _tix=[
+    {tid:'T001-A',consumer:'Sarah Mitchell',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
+    {tid:'T001-B',consumer:'Sarah Mitchell',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Reserved',price:0},
+    {tid:'T002-A',consumer:'James Kim',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
+    {tid:'T003-A',consumer:'Alex Rivera',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
+    {tid:'T003-B',consumer:'Alex Rivera',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
+    {tid:'T004-A',consumer:'Maya Torres',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Reserved',price:0},
+    {tid:'T005-A',consumer:'Chris Park',drop:'Nike Air Max Day',org:'Nike Boulder',status:'No-Show',price:0},
+    {tid:'T006-A',consumer:'Taylor Adams',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
+    {tid:'T006-B',consumer:'Taylor Adams',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
+    {tid:'T007-A',consumer:'Jordan Lee',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
+    {tid:'T008-A',consumer:'Aiden Park',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
+    {tid:'T008-B',consumer:'Nina Rossi',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
+    {tid:'T009-A',consumer:'Brett Nakamura',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
+    {tid:'T009-B',consumer:'Brett Nakamura',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'No-Show',price:120},
+    {tid:'T010-A',consumer:'Carmen Liu',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Refunded',price:120},
+    {tid:'T011-A',consumer:'Darnell Hayes',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
+    {tid:'T012-A',consumer:'Yuki Tanaka',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
+    {tid:'T013-A',consumer:'Rosa Brennan',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
+    {tid:'T014-A',consumer:'Miles Cooper',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'No-Show',price:65},
+    {tid:'T015-A',consumer:'Jade Williams',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'Checked In',price:0},
+    {tid:'T016-A',consumer:'Owen Fletcher',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'Checked In',price:0},
+    {tid:'T017-A',consumer:'Laila Ortiz',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'No-Show',price:0},
+    {tid:'T018-A',consumer:'Felix Grant',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
+    {tid:'T019-A',consumer:'Zoe Hoffman',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
+    {tid:'T020-A',consumer:'Sadie Mora',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
+    {tid:'T021-A',consumer:'Leo Abramowitz',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'Checked In',price:35},
+    {tid:'T022-A',consumer:'Nia Forsythe',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'Reserved',price:35},
+    {tid:'T023-A',consumer:'Remy Bouchard',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'No-Show',price:35},
+    {tid:'T024-A',consumer:'Emma Davis',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
+    {tid:'T025-A',consumer:'Marcus Webb',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
+    {tid:'T025-B',consumer:'Marcus Webb',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
+    {tid:'T026-A',consumer:'Priya Nair',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
+    {tid:'T027-A',consumer:'Olivia Chen',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Reserved',price:25},
+    {tid:'T028-A',consumer:'Marcus Park',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Checked In',price:35},
+    {tid:'T029-A',consumer:'Sofia Chen',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Checked In',price:35},
+    {tid:'T030-A',consumer:'Ryan Mitchell',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Reserved',price:35},
+    {tid:'T031-A',consumer:'Jessica Lee',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Reserved',price:35},
+    {tid:'T032-A',consumer:'Nathan Brown',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'No-Show',price:35},
+    {tid:'T033-A',consumer:'Jordan Lee',drop:'Elixir Spa: Deep Tissue Massage',org:'Elixir Spa',status:'Reserved',price:90},
+    {tid:'T034-A',consumer:'Tasha Drummond',drop:'Cookie Decorating Class',org:'Spruce Confections',status:'Checked In',price:40},
+    {tid:'T035-A',consumer:'Cody Ellison',drop:'Cookie Decorating Class',org:'Spruce Confections',status:'No-Show',price:40},
+    {tid:'T036-A',consumer:'Priya Patel',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Checked In',price:15},
+    {tid:'T037-A',consumer:'Derek Nguyen',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Checked In',price:15},
+    {tid:'T038-A',consumer:'Sofia Ruiz',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Reserved',price:15},
+    {tid:'T039-A',consumer:'Tyler Brooks',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'No-Show',price:15},
+    {tid:'T040-A',consumer:'Aisha Carter',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
+    {tid:'T041-A',consumer:'Ryan Kowalski',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
+  ];
+  const _ci=_tix.filter(t=>t.status==='Checked In').length;
+  const _res=_tix.filter(t=>t.status==='Reserved').length;
+  const _ns=_tix.filter(t=>t.status==='No-Show').length;
+  const _ref=_tix.filter(t=>t.status==='Refunded').length;
+  const _rev=_tix.reduce((s,t)=>s+t.price,0);
+  return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Total Tickets</div><div class="stat-val">${_tix.length}</div><div class="stat-sub">${_ci} checked in · ${_res} reserved</div></div>
+  <div class="stat"><div class="stat-label">Checked In</div><div class="stat-val" style="color:#16A34A">${_ci}</div><div class="stat-sub">${Math.round(_ci/_tix.length*100)}% check-in rate</div></div>
+  <div class="stat"><div class="stat-label">No-Shows</div><div class="stat-val" style="color:#EF4444">${_ns}</div><div class="stat-sub">${Math.round(_ns/_tix.length*100)}% no-show rate</div></div>
+  <div class="stat"><div class="stat-label">Ticket Revenue</div><div class="stat-val">$${_rev.toLocaleString()}</div><div class="stat-sub">${_ref} refunded</div></div>
+</div>
 <div class="alert alert-blue">${svgI('info',14)} <span>Reservation overrides are irreversible. All actions are logged with your Support ID and timestamp.</span></div>
 <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-  <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search by ticket ID, consumer, or drop…" style="width:320px"/></div>
+  <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search by ticket ID, consumer, or drop…" style="width:320px" id="tix-search" oninput="filterTickets()"/></div>
+  <select class="select" style="width:160px" id="tix-status-filter" onchange="filterTickets()"><option value="">All Statuses</option><option>Checked In</option><option>Reserved</option><option>No-Show</option><option>Refunded</option></select>
 </div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Ticket ID</th><th>Order</th><th>Consumer</th><th>Host Account</th><th>Drop</th><th>Status</th><th>Price</th><th>Actions</th></tr></thead><tbody>
-${[
-  // Nike Air Max Day (Free, cap 8)
-  {tid:'T001-A',consumer:'Sarah Mitchell',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
-  {tid:'T001-B',consumer:'Sarah Mitchell',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Reserved',price:0},
-  {tid:'T002-A',consumer:'James Kim',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
-  {tid:'T003-A',consumer:'Alex Rivera',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
-  {tid:'T003-B',consumer:'Alex Rivera',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Checked In',price:0},
-  {tid:'T004-A',consumer:'Maya Torres',drop:'Nike Air Max Day',org:'Nike Boulder',status:'Reserved',price:0},
-  {tid:'T005-A',consumer:'Chris Park',drop:'Nike Air Max Day',org:'Nike Boulder',status:'No-Show',price:0},
-  // Whole Foods Chef's Table ($45)
-  {tid:'T006-A',consumer:'Taylor Adams',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
-  {tid:'T006-B',consumer:'Taylor Adams',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
-  {tid:'T007-A',consumer:'Jordan Lee',drop:"Whole Foods Chef's Table",org:'Whole Foods Boulder',status:'Reserved',price:45},
-  // Valentine's Chef's Dinner ($120)
-  {tid:'T008-A',consumer:'Aiden Park',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
-  {tid:'T008-B',consumer:'Nina Rossi',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
-  {tid:'T009-A',consumer:'Brett Nakamura',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Checked In',price:120},
-  {tid:'T009-B',consumer:'Brett Nakamura',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'No-Show',price:120},
-  {tid:'T010-A',consumer:'Carmen Liu',drop:"Valentine's Chef's Dinner",org:'Centerbar Boulder',status:'Refunded',price:120},
-  // Private Whiskey Tasting ($65)
-  {tid:'T011-A',consumer:'Darnell Hayes',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
-  {tid:'T012-A',consumer:'Yuki Tanaka',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
-  {tid:'T013-A',consumer:'Rosa Brennan',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'Checked In',price:65},
-  {tid:'T014-A',consumer:'Miles Cooper',drop:'Private Whiskey Tasting Flight',org:'Bitter Bar',status:'No-Show',price:65},
-  // Gallery Opening (Free)
-  {tid:'T015-A',consumer:'Jade Williams',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'Checked In',price:0},
-  {tid:'T016-A',consumer:'Owen Fletcher',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'Checked In',price:0},
-  {tid:'T017-A',consumer:'Laila Ortiz',drop:'Gallery Opening: Local Artists Night',org:'Dairy Arts Center',status:'No-Show',price:0},
-  // Trivia Night VIP Booth ($20)
-  {tid:'T018-A',consumer:'Felix Grant',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
-  {tid:'T019-A',consumer:'Zoe Hoffman',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
-  {tid:'T020-A',consumer:'Sadie Mora',drop:'Trivia Night VIP Booth',org:'West Flanders Brewing',status:'Checked In',price:20},
-  // Yoga & Brunch ($35)
-  {tid:'T021-A',consumer:'Leo Abramowitz',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'Checked In',price:35},
-  {tid:'T022-A',consumer:'Nia Forsythe',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'Reserved',price:35},
-  {tid:'T023-A',consumer:'Remy Bouchard',drop:'Yoga & Brunch Rooftop',org:'St Julien Hotel',status:'No-Show',price:35},
-  // Friday Night Jazz & Tapas ($25)
-  {tid:'T024-A',consumer:'Emma Davis',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
-  {tid:'T025-A',consumer:'Marcus Webb',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
-  {tid:'T025-B',consumer:'Marcus Webb',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
-  {tid:'T026-A',consumer:'Priya Nair',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Checked In',price:25},
-  {tid:'T027-A',consumer:'Olivia Chen',drop:'Friday Night Jazz & Tapas',org:'Centro Mexican Kitchen',status:'Reserved',price:25},
-  // Avery Brewing Tap Room Takeover ($35)
-  {tid:'T028-A',consumer:'Marcus Park',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Checked In',price:35},
-  {tid:'T029-A',consumer:'Sofia Chen',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Checked In',price:35},
-  {tid:'T030-A',consumer:'Ryan Mitchell',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Reserved',price:35},
-  {tid:'T031-A',consumer:'Jessica Lee',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'Reserved',price:35},
-  {tid:'T032-A',consumer:'Nathan Brown',drop:'Avery Brewing Tap Room Takeover',org:'Avery Brewing',status:'No-Show',price:35},
-  // Elixir Spa Deep Tissue ($90)
-  {tid:'T033-A',consumer:'Jordan Lee',drop:'Elixir Spa: Deep Tissue Massage',org:'Elixir Spa',status:'Reserved',price:90},
-  // Cookie Decorating Class ($40)
-  {tid:'T034-A',consumer:'Tasha Drummond',drop:'Cookie Decorating Class',org:'Spruce Confections',status:'Checked In',price:40},
-  {tid:'T035-A',consumer:'Cody Ellison',drop:'Cookie Decorating Class',org:'Spruce Confections',status:'No-Show',price:40},
-  // Private Film Screening ($15)
-  {tid:'T036-A',consumer:'Priya Patel',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Checked In',price:15},
-  {tid:'T037-A',consumer:'Derek Nguyen',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Checked In',price:15},
-  {tid:'T038-A',consumer:'Sofia Ruiz',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'Reserved',price:15},
-  {tid:'T039-A',consumer:'Tyler Brooks',drop:'Private Film Screening',org:'Alamo Drafthouse',status:'No-Show',price:15},
-  // The Kitchen Supper Club ($85)
-  {tid:'T040-A',consumer:'Aisha Carter',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
-  {tid:'T041-A',consumer:'Ryan Kowalski',drop:'The Kitchen Supper Club',org:'The Kitchen Boulder',status:'Reserved',price:85},
-].map(t=>{const _ord=orders.find(o=>o.tickets&&o.tickets.includes(t.tid));return`<tr>
+${_tix.map(t=>{const _ord=orders.find(o=>o.tickets&&o.tickets.includes(t.tid));return`<tr class="tix-row" data-search="${(t.tid+' '+t.consumer+' '+t.drop+' '+t.org).toLowerCase()}" data-status="${t.status}">
   <td style="font-weight:700;color:#0E4EF5;font-size:12px">${t.tid}</td>
   <td>${_ord?`<a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${_ord.id}'})">${_ord.id}</a>`:'<span style="color:#9CA3AF;font-size:11px">—</span>'}</td>
   <td>${t.consumer}</td>
@@ -4511,6 +4580,16 @@ ${[
   </td>
 </tr>`}).join('')}
 </tbody></table></div>`;}
+
+function filterTickets(){
+  const q=(document.getElementById('tix-search')?.value||'').toLowerCase();
+  const st=document.getElementById('tix-status-filter')?.value||'';
+  document.querySelectorAll('.tix-row').forEach(r=>{
+    const matchQ=!q||r.dataset.search.includes(q);
+    const matchSt=!st||r.dataset.status===st;
+    r.style.display=(matchQ&&matchSt)?'':'none';
+  });
+}
 
 // ── ORDERS ────────────────────────────────────────────────────────────────
 function rOrders(){
@@ -4565,7 +4644,7 @@ function rOrderDetail(id){
   const secH=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
   return `
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-  <button class="btn btn-ghost btn-sm" onclick="go('orders')">${svgI('down',14)} Back to Orders</button>
+  <button class="btn btn-ghost btn-sm" onclick="go('orders')">${svgI('arrowLeft',14)} Back to Orders</button>
   <div style="font-size:16px;font-weight:800;flex:1">${o.id}</div>
   ${bg(o.status==='Confirmed'?'bg-green':o.status==='Refunded'?'bg-red':'bg-gray','',o.status)}
 </div>
@@ -4781,7 +4860,15 @@ ${creditLog.map(c=>`<tr data-credit-status="${c.status}">
 </tbody></table></div>`;}
 
 // ── REFUNDS ───────────────────────────────────────────────────────────────
-function rRefunds(){return `
+function rRefunds(){
+  const _rTotal=refundLog.reduce((s,r)=>s+r.amount,0);
+  return `
+<div class="grid grid-4" style="margin-bottom:20px">
+  <div class="stat"><div class="stat-label">Total Refunds</div><div class="stat-val">${refundLog.length}</div><div class="stat-sub">All-time overrides</div></div>
+  <div class="stat"><div class="stat-label">Total Refunded</div><div class="stat-val" style="color:#EF4444">$${_rTotal.toLocaleString()}</div><div class="stat-sub">Sum of all refunds</div></div>
+  <div class="stat"><div class="stat-label">Avg Refund</div><div class="stat-val">$${refundLog.length?(Math.round(_rTotal/refundLog.length)):'0'}</div><div class="stat-sub">Per refund event</div></div>
+  <div class="stat"><div class="stat-label">Status</div><div class="stat-val" style="color:#16A34A">${refundLog.length}</div><div class="stat-sub">All completed</div></div>
+</div>
 <div class="alert alert-red">${svgI('alert',14)} <span>Refund overrides bypass standard host policy. A mandatory reason is required and all actions are immutably logged.</span></div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
   <div style="font-size:15px;font-weight:700">Refund Override Log</div>
@@ -4807,7 +4894,7 @@ function rFinancials(){return `
 <div class="grid grid-4" style="margin-bottom:20px">
   <div class="stat"><div class="stat-label">GMV (30 days)</div><div class="stat-val">$12,840</div><div class="stat-sub">All drops</div></div>
   <div class="stat"><div class="stat-label">Captured</div><div class="stat-val">$11,920</div><div class="stat-sub">$920 pending</div></div>
-  <div class="stat"><div class="stat-label">Refunded</div><div class="stat-val" style="color:#EF4444">$145</div><div class="stat-sub">3 refund events</div></div>
+  <div class="stat"><div class="stat-label">Refunded</div><div class="stat-val" style="color:#EF4444">$390</div><div class="stat-sub">8 refund events</div></div>
   <div class="stat"><div class="stat-label">No-Show Revenue</div><div class="stat-val">$315</div><div class="stat-sub">21 events</div></div>
 </div>
 <div class="alert alert-blue">${svgI('info',14)} <span>This view is read-only. Stripe transaction IDs are shown for dispute resolution. Direct modification of Stripe records is not permitted through this interface.</span></div>
@@ -4821,6 +4908,18 @@ ${[
   {t:'T005-A',con:'Chris Park',org:'Nike Boulder',amt:0,type:'Free',sid:'—',status:'No-Show',date:'Mar 5'},
   {t:'T006-A',con:'Jordan Lee',org:'Elixir Spa',amt:90,type:'Pre-Auth',sid:'pi_3OxK...7G4H',status:'Pending',date:'Mar 5'},
   {t:'T009-A',con:'Jordan Lee',org:'Whole Foods',amt:45,type:'Refund',sid:'re_3OxK...5I2J',status:'Refunded',date:'Mar 4'},
+  {t:'T008-A',con:'Aiden Park',org:'Centerbar Boulder',amt:120,type:'Pre-Auth',sid:'pi_3OxK...1D4E',status:'Captured',date:'Mar 3'},
+  {t:'T010-A',con:'Carmen Liu',org:'Centerbar Boulder',amt:120,type:'Refund',sid:'re_3OxK...8M2N',status:'Refunded',date:'Feb 15'},
+  {t:'T011-A',con:'Darnell Hayes',org:'Bitter Bar',amt:65,type:'Pre-Auth',sid:'pi_3OxK...6N8P',status:'Captured',date:'Mar 4'},
+  {t:'T012-A',con:'Yuki Tanaka',org:'Bitter Bar',amt:65,type:'Pre-Auth',sid:'pi_3OxK...7Q9R',status:'Captured',date:'Mar 4'},
+  {t:'T015-A',con:'Jade Williams',org:'Dairy Arts Center',amt:0,type:'Free',sid:'—',status:'N/A',date:'Mar 6'},
+  {t:'T018-A',con:'Felix Grant',org:'West Flanders',amt:20,type:'Pre-Auth',sid:'pi_3OxK...1W3X',status:'Captured',date:'Mar 4'},
+  {t:'T021-A',con:'Leo Abramowitz',org:'St Julien Hotel',amt:35,type:'Pre-Auth',sid:'pi_3OxK...3A5B',status:'Captured',date:'Mar 5'},
+  {t:'T024-A',con:'Emma Davis',org:'Centro Mexican',amt:25,type:'Pre-Auth',sid:'pi_3OxK...5E7F',status:'Captured',date:'Mar 6'},
+  {t:'T033-A',con:'Jordan Lee',org:'Elixir Spa',amt:90,type:'Pre-Auth',sid:'pi_3OxK...9M2N',status:'Captured',date:'Mar 7'},
+  {t:'T034-A',con:'Tasha Drummond',org:'Spruce Confections',amt:40,type:'Pre-Auth',sid:'pi_3OxK...1P3Q',status:'Captured',date:'Mar 6'},
+  {t:'T036-A',con:'Priya Patel',org:'Alamo Drafthouse',amt:15,type:'Pre-Auth',sid:'pi_3OxK...2R4S',status:'Captured',date:'Mar 5'},
+  {t:'T040-A',con:'Aisha Carter',org:'The Kitchen',amt:85,type:'Pre-Auth',sid:'pi_3OxK...4V6W',status:'Captured',date:'Mar 8'},
 ].map(r=>{const _fo=orders.find(o=>o.tickets&&o.tickets.includes(r.t));return`<tr>
   <td style="font-size:12px;font-weight:700;color:#0E4EF5">${r.t}</td>
   <td>${_fo?`<a class="tbl-link" style="font-size:11px" onclick="go('orderDetail',{orderId:'${_fo.id}'})">${_fo.id}</a>`:'<span style="color:#9CA3AF;font-size:11px">—</span>'}</td>
@@ -6349,14 +6448,14 @@ function renderSidebar(){
     <button class="sb-item" id="nav-pipeline" onclick="go('pipeline')">${svgI('chart')} Pipeline <span class="badge" style="background:#7C3AED">${orgs.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length+organizations.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length}</span></button>
     <button class="sb-item" id="nav-drops" onclick="go('drops')"><svg width="13" height="20" viewBox="82 36 196 292" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg> Drops</button>
     <button class="sb-item" id="nav-reservations" onclick="go('reservations')">${svgI('ticket')} Tickets</button>
-    <button class="sb-item" id="nav-orders" onclick="go('orders')">${svgI('dollar')} Orders</button>
-    <button class="sb-item" id="nav-promos" onclick="go('promos')">${svgI('tag')} Promos</button>
+    <button class="sb-item" id="nav-orders" onclick="go('orders')">${svgI('shoppingBag')} Orders</button>
+    <button class="sb-item" id="nav-promos" onclick="go('promos')">${svgI('percent')} Promos</button>
     <div class="sb-section">FINANCIAL</div>
     <button class="sb-item" id="nav-credits" onclick="go('credits')">${svgI('star')} Credits</button>
-    <button class="sb-item" id="nav-refunds" onclick="go('refunds')">${svgI('dollar')} Refunds</button>
+    <button class="sb-item" id="nav-refunds" onclick="go('refunds')">${svgI('undo')} Refunds</button>
     <button class="sb-item" id="nav-financials" onclick="go('financials')">${svgI('trending')} Financials</button>
     <div class="sb-section">INTERNAL</div>
-    <button class="sb-item" id="nav-team" onclick="go('team')">${svgI('users')} Nigh Team</button>
+    <button class="sb-item" id="nav-team" onclick="go('team')">${svgI('briefcase')} Nigh Team</button>
     <button class="sb-item" id="nav-niyaconfig" onclick="go('niyaconfig')">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Niya Config
