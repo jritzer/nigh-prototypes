@@ -17,11 +17,11 @@ select,button,input{font-family:inherit;}
 
 // ── ICONS ─────────────────────────────────────────────────────────────────────
 function nighBug(sz){sz=sz||32;return `<svg viewBox="80 44 200 280" width="${sz}" height="${sz}" xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="flex-shrink:0;display:inline-block;vertical-align:middle;"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>`;}
-function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,activity:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,dollar:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,bell:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,msgBubble:`<svg width="${sz}" height="${sz}" viewBox="-1 0 26 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7Q2 2 7 2H18Q24 2 24 7V15Q24 20 18 20H7Q4 20 2 23Z"/><circle cx="9" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="13" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>`,building:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="1"/><path d="M9 22V12h6v10"/><path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg>`,qr:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z" fill="currentColor" stroke="none"/></svg>`};return d[name]||'';}
+function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,locations:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/></svg>`,drops:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,customers:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,collections:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,link:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,analytics:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,users:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>`,billing:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,settings:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,sliders:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`,activity:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,dollar:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,bell:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,msgBubble:`<svg width="${sz}" height="${sz}" viewBox="-1 0 26 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7Q2 2 7 2H18Q24 2 24 7V15Q24 20 18 20H7Q4 20 2 23Z"/><circle cx="9" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="13" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="11" r="1.5" fill="currentColor" stroke="none"/></svg>`,building:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="1"/><path d="M9 22V12h6v10"/><path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01"/></svg>`,qr:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z" fill="currentColor" stroke="none"/></svg>`,heart:`<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`};return d[name]||'';}
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const TODAY_STR='2026-04-14';
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,collectionModal:null,brandDetail:null,partnerDetailId:null,partnerDeactivateConfirm:false,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,pushCap:0,pushMaxPerGuest:null,pushAudience:'public',pushAudienceGroups:[],pushEditDropId:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',guestView:'portfolio',guestLocFilter:null,guestLocModal:false,guestLocSelected:[],acctFilter:[],acctFilterModal:false,guestDetailGuest:null,guestMenu:null,guestBlocked:[],teamTab:'members',teamFilter:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026,headsUpModal:false,headsUpDate:TODAY_STR,headsUpLocId:null,headsUpText:'',headsUpNiya:false,selectedOrder:null,ticketStatusOverrides:{},ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,cancelTicketName:null,guestDetailTab:null,orderGuestFilter:null,manageSubModal:false,selectedPlanTier:null,subModalStep:null,editTags:null,editTagInput:'',brandEdit:false,editAcctType:null};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,collectionModal:null,brandDetail:null,partnerDetailId:null,partnerDeactivateConfirm:false,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,pushCap:0,pushMaxPerGuest:null,pushAudience:'public',pushAudienceGroups:[],pushEditDropId:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',guestView:'portfolio',guestLocFilter:null,guestLocModal:false,guestLocSelected:[],acctFilter:[],acctFilterModal:false,guestDetailGuest:null,guestMenu:null,guestBlocked:[],teamTab:'members',teamFilter:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026,headsUpModal:false,headsUpDate:TODAY_STR,headsUpLocId:null,headsUpText:'',headsUpNiya:false,selectedOrder:null,ticketStatusOverrides:{},ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,cancelTicketName:null,guestDetailTab:null,orderGuestFilter:null,manageSubModal:false,selectedPlanTier:null,subModalStep:null,editTags:null,editTagInput:'',brandEdit:false,editAcctType:null,followersTab:'list'};
 function ss(p){Object.assign(S,p);render();}
 function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,brandDetail:null,partnerDetailId:null,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushEditDropId:null,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,editAssignments:null,editDisplayName:undefined,editConfirm:null,teamFilter:'all',settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null,selectedOrder:null,ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,guestDetailTab:null,orderGuestFilter:null});}
 function refundTicket(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Refunded';ss({ticketStatusOverrides:o,dropModal:null,cancelTicketId:null,cancelTicketName:null});}
@@ -1166,7 +1166,7 @@ const CONFIGS={
     description:'Zoe Park is a Denver-based outdoor fitness creator hosting trail runs, sunrise HIIT drops, and community wellness experiences at parks, trails, and partner venues across Colorado.',
     tags:['Outdoor Fitness','Trail Running','HIIT','Wellness Community'],
     website:'zoeparkfitness.com',category:'Health & Fitness',subcategory:'Outdoor Fitness',
-    hier:[],locLabel:'Drop',locsLabel:'Drop Venues',
+    hier:[],locLabel:'Location',locsLabel:'Locations',
     dropTypes:[
       {id:'run',    label:'Group Run',         icon:'&#127939;',bg:'#ecfeff',c:'#0e7490'},
       {id:'hiit',   label:'HIIT Drop',          icon:'&#128170;',bg:'#f0fdf4',c:'#15803d'},
@@ -1467,6 +1467,15 @@ function acctProfileView(acct, c, acctType){
         <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;width:140px;flex-shrink:0;padding-top:1px;">Specialty Tags</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">${tags.length>0?tags.slice(0,3).map(t=>`<span style="font-size:0.7rem;font-weight:600;background:${color}12;color:${color};border-radius:20px;padding:3px 10px;">${t}</span>`).join(''):empty}</div>
       </div>
+      <div style="display:flex;padding:9px 0;border-bottom:1px solid #f8fafc;align-items:center;">
+        <div style="font-size:0.72rem;font-weight:700;color:#94a3b8;width:140px;flex-shrink:0;">Private Account</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:36px;height:20px;border-radius:10px;background:${acct.privateAccount?color:'#cbd5e1'};position:relative;cursor:pointer;">
+            <div style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;${acct.privateAccount?'right:2px':'left:2px'};box-shadow:0 1px 2px rgba(0,0,0,0.15);"></div>
+          </div>
+          <span style="font-size:0.78rem;color:#374151;">${acct.privateAccount?'On — new followers must be approved':'Off'}</span>
+        </div>
+      </div>
       ${row('Account Contact', contactStr)}
       ${!isBrand?row(c.hier[0]||'Region', acct.t1||''):''}
       ${!isBrand&&c.hier[1]?row(c.hier[1]||'District', acct.t2||''):''}
@@ -1587,6 +1596,21 @@ function acctEditForm(acct, c, acctType, onCancel, onSave){
       </div>
       <div style="font-size:0.65rem;color:#94a3b8;margin-top:5px;">${currentTags.length}/3 tags used · Press Enter or + to add</div>
     </div>
+
+    <!-- Private Account -->
+    ${(()=>{const priv=S.editPrivate!=null?S.editPrivate:!!(acct&&acct.privateAccount);return `
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:block;margin-bottom:8px;">Private Account</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div onclick="S.editPrivate=!${priv};render()" style="width:42px;height:24px;border-radius:12px;background:${priv?color:'#cbd5e1'};position:relative;cursor:pointer;transition:background 0.15s;">
+          <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;${priv?'right:2px':'left:2px'};box-shadow:0 1px 2px rgba(0,0,0,0.15);transition:all 0.15s;"></div>
+        </div>
+        <div>
+          <div style="font-size:0.82rem;font-weight:600;color:#374151;">Require follow approval</div>
+          <div style="font-size:0.68rem;color:#94a3b8;">When on, new followers must be approved before they can see your drops.</div>
+        </div>
+      </div>
+    </div>`;})()}
 
     ${sel('Account Contact',activeTeam.map(t=>({v:t.name,l:`${t.name} — ${t.role}`})),primaryContact,'60%')}
 
@@ -1729,7 +1753,7 @@ function venueModalFn(){
     <div onclick="event.stopPropagation()" style="background:#fff;border-radius:18px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,0.18);">
       <div style="padding:22px 24px 0;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-          <div style="font-size:1rem;font-weight:900;color:#0f172a;">${isEdit?'Edit Venue':'Add Drop Venue'}</div>
+          <div style="font-size:1rem;font-weight:900;color:#0f172a;">${isEdit?'Edit Location':'Add Location'}</div>
           <button onclick="ss({venueModal:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:30px;height:30px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;">
@@ -1871,7 +1895,8 @@ function sidebar(){
     {id:'dashboard',  label:'Dashboard',    icon:'dashboard'},
     {id:'drops',      label:'Drops',         icon:'nighBug'},
     {id:'customers',  label:'Guests',        icon:'customers'},
-    {id:'payouts',    label:'Revenue',       icon:'dollar'},
+    {id:'followers',  label:'Followers',     icon:'heart'},
+    {id:'payouts',    label:'Orders',        icon:'dollar'},
     {id:'analytics',  label:'Analytics',    icon:'analytics'},
     {id:'users',      label:'Team',          icon:'users'},
     {id:'partners',   label:'Partners',      icon:'link'},
@@ -2019,6 +2044,7 @@ function renderPage(){
   if(p==='locations')   return rLocations();
   if(p==='drops')       return rDrops();
   if(p==='customers')   return rCustomers();
+  if(p==='followers')   return rFollowers();
   if(p==='collections') return rCollections();
   if(p==='analytics')   return rAnalytics();
   if(p==='users')       return rUsers();
@@ -2131,7 +2157,7 @@ function rDashboard(){
       ${kpi('Live Drops',live.length,`${sched.length} scheduled`,c.color)}
       ${kpi('Total Reservations',fmtNum(totalRes),`across ${drops.length} drops`,'#0f172a')}
       ${kpi('Total Check-ins',fmtNum(totalCi),`${avgSr}% avg show rate`,'#0f172a')}
-      ${mode==='brand'?(()=>{const sv=c.savedVenues||[];const tz=sv.reduce((s,v)=>s+(v.zones||[]).length,0);return tz>0?kpi('Drop Zones',tz,sv.length+' '+(sv.length===1?'venue':'venues'),'#0f172a'):kpi('Drop Venues',sv.length,'drop location shortcuts','#0f172a');})():mode!=='single'?kpi('Active Locations',locs.filter(l=>l.status==='active').length,`${t1groups.length} ${(c.hier[0]||'group').toLowerCase()}s`,'#0f172a'):''}
+      ${mode==='brand'?(()=>{const sv=c.savedVenues||[];const tz=sv.reduce((s,v)=>s+(v.zones||[]).length,0);return tz>0?kpi('Drop Zones',tz,sv.length+' '+(sv.length===1?'venue':'venues'),'#0f172a'):kpi('Locations',sv.length,'saved locations','#0f172a');})():mode!=='single'?kpi('Active Locations',locs.filter(l=>l.status==='active').length,`${t1groups.length} ${(c.hier[0]||'group').toLowerCase()}s`,'#0f172a'):''}
       ${kpi('Followers',fmtNum(totalFollowers),mode==='brand'?`+${totalFollowersGrowth} this month`:`+${totalFollowersGrowth} across all locations`,'#7C3AED')}
     </div>
 
@@ -2480,7 +2506,7 @@ function rLocations(){
               <button onclick="ss({locQrLinking:'brand_${b.handle}',locQrStep:1})" style="padding:7px 14px;background:${bColor};color:#fff;border:none;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('qr',14)} Link Sticker</button>
             </div>
             <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:22px 24px;">
-              <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this brand. When scanned, customers go to @${b.handle}'s Nigh profile.</div>
+              <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this brand. When scanned, guests go to @${b.handle}'s Nigh profile.</div>
               <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">
                 <div style="width:34px;height:34px;border-radius:8px;background:${bColor}12;display:flex;align-items:center;justify-content:center;color:${bColor};flex-shrink:0;">${ic('qr',18)}</div>
                 <div style="flex:1;">
@@ -2802,7 +2828,7 @@ function locationDetail(l){
 
       ${acctTab==='qr'?`
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:22px 24px;">
-          <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this account. When scanned, customers go to this account's Nigh profile to follow and see live drops.</div>
+          <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this account. When scanned, guests go to this account's Nigh profile to follow and see live drops.</div>
           ${(()=>{
             const locQrCodes=(S.locQrCodes||{})[l.id]||[
               {id:'NQ-B2D8F1',label:'Main Entrance',status:'active',scans:214,linked:'Mar 1, 2026'},
@@ -2837,7 +2863,7 @@ function locationDetail(l){
             <div style="width:52px;height:52px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem;">🚫</div>
             <div style="font-size:1rem;font-weight:900;color:#0f172a;margin-bottom:8px;">Deactivate Sticker?</div>
             <div style="font-size:0.82rem;color:#64748b;line-height:1.6;margin-bottom:22px;">
-              The sticker <strong style="color:#0f172a;">${S.locQrConfirm.label}</strong> (<span style="font-family:monospace;font-size:0.78rem;">${S.locQrConfirm.qrId}</span>) will stop redirecting customers. This cannot be undone — you'll need a new sticker to replace it.
+              The sticker <strong style="color:#0f172a;">${S.locQrConfirm.label}</strong> (<span style="font-family:monospace;font-size:0.78rem;">${S.locQrConfirm.qrId}</span>) will stop redirecting guests. This cannot be undone — you'll need a new sticker to replace it.
             </div>
             <div style="display:flex;gap:10px;">
               <button onclick="ss({locQrConfirm:null})" style="flex:1;padding:11px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Cancel</button>
@@ -2906,7 +2932,7 @@ function addBrandOrLocModal(){
         <div style="font-size:0.8rem;color:#64748b;margin-bottom:22px;">Choose whether you're adding a brand identity or a physical location to this org.</div>
         <div style="display:flex;flex-direction:column;gap:12px;">
           ${optCard('🏷️','Brand','A brand identity with no fixed address — for sub-brands, product lines, or co-brands under this org.',"ss({addBrandLocModal:false,addBrandModal:true})")}
-          ${optCard('📍',c.locLabel||'Location','A physical address — store, venue, restaurant, or any location your customers visit.',"ss({addBrandLocModal:false,addLocModal:true})")}
+          ${optCard('📍',c.locLabel||'Location','A physical address — store, venue, restaurant, or any location your guests visit.',"ss({addBrandLocModal:false,addLocModal:true})")}
         </div>
       </div>
     </div>
@@ -3169,7 +3195,7 @@ function rDrops(){
     <div style="display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;margin-bottom:22px;width:fit-content;">
       <button onclick="ss({dropsTab:null,locationDetail:null,collectionDetail:null})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${activeTab==='drops'?'#fff':'transparent'};color:${activeTab==='drops'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='drops'?'0 1px 4px rgba(0,0,0,0.1)':'none'};">Drops</button>
       <button onclick="ss({dropsTab:'collections',locationDetail:null,collectionDetail:null})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${activeTab==='collections'?'#fff':'transparent'};color:${activeTab==='collections'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='collections'?'0 1px 4px rgba(0,0,0,0.1)':'none'};">Collections</button>
-      ${showVenuesTab?`<button onclick="ss({dropsTab:'venues',locationDetail:null,collectionDetail:null})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${activeTab==='venues'?'#fff':'transparent'};color:${activeTab==='venues'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='venues'?'0 1px 4px rgba(0,0,0,0.1)':'none'};">Venues</button>`:''}
+      ${showVenuesTab?`<button onclick="ss({dropsTab:'venues',locationDetail:null,collectionDetail:null})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${activeTab==='venues'?'#fff':'transparent'};color:${activeTab==='venues'?'#0f172a':'#94a3b8'};box-shadow:${activeTab==='venues'?'0 1px 4px rgba(0,0,0,0.1)':'none'};">Locations</button>`:''}
     </div>`;
 
   // ── Collections sub-tab ──
@@ -3231,7 +3257,7 @@ function rDrops(){
         return `<div style="padding:28px 32px;">
           ${tabBar}
           <button onclick="ss({venueDetail:null})" style="display:flex;align-items:center;gap:6px;background:none;border:none;color:#64748b;font-size:0.8rem;font-weight:700;cursor:pointer;padding:0;margin-bottom:20px;">
-            <span style="font-size:1rem;">←</span> Back to Drop Venues
+            <span style="font-size:1rem;">←</span> Back to Locations
           </button>
           <div style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;padding:22px 24px;margin-bottom:20px;">
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
@@ -3299,8 +3325,8 @@ function rDrops(){
       ${tabBar}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;max-width:860px;">
         <div>
-          <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Drop Venues</div>
-          <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">Click a venue to view its drop zones</div>
+          <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Locations</div>
+          <div style="font-size:0.78rem;color:#64748b;margin-top:2px;">Click a location to view its drop zones</div>
         </div>
         <button onclick="ss({venueModal:'add',venueModalId:null})" style="background:${c.color};color:#fff;border:none;padding:9px 20px;border-radius:10px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ Add Venue</button>
       </div>
@@ -4033,6 +4059,142 @@ function dropModalPanel(){
 }
 
 function sampleGuestCount(){return 8;}
+
+// ── FOLLOWERS ──────────────────────────────────────────────────────────────
+function rFollowers(){
+  const c=cfg();
+  const tab=S.followersTab||'list';
+  const tabBtn=(id,label)=>`<button onclick="ss({followersTab:'${id}'})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${tab===id?'#fff':'transparent'};color:${tab===id?'#0f172a':'#94a3b8'};box-shadow:${tab===id?'0 1px 4px rgba(0,0,0,0.1)':'none'};">${label}</button>`;
+  const isPrivate=!!(c.privateAccount);
+
+  const followers=[
+    {name:'Emily Chen',handle:'@emilyc',since:'Jan 5, 2026',drops:12,status:'Active'},
+    {name:'Marcus Johnson',handle:'@marcusj',since:'Jan 12, 2026',drops:8,status:'Active'},
+    {name:'Sofia Ramirez',handle:'@sofiar',since:'Jan 18, 2026',drops:15,status:'Active'},
+    {name:'Tyler Brooks',handle:'@tylerb',since:'Feb 1, 2026',drops:6,status:'Active'},
+    {name:'Aisha Patel',handle:'@aishap',since:'Feb 8, 2026',drops:10,status:'Active'},
+    {name:'Jordan Lee',handle:'@jordanl',since:'Feb 14, 2026',drops:4,status:'Active'},
+    {name:'Mia Thompson',handle:'@miat',since:'Feb 22, 2026',drops:9,status:'Active'},
+    {name:'Chris Nguyen',handle:'@chrisn',since:'Mar 1, 2026',drops:3,status:'Active'},
+    {name:'Rachel Kim',handle:'@rachelk',since:'Mar 8, 2026',drops:7,status:'Active'},
+    {name:'David Okafor',handle:'@davido',since:'Mar 15, 2026',drops:2,status:'Active'},
+    {name:'Nina Petrova',handle:'@ninap',since:'Mar 20, 2026',drops:5,status:'Active'},
+    {name:'Sam Ruiz',handle:'@samr',since:'Apr 1, 2026',drops:1,status:'Active'},
+  ];
+
+  const requests=[
+    {name:'Alex Thompson',handle:'@alext',requested:'Apr 10, 2026'},
+    {name:'Jamie Park',handle:'@jamiep',requested:'Apr 12, 2026'},
+    {name:'Casey Morgan',handle:'@caseym',requested:'Apr 14, 2026'},
+  ];
+
+  const followLink='nigh.app/'+c.short.toLowerCase().replace(/[^a-z0-9]/g,'');
+
+  const statCards=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px;">
+      ${[
+        ['Total Followers',followers.length,c.color],
+        ['This Month','3','#16a34a'],
+        ['Avg Drops Attended','6.8','#7c3aed'],
+        ...(isPrivate?[['Pending Requests',requests.length,'#f59e0b']]:[]),
+      ].map(([label,val,color])=>`
+        <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+          <div style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">${label}</div>
+          <div style="font-size:1.4rem;font-weight:900;color:#0f172a;margin-top:4px;">${val}</div>
+        </div>`).join('')}
+    </div>`;
+
+  const listTab=`
+    ${statCards}
+    <div style="margin-bottom:14px;">
+      <input placeholder="Search followers..." style="width:280px;padding:9px 14px;border:1px solid #e5e7eb;border-radius:10px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'"/>
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
+        <div>Follower</div><div>Since</div><div>Drops Attended</div><div>Status</div><div></div>
+      </div>
+      ${followers.map(f=>`
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:${c.color}18;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:${c.color};">${f.name.split(' ').map(w=>w[0]).join('')}</div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${f.name}</div>
+              <div style="font-size:0.68rem;color:#94a3b8;">${f.handle}</div>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:#64748b;">${f.since}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${f.drops}</div>
+          <div><span style="background:#dcfce7;color:#16a34a;font-size:0.65rem;font-weight:700;padding:2px 10px;border-radius:20px;">${f.status}</span></div>
+          <div style="text-align:right;">
+            <button style="font-size:0.7rem;color:#ef4444;background:none;border:none;cursor:pointer;font-weight:600;">Remove</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  const requestsTab=isPrivate?`
+    ${requests.length>0?`
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:2fr 1fr 120px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
+        <div>User</div><div>Requested</div><div></div>
+      </div>
+      ${requests.map(r=>`
+        <div style="display:grid;grid-template-columns:2fr 1fr 120px;padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b18;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#f59e0b;">${r.name.split(' ').map(w=>w[0]).join('')}</div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${r.name}</div>
+              <div style="font-size:0.68rem;color:#94a3b8;">${r.handle}</div>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:#64748b;">${r.requested}</div>
+          <div style="display:flex;gap:6px;justify-content:flex-end;">
+            <button style="padding:5px 12px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">Accept</button>
+            <button style="padding:5px 12px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">Decline</button>
+          </div>
+        </div>`).join('')}
+    </div>`:`
+    <div style="text-align:center;padding:60px 20px;color:#94a3b8;">
+      <div style="font-size:2rem;margin-bottom:8px;">&#10003;</div>
+      <div style="font-size:0.88rem;font-weight:700;color:#64748b;">No pending requests</div>
+      <div style="font-size:0.78rem;margin-top:4px;">All follow requests have been handled.</div>
+    </div>`}`:`
+    <div style="text-align:center;padding:60px 20px;color:#94a3b8;">
+      <div style="font-size:2rem;margin-bottom:8px;">🔓</div>
+      <div style="font-size:0.88rem;font-weight:700;color:#64748b;">Account is public</div>
+      <div style="font-size:0.78rem;margin-top:4px;">Follow requests are only available when your account is set to Private. Go to your profile settings to enable Private Account.</div>
+    </div>`;
+
+  const linkTab=`
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:28px;max-width:480px;">
+      <div style="font-size:0.88rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Your Follow Link</div>
+      <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Share this link so people can follow you on Nigh.</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+        <div style="flex:1;padding:10px 14px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;font-size:0.85rem;font-weight:600;color:${c.color};">${followLink}</div>
+        <button style="padding:10px 16px;background:${c.color};color:#fff;border:none;border-radius:10px;font-size:0.78rem;font-weight:700;cursor:pointer;">Copy</button>
+      </div>
+      <div style="text-align:center;padding:20px;background:#f8fafc;border-radius:12px;margin-bottom:16px;">
+        <div style="width:140px;height:140px;background:#fff;border:2px solid #e5e7eb;border-radius:12px;margin:0 auto;display:flex;align-items:center;justify-content:center;">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+            ${Array(25).fill(0).map(()=>`<div style="width:8px;height:8px;background:${Math.random()>0.4?'#0f172a':'#fff'};border-radius:1px;"></div>`).join('')}
+          </div>
+        </div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:8px;">Scan to follow</div>
+      </div>
+      <button style="width:100%;padding:10px;background:#f1f5f9;border:none;border-radius:10px;font-size:0.78rem;font-weight:700;cursor:pointer;color:#374151;">Download QR Code</button>
+    </div>`;
+
+  return `<div style="padding:28px 32px;max-width:960px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Followers</div>
+      <div style="display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;">
+        ${tabBtn('list','List')}
+        ${tabBtn('requests','Requests')}${isPrivate?`<span style="background:#f59e0b;color:#fff;font-size:0.55rem;font-weight:800;padding:1px 5px;border-radius:8px;position:relative;top:-8px;left:-4px;">${requests.length}</span>`:''}
+        ${tabBtn('link','Follow Link')}
+      </div>
+    </div>
+    ${tab==='list'?listTab:tab==='requests'?requestsTab:linkTab}
+  </div>`;
+}
 
 // ── GUESTS ─────────────────────────────────────────────────────────────────
 function rCustomers(){
@@ -5011,8 +5173,8 @@ function rUsers(){
   // locked: permissions whose ceiling cannot be raised by an Admin
   const ROLES=[
     {id:'admin',
-     name:'Admin',        short:'Admin',   color:'#1d4ed8', bg:'#eff6ff',
-     desc:'Full access to all features including billing. The Account Owner is a protected Admin whose role cannot be changed or removed.',
+     name:'Account Admin', short:'Admin',   color:'#1d4ed8', bg:'#eff6ff',
+     desc:'Full access to all features including billing. The Account Owner is a protected Account Admin whose role cannot be changed or removed.',
      scope:'All locations', scopeFixed:true,
      perms:{
        drops_create:true,  drops_approve:true,  drops_delete:true,
@@ -6520,13 +6682,13 @@ function rSetup(){
   const sv=c.savedVenues||[];
   const totalZones=sv.reduce((s,v)=>s+(v.zones||[]).length,0);
   const hierHTML=isBrand?card(`
-    ${sectionHd('Drop Venue Structure','Manage the venues and drop zones that organize your activations.')}
+    ${sectionHd('Location Structure','Manage the locations and drop zones that organize your activations.')}
     <div style="display:flex;flex-direction:column;gap:0;">
       <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed #f1f5f9;">
         <div style="width:24px;height:24px;border-radius:50%;background:${c.color}18;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;">📍</div>
         <div style="flex:1;">
-          <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-bottom:2px;">Drop Venues</div>
-          <div style="font-size:0.68rem;color:#94a3b8;">${sv.length} venue${sv.length!==1?'s':''} configured — ${sv.slice(0,3).map(v=>v.name).join(', ')}${sv.length>3?` +${sv.length-3} more`:''}</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#0f172a;margin-bottom:2px;">Locations</div>
+          <div style="font-size:0.68rem;color:#94a3b8;">${sv.length} location${sv.length!==1?'s':''} configured — ${sv.slice(0,3).map(v=>v.name).join(', ')}${sv.length>3?` +${sv.length-3} more`:''}</div>
         </div>
         ${editBtn()}
       </div>
@@ -6540,7 +6702,7 @@ function rSetup(){
       </div>
     </div>
     <div style="margin-top:10px;display:flex;gap:8px;">
-      <button onclick="ss({page:'drops',dropsTab:'venues'})" style="padding:7px 14px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">Manage Venues &amp; Zones</button>
+      <button onclick="ss({page:'drops',dropsTab:'venues'})" style="padding:7px 14px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">Manage Locations &amp; Zones</button>
     </div>`):card(`
     ${sectionHd('Location Hierarchy','Define the tiers that organize your locations — rename them to match your org structure.')}
     <div style="display:flex;flex-direction:column;gap:0;">
@@ -8119,7 +8281,7 @@ function pushModal(){
     ];
     body=`<div style="display:flex;flex-direction:column;gap:14px;padding-top:4px;">
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;">Drop Tickets <span style="color:#EF4444;">*</span></label>
+        <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;">Number of Spots <span style="color:#EF4444;">*</span></label>
         <div style="display:flex;gap:8px;">
           <div style="width:280px;"><input type="number" id="push-cap" placeholder="Number of spots" value="${S.pushCap||''}" oninput="S.pushCap=parseInt(this.value)||0" onchange="(function(){if(S.pushMaxPerGuest&&S.pushCap>=1&&S.pushCap<=3&&S.pushMaxPerGuest>S.pushCap)S.pushMaxPerGuest=null;render();})()" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;box-sizing:border-box;font-family:inherit;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#E5E7EB'"/></div>
         </div>
@@ -8136,17 +8298,18 @@ function pushModal(){
         ${S.pushMaxPerGuest===1?`<div style="font-size:10px;color:#9CA3AF;margin-top:6px;line-height:1.5;">Purchaser can not transfer their ticket.</div>`:S.pushMaxPerGuest>=2?`<div style="font-size:10px;color:#9CA3AF;margin-top:6px;line-height:1.5;">Purchaser can transfer or check-in any additional tickets on their phone.</div>`:''}
       </div>
       <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;display:block;">Who Can Purchase Tickets</label>
+        <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;display:block;">Who Can Reserve Tickets</label>
         <div style="position:relative;display:inline-block;width:280px;margin-bottom:${S.pushAudience==='groups'?'8px':'0'};">
           <select onchange="S.pushAudience=this.value;render()" style="width:100%;padding:10px 32px 10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;font-family:inherit;appearance:none;cursor:pointer;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#E5E7EB'">
-            <option value="public" ${S.pushAudience==='public'?'selected':''}>Anyone on Nigh</option>
-            <option value="followers" ${S.pushAudience==='followers'?'selected':''}>Only Followers</option>
-            <option value="guests" ${S.pushAudience==='guests'?'selected':''}>All Guests / Customers</option>
-            <option value="groups" ${S.pushAudience==='groups'?'selected':''}>Specific Guest Group(s)</option>
+            <option value="public" ${S.pushAudience==='public'?'selected':''}>Public</option>
+            <option value="followers" ${S.pushAudience==='followers'?'selected':''}>Followers Only</option>
+            <option value="groups" ${S.pushAudience==='groups'?'selected':''}>Select Specific List</option>
+            <option value="link" ${S.pushAudience==='link'?'selected':''}>Anyone with Link</option>
+            <option value="password" ${S.pushAudience==='password'?'selected':''}>Password Protected</option>
           </select>
           <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF;">▾</span>
         </div>
-        ${S.pushAudience==='groups'?`<div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;">${dagList2.map((g,gi)=>{const chk=(S.pushAudienceGroups||[]).includes(g.id);return`<button onclick="(function(){var a=(S.pushAudienceGroups||[]).slice();var i=a.indexOf('${g.id}');if(i>-1)a.splice(i,1);else a.push('${g.id}');S.pushAudienceGroups=a;render()})()" style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 13px;background:${chk?'#F0F9FF':'#fff'};border:none;${gi<3?'border-bottom:1px solid #F3F4F6;':''}cursor:pointer;text-align:left;box-sizing:border-box;"><div style="width:18px;height:18px;border-radius:4px;border:2px solid ${chk?c.color:'#D1D5DB'};background:${chk?c.color:'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${chk?`<svg width="8" height="8" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div><span style="flex:1;font-size:13px;color:#111827;">${g.name}</span><span style="font-size:11px;color:#9CA3AF;">${g.count.toLocaleString()} guests</span></button>`;}).join('')}</div>`:``}
+        ${S.pushAudience==='groups'?`<div style="border:1px solid #E5E7EB;border-radius:10px;overflow:hidden;">${dagList2.map((g,gi)=>{const chk=(S.pushAudienceGroups||[]).includes(g.id);return`<button onclick="(function(){var a=(S.pushAudienceGroups||[]).slice();var i=a.indexOf('${g.id}');if(i>-1)a.splice(i,1);else a.push('${g.id}');S.pushAudienceGroups=a;render()})()" style="width:100%;display:flex;align-items:center;gap:12px;padding:11px 13px;background:${chk?'#F0F9FF':'#fff'};border:none;${gi<3?'border-bottom:1px solid #F3F4F6;':''}cursor:pointer;text-align:left;box-sizing:border-box;"><div style="width:18px;height:18px;border-radius:4px;border:2px solid ${chk?c.color:'#D1D5DB'};background:${chk?c.color:'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${chk?`<svg width="8" height="8" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div><span style="flex:1;font-size:13px;color:#111827;">${g.name}</span><span style="font-size:11px;color:#9CA3AF;">${g.count.toLocaleString()} guests</span></button>`;}).join('')}</div>`:S.pushAudience==='link'?`<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:10px 12px;font-size:11px;color:#9A3412;line-height:1.5;">🔗 A shareable link will be generated after publishing. Only people with the link can view and reserve.</div>`:S.pushAudience==='password'?`<div style="margin-top:4px;"><input type="text" placeholder="Enter drop password" value="${S.pushPassword||''}" oninput="S.pushPassword=this.value" style="width:280px;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;box-sizing:border-box;font-family:inherit;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#E5E7EB'"/><div style="font-size:10px;color:#9CA3AF;margin-top:6px;">Guests must enter this password to view and reserve tickets.</div></div>`:``}
       </div>
       <div>
         <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block;">Price Per Ticket <span style="color:#EF4444;">*</span></label>
@@ -8161,10 +8324,10 @@ function pushModal(){
           </button>
         </div>
         ${dual?`
-        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#15803d;line-height:1.5;">&#11088; <strong>Dual pricing on.</strong> People who have a ticket from you on Nigh will see the <strong>Existing Customer</strong> price. Everyone else sees the <strong>New Customer</strong> price.</div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:11px;color:#15803d;line-height:1.5;">&#11088; <strong>Dual pricing on.</strong> People who have a ticket from you on Nigh will see the <strong>Existing Guest</strong> price. Everyone else sees the <strong>New Guest</strong> price.</div>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <div style="flex:1;"><label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block;">New Customer</label><div style="position:relative;"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF;">$</span><input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border-radius:8px;border:1.5px solid ${c.color};font-size:13px;outline:none;font-family:inherit;"/></div></div>
-          <div style="flex:1;"><label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block;">Existing Customer</label><div style="position:relative;"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF;">$</span><input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit;"/></div></div>
+          <div style="flex:1;"><label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block;">New Guest</label><div style="position:relative;"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF;">$</span><input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border-radius:8px;border:1.5px solid ${c.color};font-size:13px;outline:none;font-family:inherit;"/></div></div>
+          <div style="flex:1;"><label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:4px;display:block;">Existing Guest</label><div style="position:relative;"><span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF;">$</span><input type="number" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:9px 10px 9px 24px;border-radius:8px;border:1px solid #E5E7EB;font-size:13px;outline:none;font-family:inherit;"/></div></div>
         </div>
         <div style="font-size:11px;color:#6B7280;">$0.00 = FREE &nbsp;·&nbsp; $5.00 min for priced drops</div>`:`
         <div style="margin-bottom:4px;">
@@ -8205,7 +8368,7 @@ function pushModal(){
     const revDateVal=fmtRevDate(S.pushDate)||'—';
     const revTimeVal=(()=>{if(timing==='window'){const ws=fmtRevTime(S.pushWindowStart),we=fmtRevTime(S.pushWindowEnd);return ws&&we?ws+' – '+we:ws||'—';}return fmtRevTime(S.pushStartTime)||'—';})();
     let broadcastDisplay;({broadcastDisplay,isImmDrop}=(()=>{if(!S.pushDate)return {broadcastDisplay:'24 hrs before · ends 15 min before '+timeDisplay.toLowerCase(),isImmDrop:false};const fmtT=d=>d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});const fmtD2=d=>d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});const pSt=timing==='start'?S.pushStartTime:S.pushWindowStart;if(!pSt)return {broadcastDisplay:'24 hrs before · ends 15 min before '+timeDisplay.toLowerCase(),isImmDrop:false};const[y,mo,d]=S.pushDate.split('-').map(Number);const[sh,sm]=(pSt||'12:00').split(':').map(Number);const startDt=new Date(y,mo-1,d,sh,sm);const liveDt=new Date(startDt.getTime()-24*60*60*1000);const pEt=timing==='window'?S.pushWindowEnd:S.pushStartTime;const[eh,em]=((pEt||pSt||'12:00').split(':').map(Number));const endDt=new Date(y,mo-1,d,eh,em);const endBDt=new Date(endDt.getTime()-15*60*1000);const now=new Date();const isImm=liveDt<=now;return {broadcastDisplay:(isImm?'Immediately':fmtT(liveDt)+' on '+fmtD2(liveDt))+' · ends '+fmtT(endBDt)+' on '+fmtD2(endBDt),isImmDrop:isImm};})());
-    const audienceDisplay=S.pushAudience==='public'?'Anyone on Nigh':S.pushAudience==='followers'?'Only Followers':S.pushAudience==='guests'?'All Guests / Customers':'Specific Guest Group(s)';
+    const audienceDisplay=S.pushAudience==='public'?'Public':S.pushAudience==='followers'?'Followers Only':S.pushAudience==='groups'?'Select Specific List':S.pushAudience==='link'?'Anyone with Link':S.pushAudience==='password'?'Password Protected':'Public';
     const pricingDisplay=dual?'Dual pricing — New & Existing':'Single price for all guests';
     const pushPartners2=S.pushPartners&&S.pushPartners.length?S.pushPartners.join(', '):'None';
     const activeLocs4=locs.filter(l=>l.status==='active');
@@ -8448,7 +8611,7 @@ function addBizModal(){
         <div style="font-size:0.78rem;font-weight:700;color:#374151;margin-bottom:10px;">What's included</div>
         ${[
           ['🏷️','<strong>Profile &amp; handle</strong>','Your brand identity without requiring a fixed address'],
-          ['📍','<strong>Drop Venues</strong>','Save addresses as shortcuts for fast drop creation — not public pages'],
+          ['📍','<strong>Locations</strong>','Save addresses as shortcuts for fast drop creation — not public pages'],
           ['📣','<strong>Followers &amp; drops</strong>','Build your audience and broadcast drops anywhere you operate'],
           ['👥','<strong>Separate team &amp; billing</strong>','Invite staff and choose a plan independently of your other account'],
         ].map(([icon,title,sub])=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #F1F5F9;">
