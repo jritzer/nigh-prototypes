@@ -1427,7 +1427,7 @@ function acctProfileView(acct, c, acctType){
   const category = acct.category||c.category||'';
   const subcategory = acct.subcategory||c.subcategory||'';
   const tags = acct.tags||c.tags||[];
-  const handle = acct.handle ? '@'+acct.handle : '';
+  const handle = hAt(acct.handle||'');
   const joined = acct.yr?(()=>{
     const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
     return months[Math.abs((acct.id||'x').charCodeAt(1)+acct.yr)%12]+' '+acct.yr;
@@ -1679,6 +1679,7 @@ function dayBadge(dayId){
 function pct(a,b){return b>0?Math.round(a/b*100):0;}
 function fmtMoney(n){return '$'+n.toLocaleString();}
 function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+function hAt(h){return h?(h.startsWith('@')?h:'@'+h):'';}  // safe handle display — prevents @@
 function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
 function infoRow(l,v){return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${l}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${v}</span></div>`;}
 function getFilteredDrops(){
@@ -2099,7 +2100,7 @@ function acctFilterWidget(c){
         ${filterOrgs.map(l=>`<label onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
           <input type="checkbox" ${sel.includes(l.id)?'checked':''} onchange="event.stopPropagation();ss({acctFilter:this.checked?[...(S.acctFilter||[]),'${l.id}']:(S.acctFilter||[]).filter(function(id){return id!=='${l.id}';})})" style="width:15px;height:15px;accent-color:${c.color};cursor:pointer;flex-shrink:0;">
           <div>
-            <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">@${l.handle}</div>
+            <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${hAt(l.handle)}</div>
             <div style="font-size:0.65rem;color:#94a3b8;">${l.name||''}</div>
           </div>
         </label>`).join('')}
@@ -2163,23 +2164,34 @@ function rDashboard(){
 
     <!-- Today's Heads Up -->
     ${locs.length===0?'':(()=>{
-      const todayHU=getHeadsUp(locs[0].id, TODAY_STR);
-      return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 20px;margin-bottom:18px;display:flex;align-items:center;gap:16px;">
-        <div style="width:38px;height:38px;border-radius:10px;background:#f0f4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E4EF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 19-9v18L3 13"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-            <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">Today's Heads Up</span>
-            <span style="font-size:0.62rem;font-weight:700;color:#64748b;background:#f1f5f9;padding:2px 7px;border-radius:10px;">Apr 10 · expires midnight</span>
-            ${todayHU&&todayHU.sent?`<span style="font-size:0.62rem;font-weight:700;color:#16a34a;background:#dcfce7;padding:2px 7px;border-radius:10px;">Sent ${todayHU.time}</span>`:''}
+      const huLocs=locs.filter(l=>l.type!=='hq');
+      const todayHUs=getHeadsUpMulti(huLocs.map(l=>l.id), TODAY_STR);
+      const todayHU=todayHUs.length>0?todayHUs[0].hu:null;
+      const huCount=todayHUs.length;
+      const noHuCount=huLocs.length-huCount;
+      return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:16px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#f0f4ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E4EF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 19-9v18L3 13"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
           </div>
-          ${todayHU
-            ?`<div style="font-size:0.82rem;color:#374151;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${todayHU.text}"</div>
-               <div style="font-size:0.68rem;color:#94a3b8;margin-top:3px;">by ${todayHU.author}</div>`
-            :`<div style="font-size:0.82rem;color:#94a3b8;font-style:italic;">No Heads Up scheduled for today</div>`}
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span style="font-size:0.78rem;font-weight:800;color:#0f172a;">Today's Heads Up</span>
+              <span style="font-size:0.62rem;font-weight:700;color:#64748b;background:#f1f5f9;padding:2px 7px;border-radius:10px;">Apr 10 · expires midnight</span>
+              ${huCount>0?`<span style="font-size:0.62rem;font-weight:700;color:#16a34a;background:#dcfce7;padding:2px 7px;border-radius:10px;">${huCount} account${huCount>1?'s':''} scheduled</span>`:''}
+              ${huLocs.length>1&&noHuCount>0?`<span style="font-size:0.62rem;font-weight:700;color:#f59e0b;background:#fef3c7;padding:2px 7px;border-radius:10px;">${noHuCount} without</span>`:''}
+            </div>
+            ${todayHU
+              ?`<div style="font-size:0.82rem;color:#374151;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"${todayHU.text}"</div>
+                 <div style="font-size:0.68rem;color:#94a3b8;margin-top:3px;">by ${todayHU.author}${huCount>1?' · +' +(huCount-1)+' more account'+(huCount>2?'s':''):''}</div>`
+              :`<div style="font-size:0.82rem;color:#94a3b8;font-style:italic;">No Heads Up scheduled for today</div>`}
+          </div>
+          <button onclick="ss({headsUpModal:true,headsUpDate:'${TODAY_STR}',headsUpLocId:'${huLocs[0]?.id||''}',headsUpAccts:${huCount>0?JSON.stringify(todayHUs.map(h=>h.locId)):JSON.stringify([huLocs[0]?.id||''])},headsUpText:'${todayHU?todayHU.text.replace(/'/g,"\\\\'"):''}',headsUpNiya:false})" style="padding:7px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;font-size:0.75rem;font-weight:700;color:#374151;cursor:pointer;flex-shrink:0;white-space:nowrap;">${todayHU?'Edit':'+ Write'}</button>
         </div>
-        <button onclick="ss({headsUpModal:true,headsUpDate:'${TODAY_STR}',headsUpLocId:'${locs[0].id}',headsUpText:'${todayHU?todayHU.text:''}',headsUpNiya:false})" style="padding:7px 14px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;font-size:0.75rem;font-weight:700;color:#374151;cursor:pointer;flex-shrink:0;white-space:nowrap;">${todayHU?'Edit':'+ Write'}</button>
+        ${huLocs.length>1&&huCount>0?`
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;">
+          ${todayHUs.map(h=>{const loc=huLocs.find(l=>l.id===h.locId);return loc?'<span style="font-size:0.62rem;font-weight:700;background:'+c.color+'12;color:'+c.color+';padding:2px 8px;border-radius:12px;">'+hAt(loc.handle)+(h.hu.sent?' &#10003;':'')+'</span>':'';}).join('')}
+        </div>`:''}
       </div>`;
     })()}
 
@@ -2297,7 +2309,7 @@ function rBrandProfile(showBack){
           <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${c.name}</div>
           <span style="font-size:0.65rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;">Active</span>
         </div>
-        <div style="font-size:0.75rem;color:${c.color};font-weight:700;margin-top:1px;">@${c.handle}</div>
+        <div style="font-size:0.75rem;color:${c.color};font-weight:700;margin-top:1px;">${hAt(c.handle)}</div>
       </div>
     </div>
 
@@ -2387,7 +2399,7 @@ function rBrandProfile(showBack){
           <div style="width:64px;height:64px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:2rem;">&#9639;</div>
           <div>
             <div style="font-size:0.82rem;font-weight:700;color:#0f172a;margin-bottom:2px;">${c.handle} — Brand QR</div>
-            <div style="font-size:0.7rem;color:#64748b;">nigh.com/@${c.handle} · 1 active sticker</div>
+            <div style="font-size:0.7rem;color:#64748b;">nigh.com/${hAt(c.handle)} · 1 active sticker</div>
           </div>
           <button style="margin-left:auto;padding:6px 14px;border:1px solid #e5e7eb;border-radius:8px;font-size:0.73rem;font-weight:600;background:#fff;cursor:pointer;color:#374151;">Download</button>
         </div>
@@ -2446,7 +2458,7 @@ function rLocations(){
                 <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${b.name}</div>
                 <span style="font-size:0.65rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;">Active</span>
               </div>
-              <div style="font-size:0.75rem;color:${bColor};font-weight:700;margin-top:1px;">@${b.handle}</div>
+              <div style="font-size:0.75rem;color:${bColor};font-weight:700;margin-top:1px;">${hAt(b.handle)}</div>
             </div>
           </div>
 
@@ -2506,7 +2518,7 @@ function rLocations(){
               <button onclick="ss({locQrLinking:'brand_${b.handle}',locQrStep:1})" style="padding:7px 14px;background:${bColor};color:#fff;border:none;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">${ic('qr',14)} Link Sticker</button>
             </div>
             <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:22px 24px;">
-              <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this brand. When scanned, guests go to @${b.handle}'s Nigh profile.</div>
+              <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Stickers linked to this brand. When scanned, guests go to ${hAt(b.handle)}'s Nigh profile.</div>
               <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">
                 <div style="width:34px;height:34px;border-radius:8px;background:${bColor}12;display:flex;align-items:center;justify-content:center;color:${bColor};flex-shrink:0;">${ic('qr',18)}</div>
                 <div style="flex:1;">
@@ -2572,7 +2584,7 @@ function rLocations(){
                     <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${c.short}</span>
                     <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                   </div>
-                  <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">@${c.handle}</div>
+                  <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(c.handle)}</div>
                 </div>
                 <span style="font-size:0.65rem;color:#94a3b8;">›</span>
               </div>
@@ -2585,7 +2597,7 @@ function rLocations(){
                   <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${b.name}</span>
                   <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                 </div>
-                ${b.handle?`<div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">@${b.handle}</div>`:''}
+                ${b.handle?`<div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(b.handle)}</div>`:''}
               </div>
               <span style="font-size:0.65rem;color:#94a3b8;">›</span>
             </div>`).join('')}</div>`
@@ -2598,7 +2610,7 @@ function rLocations(){
                   <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${c.short}</span>
                   <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                 </div>
-                <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">@${c.handle}</div>
+                <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(c.handle)}</div>
               </div>
               <span style="font-size:0.65rem;color:#94a3b8;">›</span>
             </div>
@@ -2761,7 +2773,7 @@ function locationDetail(l){
       ${acctLogoImg(l.website||c.website, c.color, l.name, 36)}
       <div>
         <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${l.name}</div>
-        <div style="font-size:0.75rem;color:#64748b;">${l.handle?'@'+l.handle:l.city+', '+l.state} · ${badge(l.status)}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${l.handle?(l.handle.startsWith('@')?l.handle:'@'+l.handle):l.city+', '+l.state} · ${badge(l.status)}</div>
       </div>
     </div>
 
@@ -3130,13 +3142,23 @@ const TODAY=new Date(2026,3,10); // April 10 2026
 
 // ── HEADS UP DATA ─────────────────────────────────────────────────────────────
 const headsUpSchedule={
+  // Mastro's Ocean Club (L01)
   'L01_2026-04-10':{text:"Chef's Table tonight — 2 spots just opened up. One of the best menus of the season.",author:'Niya',sent:true,time:'8:02 AM'},
   'L01_2026-04-11':{text:"Saturday brunch runs 10am–2pm. Come try the spring pea risotto — limited portions.",author:'Josh Ritzer',sent:false,time:''},
   'L01_2026-04-12':{text:"Sunday market haul just arrived. Tonight's prix fixe features Colorado lamb.",author:'Niya',sent:false,time:''},
   'L01_2026-04-14':{text:"New spring menu launches Tuesday. Stop in and tell us what you think.",author:'Niya',sent:false,time:''},
   'L01_2026-04-16':{text:"Thursday wine pairing is back by popular demand. Limited seats — reserve early.",author:'Josh Ritzer',sent:false,time:''},
+  // Mastro's Beverly Hills (L02) — shared post + unique
+  'L02_2026-04-10':{text:"Chef's Table tonight — 2 spots just opened up. One of the best menus of the season.",author:'Niya',sent:true,time:'8:02 AM'},
+  'L02_2026-04-12':{text:"Sunday sunset happy hour 4-7pm on the rooftop. Live jazz and half-price oysters.",author:'Dana Holt',sent:false,time:''},
+  'L02_2026-04-15':{text:"Private dining room available Tuesday night. Perfect for groups of 8-12.",author:'Dana Holt',sent:false,time:''},
+  // Mastro's Scottsdale (L03) — unique
+  'L03_2026-04-11':{text:"Patio season is here. Reserve your table under the stars tonight.",author:'Tony Reyes',sent:true,time:'9:15 AM'},
+  'L03_2026-04-14':{text:"New spring menu launches Tuesday. Stop in and tell us what you think.",author:'Niya',sent:false,time:''},
 };
 function getHeadsUp(locId,dateStr){return headsUpSchedule[locId+'_'+dateStr]||null;}
+// Get all Heads Up entries for a given date across multiple locIds
+function getHeadsUpMulti(locIds,dateStr){return locIds.map(id=>({locId:id,hu:headsUpSchedule[id+'_'+dateStr]||null})).filter(x=>x.hu);}
 function dateToStr(d){return d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();}
 function dropSeed(d){let h=0;for(let i=0;i<(d.id||'').length;i++)h=(h*31+d.id.charCodeAt(i))>>>0;return h;}
 function dropDate(d){
@@ -3858,8 +3880,16 @@ function dropDetail(d){
 
 function headsUpModalFn(){
   const c=cfg();
-  const _huFallbackId=c.locations[0]?c.locations[0].id:((c.savedVenues||[])[0]?.id||'org');
-  const existing=getHeadsUp(S.headsUpLocId||_huFallbackId, S.headsUpDate||TODAY_STR);
+  const mode=orgMode();
+  const allLocs=c.locations||[];
+  const locOrgs=allLocs.filter(l=>l.type!=='hq');
+  const isEnterprise=locOrgs.length>1;
+  const _huFallbackId=locOrgs[0]?locOrgs[0].id:((c.savedVenues||[])[0]?.id||'org');
+
+  // Account selection state — for enterprise, allow multi-select
+  const huSelAccts=S.headsUpAccts||(S.headsUpLocId?[S.headsUpLocId]:[_huFallbackId]);
+  const primaryLocId=huSelAccts[0]||_huFallbackId;
+  const existing=getHeadsUp(primaryLocId, S.headsUpDate||TODAY_STR);
   const charCount=(S.headsUpText||'').length;
   const limit=280;
   const dateLabel=(()=>{
@@ -3868,8 +3898,29 @@ function headsUpModalFn(){
     return months[d.getMonth()]+' '+d.getDate();
   })();
   const niyaSuggestions=["Chef's Table tonight — 2 spots just opened up. One of the best menus of the season.","Weekend brunch starts Saturday 10am. Spring pea risotto is back — limited portions.","New spring menu launches this week. Stop in and tell us what you think."];
-  return `<div onclick="ss({headsUpModal:false,headsUpNiya:false})" style="position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:300;display:flex;align-items:center;justify-content:center;">
-    <div onclick="event.stopPropagation()" style="background:#fff;border-radius:16px;width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.18);overflow:hidden;">
+
+  // Enterprise account picker
+  const acctPicker=isEnterprise?`
+    <div style="margin-bottom:14px;">
+      <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:8px;">Post to Accounts</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+        <button onclick="S.headsUpAccts=${JSON.stringify(locOrgs.map(l=>l.id))};render()" style="padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;border:1px solid ${huSelAccts.length===locOrgs.length?c.color:'#e5e7eb'};background:${huSelAccts.length===locOrgs.length?c.color+'12':'#fff'};color:${huSelAccts.length===locOrgs.length?c.color:'#64748b'};cursor:pointer;">All Accounts</button>
+        ${locOrgs.slice(0,8).map(l=>{
+          const sel=huSelAccts.includes(l.id);
+          return '<button onclick="S.headsUpAccts='+(sel?"(S.headsUpAccts||[]).filter(function(x){return x!==\\'"+l.id+"\\'}})":"[...(S.headsUpAccts||[]),\\'"+l.id+"\\']")+';render()" style="padding:5px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;border:1px solid '+(sel?c.color:'#e5e7eb')+';background:'+(sel?c.color+'12':'#fff')+';color:'+(sel?c.color:'#64748b')+';cursor:pointer;">'+hAt(l.handle)+'</button>';
+        }).join('')}
+      </div>
+      ${locOrgs.length>8?'<div style="font-size:0.65rem;color:#94a3b8;">+'+(locOrgs.length-8)+' more accounts</div>':''}
+      <div style="font-size:0.65rem;color:#94a3b8;margin-top:4px;">${huSelAccts.length} account${huSelAccts.length!==1?'s':''} selected — same message posts to each</div>
+    </div>`:'';
+
+  // Save handler — writes to headsUpSchedule for each selected account
+  const saveExpr=isEnterprise
+    ?huSelAccts.map(id=>"headsUpSchedule['"+id+"_"+(S.headsUpDate||TODAY_STR)+"']={text:S.headsUpText,author:'"+(c.users?.[0]?.name||'Admin')+"',sent:false,time:''}").join(';')
+    :"headsUpSchedule['"+(primaryLocId)+"_"+(S.headsUpDate||TODAY_STR)+"']={text:S.headsUpText,author:'"+(c.users?.[0]?.name||'Admin')+"',sent:false,time:''}";
+
+  return `<div onclick="ss({headsUpModal:false,headsUpNiya:false,headsUpAccts:null})" style="position:fixed;inset:0;background:rgba(15,23,42,0.45);z-index:300;display:flex;align-items:center;justify-content:center;">
+    <div onclick="event.stopPropagation()" style="background:#fff;border-radius:16px;width:${isEnterprise?'540':'480'}px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.18);">
       <!-- Header -->
       <div style="padding:20px 24px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:10px;">
@@ -3878,16 +3929,17 @@ function headsUpModalFn(){
           </div>
           <div>
             <div style="font-size:0.95rem;font-weight:800;color:#0f172a;">Heads Up</div>
-            <div style="font-size:0.7rem;color:#94a3b8;">${dateLabel} &middot; one per day &middot; expires midnight</div>
+            <div style="font-size:0.7rem;color:#94a3b8;">${dateLabel} &middot; one per account per day &middot; expires midnight</div>
           </div>
         </div>
-        <button onclick="ss({headsUpModal:false,headsUpNiya:false})" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.2rem;">&times;</button>
+        <button onclick="ss({headsUpModal:false,headsUpNiya:false,headsUpAccts:null})" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.2rem;">&times;</button>
       </div>
       <!-- Body -->
       <div style="padding:20px 24px;">
+        ${acctPicker}
         ${S.headsUpNiya?`
         <div style="background:linear-gradient(135deg,#f5f0ff,#eef2ff);border-radius:10px;padding:14px;margin-bottom:14px;">
-          <div style="font-size:0.72rem;font-weight:700;color:#7c3aed;margin-bottom:8px;">✦ Niya suggestions — click to use</div>
+          <div style="font-size:0.72rem;font-weight:700;color:#7c3aed;margin-bottom:8px;">&#10022; Niya suggestions — click to use</div>
           ${niyaSuggestions.map((s,i)=>`<div onclick="S.headsUpText='${s}';S.headsUpNiya=false;render()" style="padding:8px 10px;border-radius:8px;background:#fff;border:1px solid #e9d5ff;margin-bottom:${i<2?6:0}px;cursor:pointer;">
             <div style="font-size:0.78rem;color:#374151;line-height:1.5;">"${s}"</div>
           </div>`).join('')}
@@ -3903,9 +3955,9 @@ function headsUpModalFn(){
           <span style="font-size:0.7rem;font-weight:600;color:${charCount>limit?'#ef4444':charCount>limit*0.85?'#f59e0b':'#94a3b8'};">${charCount}/${limit}</span>
         </div>
         <div style="display:flex;gap:8px;">
-          ${existing?`<button onclick="ss({headsUpModal:false,headsUpNiya:false})" style="flex:1;padding:10px;border-radius:9px;border:1px solid #e5e7eb;background:#f8fafc;font-size:0.82rem;font-weight:700;color:#64748b;cursor:pointer;">Cancel</button>`:''}
-          <button onclick="headsUpSchedule['${S.headsUpLocId||_huFallbackId}_${S.headsUpDate||TODAY_STR}']={text:S.headsUpText,author:'${c.users?.[0]?.name||'Admin'}',sent:false,time:''};ss({headsUpModal:false,headsUpNiya:false})" style="flex:2;padding:10px;border-radius:9px;border:none;background:${charCount===0?'#e5e7eb':'#0E4EF5'};color:${charCount===0?'#94a3b8':'#fff'};font-size:0.82rem;font-weight:700;cursor:pointer;" ${charCount===0?'disabled':''}>
-            ${existing?'Save Changes':'Schedule Heads Up'}
+          ${existing?`<button onclick="ss({headsUpModal:false,headsUpNiya:false,headsUpAccts:null})" style="flex:1;padding:10px;border-radius:9px;border:1px solid #e5e7eb;background:#f8fafc;font-size:0.82rem;font-weight:700;color:#64748b;cursor:pointer;">Cancel</button>`:''}
+          <button onclick="${saveExpr};ss({headsUpModal:false,headsUpNiya:false,headsUpAccts:null})" style="flex:2;padding:10px;border-radius:9px;border:none;background:${charCount===0||huSelAccts.length===0?'#e5e7eb':'#0E4EF5'};color:${charCount===0||huSelAccts.length===0?'#94a3b8':'#fff'};font-size:0.82rem;font-weight:700;cursor:pointer;" ${charCount===0||huSelAccts.length===0?'disabled':''}>
+            ${existing?'Save Changes':isEnterprise&&huSelAccts.length>1?'Schedule for '+huSelAccts.length+' Accounts':'Schedule Heads Up'}
           </button>
         </div>
       </div>
@@ -4063,39 +4115,105 @@ function sampleGuestCount(){return 8;}
 // ── FOLLOWERS ──────────────────────────────────────────────────────────────
 function rFollowers(){
   const c=cfg();
+  const mode=orgMode();
   const tab=S.followersTab||'list';
   const tabBtn=(id,label)=>`<button onclick="ss({followersTab:'${id}'})" style="padding:6px 20px;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.1s;background:${tab===id?'#fff':'transparent'};color:${tab===id?'#0f172a':'#94a3b8'};box-shadow:${tab===id?'0 1px 4px rgba(0,0,0,0.1)':'none'};">${label}</button>`;
   const isPrivate=!!(c.privateAccount);
 
-  const followers=[
-    {name:'Emily Chen',handle:'@emilyc',since:'Jan 5, 2026',drops:12,status:'Active'},
-    {name:'Marcus Johnson',handle:'@marcusj',since:'Jan 12, 2026',drops:8,status:'Active'},
-    {name:'Sofia Ramirez',handle:'@sofiar',since:'Jan 18, 2026',drops:15,status:'Active'},
-    {name:'Tyler Brooks',handle:'@tylerb',since:'Feb 1, 2026',drops:6,status:'Active'},
-    {name:'Aisha Patel',handle:'@aishap',since:'Feb 8, 2026',drops:10,status:'Active'},
-    {name:'Jordan Lee',handle:'@jordanl',since:'Feb 14, 2026',drops:4,status:'Active'},
-    {name:'Mia Thompson',handle:'@miat',since:'Feb 22, 2026',drops:9,status:'Active'},
-    {name:'Chris Nguyen',handle:'@chrisn',since:'Mar 1, 2026',drops:3,status:'Active'},
-    {name:'Rachel Kim',handle:'@rachelk',since:'Mar 8, 2026',drops:7,status:'Active'},
-    {name:'David Okafor',handle:'@davido',since:'Mar 15, 2026',drops:2,status:'Active'},
-    {name:'Nina Petrova',handle:'@ninap',since:'Mar 20, 2026',drops:5,status:'Active'},
-    {name:'Sam Ruiz',handle:'@samr',since:'Apr 1, 2026',drops:1,status:'Active'},
+  // ── Context detection (same pattern as Guests, Drops, Team, etc.) ──
+  const allLocs=c.locations||[];
+  const hqLoc=allLocs.find(l=>l.type==='hq');
+  const locOrgs=allLocs.filter(l=>l.type!=='hq');
+  const isEnterprise=!!hqLoc&&locOrgs.length>1;
+
+  // ── Account filter (shared S.acctFilter used by all enterprise pages) ──
+  const acctFW=acctFilterWidget(c);
+  const sel=S.acctFilter||[];
+
+  // ── Per-account follower seed data ──
+  // Each follower has locs[] showing which accounts they follow
+  const L=locOrgs;
+  const followerNames=[
+    {name:'Emily Chen',handle:'@emilyc',since:'Jan 5, 2026',drops:12},
+    {name:'Marcus Johnson',handle:'@marcusj',since:'Jan 12, 2026',drops:8},
+    {name:'Sofia Ramirez',handle:'@sofiar',since:'Jan 18, 2026',drops:15},
+    {name:'Tyler Brooks',handle:'@tylerb',since:'Feb 1, 2026',drops:6},
+    {name:'Aisha Patel',handle:'@aishap',since:'Feb 8, 2026',drops:10},
+    {name:'Jordan Lee',handle:'@jordanl',since:'Feb 14, 2026',drops:4},
+    {name:'Mia Thompson',handle:'@miat',since:'Feb 22, 2026',drops:9},
+    {name:'Chris Nguyen',handle:'@chrisn',since:'Mar 1, 2026',drops:3},
+    {name:'Rachel Kim',handle:'@rachelk',since:'Mar 8, 2026',drops:7},
+    {name:'David Okafor',handle:'@davido',since:'Mar 15, 2026',drops:2},
+    {name:'Nina Petrova',handle:'@ninap',since:'Mar 20, 2026',drops:5},
+    {name:'Sam Ruiz',handle:'@samr',since:'Apr 1, 2026',drops:1},
+    {name:'Priya Sharma',handle:'@priyas',since:'Jan 20, 2026',drops:11},
+    {name:'Liam O\'Brien',handle:'@liamo',since:'Feb 5, 2026',drops:7},
+    {name:'Zara Ahmed',handle:'@zaraa',since:'Feb 18, 2026',drops:3},
+    {name:'Diego Torres',handle:'@diegot',since:'Mar 3, 2026',drops:6},
+    {name:'Hana Watanabe',handle:'@hanaw',since:'Mar 12, 2026',drops:4},
+    {name:'Owen Mitchell',handle:'@owenm',since:'Mar 25, 2026',drops:2},
+    {name:'Leila Farah',handle:'@leilaf',since:'Apr 2, 2026',drops:1},
+    {name:'Kai Robinson',handle:'@kair',since:'Apr 8, 2026',drops:0},
   ];
 
-  const requests=[
-    {name:'Alex Thompson',handle:'@alext',requested:'Apr 10, 2026'},
-    {name:'Jamie Park',handle:'@jamiep',requested:'Apr 12, 2026'},
-    {name:'Casey Morgan',handle:'@caseym',requested:'Apr 14, 2026'},
+  // Assign followers to locations — each follower follows 1-3 accounts
+  const allFollowers=followerNames.map((f,i)=>{
+    let flocs=[];
+    if(isEnterprise&&L.length>0){
+      const primary=L[i%L.length];
+      flocs=[primary];
+      if(i%3===0&&L.length>1) flocs.push(L[(i+1)%L.length]);
+      if(i%5===0&&L.length>2) flocs.push(L[(i+2)%L.length]);
+    }
+    return {...f,status:'Active',locs:flocs,locIds:flocs.map(l=>l.id)};
+  });
+
+  // Per-account follow requests
+  const allRequests=[
+    {name:'Alex Thompson',handle:'@alext',requested:'Apr 10, 2026',locIds:isEnterprise&&L.length>0?[L[0].id]:[]},
+    {name:'Jamie Park',handle:'@jamiep',requested:'Apr 12, 2026',locIds:isEnterprise&&L.length>1?[L[1].id]:[]},
+    {name:'Casey Morgan',handle:'@caseym',requested:'Apr 14, 2026',locIds:isEnterprise&&L.length>2?[L[2].id]:[]},
+    {name:'River Chen',handle:'@riverc',requested:'Apr 15, 2026',locIds:isEnterprise&&L.length>0?[L[0].id]:[]},
   ];
+
+  // ── Apply account filter ──
+  const followers=isEnterprise&&sel.length>0
+    ?allFollowers.filter(f=>f.locIds.some(id=>sel.includes(id)))
+    :allFollowers;
+  const requests=isPrivate
+    ?(isEnterprise&&sel.length>0
+      ?allRequests.filter(r=>r.locIds.some(id=>sel.includes(id)))
+      :allRequests)
+    :[];
+
+  // ── Stats — aggregate or filtered ──
+  const totalFollowers=isEnterprise
+    ?(sel.length>0
+      ?locOrgs.filter(l=>sel.includes(l.id)).reduce((s,l)=>s+(l.followers||0),0)
+      :Math.round(locOrgs.reduce((s,l)=>s+(l.followers||0),0)*0.85))
+    :mode==='brand'?(c.followers||allFollowers.length):(locOrgs[0]?.followers||allFollowers.length);
+  const thisMonthGrowth=isEnterprise
+    ?(sel.length>0
+      ?locOrgs.filter(l=>sel.includes(l.id)).reduce((s,l)=>s+(l.followersGrowth||0),0)
+      :locOrgs.reduce((s,l)=>s+(l.followersGrowth||0),0))
+    :mode==='brand'?(c.followersGrowth||3):(locOrgs[0]?.followersGrowth||3);
+  const avgDrops=followers.length>0?Math.round(followers.reduce((s,f)=>s+f.drops,0)/followers.length*10)/10:0;
 
   const followLink='nigh.app/'+c.short.toLowerCase().replace(/[^a-z0-9]/g,'');
+
+  // ── Account column for enterprise ──
+  const showAcctCol=isEnterprise;
+  const gridCols=showAcctCol?'2fr 1.2fr 1fr 0.8fr 0.7fr 80px':'2fr 1fr 1fr 1fr 80px';
+  const headerCols=showAcctCol
+    ?'<div>Follower</div><div>Accounts</div><div>Since</div><div>Drops</div><div>Status</div><div></div>'
+    :'<div>Follower</div><div>Since</div><div>Drops Attended</div><div>Status</div><div></div>';
 
   const statCards=`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px;">
       ${[
-        ['Total Followers',followers.length,c.color],
-        ['This Month','3','#16a34a'],
-        ['Avg Drops Attended','6.8','#7c3aed'],
+        ['Total Followers',fmtNum(totalFollowers),c.color],
+        ['This Month','+'+fmtNum(thisMonthGrowth),'#16a34a'],
+        ['Avg Drops Attended',avgDrops,'#7c3aed'],
         ...(isPrivate?[['Pending Requests',requests.length,'#f59e0b']]:[]),
       ].map(([label,val,color])=>`
         <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
@@ -4104,17 +4222,34 @@ function rFollowers(){
         </div>`).join('')}
     </div>`;
 
+  // ── Per-account breakdown (enterprise only) ──
+  const acctBreakdown=isEnterprise?`
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;margin-bottom:18px;">
+      <div style="font-size:0.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Followers by Account</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${(sel.length>0?locOrgs.filter(l=>sel.includes(l.id)):locOrgs.slice(0,8)).map(l=>`
+          <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb;">
+            <span style="font-size:0.72rem;font-weight:700;color:${c.color};">@${l.handle.startsWith('@')?l.handle.slice(1):l.handle}</span>
+            <span style="font-size:0.78rem;font-weight:900;color:#0f172a;">${fmtNum(l.followers||0)}</span>
+            <span style="font-size:0.6rem;font-weight:600;color:#16a34a;">+${l.followersGrowth||0}</span>
+          </div>`).join('')}
+        ${sel.length===0&&locOrgs.length>8?`<div style="font-size:0.72rem;color:#94a3b8;padding:6px 8px;">+${locOrgs.length-8} more</div>`:''}
+      </div>
+    </div>`:'';
+
   const listTab=`
     ${statCards}
-    <div style="margin-bottom:14px;">
+    ${acctBreakdown}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
       <input placeholder="Search followers..." style="width:280px;padding:9px 14px;border:1px solid #e5e7eb;border-radius:10px;font-size:0.82rem;font-family:inherit;outline:none;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#e5e7eb'"/>
+      <div style="font-size:0.72rem;color:#94a3b8;">${followers.length} shown</div>
     </div>
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
-        <div>Follower</div><div>Since</div><div>Drops Attended</div><div>Status</div><div></div>
+      <div style="display:grid;grid-template-columns:${gridCols};padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
+        ${headerCols}
       </div>
       ${followers.map(f=>`
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px;padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
+        <div style="display:grid;grid-template-columns:${gridCols};padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:32px;height:32px;border-radius:50%;background:${c.color}18;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:${c.color};">${f.name.split(' ').map(w=>w[0]).join('')}</div>
             <div>
@@ -4122,6 +4257,7 @@ function rFollowers(){
               <div style="font-size:0.68rem;color:#94a3b8;">${f.handle}</div>
             </div>
           </div>
+          ${showAcctCol?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${f.locs.map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:12px;">${hAt(l.handle.split('-')[0])}</span>`).join('')}</div>`:''}
           <div style="font-size:0.78rem;color:#64748b;">${f.since}</div>
           <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${f.drops}</div>
           <div><span style="background:#dcfce7;color:#16a34a;font-size:0.65rem;font-weight:700;padding:2px 10px;border-radius:20px;">${f.status}</span></div>
@@ -4134,11 +4270,13 @@ function rFollowers(){
   const requestsTab=isPrivate?`
     ${requests.length>0?`
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
-      <div style="display:grid;grid-template-columns:2fr 1fr 120px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
-        <div>User</div><div>Requested</div><div></div>
+      <div style="display:grid;grid-template-columns:2fr ${showAcctCol?'1fr ':''}1fr 120px;padding:10px 18px;background:#f8fafc;border-bottom:1px solid #e5e7eb;font-size:0.68rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">
+        <div>User</div>${showAcctCol?'<div>Account</div>':''}<div>Requested</div><div></div>
       </div>
-      ${requests.map(r=>`
-        <div style="display:grid;grid-template-columns:2fr 1fr 120px;padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
+      ${requests.map(r=>{
+        const rLocs=isEnterprise?locOrgs.filter(l=>r.locIds.includes(l.id)):[];
+        return `
+        <div style="display:grid;grid-template-columns:2fr ${showAcctCol?'1fr ':''}1fr 120px;padding:12px 18px;border-bottom:1px solid #f8fafc;align-items:center;">
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="width:32px;height:32px;border-radius:50%;background:#f59e0b18;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#f59e0b;">${r.name.split(' ').map(w=>w[0]).join('')}</div>
             <div>
@@ -4146,12 +4284,13 @@ function rFollowers(){
               <div style="font-size:0.68rem;color:#94a3b8;">${r.handle}</div>
             </div>
           </div>
+          ${showAcctCol?`<div style="display:flex;flex-wrap:wrap;gap:3px;">${rLocs.map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:12px;">${hAt(l.handle.split('-')[0])}</span>`).join('')}</div>`:''}
           <div style="font-size:0.78rem;color:#64748b;">${r.requested}</div>
           <div style="display:flex;gap:6px;justify-content:flex-end;">
             <button style="padding:5px 12px;background:${c.color};color:#fff;border:none;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">Accept</button>
             <button style="padding:5px 12px;background:#f1f5f9;color:#64748b;border:none;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">Decline</button>
           </div>
-        </div>`).join('')}
+        </div>`;}).join('')}
     </div>`:`
     <div style="text-align:center;padding:60px 20px;color:#94a3b8;">
       <div style="font-size:2rem;margin-bottom:8px;">&#10003;</div>
@@ -4159,7 +4298,7 @@ function rFollowers(){
       <div style="font-size:0.78rem;margin-top:4px;">All follow requests have been handled.</div>
     </div>`}`:`
     <div style="text-align:center;padding:60px 20px;color:#94a3b8;">
-      <div style="font-size:2rem;margin-bottom:8px;">🔓</div>
+      <div style="font-size:2rem;margin-bottom:8px;">&#x1F513;</div>
       <div style="font-size:0.88rem;font-weight:700;color:#64748b;">Account is public</div>
       <div style="font-size:0.78rem;margin-top:4px;">Follow requests are only available when your account is set to Private. Go to your profile settings to enable Private Account.</div>
     </div>`;
@@ -4180,19 +4319,35 @@ function rFollowers(){
         </div>
         <div style="font-size:0.7rem;color:#94a3b8;margin-top:8px;">Scan to follow</div>
       </div>
+      ${isEnterprise?`
+      <div style="margin-bottom:16px;">
+        <div style="font-size:0.72rem;font-weight:700;color:#64748b;margin-bottom:8px;">Per-Account Follow Links</div>
+        ${(sel.length>0?locOrgs.filter(l=>sel.includes(l.id)):locOrgs.slice(0,5)).map(l=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:0.72rem;font-weight:700;color:${c.color};width:140px;flex-shrink:0;">@${l.handle.startsWith('@')?l.handle.slice(1):l.handle}</span>
+            <span style="font-size:0.72rem;color:#64748b;flex:1;">nigh.app/${(l.handle||'').replace(/^@/,'')}</span>
+            <button style="padding:4px 10px;background:#f1f5f9;border:none;border-radius:6px;font-size:0.68rem;font-weight:700;cursor:pointer;color:#374151;">Copy</button>
+          </div>`).join('')}
+        ${sel.length===0&&locOrgs.length>5?`<div style="font-size:0.68rem;color:#94a3b8;padding:6px 0;">+${locOrgs.length-5} more accounts</div>`:''}
+      </div>`:''}
       <button style="width:100%;padding:10px;background:#f1f5f9;border:none;border-radius:10px;font-size:0.78rem;font-weight:700;cursor:pointer;color:#374151;">Download QR Code</button>
     </div>`;
 
   return `<div style="padding:28px 32px;max-width:960px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
       <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">Followers</div>
-      <div style="display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;">
-        ${tabBtn('list','List')}
-        ${tabBtn('requests','Requests')}${isPrivate?`<span style="background:#f59e0b;color:#fff;font-size:0.55rem;font-weight:800;padding:1px 5px;border-radius:8px;position:relative;top:-8px;left:-4px;">${requests.length}</span>`:''}
-        ${tabBtn('link','Follow Link')}
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${acctFW.btn}
+        <div style="display:flex;gap:2px;background:#f1f5f9;border-radius:10px;padding:3px;">
+          ${tabBtn('list','List')}
+          ${tabBtn('requests','Requests')}${isPrivate?`<span style="background:#f59e0b;color:#fff;font-size:0.55rem;font-weight:800;padding:1px 5px;border-radius:8px;position:relative;top:-8px;left:-4px;">${requests.length}</span>`:''}
+          ${tabBtn('link','Follow Link')}
+        </div>
       </div>
     </div>
+    ${isEnterprise&&sel.length>0?`<div style="margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;"><span style="font-size:0.72rem;color:#64748b;">Filtering:</span>${sel.map(id=>{const l=locOrgs.find(x=>x.id===id);return l?'<span style="background:'+c.color+'12;color:'+c.color+';font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:20px;">@'+(l.handle.startsWith('@')?l.handle.slice(1):l.handle)+'</span>':'';}).join('')}<button onclick="ss({acctFilter:[]})" style="background:none;border:none;color:#94a3b8;font-size:0.68rem;cursor:pointer;text-decoration:underline;">Clear</button></div>`:''}
     ${tab==='list'?listTab:tab==='requests'?requestsTab:linkTab}
+    ${acctFW.modal}
   </div>`;
 }
 
@@ -4337,7 +4492,7 @@ function rCustomers(){
           ${filterOrgs.map(l=>`<label onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
             <input type="checkbox" ${selLocs.includes(l.id)?'checked':''} onchange="event.stopPropagation();ss({guestLocSelected:this.checked?[...(S.guestLocSelected||[]),'${l.id}']:(S.guestLocSelected||[]).filter(function(id){return id!=='${l.id}';})})" style="width:15px;height:15px;accent-color:${c.color};cursor:pointer;flex-shrink:0;">
             <div>
-              <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">@${l.handle}</div>
+              <div style="font-size:0.78rem;font-weight:700;color:#0f172a;">${hAt(l.handle)}</div>
               <div style="font-size:0.65rem;color:#94a3b8;">${l.name||''}</div>
             </div>
           </label>`).join('')}
@@ -4392,7 +4547,7 @@ function rCustomers(){
         <div style="font-size:0.63rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#94a3b8;margin-bottom:8px;">Following</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           ${g.locFollows&&g.locFollows.length>0
-            ?g.locFollows.map(l=>`<span style="background:#EDE9FE;color:#7C3AED;font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:20px;">@${l.handle}</span>`).join('')
+            ?g.locFollows.map(l=>`<span style="background:#EDE9FE;color:#7C3AED;font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:20px;">${hAt(l.handle)}</span>`).join('')
             :`<span style="background:#EDE9FE;color:#7C3AED;font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:20px;">@${fallbackHandle}</span>`}
         </div>
       </div>`:''}
@@ -4620,13 +4775,13 @@ function rCustomers(){
     // Account filter — uses shared topbar acctFilter state
     const selLocs = S.acctFilter||[];
     const locFilteredGuests = selLocs.length>0 ? dropGuests.filter(g=>g.locs&&g.locs.some(l=>selLocs.includes(l.id))) : dropGuests;
-    const selLocHandles = selLocs.length>0 ? [...(hqLoc&&selLocs.includes(hqLoc.id)?['@'+hqLoc.handle]:[]),...locOrgs.filter(l=>selLocs.includes(l.id)).map(l=>'@'+l.handle)] : [];
+    const selLocHandles = selLocs.length>0 ? [...(hqLoc&&selLocs.includes(hqLoc.id)?[(hqLoc.handle&&hqLoc.handle.startsWith('@')?hqLoc.handle:'@'+(hqLoc.handle||''))]:[]),...locOrgs.filter(l=>selLocs.includes(l.id)).map(l=>(l.handle&&l.handle.startsWith('@')?l.handle:'@'+(l.handle||'')))] : [];
 
     function locHandleBadges(locs){
       if(!locs||locs.length===0) return '';
       const show = locs.slice(0,2);
       const extra = locs.length-2;
-      return show.map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;">@${l.handle}</span>`).join('')
+      return show.map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;">${hAt(l.handle)}</span>`).join('')
         +(extra>0?`<span style="background:#f1f5f9;color:#64748b;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;">+${extra}</span>`:'');
     }
 
@@ -4734,7 +4889,7 @@ function rCustomers(){
     <!-- Location selector -->
     <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
       <span style="font-size:0.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-right:4px;">Location</span>
-      ${locOrgs.slice(0,8).map(l=>`<button onclick="ss({guestLocFilter:'${l.id}',guestView:'location',guestTab:'drop'})" style="padding:4px 12px;border-radius:20px;border:1px solid ${loc?.id===l.id?c.color:'#e5e7eb'};background:${loc?.id===l.id?c.color+'15':'#fff'};color:${loc?.id===l.id?c.color:'#64748b'};font-size:0.7rem;font-weight:${loc?.id===l.id?'700':'500'};cursor:pointer;">@${l.handle}</button>`).join('')}
+      ${locOrgs.slice(0,8).map(l=>`<button onclick="ss({guestLocFilter:'${l.id}',guestView:'location',guestTab:'drop'})" style="padding:4px 12px;border-radius:20px;border:1px solid ${loc?.id===l.id?c.color:'#e5e7eb'};background:${loc?.id===l.id?c.color+'15':'#fff'};color:${loc?.id===l.id?c.color:'#64748b'};font-size:0.7rem;font-weight:${loc?.id===l.id?'700':'500'};cursor:pointer;">${hAt(l.handle)}</button>`).join('')}
       ${locOrgs.length>8?`<span style="font-size:0.7rem;color:#94a3b8;">+${locOrgs.length-8} more</span>`:''}
     </div>
 
@@ -4797,7 +4952,7 @@ function rCustomers(){
         const otherLocs=g.locs?g.locs.filter(l=>l.id!==loc?.id):[];
         const alsoAtCell=`<div style="display:flex;gap:3px;flex-wrap:wrap;align-items:center;">${
           otherLocs.length>0
-            ? otherLocs.slice(0,2).map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;">@${l.handle}</span>`).join('')
+            ? otherLocs.slice(0,2).map(l=>`<span style="background:${c.color}12;color:${c.color};font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;">${hAt(l.handle)}</span>`).join('')
               +(otherLocs.length>2?`<span style="background:#f1f5f9;color:#64748b;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:20px;">+${otherLocs.length-2}</span>`:'')
             : `<span style="font-size:0.68rem;color:#94a3b8;">—</span>`
         }</div>`;
@@ -6073,7 +6228,7 @@ function rBilling(forceTab){
             <div style="width:42px;height:42px;border-radius:50%;background:${c.color}20;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:${c.color};flex-shrink:0;">${selOrder.guest.name[0]}</div>
             <div>
               <div style="font-size:0.88rem;font-weight:800;color:#0f172a;">${selOrder.guest.name}</div>
-              <div style="font-size:0.7rem;color:#64748b;">@${selOrder.guest.handle}</div>
+              <div style="font-size:0.7rem;color:#64748b;">${hAt(selOrder.guest.handle)}</div>
               <div style="font-size:0.68rem;color:#94a3b8;margin-top:1px;">${selOrder.guest.phone||'—'}</div>
               <div style="font-size:0.68rem;color:#94a3b8;">${selOrder.guest.email}</div>
             </div>
@@ -6323,7 +6478,7 @@ function rBilling(forceTab){
         </div>
         <div>
           <div style="font-size:0.75rem;font-weight:600;color:#0f172a;">${o.guest.name}</div>
-          <div style="font-size:0.63rem;color:#94a3b8;">@${o.guest.handle}</div>
+          <div style="font-size:0.63rem;color:#94a3b8;">${hAt(o.guest.handle)}</div>
           ${o.transferred?`<div style="font-size:0.62rem;color:#b45309;margin-top:1px;">→ ${o.transferredTo}</div>`:''}
         </div>
         <div style="font-size:0.82rem;font-weight:800;color:#0f172a;">${o.amount>0?fmtMoney(o.amount):'Free'}</div>
@@ -6921,7 +7076,7 @@ function rOrganization(){
                 <div style="font-size:1.05rem;font-weight:900;color:#0f172a;">${c.name}</div>
                 <span style="font-size:0.63rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;">Active</span>
               </div>
-              <div style="font-size:0.75rem;color:${color};font-weight:700;">@${c.handle}</div>
+              <div style="font-size:0.75rem;color:${color};font-weight:700;">${hAt(c.handle)}</div>
             </div>
             <button style="padding:7px 16px;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;font-size:0.75rem;background:#fff;cursor:pointer;color:#374151;">Edit</button>
           </div>
@@ -6959,7 +7114,7 @@ function rOrganization(){
                   <span style="font-size:0.6rem;font-weight:700;background:${bColor}15;color:${bColor};padding:2px 7px;border-radius:20px;">Brand</span>
                   <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                 </div>
-                <div style="font-size:0.72rem;color:${bColor};font-weight:700;">@${b.handle}</div>
+                <div style="font-size:0.72rem;color:${bColor};font-weight:700;">${hAt(b.handle)}</div>
               </div>
               <span style="font-size:0.65rem;color:#94a3b8;">›</span>
             </div>`;
@@ -7286,15 +7441,30 @@ function inboxComposeOverlay(){
   if(mode==='headsup'){
     const huAud=S.inboxHuAud||'public';
     const huDate=S.inboxHuDate||'today';
-    return `<div onclick="${close}" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;">
-      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:16px;padding:28px 24px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+    const locOrgs=(c.locations||[]).filter(l=>l.type!=='hq');
+    const isEnt=locOrgs.length>1;
+    const inboxHuAccts=S.inboxHuAccts||(isEnt?[locOrgs[0].id]:[locOrgs[0]?.id||'org']);
+    const acctCount=inboxHuAccts.length;
+
+    return `<div onclick="${close};S.inboxHuAccts=null" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:9000;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:16px;padding:28px 24px;max-width:${isEnt?'560':'520'}px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.15);max-height:90vh;overflow-y:auto;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-          <button onclick="ss({inboxComposeModal:'picker',inboxHuMsg:null,inboxHuAud:null,inboxHuDate:null})" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;">
+          <button onclick="ss({inboxComposeModal:'picker',inboxHuMsg:null,inboxHuAud:null,inboxHuDate:null,inboxHuAccts:null})" style="background:none;border:none;cursor:pointer;color:#64748b;display:flex;align-items:center;">
             <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <div style="font-size:1.1rem;font-weight:800;color:#0f172a;">Post a Heads Up</div>
         </div>
         <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;padding-left:26px;">Visible to users — expires at midnight on the post date</div>
+
+        ${isEnt?`
+        <!-- Account Picker (enterprise) -->
+        <label style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#64748b;display:block;margin-bottom:8px;">Post to Accounts</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <button onclick="S.inboxHuAccts=${JSON.stringify(locOrgs.map(l=>l.id))};render()" style="padding:6px 14px;border-radius:20px;font-size:0.72rem;font-weight:700;border:1px solid ${acctCount===locOrgs.length?c.color:'#e5e7eb'};background:${acctCount===locOrgs.length?c.color+'12':'#fff'};color:${acctCount===locOrgs.length?c.color:'#64748b'};cursor:pointer;">All (${locOrgs.length})</button>
+          ${locOrgs.slice(0,6).map(l=>{const sel=inboxHuAccts.includes(l.id);return '<button onclick="S.inboxHuAccts='+(sel?"(S.inboxHuAccts||[]).filter(function(x){return x!==\\'"+l.id+"\\'}})":"[...(S.inboxHuAccts||[]),\\'"+l.id+"\\']")+';render()" style="padding:6px 14px;border-radius:20px;font-size:0.72rem;font-weight:600;border:1px solid '+(sel?c.color:'#e5e7eb')+';background:'+(sel?c.color+'12':'#fff')+';color:'+(sel?c.color:'#64748b')+';cursor:pointer;">'+hAt(l.handle)+'</button>';}).join('')}
+        </div>
+        <div style="font-size:0.65rem;color:#94a3b8;margin-bottom:14px;">${acctCount} account${acctCount!==1?'s':''} selected${acctCount>1?' — same message posts to each':''}</div>
+        `:''}
 
         <!-- Audience -->
         <label style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#64748b;display:block;margin-bottom:8px;">Audience</label>
@@ -7302,7 +7472,7 @@ function inboxComposeOverlay(){
           <button onclick="ss({inboxHuAud:'public'})" style="padding:8px 20px;border-radius:20px;font-size:0.78rem;font-weight:600;border:1.5px solid ${huAud==='public'?'#16a34a':'#e5e7eb'};background:${huAud==='public'?'#f0fdf4':'#fff'};color:${huAud==='public'?'#16a34a':'#64748b'};cursor:pointer;">Public</button>
           <button onclick="ss({inboxHuAud:'followers'})" style="padding:8px 20px;border-radius:20px;font-size:0.78rem;font-weight:600;border:1.5px solid ${huAud==='followers'?'#16a34a':'#e5e7eb'};background:${huAud==='followers'?'#f0fdf4':'#fff'};color:${huAud==='followers'?'#16a34a':'#64748b'};cursor:pointer;">Followers Only</button>
         </div>
-        ${huAud==='public'?`<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:14px;">Anyone on Nigh can see this post</div>`:`<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:14px;">Only users who follow your venue will see this</div>`}
+        ${huAud==='public'?`<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:14px;">Anyone on Nigh can see this post</div>`:`<div style="font-size:0.72rem;color:#94a3b8;margin-bottom:14px;">Only users who follow the selected account${acctCount>1?'s':''} will see this</div>`}
 
         <!-- Post Date -->
         <label style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#64748b;display:block;margin-bottom:8px;">Post Date</label>
@@ -7327,11 +7497,11 @@ function inboxComposeOverlay(){
         </div>
 
         <!-- Post -->
-        <button onclick="${close}" style="width:100%;padding:12px;border-radius:10px;border:none;background:#16a34a;font-size:0.85rem;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-          ${huDate==='today'?'Post Heads Up':'Schedule Heads Up'}
+        <button onclick="${close};S.inboxHuAccts=null" style="width:100%;padding:12px;border-radius:10px;border:none;background:${acctCount===0?'#e5e7eb':'#16a34a'};font-size:0.85rem;font-weight:700;color:${acctCount===0?'#94a3b8':'#fff'};cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;" ${acctCount===0?'disabled':''}>
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="${acctCount===0?'#94a3b8':'#fff'}" stroke-width="2.5" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          ${huDate==='today'?'Post Heads Up':'Schedule Heads Up'}${isEnt&&acctCount>1?' for '+acctCount+' Accounts':''}
         </button>
-        <button onclick="${close}" style="display:block;margin:12px auto 0;background:none;border:none;color:#94a3b8;font-size:0.78rem;font-weight:600;cursor:pointer;">Cancel</button>
+        <button onclick="${close};S.inboxHuAccts=null" style="display:block;margin:12px auto 0;background:none;border:none;color:#94a3b8;font-size:0.78rem;font-weight:600;cursor:pointer;">Cancel</button>
       </div>
     </div>`;
   }
@@ -7611,7 +7781,7 @@ function rPartners(){
   if(S.partnerDetailId!==null){
     const p=partners[S.partnerDetailId];
     if(p){
-      const handle=p.handle||('@'+p.name.toLowerCase().replace(/\s+/g,'-'));
+      const handle=p.handle?(p.handle.startsWith('@')?p.handle:'@'+p.handle):('@'+p.name.toLowerCase().replace(/\s+/g,'-'));
       const isActive=p.status==='Active';
       const isInvited=p.status==='Invited';
       const isDeactivated=p.status==='Deactivated'||p.status==='Declined';
@@ -7683,7 +7853,7 @@ function rPartners(){
   const deactivated=partners.filter(p=>p.status==='Deactivated'||p.status==='Declined');
 
   const partnerRow=(p,idx)=>{
-    const handle=p.handle||('@'+p.name.toLowerCase().replace(/\s+/g,'-'));
+    const handle=p.handle?(p.handle.startsWith('@')?p.handle:'@'+p.handle):('@'+p.name.toLowerCase().replace(/\s+/g,'-'));
     const initials=p.name.split(' ').map(w=>w[0]).slice(0,2).join('');
     const isActive=p.status==='Active';
     const stColor=isActive?'#16a34a':p.status==='Invited'?'#ca8a04':'#64748b';
