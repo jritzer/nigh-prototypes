@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nigh Drops - Transfer</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{--bg:#0a0a14;--bg2:#111118;--card:#1c1c28;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#fff;--text2:rgba(255,255,255,0.60);--text3:rgba(255,255,255,0.38);--blue:#0E4EF5;--purple:#6226E9;--teal:#41EFF9;--magenta:#EC1977;--green:#4ADE80;--amber:#F5A623;--nav-h:64px;--sb-w:240px}
+    html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Roboto,sans-serif;background:var(--bg);color:var(--text)}
+    #app{display:flex;height:100vh}
+    #main{flex:1;display:flex;flex-direction:column;min-width:0}
+    #content{flex:1;overflow-y:auto}
+    #content::-webkit-scrollbar{width:0}
+    #tabbar{height:var(--nav-h);background:#0d0d1a;border-top:1px solid var(--border);display:flex;flex-shrink:0}
+    .tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--text3);font-size:9px;font-weight:600;letter-spacing:0.04em;cursor:pointer;text-decoration:none;padding:4px 0;position:relative}
+    .tb-btn.active{color:var(--blue)}
+    .tb-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .tb-badge{position:absolute;top:4px;right:calc(50% - 18px);width:16px;height:16px;border-radius:50%;background:#EF4444;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+    #sidebar{display:none}
+    @media(min-width:900px){
+      #sidebar{display:flex;flex-direction:column;width:var(--sb-w);background:#0d0d1a;border-right:1px solid var(--border);flex-shrink:0}
+      #tabbar{display:none}
+      .sb-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:8px}
+      .sb-wordmark{font-size:17px;font-weight:700;color:var(--blue);letter-spacing:-0.01em}
+      .sb-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 8px;border-radius:10px;color:var(--text3);font-size:13px;font-weight:600;text-decoration:none;border:none;background:none;cursor:pointer;transition:background .15s,color .15s;width:calc(100% - 16px)}
+      .sb-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+      .sb-item.active{background:rgba(14,78,245,0.14);color:#fff}
+      .sb-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+      .sb-badge{margin-left:auto;background:#EF4444;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px}
+      .sb-nigh-icon{width:14px !important;height:21px !important;stroke:none !important;fill:currentColor !important;flex-shrink:0}
+      .sb-app-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;text-decoration:none;transition:background .15s}
+      .sb-app-link:hover{background:rgba(255,255,255,0.06)}
+    }
+    .page-hdr{position:sticky;top:0;z-index:50;background:var(--bg);padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+    .page-hdr-title{font-size:17px;font-weight:700;color:#fff;flex:1}
+    .page-hdr-sub{font-size:11px;color:var(--text2);margin-top:2px}
+    .back-btn{background:none;border:none;padding:4px;color:var(--text2);display:flex;align-items:center;cursor:pointer}
+    .back-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2}
+    .page-inner{padding:16px 16px 32px}
+    @media(min-width:600px){.page-inner{max-width:560px;margin:0 auto;padding:20px 20px 40px}}
+    @media(min-width:900px){.page-inner{max-width:680px;margin:0 auto;padding:24px 24px 48px}}
+    .search-input{width:100%;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:14px;color:#fff;font-family:inherit;margin-bottom:20px}
+    .search-input::placeholder{color:var(--text3)}
+    .search-input:focus{outline:none;border-color:var(--blue);background:rgba(14,78,245,0.1)}
+    .section-hdr{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin:20px 0 12px}
+    .user-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+    .user-row:last-child{border-bottom:none}
+    .user-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,var(--purple),var(--magenta))}
+    .user-info{flex:1}
+    .user-name{font-size:13px;font-weight:600;color:#fff}
+    .user-handle{font-size:11px;color:var(--text2)}
+    .nigh-badge{font-size:9px;background:rgba(14,78,245,0.2);color:var(--blue);padding:2px 6px;border-radius:6px;font-weight:600;margin-left:auto}
+    .invite-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;margin-left:auto}
+    .confirm-section{display:none;flex-direction:column;align-items:center;text-align:center}
+    .confirm-section.active{display:flex}
+    .confirm-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--teal));margin-bottom:16px}
+    .confirm-name{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px}
+    .confirm-handle{font-size:12px;color:var(--text2);margin-bottom:20px}
+    .confirm-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:20px;text-align:left}
+    .confirm-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:4px}
+    .confirm-detail{font-size:13px;color:#fff;font-weight:600;margin-bottom:8px}
+    .confirm-sublabel{font-size:11px;color:var(--text2)}
+    .confirm-disclaimer{background:rgba(245,166,35,0.1);border-left:2px solid var(--amber);padding:12px;border-radius:8px;margin-bottom:20px;font-size:11px;color:var(--text2);line-height:1.4}
+    .btn-group{display:flex;gap:12px;flex-direction:column}
+    .btn-primary{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-ghost{width:100%;background:none;color:var(--text2);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-primary:hover{background:#0d42d0}
+    .btn-ghost:hover{background:rgba(255,255,255,0.05)}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sb-brand">
+        <svg width="18" height="28" viewBox="86 40 180 285" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0">
+          <path fill="#6226E9" d="M242.8,82.1c-0.2-4-1.7-7.8-4.1-10.7c-0.4-0.5-0.8-0.9-1.2-1.3c-3.3-3.3-7.8-5.3-12.9-5.3h-94.1c-0.3,0-0.6,0-0.9,0h-0.1c-7.9,0.1-15.3,2.5-21.4,6.6c-10.5,7-17.5,19.1-17.5,32.7V71.4C90.7,56.3,103,44,118.2,44h86.6c17,0.5,31.4,11.9,36.2,27.5C242.1,74.8,242.7,78.4,242.8,82.1z"/>
+          <path fill="#0E4EF5" d="M264.5,143.9v43c0,6.9-2.8,13.4-7.7,18.2l-79.2,76.4l-50.7-48.9c0,0,0,0,0,0l-3.6-5.2c-7.1-10.1-10.9-22.2-10.9-34.5v-12c0.1,5.2,2.2,10.1,6,13.7l59.2,56.7l-0.3,0.2h0.5l-0.3-0.2l59.3-56.8l7.2-6.9c8.2-7.9,14-17.9,16.8-28.9L264.5,143.9z"/>
+          <path fill="#41EFF9" d="M123.3,227.4l3.6,5.2c0,0,0,0,0,0l-28.5-27.5c-4.9-4.8-7.7-11.3-7.7-18.2v-82.7c0-13.6,6.9-25.7,17.5-32.7c6.1-4.1,13.5-6.5,21.4-6.6c-5.3,0.3-9.9,2.8-13.1,6.6c-2.6,3.1-4.1,7.2-4.1,11.5v97.6c0,0.1,0,0.2,0,0.3v12C112.4,205.2,116.2,217.3,123.3,227.4z"/>
+          <path fill="#FFFFFF" d="M242.8,83v97.6c0,5.3-2.1,10.3-6,14l-59.3,56.8l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-97.9,0-97.9c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6h0.1c0.3,0,95,0,95,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7C242.8,82.4,242.8,82.7,242.8,83z"/>
+          <path fill="#EC1977" d="M264.5,71.4v72.5l-3.7,14.8c-2.8,11-8.6,21-16.8,28.9l-7.2,6.9c3.8-3.7,6-8.7,6-14V85.5h0v-2.2c0-0.1,0-0.2,0-0.3c0-0.3,0-0.6,0-0.9c-0.1-3.7-0.7-7.3-1.8-10.7c-4.9-15.6-19.2-26.9-36.2-27.5H237c7.6,0,14.5,3.1,19.4,8C261.4,57,264.5,63.8,264.5,71.4z"/>
+          <polygon fill="#0E4EF5" points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5"/>
+          <path fill="#0E4EF5" d="M171.2,214.8c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6c-3.5-3.5-9.1-3.5-12.6,0C167.7,205.7,167.7,211.3,171.2,214.8z"/>
+          <ellipse fill="#0E4EF5" cx="177.5" cy="308.4" rx="33.6" ry="8.4"/>
+        </svg>
+        <span class="sb-wordmark">Nigh Drops</span>
+      </div>
+      <a href="nigh-feed.html" class="sb-item">
+        <svg class="sb-nigh-icon" viewBox="80 36 200 294" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon fill="currentColor" points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5"/><ellipse fill="currentColor" cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path fill="currentColor" d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>
+        Drops
+      </a>
+      <a href="nigh-tickets.html" class="sb-item active">
+        <svg viewBox="0 0 24 24"><path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/></svg>
+        Tickets
+      </a>
+      <a href="nigh-alerts.html" class="sb-item">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        Alerts <span class="sb-badge">2</span>
+      </a>
+      <a href="nigh-menu.html" class="sb-item">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Menu
+      </a>
+      <div style="flex:1"></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08);padding:10px 8px">
+        <a href="#" class="sb-app-link" onclick="showAppModal();return false;">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:#fff">Get the Nigh Drops App</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.40);margin-top:1px">iOS &amp; Android</div>
+          </div>
+          <span style="background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.30);color:#F5A623;font-size:8px;font-weight:700;padding:3px 6px;border-radius:5px;letter-spacing:0.05em;flex-shrink:0;text-align:center;line-height:1.4">EARLY<br>ACCESS</span>
+        </a>
+      </div>
+    </aside>
+
+    <div id="main">
+      <div class="page-hdr">
+        <button class="back-btn" id="backBtn" onclick="goBack()">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <div>
+          <h1 class="page-hdr-title" id="pageTitle">Transfer Ticket</h1>
+          <div class="page-hdr-sub" id="pageSub">Spot 4 of 4 · Whole Foods Chef's Table</div>
+        </div>
+      </div>
+      <div id="content">
+        <div class="page-inner">
+          <!-- SELECT PHASE -->
+          <div id="selectPhase">
+            <input type="text" class="search-input" id="searchInput" placeholder="Name or mobile number" oninput="filterUsers()">
+
+            <div class="section-hdr">RECENTS</div>
+            <div id="recentsSection"></div>
+
+            <div class="section-hdr">FRIENDS ON NIGH</div>
+            <div id="friendsSection"></div>
+
+            <div class="section-hdr">PHONE CONTACTS</div>
+            <div id="contactsSection"></div>
+          </div>
+
+          <!-- CONFIRM PHASE -->
+          <div id="confirmPhase" class="confirm-section">
+            <div class="confirm-avatar" id="confirmAvatar">MT</div>
+            <div class="confirm-name" id="confirmName">Maya Torres</div>
+            <div class="confirm-handle" id="confirmHandle">@mayat</div>
+            
+            <div class="confirm-card">
+              <div class="confirm-label">Transferring</div>
+              <div class="confirm-detail">Whole Foods Chef's Table</div>
+              <div class="confirm-sublabel">Spot 4 of 4 · ORD-7291</div>
+            </div>
+
+            <div class="confirm-disclaimer">Once they accept, their QR code will be active and yours will be locked. You won't be able to access this ticket.</div>
+
+            <div class="btn-group">
+              <button class="btn-primary" onclick="sendInvite()">Send Invite</button>
+              <button class="btn-ghost" onclick="goBack()">Go back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav id="tabbar">
+        <a href="nigh-feed.html" class="tb-btn">
+          <svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 012 2v9.5L12 22 5 13.5V4a2 2 0 012-2z"/><line x1="9" y1="6" x2="9" y2="13"/><line x1="15" y1="6" x2="15" y2="13"/><line x1="9" y1="6" x2="15" y2="13"/></svg>
+          Drops
+        </a>
+        <a href="nigh-tickets.html" class="tb-btn active">
+          <svg viewBox="0 0 24 24"><path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/></svg>
+          Tickets
+        </a>
+        <a href="nigh-alerts.html" class="tb-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="tb-badge">2</span> Alerts
+        </a>
+        <a href="nigh-menu.html" class="tb-btn">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          Menu
+        </a>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    var friendsList=[
+      {id:'F001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',mutual:2},
+      {id:'F002',name:'James Kim',uname:'@jamesk',av:'JK',mutual:5},
+      {id:'F003',name:'Maya Torres',uname:'@mayat',av:'MT',mutual:1},
+      {id:'F004',name:'Chris Park',uname:'@chrisp',av:'CP',mutual:0},
+    ];
+    var phoneContacts=[
+      {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW'},
+      {name:'Taylor Reed',phone:'(303) 555-0847',av:'TR'},
+      {name:'Marcus Chen',phone:'(720) 555-0334',av:'MC'},
+    ];
+    var recentTransfers=[
+      {name:'Maya Torres',uname:'@mayat',av:'MT',type:'nigh'},
+      {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW',type:'phone'},
+    ];
+
+    var currentPhase = 'select';
+    var selectedUser = null;
+
+    function renderUsers() {
+      // Recents
+      document.getElementById('recentsSection').innerHTML = recentTransfers.map(u => 
+        '<div class="user-row" onclick="selectUser(' + JSON.stringify(u).replace(/"/g, '&quot;') + ')">' +
+        '<div class="user-avatar">' + u.av + '</div>' +
+        '<div class="user-info">' +
+        '<div class="user-name">' + u.name + '</div>' +
+        '<div class="user-handle">' + (u.uname || u.phone) + '</div>' +
+        '</div>' +
+        (u.uname ? '<div class="nigh-badge">Nigh</div>' : '') +
+        '<button class="invite-btn" onclick="event.stopPropagation();selectUser(' + JSON.stringify(u).replace(/"/g, '&quot;') + ')">Invite</button>' +
+        '</div>'
+      ).join('');
+
+      // Friends
+      document.getElementById('friendsSection').innerHTML = friendsList.filter(f => f.id !== 'F004').map(f =>
+        '<div class="user-row" onclick="selectUser(' + JSON.stringify({name:f.name,uname:f.uname,av:f.av,type:\'nigh\'}).replace(/"/g, '&quot;') + ')">' +
+        '<div class="user-avatar">' + f.av + '</div>' +
+        '<div class="user-info">' +
+        '<div class="user-name">' + f.name + '</div>' +
+        '<div class="user-handle">' + f.uname + ' · ' + f.mutual + ' mutual</div>' +
+        '</div>' +
+        '<div class="nigh-badge">Nigh</div>' +
+        '<button class="invite-btn" onclick="event.stopPropagation();selectUser(' + JSON.stringify({name:f.name,uname:f.uname,av:f.av,type:\'nigh\'}).replace(/"/g, '&quot;') + ')">Invite</button>' +
+        '</div>'
+      ).join('');
+
+      // Contacts
+      document.getElementById('contactsSection').innerHTML = phoneContacts.map(c =>
+        '<div class="user-row" onclick="selectUser(' + JSON.stringify({name:c.name,phone:c.phone,av:c.av,type:\'phone\'}).replace(/"/g, '&quot;') + ')">' +
+        '<div class="user-avatar">' + c.av + '</div>' +
+        '<div class="user-info">' +
+        '<div class="user-name">' + c.name + '</div>' +
+        '<div class="user-handle">' + c.phone + '</div>' +
+        '</div>' +
+        '<button class="invite-btn" onclick="event.stopPropagation();selectUser(' + JSON.stringify({name:c.name,phone:c.phone,av:c.av,type:\'phone\'}).replace(/"/g, '&quot;') + ')">Invite</button>' +
+        '</div>'
+      ).join('');
+    }
+
+    function filterUsers() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.user-row').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    function selectUser(user) {
+      selectedUser = user;
+      document.getElementById('selectPhase').style.display = 'none';
+      document.getElementById('confirmPhase').classList.add('active');
+      document.getElementById('confirmAvatar').textContent = user.av;
+      document.getElementById('confirmName').textContent = user.name;
+      document.getElementById('confirmHandle').textContent = user.uname ? user.uname : user.phone;
+    }
+
+    function goBack() {
+      if (currentPhase === 'confirm') {
+        currentPhase = 'select';
+        selectedUser = null;
+        document.getElementById('selectPhase').style.display = 'block';
+        document.getElementById('confirmPhase').classList.remove('active');
+      } else {
+        window.location.href = 'nigh-ticket-view.html?id=TK003';
+      }
+    }
+
+    function sendInvite() {
+      alert('Invite sent to ' + selectedUser.name + '!');
+      window.location.href = 'nigh-ticket-view.html?id=TK003';
+    }
+
+    renderUsers();
+
+    // App modal
+    var _qrGenerated = false;
+    function showAppModal() {
+      var modal = document.getElementById('app-modal');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      if (!_qrGenerated && typeof QRCode !== 'undefined') {
+        new QRCode(document.getElementById('app-qr-code'), {
+          text: 'https://nighdrops.com/app',
+          width: 160,
+          height: 160,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+        _qrGenerated = true;
+      }
+    }
+    function closeAppModal() {
+      document.getElementById('app-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAppModal();
+    });
+  </script>
+
+  <!-- App Download Modal -->
+  <div id="app-modal" onclick="if(event.target===this)closeAppModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.80);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:#1c1c28;border:1px solid rgba(255,255,255,0.12);border-radius:22px;padding:28px 24px 22px;max-width:290px;width:88%;text-align:center;position:relative;box-shadow:0 24px 60px rgba(0,0,0,0.6)">
+      <button onclick="closeAppModal()" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.08);border:none;width:30px;height:30px;border-radius:50%;color:rgba(255,255,255,0.55);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit">&times;</button>
+      <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">Get the Nigh Drops App</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px;line-height:1.5">Scan with your phone's camera<br>to download on iOS or Android</div>
+      <div style="background:#fff;border-radius:14px;padding:14px;display:inline-block;margin-bottom:16px">
+        <div id="app-qr-code"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px">
+        <span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:5px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.60)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.6)" style="vertical-align:middle;margin-right:4px"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          App Store
+        </span>
+        <span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:8px;padding:5px 14px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.60)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.6)" style="vertical-align:middle;margin-right:4px"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-12.12L12.9 8.49 3.18 23.76zm17.89-10.98l-2.54-1.47-3.22 3.22 3.22 3.22 2.57-1.48c.73-.42.73-1.48-.03-1.49zM2.08 1.28C2.03 1.44 2 1.62 2 1.82v20.36c0 .2.03.38.08.54L14.09 12 2.08 1.28zm10.82 10.72l3.3-3.3L4.08.49c-.36-.21-.75-.25-1.08-.12L12.9 12z"/></svg>
+          Google Play
+        </span>
+      </div>
+      <div style="font-size:9px;font-weight:700;color:rgba(245,166,35,0.75);letter-spacing:0.10em">EARLY ACCESS · INVITE ONLY</div>
+    </div>
+  </div>
+</body>
+</html>

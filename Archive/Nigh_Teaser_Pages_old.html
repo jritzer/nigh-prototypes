@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nigh — Teaser Pages</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #0E4EF5;
+      --blue-lt:    #2563EB;
+      --purple:     #6226E9;
+      --purple-lt:  #7C3AED;
+      --purple-dim: rgba(98,38,233,0.15);
+      --purple-bdr: rgba(98,38,233,0.30);
+      --bg:         #080808;
+      --surface:    #111111;
+      --surface2:   #181818;
+      --border:     #222222;
+      --border2:    #2A2A2A;
+      --text:       #FFFFFF;
+      --text-2:     #A0A0A0;
+      --text-3:     #505050;
+      --lavender:   #C4B5FD;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Centered content shell ── */
+    .pg > * {
+      width: 100%;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Demo switcher ── */
+    .switcher {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(8,8,8,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px; padding: 9px 14px;
+      flex-wrap: wrap;
+    }
+    .sw-label { font-size: 10px; color: var(--text-3); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em; margin-right: 4px; }
+    .sw-btn {
+      background: none; border: 1px solid var(--border2); border-radius: 8px;
+      color: var(--text-2); font-size: 11px; font-weight: 600;
+      padding: 5px 11px; cursor: pointer; transition: all .15s;
+    }
+    .sw-btn:hover { border-color: var(--purple); color: var(--text); }
+    .sw-btn.on { background: var(--purple); border-color: var(--purple); color: #fff; }
+    .sw-new { position: relative; }
+    .sw-new::after {
+      content: 'NEW'; position: absolute; top: -6px; right: -6px;
+      background: #EC1977; color: #fff; font-size: 7px; font-weight: 800;
+      padding: 1px 4px; border-radius: 4px; letter-spacing: 0.05em;
+    }
+
+    /* ── Page scaffold ── */
+    .pg { display: none; min-height: 100vh; flex-direction: column; }
+    .pg.on { display: flex; }
+
+    /* ── Shared: top nav ── */
+    .tnav {
+      display: flex; align-items: center; justify-content: center;
+      padding: 22px 24px 0;
+    }
+    .logo svg { height: 36px; width: auto; display: block; }
+    .tnav-link {
+      font-size: 13px; color: var(--text-2); cursor: pointer; text-decoration: none;
+      transition: color .15s;
+    }
+    .tnav-link:hover { color: var(--text); }
+
+    /* ── Shared: buttons ── */
+    .btn {
+      display: block; width: 100%; max-width: 240px; border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 700; padding: 17px 24px;
+      cursor: pointer; text-align: center; transition: all .15s; letter-spacing: -0.1px;
+      margin-left: auto; margin-right: auto;
+    }
+    .btn-fill { background: var(--blue); color: #fff; }
+    .btn-fill:hover { background: var(--blue-lt); }
+    .btn-outline {
+      background: none; border: 1.5px solid var(--border2); color: var(--text-2);
+    }
+    .btn-outline:hover { border-color: var(--purple); color: var(--text); }
+    .btn-ghost {
+      background: none; border: none; color: var(--text-3); font-size: 13px;
+      font-weight: 600; padding: 12px 24px;
+    }
+    .btn-ghost:hover { color: var(--text-2); }
+
+    /* ── Shared: fine print ── */
+    .fine { font-size: 11px; color: var(--text-3); text-align: center;
+      line-height: 1.7; margin-top: 18px; }
+
+    /* ── Shared: pill badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--purple-dim); border: 1px solid var(--purple-bdr);
+      border-radius: 100px; font-size: 11px; font-weight: 700;
+      color: var(--lavender); padding: 5px 12px;
+      text-transform: uppercase; letter-spacing: 0.07em;
+    }
+    .badge-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--lavender); flex-shrink: 0;
+    }
+    .badge-pink {
+      background: rgba(236,25,119,0.12); border-color: rgba(236,25,119,0.30); color: #EC1977;
+    }
+    .badge-pink .badge-dot { background: #EC1977; }
+
+    /* ── Shared: "from" strip ── */
+    .from-strip {
+      background: var(--surface); border-radius: 14px; padding: 12px 16px;
+      width: fit-content; margin-bottom: 32px; text-align: center;
+    }
+    .from-strip div { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .from-strip strong { color: var(--text); }
+
+    /* ── Shared: headlines ── */
+    .inv-headline {
+      font-size: 34px; font-weight: 900; color: var(--text);
+      text-align: center; line-height: 1.1; letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .inv-sub {
+      font-size: 15px; color: var(--text-2); text-align: center;
+      line-height: 1.7; max-width: 280px; margin-bottom: 28px;
+    }
+
+    /* ── Shared: "What is a Drop?" explainer ── */
+    .drop-explainer {
+      width: 100%; max-width: 340px; margin-bottom: 36px;
+    }
+    .drop-explainer-label {
+      font-size: 10px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      text-align: center; margin-bottom: 10px;
+    }
+    .drop-explainer-row {
+      display: flex; gap: 8px;
+    }
+    .drop-explainer-item {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 10px; text-align: center;
+    }
+    .drop-explainer-icon {
+      font-size: 18px; margin-bottom: 6px;
+    }
+    .drop-explainer-title {
+      font-size: 11px; font-weight: 800; color: var(--text);
+      margin-bottom: 3px; letter-spacing: -0.1px;
+    }
+    .drop-explainer-desc {
+      font-size: 10px; color: var(--text-3); line-height: 1.4;
+    }
+
+    /* ── Shared: page footer ── */
+    .pg-footer {
+      max-width: 100% !important;
+      border-top: 1px solid var(--border);
+      padding: 18px 28px;
+      display: flex; align-items: center; justify-content: center; gap: 20px;
+    }
+    .pg-footer-link {
+      font-size: 11px; color: var(--text-3); cursor: pointer;
+      text-decoration: none; transition: color .15s;
+    }
+    .pg-footer-link:hover { color: var(--text-2); }
+    .pg-footer-sep { font-size: 11px; color: var(--border2); }
+
+    /* ── Shared: recovery/waitlist section ── */
+    .recovery {
+      width: 100%; max-width: 320px; margin-top: 32px;
+      padding-top: 28px; border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .recovery-label {
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+    }
+    .recovery-sub {
+      font-size: 11px; color: var(--text-3); margin-top: 8px; line-height: 1.5;
+    }
+
+    /* ── Shared: input row ── */
+    .input-wrap {
+      width: 100%; display: flex; gap: 8px;
+    }
+    .input-field {
+      flex: 1; background: var(--surface); border: 1.5px solid var(--border2);
+      border-radius: 13px; color: var(--text); font-size: 14px;
+      padding: 15px 16px; outline: none; transition: border-color .15s;
+      min-width: 0;
+    }
+    .input-field::placeholder { color: var(--text-3); }
+    .input-field:focus { border-color: var(--purple); }
+    .input-btn {
+      background: var(--blue); border: none; border-radius: 13px;
+      color: #fff; font-size: 14px; font-weight: 800;
+      padding: 15px 22px; cursor: pointer; white-space: nowrap;
+      transition: background .15s;
+    }
+    .input-btn:hover { background: var(--blue-lt); }
+
+
+    /* ══════════════════════════════════
+       BODY LAYOUTS
+    ══════════════════════════════════ */
+    .inv-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 36px 24px 48px;
+    }
+    .drp-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 32px 24px 48px;
+    }
+    .prt-body {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 32px 24px 48px;
+    }
+
+    /* ── CTA stacks ── */
+    .inv-cta, .drp-cta, .prt-cta {
+      width: 100%; display: flex; flex-direction: column; gap: 10px;
+    }
+
+    /* ── Drop link: blurred teaser card ── */
+    .drp-card {
+      width: 100%; border-radius: 22px; overflow: hidden;
+      border: 1px solid var(--border2); margin-bottom: 28px;
+      position: relative;
+    }
+    .drp-banner {
+      height: 160px; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #130826 0%, #3B1080 55%, #6226E9 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .drp-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(40px); opacity: 0.5;
+    }
+    .drp-blob-1 {
+      width: 160px; height: 160px;
+      background: #6226E9; top: -30px; left: -20px;
+    }
+    .drp-blob-2 {
+      width: 120px; height: 120px;
+      background: #A78BFA; bottom: -20px; right: 20px;
+    }
+    .drp-lock-wrap {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .drp-lock-circle {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.08); backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .drp-lock-label {
+      font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.5);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .drp-card-body {
+      background: var(--surface); padding: 16px 18px;
+    }
+    .drp-shared-by {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    }
+    .drp-av-sm {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, #3B0DAF, #8B5CF6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .drp-shared-text { font-size: 12px; color: var(--text-2); }
+    .drp-shared-text strong { color: var(--text); }
+    .drp-card-title {
+      font-size: 15px; font-weight: 800; color: var(--text);
+      margin-bottom: 8px; letter-spacing: -0.3px;
+    }
+    .drp-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .drp-chip {
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 5px 10px;
+      font-size: 11px; font-weight: 600; color: var(--text-2);
+    }
+
+    .drp-headline {
+      font-size: 26px; font-weight: 900; color: var(--text);
+      text-align: center; line-height: 1.15; letter-spacing: -0.6px;
+      margin-bottom: 12px;
+    }
+    .drp-sub {
+      font-size: 14px; color: var(--text-2); text-align: center;
+      line-height: 1.65; max-width: 280px; margin-bottom: 32px;
+    }
+
+
+    /* ══════════════════════════════════
+       PARTNER SPECIFIC
+    ══════════════════════════════════ */
+    .prt-headline {
+      font-size: 30px; font-weight: 900; color: var(--text);
+      text-align: center; line-height: 1.15; letter-spacing: -0.7px;
+      margin-bottom: 10px; width: 100%;
+    }
+    .prt-sub {
+      font-size: 14px; color: var(--text-2); text-align: center;
+      line-height: 1.65; max-width: 280px; margin-bottom: 32px;
+    }
+
+
+    /* ══════════════════════════════════
+       MARKETING  —  nigh.com
+    ══════════════════════════════════ */
+    .mkt-nav {
+      display: flex; align-items: center; justify-content: center;
+      padding: 22px 28px 0;
+    }
+    .mkt-hero {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      padding: 52px 28px 24px;
+    }
+    .mkt-headline {
+      font-size: 48px; font-weight: 900; color: var(--text);
+      line-height: 1.0; letter-spacing: -2px; margin-bottom: 20px;
+    }
+    .mkt-headline em { color: var(--purple); font-style: normal; }
+    .mkt-sub {
+      font-size: 16px; color: var(--text-2); line-height: 1.7;
+      max-width: 300px; margin-bottom: 44px;
+    }
+    .mkt-caveat { font-size: 11px; color: var(--text-3); }
+    .mkt-footer {
+      max-width: 100% !important;
+      border-top: 1px solid var(--border);
+      padding: 20px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    @media (max-width: 520px) {
+      .mkt-footer { padding: 20px 28px; }
+    }
+    .mkt-footer-links { display: flex; gap: 18px; }
+    .mkt-footer-link {
+      font-size: 11px; color: var(--text-3); cursor: pointer; transition: color .15s;
+    }
+    .mkt-footer-link:hover { color: var(--text-2); }
+
+
+    /* ══════════════════════════════════
+       CONFIRMATION STATE
+    ══════════════════════════════════ */
+    .confirm-check {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(16,185,129,0.12); border: 1.5px solid rgba(16,185,129,0.30);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin-bottom: 24px;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Hidden SVG symbol — logo with tight viewBox cropped to content -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="nigh-logo" viewBox="48 118 268 116">
+    <style>.st0{fill:#6226E9}.st1{fill:#0E4EF5}.st2{fill:#41EFF9}.st3{fill:#FFFFFF}.st4{fill:#EC1977}</style>
+    <path class="st0" d="M100.3,134.3c-0.1-1.2-0.5-2.3-1.2-3.2c-0.1-0.1-0.2-0.3-0.4-0.4c-1-1-2.3-1.6-3.8-1.6H67.1c-0.1,0-0.2,0-0.3,0h0c-2.3,0-4.5,0.7-6.3,2c-3.1,2.1-5.2,5.6-5.2,9.7v-9.7c0-4.5,3.6-8.1,8.1-8.1H89c5,0.2,9.3,3.5,10.7,8.1C100.1,132.2,100.3,133.2,100.3,134.3z"/>
+    <path class="st1" d="M106.7,152.6v12.7c0,2-0.8,4-2.3,5.4L81,193.2l-15-14.5l-1.1-1.5c-2.1-3-3.2-6.6-3.2-10.2v-3.5c0,1.5,0.7,3,1.8,4.1L81,184.3l17.5-16.8l2.1-2c2.4-2.3,4.1-5.3,4.9-8.5L106.7,152.6z"/>
+    <path class="st2" d="M65,177.3l1.1,1.5l-8.4-8.1c-1.5-1.4-2.3-3.3-2.3-5.4v-24.4c0-4,2.1-7.6,5.2-9.7c1.8-1.2,4-1.9,6.3-2c-1.6,0.1-2.9,0.8-3.9,2c-0.8,0.9-1.2,2.1-1.2,3.4v28.8v3.5C61.8,170.7,62.9,174.3,65,177.3z"/>
+    <path class="st3" d="M100.3,134.6v28.8c0,1.6-0.6,3.1-1.8,4.1L81,184.3l-17.5-16.8c-1.1-1.1-1.7-2.5-1.8-4.1c0,0,0-28.9,0-28.9c0-1.3,0.5-2.5,1.2-3.4c0.9-1.1,2.3-1.9,3.9-2h0c0.1,0,28.1,0,28.1,0c1.5,0,2.8,0.6,3.8,1.6c0.1,0.1,0.2,0.3,0.4,0.4c0.7,0.9,1.2,2,1.2,3.2C100.3,134.4,100.3,134.5,100.3,134.6z"/>
+    <path class="st4" d="M106.7,131.2v21.4l-1.1,4.4c-0.8,3.3-2.5,6.2-4.9,8.5l-2.1,2c1.1-1.1,1.8-2.6,1.8-4.1v-28.1h0v-0.7c0-0.1,0-0.2,0-0.3c0-1.1-0.2-2.2-0.5-3.2c-1.4-4.6-5.7-8-10.7-8.1h9.5c2.2,0,4.3,0.9,5.7,2.4C105.8,126.9,106.7,128.9,106.7,131.2z"/>
+    <polygon class="st1" points="87.4,135.6 87.4,152.5 74.3,135.6 69.4,135.6 69.4,160.9 74.6,160.9 74.6,144.4 87.4,160.9 92.7,160.9 92.7,135.6"/>
+    <ellipse class="st1" cx="81" cy="201.2" rx="9.9" ry="2.5"/>
+    <path class="st1" d="M79.1,173.5c1,1,2.7,1,3.7,0c1-1,1-2.7,0-3.7c-1-1-2.7-1-3.7,0C78.1,170.8,78.1,172.5,79.1,173.5z"/>
+    <path class="st1" d="M170.7,203.8h-11.8L132,163.3v40.5h-11.8v-59.1H132l26.8,40.6v-40.6h11.8V203.8z"/>
+    <path class="st1" d="M183.2,149.4c-1.4-1.3-2.1-3-2.1-4.9c0-2,0.7-3.6,2.1-4.9c1.4-1.3,3.1-2,5.2-2c2.1,0,3.8,0.7,5.2,2c1.4,1.3,2.1,3,2.1,4.9c0,2-0.7,3.6-2.1,4.9c-1.4,1.3-3.1,2-5.2,2C186.3,151.3,184.5,150.7,183.2,149.4z M194.2,156.9v46.9h-11.8v-46.9H194.2z"/>
+    <path class="st1" d="M233.4,158.2c2.6,1.4,4.7,3.2,6.3,5.4v-6.7h11.9v47.2c0,4.3-0.9,8.2-2.6,11.6c-1.7,3.4-4.4,6.1-7.9,8.1c-3.5,2-7.7,3-12.7,3c-6.7,0-12.1-1.6-16.4-4.7c-4.3-3.1-6.7-7.3-7.2-12.7h11.8c0.6,2.1,2,3.8,4,5.1c2.1,1.3,4.6,1.9,7.5,1.9c3.4,0,6.2-1,8.4-3.1c2.1-2.1,3.2-5.2,3.2-9.3v-7.3c-1.5,2.2-3.6,4-6.3,5.5c-2.7,1.5-5.7,2.2-9.2,2.2c-3.9,0-7.6-1-10.8-3c-3.3-2-5.9-4.9-7.7-8.6c-1.9-3.7-2.8-7.9-2.8-12.7c0-4.7,0.9-8.9,2.8-12.6c1.9-3.7,4.5-6.5,7.7-8.5c3.2-2,6.9-3,10.9-3C227.7,156.2,230.8,156.9,233.4,158.2z M238,173c-1.1-2.1-2.7-3.6-4.6-4.7c-1.9-1.1-4-1.6-6.2-1.6s-4.2,0.5-6.1,1.6c-1.9,1.1-3.4,2.6-4.5,4.7c-1.2,2.1-1.7,4.5-1.7,7.3c0,2.8,0.6,5.3,1.7,7.4c1.2,2.1,2.7,3.7,4.6,4.9c1.9,1.1,3.9,1.7,6,1.7c2.2,0,4.3-0.5,6.2-1.6c1.9-1.1,3.4-2.7,4.6-4.7c1.1-2.1,1.7-4.5,1.7-7.4C239.7,177.5,239.1,175,238,173z"/>
+    <path class="st1" d="M299.1,158.6c2.8,1.6,4.9,3.8,6.5,6.9c1.6,3,2.3,6.6,2.3,10.9v27.5H296v-25.9c0-3.7-0.9-6.6-2.8-8.6c-1.9-2-4.4-3-7.6-3c-3.3,0-5.9,1-7.7,3c-1.9,2-2.8,4.9-2.8,8.6v25.9h-11.8v-62.6h11.8v21.6c1.5-2,3.6-3.6,6.1-4.8c2.5-1.2,5.4-1.7,8.5-1.7C293.2,156.3,296.3,157,299.1,158.6z"/>
+  </symbol>
+</svg>
+
+<!-- ══════════════════════════════════════════
+     SWITCHER
+══════════════════════════════════════════ -->
+<div class="switcher">
+  <span class="sw-label">Page</span>
+  <button class="sw-btn on"  onclick="show('invite', this)">consumer invite</button>
+  <button class="sw-btn sw-new" onclick="show('invite-biz-consumer', this)">consumer invite (from biz)</button>
+  <button class="sw-btn"     onclick="show('invite-exp', this)">invite (expired)</button>
+  <button class="sw-btn sw-new" onclick="show('invite-claimed', this)">invite (claimed)</button>
+  <button class="sw-btn"     onclick="show('invite-biz', this)">host invite (via user)</button>
+  <button class="sw-btn"     onclick="show('invite-biz-exp', this)">host invite (expired)</button>
+  <button class="sw-btn"     onclick="show('host-invite', this)">host invite (via host)</button>
+  <button class="sw-btn"     onclick="show('host-invite-exp', this)">host invite (expired)</button>
+  <button class="sw-btn"     onclick="show('drop', this)">drop link</button>
+  <button class="sw-btn"     onclick="show('drop-exp', this)">drop (expired)</button>
+  <button class="sw-btn sw-new" onclick="show('drop-full', this)">drop (full)</button>
+  <button class="sw-btn"     onclick="show('partner', this)">collab (personal)</button>
+  <button class="sw-btn"     onclick="show('partner-biz', this)">collab (business)</button>
+  <button class="sw-btn"     onclick="show('partner-exp', this)">collab (expired)</button>
+  <button class="sw-btn sw-new" onclick="show('partner-accepted', this)">collab (accepted)</button>
+  <button class="sw-btn"     onclick="show('desktop', this)">desktop view</button>
+  <button class="sw-btn sw-new" onclick="show('confirm', this)">confirmation</button>
+  <button class="sw-btn sw-new" onclick="show('404', this)">404 / invalid</button>
+  <button class="sw-btn"     onclick="show('mkt', this)">nigh.com</button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     1. CONSUMER INVITE (from person)
+     invite.nigh.com/joshritzer/xT4pQ8
+══════════════════════════════════════════ -->
+<div class="pg on" id="pg-invite" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="inv-body">
+
+    <div class="from-strip">
+      <div><strong>Josh Ritzer</strong> got you early access to Nigh.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="inv-headline">
+      In real life.<br/>On purpose.
+    </div>
+    <div class="inv-sub">
+      Nigh is where in-person experiences worth showing up for live — no algorithm, no feed, just real people and real businesses creating something special IRL.
+    </div>
+
+    <!-- What is a Drop? -->
+    <div class="drop-explainer">
+      <div class="drop-explainer-label">What is a Drop?</div>
+      <div class="drop-explainer-row">
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x23F0;</div>
+          <div class="drop-explainer-title">Time</div>
+          <div class="drop-explainer-desc">A moment that starts soon</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x1F4CD;</div>
+          <div class="drop-explainer-title">Place</div>
+          <div class="drop-explainer-desc">A real location IRL</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x2728;</div>
+          <div class="drop-explainer-title">Experience</div>
+          <div class="drop-explainer-desc">Then it's gone</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-cta">
+      <button class="btn btn-fill">Accept Invite</button>
+      <button class="btn btn-ghost">Want to host Drops? Get Nigh Host</button>
+    </div>
+
+    <div class="fine" style="margin-top:28px">You're one of the first to get access. Spots are limited.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     2. CONSUMER INVITE (from business) — NEW
+     invite.nigh.com/centrob/consumer/xT4pQ8
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-invite-biz-consumer" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="inv-body">
+
+    <div class="from-strip">
+      <div><strong>Centro Boulder</strong> got you early access to Nigh.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="inv-headline">
+      In real life.<br/>On purpose.
+    </div>
+    <div class="inv-sub">
+      Centro Boulder is on Nigh — a new way for the places you love to host exclusive, in-person moments for their community. Be one of the first to experience it.
+    </div>
+
+    <div class="drop-explainer">
+      <div class="drop-explainer-label">What is a Drop?</div>
+      <div class="drop-explainer-row">
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x23F0;</div>
+          <div class="drop-explainer-title">Time</div>
+          <div class="drop-explainer-desc">A moment that starts soon</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x1F4CD;</div>
+          <div class="drop-explainer-title">Place</div>
+          <div class="drop-explainer-desc">A real location IRL</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x2728;</div>
+          <div class="drop-explainer-title">Experience</div>
+          <div class="drop-explainer-desc">Then it's gone</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-cta">
+      <button class="btn btn-fill">Accept Invite</button>
+      <button class="btn btn-ghost">Want to host Drops? Get Nigh Host</button>
+    </div>
+
+    <div class="fine" style="margin-top:28px">You're one of the first to get access. Spots are limited.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     3. INVITE (EXPIRED)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-invite-exp" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="inv-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F512;</div>
+    <div class="inv-headline" style="font-size:22px;margin-bottom:12px">
+      This invite is<br/>no longer active.
+    </div>
+    <div class="inv-sub" style="margin-bottom:0">
+      This invite link has expired. Ask the person who sent it for a new one, or request access below.
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Request access</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">No guarantees. We'll text you if a spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     4. INVITE (ALREADY CLAIMED) — NEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-invite-claimed" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="inv-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x2705;</div>
+    <div class="inv-headline" style="font-size:22px;margin-bottom:12px">
+      This invite has already<br/>been claimed.
+    </div>
+    <div class="inv-sub" style="margin-bottom:4px">
+      Someone already used this invite link. If it was you, open the app to continue. Otherwise, ask the sender for a new invite.
+    </div>
+    <div class="inv-cta" style="margin-top:24px">
+      <button class="btn btn-fill" style="max-width:200px">Open Nigh</button>
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Need a new invite?</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">No guarantees. We'll text you if a spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     5. HOST INVITE (via user)
+     invite.nigh.com/joshritzer/biz/xT4pQ8
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-invite-biz" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="inv-body">
+
+    <div class="from-strip">
+      <div><strong>Josh Ritzer</strong> got you early access to host on Nigh.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Host Invite
+    </div>
+
+    <div class="inv-headline">
+      Drop something<br/>worth showing<br/>up for.
+    </div>
+    <div class="inv-sub">
+      A Drop is a new kind of IRL moment — exclusive, time-bound, and gone when it's over. Create one for your community, your guests, or your closest circle.
+    </div>
+
+    <div class="drop-explainer">
+      <div class="drop-explainer-label">What is a Drop?</div>
+      <div class="drop-explainer-row">
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x23F0;</div>
+          <div class="drop-explainer-title">Time</div>
+          <div class="drop-explainer-desc">You set when it starts</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x1F4CD;</div>
+          <div class="drop-explainer-title">Place</div>
+          <div class="drop-explainer-desc">Your venue or location</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x2728;</div>
+          <div class="drop-explainer-title">Experience</div>
+          <div class="drop-explainer-desc">People show up IRL</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-cta">
+      <button class="btn btn-fill">Accept Host Invite</button>
+      <button class="btn btn-ghost">Just want to discover Drops? Get Nigh</button>
+    </div>
+
+    <div class="fine" style="margin-top:28px">Limited host spots during private beta.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     6. HOST INVITE VIA USER (EXPIRED)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-invite-biz-exp" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="inv-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F512;</div>
+    <div class="inv-headline" style="font-size:22px;margin-bottom:12px">
+      This host invite is<br/>no longer active.
+    </div>
+    <div class="inv-sub" style="margin-bottom:0">
+      This invite link has expired. Ask the person who sent it for a new one, or request host access below.
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Request host access</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">No guarantees. We'll text you if a host spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     7. HOST INVITE (via host)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-host-invite" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="inv-body">
+
+    <div class="from-strip">
+      <div><strong>Centro Boulder</strong> invited you to host on Nigh.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Host Invite
+    </div>
+
+    <div class="inv-headline">
+      Drop something<br/>people show up for<br/>in real life.
+    </div>
+    <div class="inv-sub" style="margin-bottom:20px">
+      You've been invited to host on Nigh — a new way to create exclusive, time-bound IRL moments for your business, your community, or select guests.
+    </div>
+
+    <div class="drop-explainer" style="margin-bottom:28px">
+      <div class="drop-explainer-label">What is a Drop?</div>
+      <div class="drop-explainer-row">
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x23F0;</div>
+          <div class="drop-explainer-title">Time</div>
+          <div class="drop-explainer-desc">You set when it starts</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x1F4CD;</div>
+          <div class="drop-explainer-title">Place</div>
+          <div class="drop-explainer-desc">Your venue or location</div>
+        </div>
+        <div class="drop-explainer-item">
+          <div class="drop-explainer-icon">&#x2728;</div>
+          <div class="drop-explainer-title">Experience</div>
+          <div class="drop-explainer-desc">People show up IRL</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone input for signup -->
+    <div style="width:100%;max-width:320px;margin-bottom:12px">
+      <div style="font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:10px;text-align:center">Enter your phone number to get started</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Next</button>
+      </div>
+    </div>
+    <div class="fine">We'll send a verification code to set up your account.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     8. HOST INVITE VIA HOST (EXPIRED)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-host-invite-exp" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="inv-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F512;</div>
+    <div class="inv-headline" style="font-size:22px;margin-bottom:12px">
+      This host invite is<br/>no longer active.
+    </div>
+    <div class="inv-sub" style="margin-bottom:0">
+      This invite link has expired. Reach out to Centro Boulder for a new one, or request host access below.
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Request host access</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">No guarantees. We'll text you if a host spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     9. DROP LINK
+     drop.nigh.com/centrob/k9x2mP4
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-drop" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="drp-body">
+
+    <div class="from-strip">
+      <div><strong>Centro Boulder</strong> shared a Nigh Drop with you.</div>
+    </div>
+
+    <!-- Blurred teaser card -->
+    <div class="drp-card">
+      <div class="drp-banner">
+        <div class="drp-blob drp-blob-1"></div>
+        <div class="drp-blob drp-blob-2"></div>
+        <div class="drp-lock-wrap">
+          <div class="drp-lock-circle">&#x1F512;</div>
+          <div class="drp-lock-label">Drop Preview</div>
+        </div>
+      </div>
+      <div class="drp-card-body">
+        <div class="drp-shared-by">
+          <div class="drp-av-sm">CB</div>
+          <div class="drp-shared-text">Hosted by <strong>Centro Boulder</strong></div>
+        </div>
+        <div class="drp-card-title">Something special is dropping soon...</div>
+        <div class="drp-chips">
+          <span class="drp-chip">&#x1F4CD; Boulder, CO</span>
+          <span class="drp-chip">&#x23F0; Dropping soon</span>
+          <span class="drp-chip">&#x1F512; Limited spots</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:16px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="drp-headline">
+      A real place.<br/>A real moment.<br/>Then it's gone.
+    </div>
+    <div class="drp-sub">
+      Open the Drop in Nigh to see the full details and reserve your spot before it's too late.
+    </div>
+
+    <div class="drp-cta">
+      <button class="btn btn-fill" style="max-width:220px">View This Drop</button>
+    </div>
+
+    <div class="fine" style="margin-top:24px">Don't have the app yet? Viewing this link will get you started.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     10. DROP (EXPIRED)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-drop-exp" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="drp-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F55B;</div>
+    <div class="drp-headline" style="font-size:22px;margin-bottom:12px">
+      This Drop has ended.
+    </div>
+    <div class="drp-sub" style="margin-bottom:24px">
+      This Drop has come and gone — that's how Drops work. Follow Centro Boulder in Nigh so you don't miss their next one.
+    </div>
+    <div class="drp-cta">
+      <button class="btn btn-fill" style="max-width:240px">Follow Centro Boulder</button>
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Don't have Nigh yet?</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">We'll text you when a spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     11. DROP (FULL / SOLD OUT) — NEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-drop-full" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="drp-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F525;</div>
+    <div class="drp-headline" style="font-size:22px;margin-bottom:12px">
+      This Drop is full.
+    </div>
+    <div class="drp-sub" style="margin-bottom:24px">
+      All spots for this Drop have been claimed — but Centro Boulder is on Nigh, and more Drops are coming. Follow them so you're first in line next time.
+    </div>
+    <div class="drp-cta">
+      <button class="btn btn-fill" style="max-width:240px">Follow Centro Boulder</button>
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Don't have Nigh yet?</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">We'll text you when a spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     12. DROP COLLAB (personal)
+     partner.nigh.com/centrob/mR7nK2
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-partner" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="prt-body">
+
+    <div class="from-strip">
+      <div><strong>Centro Boulder</strong> invited you to collaborate on a Nigh Drop.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="prt-headline">
+      Centro Boulder<br/>wants to Drop<br/>with you.
+    </div>
+    <div class="prt-sub">
+      You've been invited to collaborate on a Drop — a time-bound, IRL experience that brings people together. Open the app to see the full details.
+    </div>
+
+    <div class="prt-cta">
+      <button class="btn btn-fill">View Collaboration</button>
+      <button class="btn btn-ghost">Don't have Nigh? Accept Invite</button>
+    </div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     13. DROP COLLAB (business)
+     partner.nigh.com/centrob/biz/mR7nK2
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-partner-biz" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="prt-body">
+
+    <div class="from-strip">
+      <div><strong>Centro Boulder</strong> invited your business to collaborate on a Nigh Drop.</div>
+    </div>
+
+    <div class="badge badge-pink" style="margin-bottom:20px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="prt-headline">
+      Centro Boulder<br/>wants to Drop<br/>with your business.
+    </div>
+    <div class="prt-sub">
+      Your business has been invited to co-host a Drop — a time-bound, IRL experience that brings people together. Open Nigh Host to see the details.
+    </div>
+
+    <div class="prt-cta">
+      <button class="btn btn-fill">View in Nigh Host</button>
+      <button class="btn btn-ghost">Don't have Nigh Host? Accept Invite</button>
+    </div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     14. DROP COLLAB (EXPIRED)
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-partner-exp" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="prt-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x1F512;</div>
+    <div class="prt-headline" style="font-size:22px;margin-bottom:12px">
+      This collaboration invite<br/>is no longer available.
+    </div>
+    <div class="prt-sub" style="margin-bottom:0">
+      This invitation to collaborate on a Drop has expired. Reach out to Centro Boulder for future opportunities.
+    </div>
+
+    <div class="recovery">
+      <div class="recovery-label">Want to host on Nigh?</div>
+      <div class="input-wrap">
+        <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+        <button class="input-btn">Request</button>
+      </div>
+      <div class="recovery-sub">We'll text you if a host spot opens.</div>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     15. DROP COLLAB (ALREADY ACCEPTED) — NEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-partner-accepted" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div class="prt-body" style="justify-content:center;text-align:center">
+    <div style="font-size:32px;margin-bottom:20px">&#x2705;</div>
+    <div class="prt-headline" style="font-size:22px;margin-bottom:12px">
+      This collaboration has<br/>already been accepted.
+    </div>
+    <div class="prt-sub" style="margin-bottom:24px">
+      Someone has already accepted this collaboration invite. If it was you, open the app to continue. Otherwise, reach out to Centro Boulder.
+    </div>
+    <div class="prt-cta">
+      <button class="btn btn-fill" style="max-width:200px">Open Nigh Host</button>
+    </div>
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     16. DESKTOP VIEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-desktop" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;max-width:480px;margin:0 auto">
+
+    <div class="badge badge-pink" style="margin-bottom:28px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div style="font-size:28px;font-weight:900;color:var(--text);letter-spacing:-0.6px;line-height:1.15;margin-bottom:12px">
+      Nigh is made<br/>for your phone.
+    </div>
+    <div style="font-size:14px;color:var(--text-2);line-height:1.65;max-width:280px;margin-bottom:12px">
+      Nigh is where exclusive, in-person experiences from the people and places you care about live — designed to get you off the screen and into the moment.
+    </div>
+    <div style="font-size:13px;color:var(--text-2);line-height:1.65;max-width:280px;margin-bottom:32px">
+      Enter your phone number and we'll text you a link to continue on your mobile device.
+    </div>
+
+    <div class="input-wrap" style="max-width:320px;margin-bottom:12px">
+      <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+      <button class="input-btn">Send</button>
+    </div>
+
+    <div style="font-size:11px;color:var(--text-3);line-height:1.5;text-align:center">We'll send a one-time link. No spam, ever.</div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     17. POST-SIGNUP CONFIRMATION — NEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-confirm" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;max-width:480px;margin:0 auto">
+
+    <div class="confirm-check">&#x2714;&#xFE0F;</div>
+
+    <div style="font-size:26px;font-weight:900;color:var(--text);letter-spacing:-0.6px;line-height:1.15;margin-bottom:14px">
+      Check your texts.
+    </div>
+    <div style="font-size:14px;color:var(--text-2);line-height:1.65;max-width:280px;margin-bottom:8px">
+      We just sent a link to <strong style="color:var(--text)">(303) 555-0188</strong>. Tap the link on your phone to continue.
+    </div>
+    <div style="font-size:12px;color:var(--text-3);line-height:1.6;max-width:260px;margin-bottom:32px">
+      Didn't get it? Check your message requests or wait a moment and try again.
+    </div>
+
+    <button class="btn btn-outline" style="max-width:180px;font-size:13px;padding:13px 20px">Resend Link</button>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     18. 404 / INVALID LINK — NEW
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-404" style="padding-top:52px">
+  <div class="tnav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;max-width:480px;margin:0 auto">
+
+    <div style="font-size:32px;margin-bottom:20px">&#x1F50D;</div>
+
+    <div style="font-size:24px;font-weight:900;color:var(--text);letter-spacing:-0.5px;line-height:1.15;margin-bottom:12px">
+      We can't find<br/>what you're looking for.
+    </div>
+    <div style="font-size:14px;color:var(--text-2);line-height:1.65;max-width:280px;margin-bottom:32px">
+      This link doesn't match anything on Nigh. It may have been mistyped or is no longer valid.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+      <button class="btn btn-fill" style="max-width:200px">Go to nigh.com</button>
+      <button class="btn btn-ghost">Open Nigh</button>
+    </div>
+
+  </div>
+
+  <div class="pg-footer">
+    <span class="pg-footer-link">Privacy</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Terms</span>
+    <span class="pg-footer-sep">&middot;</span>
+    <span class="pg-footer-link">Contact</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     19. MARKETING  ·  nigh.com
+══════════════════════════════════════════ -->
+<div class="pg" id="pg-mkt" style="padding-top:52px">
+  <div class="mkt-nav">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+  </div>
+
+  <div class="mkt-hero">
+
+    <div class="badge badge-pink" style="margin-bottom:28px">
+      <span class="badge-dot"></span>Private Beta · Invite Only
+    </div>
+
+    <div class="mkt-headline">
+      In real life.<br/><em>On purpose.</em>
+    </div>
+
+    <div class="mkt-sub">
+      Drops are a new kind of IRL moment — exclusive, time-bound experiences created by real people and real businesses to bring people together.
+    </div>
+
+    <!-- Audience split -->
+    <div style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+
+      <!-- Attendees -->
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:18px 20px">
+        <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">For people</div>
+        <div style="font-size:14px;color:var(--text-2);line-height:1.5;margin-bottom:14px">Find Drops happening soon from the people and places you care about. Show up before they're gone.</div>
+        <button class="btn btn-fill" style="max-width:none;font-size:13px;padding:13px 12px">Get Nigh</button>
+      </div>
+
+      <!-- Businesses -->
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:18px 20px">
+        <div style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">For hosts</div>
+        <div style="font-size:14px;color:var(--text-2);line-height:1.5;margin-bottom:14px">Drop something worth showing up for — bring people together IRL for your business, your community, or your friends.</div>
+        <button class="btn btn-fill" style="max-width:none;font-size:13px;padding:13px 12px">Get Nigh Host</button>
+      </div>
+
+    </div>
+
+    <div class="mkt-caveat" style="margin-bottom:20px">Invite required · No algorithm · One account, both apps</div>
+
+    <hr style="border:none;border-top:1px solid var(--border);width:100%;max-width:360px;margin-bottom:20px"/>
+
+    <!-- Request access -->
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700">Don't have an invite?</div>
+    <div class="input-wrap" style="max-width:360px">
+      <input class="input-field" type="tel" placeholder="(555) 555-5555"/>
+      <button class="input-btn">Request</button>
+    </div>
+    <div class="mkt-caveat" style="margin-top:8px">No guarantees. We'll text you when a spot opens.</div>
+
+  </div>
+
+  <div class="mkt-footer" style="max-width:100%!important">
+    <div class="logo"><svg xmlns="http://www.w3.org/2000/svg"><use href="#nigh-logo"/></svg></div>
+    <div class="mkt-footer-links">
+      <span class="mkt-footer-link">Privacy</span>
+      <span class="mkt-footer-link">Terms</span>
+      <span class="mkt-footer-link">Contact</span>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function show(id, btn) {
+    document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('on'));
+    document.getElementById('pg-' + id).classList.add('on');
+    btn.classList.add('on');
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>

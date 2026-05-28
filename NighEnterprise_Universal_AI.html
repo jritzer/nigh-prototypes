@@ -21,9 +21,9 @@ function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${
 
 // ── STATE ─────────────────────────────────────────────────────────────────────
 const TODAY_STR='2026-04-14';
-const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,collectionModal:null,brandDetail:null,partnerDetailId:null,partnerDeactivateConfirm:false,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,pushCap:0,pushMaxPerGuest:null,pushAudience:'public',pushAudienceGroups:[],pushEditDropId:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',guestView:'portfolio',guestLocFilter:null,guestLocModal:false,guestLocSelected:[],acctFilter:[],acctFilterModal:false,guestDetailGuest:null,guestMenu:null,guestBlocked:[],teamTab:'members',teamFilter:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026,headsUpModal:false,headsUpDate:TODAY_STR,headsUpLocId:null,headsUpText:'',headsUpNiya:false,selectedOrder:null,ticketStatusOverrides:{},ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,cancelTicketName:null,guestDetailTab:null,orderGuestFilter:null,manageSubModal:false,selectedPlanTier:null,subModalStep:null,editTags:null,editTagInput:'',brandEdit:false,editAcctType:null,followersTab:'list'};
+const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,collectionModal:null,brandDetail:null,partnerDetailId:null,partnerDeactivateConfirm:false,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,pushCap:0,pushMaxPerGuest:null,pushAudience:'public',pushAudienceGroups:[],pushEditDropId:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',guestView:'portfolio',guestLocFilter:null,guestLocModal:false,guestLocSelected:[],acctFilter:[],acctFilterModal:false,guestDetailGuest:null,guestMenu:null,guestBlocked:[],teamTab:'members',teamFilter:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026,headsUpModal:false,headsUpDate:TODAY_STR,headsUpLocId:null,headsUpText:'',headsUpNiya:false,selectedOrder:null,ticketStatusOverrides:{},ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,cancelTicketName:null,guestDetailTab:null,orderGuestFilter:null,manageSubModal:false,selectedPlanTier:null,subModalStep:null,editTags:null,editTagInput:'',brandEdit:false,editAcctType:null,followersTab:'list',pushPhoneRequest:'none'};
 function ss(p){Object.assign(S,p);render();}
-function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,brandDetail:null,partnerDetailId:null,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushEditDropId:null,showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,editAssignments:null,editDisplayName:undefined,editConfirm:null,teamFilter:'all',settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null,selectedOrder:null,ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,guestDetailTab:null,orderGuestFilter:null});}
+function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,brandDetail:null,partnerDetailId:null,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushEditDropId:null,pushPhoneRequest:'none',showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,editAssignments:null,editDisplayName:undefined,editConfirm:null,teamFilter:'all',settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null,selectedOrder:null,ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,guestDetailTab:null,orderGuestFilter:null});}
 function refundTicket(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Refunded';ss({ticketStatusOverrides:o,dropModal:null,cancelTicketId:null,cancelTicketName:null});}
 function uncheckIn(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Reserved';ss({ticketStatusOverrides:o});}
 function checkIn(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Checked In';ss({ticketStatusOverrides:o});}
@@ -82,8 +82,8 @@ const CONFIGS={
     ],
     drops:[
       {id:'D01',title:'Apple Flash Sale \u2014 MacBook, iPad &amp; AirPods', type:'flash-sale',    status:'live',      locId:'L01',cap:200,res:183,ci:165,sr:90,price:799,bh:4, desc:'MacBook Air 13" M3 (reg. $1,099) · iPad Pro 11" (reg. $999) · AirPods Pro 2 (reg. $249) · In-store only · One per customer · While supplies last'},
-      {id:'D02',title:'Galaxy S25 Ultra Launch \u2014 Trade-In Bonus',       type:'product-launch',status:'live',      locId:'L07',cap:150,res:141,ci:128,sr:91,price:0,bh:6, desc:'Trade in any Samsung (any condition) for up to $400 off · Carrier financing from $0/mo · Free SmartTag+ with every pre-order today · Launch-day pricing locked for claim holders'},
-      {id:'D03',title:'Totaltech VIP Early Access',                           type:'vip-member',    status:'live',      locId:'L13',cap:80, res:80, ci:72, sr:90,price:0,bh:3, desc:'Members enter at 8 AM — 2 hours before store opens · First pick of limited PS5 Pro, MacBook & TV inventory · 5% member discount stacked on any existing sale · Complimentary coffee & pastries'},
+      {id:'D02',title:'Galaxy S25 Ultra Launch \u2014 Trade-In Bonus',       type:'product-launch',status:'live',      locId:'L07',cap:150,res:141,ci:128,sr:91,price:0,bh:6, phoneRequest:'optional', desc:'Trade in any Samsung (any condition) for up to $400 off · Carrier financing from $0/mo · Free SmartTag+ with every pre-order today · Launch-day pricing locked for claim holders'},
+      {id:'D03',title:'Totaltech VIP Early Access',                           type:'vip-member',    status:'live',      locId:'L13',cap:80, res:80, ci:72, sr:90,price:0,bh:3, phoneRequest:'required', desc:'Members enter at 8 AM — 2 hours before store opens · First pick of limited PS5 Pro, MacBook & TV inventory · 5% member discount stacked on any existing sale · Complimentary coffee & pastries'},
       {id:'D04',title:'In-Store Gaming Tournament',                           type:'event',         status:'live',      locId:'L09',cap:100,res:88, ci:79, sr:90,price:0,bh:5, desc:'Call of Duty: Warzone single-elimination bracket · Semi-finals 2 PM, finals 5 PM · $500 Best Buy gift card to the champion · Free entry · Snacks & drinks for all participants'},
       {id:'D05',title:'Smart TV Flash Sale \u2014 All Sizes',                 type:'flash-sale',    status:'live',      locId:'L10',cap:180,res:162,ci:148,sr:91,price:699,bh:3, desc:'Samsung 65" QLED 4K (reg. $1,099) · LG C3 55" OLED (reg. $1,299) · Sony Bravia 75" (reg. $1,499) · Haul-away & delivery $49 · Limited to 8–12 units per model'},
       {id:'D06',title:'PlayStation 5 Pro Launch Bundle',                      type:'product-launch',status:'scheduled', locId:'L05',cap:120,res:74, ci:0,  sr:0, price:599,bh:4, desc:'PS5 Pro + choose any 3 launch titles (reg. $60 each) included in bundle price · Totaltech 2-year warranty included ($50 value) · One bundle per household · 120 units allocated'},
@@ -3815,6 +3815,13 @@ function dropDetail(d){
               }).join('')}
             </div>
           </div>`:''}
+          ${d.phoneRequest&&d.phoneRequest!=='none'?`<div>
+            <div style="font-size:0.63rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Guest Phone</div>
+            <div style="display:inline-flex;align-items:center;gap:6px;">
+              <span style="font-size:0.85rem;color:#374151;font-weight:600;">${d.phoneRequest==='optional'?'Optional':'Required'}</span>
+              <span style="font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;background:${d.phoneRequest==='required'?'#FEF3C7':'#EEF2FF'};color:${d.phoneRequest==='required'?'#92400E':'#1d4ed8'};">${d.phoneRequest==='required'?'Must share':'Can choose to share'}</span>
+            </div>
+          </div>`:''}
           <div style="background:#ede9fe;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
             <span style="font-size:1.2rem;">📡</span>
             <div>
@@ -3851,7 +3858,7 @@ function dropDetail(d){
             {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
             {icon:'M2 2h8v8H2zM14 2h8v8h-8zM2 14h8v8H2zM14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
             {icon:'M3 11l19-9v18L3 13M11.6 16.8a3 3 0 1 1-5.8-1.6', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
-            {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:"ss({showPush:true,pushStep:1,pushEditDropId:'"+d.id+"',pushLoc:'"+d.locId+"',pushLocOpen:false,pushLocQ:'',pushHostId:'"+(d.locId||'')+"',pushHostOpen:false,pushFormTiming:'start',pushMaxPerGuest:null,pushAudience:'"+(d.audience||'public')+"',pushAudienceGroups:[],pushDualPrice:false,pushCap:"+(d.cap||0)+",pushTaxOn:true,pushPartners:[],pushPartnersOpen:false,pushAgeRestriction:'everyone',pushDate:null,pushCalOpen:false,pushCalYear:null,pushCalMonth:null,pushStartTime:null,pushWindowStart:null,pushWindowEnd:null,pushOpenTimePicker:null})"},
+            {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:"ss({showPush:true,pushStep:1,pushEditDropId:'"+d.id+"',pushLoc:'"+d.locId+"',pushLocOpen:false,pushLocQ:'',pushHostId:'"+(d.locId||'')+"',pushHostOpen:false,pushFormTiming:'start',pushMaxPerGuest:null,pushAudience:'"+(d.audience||'public')+"',pushAudienceGroups:[],pushDualPrice:false,pushCap:"+(d.cap||0)+",pushTaxOn:true,pushPartners:[],pushPartnersOpen:false,pushAgeRestriction:'everyone',pushPhoneRequest:'"+(d.phoneRequest||'none')+"',pushDate:null,pushCalOpen:false,pushCalYear:null,pushCalMonth:null,pushStartTime:null,pushWindowStart:null,pushWindowEnd:null,pushOpenTimePicker:null})"},
           ].map((a,i)=>`
             <button onclick="${a.action}" style="width:100%;padding:11px 14px;background:none;border:none;border-bottom:${i<4?'1px solid #f8fafc':'none'};display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
               <div style="width:34px;height:34px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -4330,6 +4337,7 @@ function rFollowers(){
           </div>`).join('')}
         ${sel.length===0&&locOrgs.length>5?`<div style="font-size:0.68rem;color:#94a3b8;padding:6px 0;">+${locOrgs.length-5} more accounts</div>`:''}
       </div>`:''}
+
       <button style="width:100%;padding:10px;background:#f1f5f9;border:none;border-radius:10px;font-size:0.78rem;font-weight:700;cursor:pointer;color:#374151;">Download QR Code</button>
     </div>`;
 
@@ -6102,7 +6110,7 @@ function rBilling(forceTab){
   const orderDates=['Apr 20','Apr 19','Apr 18','Apr 17','Apr 16','Apr 15','Apr 14','Apr 12','Apr 10','Apr 8','Apr 6','Apr 4','Apr 2','Mar 30','Mar 28','Mar 25','Mar 22','Mar 18','Mar 15','Mar 10','Mar 8','Mar 5','Mar 2','Feb 28','Feb 24','Feb 20','Feb 15','Feb 10','Feb 5','Feb 1'];
   const orderTimes=['2:34 PM','11:18 AM','4:52 PM','9:07 AM','1:41 PM','3:29 PM','10:55 AM','7:03 PM','12:17 PM','5:48 PM','8:22 AM','2:59 PM','6:14 PM','11:33 AM','3:07 PM','9:44 AM','4:21 PM','1:06 PM','7:38 PM','10:12 AM'];
   const paymentMethods=['Apple Pay','Visa ···· 4242','Mastercard ···· 8871','Apple Pay','Google Pay','Visa ···· 9123','Amex ···· 3344','Apple Pay'];
-  const orderSource='Nigh Drops';
+  const orderSource='Nigh';
   const checkInMethods=['QR Code','QR Code','QR Code','Manual Entry','QR Code','Staff Override','QR Code'];
   const staffNames=['Sarah M.','Jordan T.','Alex R.','Casey B.','Sam W.'];
   const ticketTypes={
@@ -8525,6 +8533,29 @@ function pushModal(){
           <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF;">▾</span>
         </div>
       </div>
+      ${(()=>{
+        const isEnt = c.plan && c.plan.toLowerCase().includes('enterprise');
+        const isPro = !isEnt && c.plan && c.plan.toLowerCase().includes('pro');
+        const phoneEligible = isPro || isEnt;
+        if(!phoneEligible) return '';
+        const phoneVal = S.pushPhoneRequest||'none';
+        return `<div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <label style="font-size:12px;font-weight:600;color:#374151;">Guest Phone Number</label>
+          <span style="font-size:9px;font-weight:700;color:#5B21B6;background:#EDE9FE;padding:1px 6px;border-radius:99px;display:inline-flex;align-items:center;gap:3px">Pro</span>
+        </div>
+        <div style="position:relative;display:inline-block;width:280px;">
+          <select onchange="S.pushPhoneRequest=this.value;render()" style="width:100%;padding:10px 32px 10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;font-family:inherit;appearance:none;cursor:pointer;">
+            <option value="none" ${phoneVal==='none'?'selected':''}>Not requested</option>
+            <option value="optional" ${phoneVal==='optional'?'selected':''}>Optional — guest can choose to share</option>
+            <option value="required" ${phoneVal==='required'?'selected':''}>Required — guests must share</option>
+          </select>
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF;">▾</span>
+        </div>
+        ${phoneVal==='optional'?`<div style="margin-top:8px;background:#EEF2FF;border-radius:8px;padding:8px 10px;display:flex;align-items:flex-start;gap:7px;width:280px;box-sizing:border-box;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span style="font-size:11px;color:#1d4ed8;line-height:1.5;">Guests have the option to share their number. Not requiring has a higher conversion rate.</span></div>`:''}
+        ${phoneVal==='required'?`<div style="margin-top:8px;background:#FEF3C7;border-radius:8px;padding:8px 10px;display:flex;align-items:flex-start;gap:7px;width:280px;box-sizing:border-box;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span style="font-size:11px;color:#92400E;line-height:1.5;">Guests must share their number to complete the reservation. This may reduce your conversion rate.</span></div>`:''}
+      </div>`;
+      })()}
     </div>`;
 
   // ── STEP 4: Review & Schedule ───────────────────────────────────────────────
@@ -8559,6 +8590,7 @@ function pushModal(){
           ${revRow('💵','Ticket Price',pricingDisplay)}
           ${revRow('👥','Audience',audienceDisplay)}
           ${revRow('🏢','Host',selHostName)}
+          ${(S.pushPhoneRequest&&S.pushPhoneRequest!=='none')?revRow('📱','Guest Phone',S.pushPhoneRequest==='optional'?'Optional — guest can choose':'Required — guests must share'):''}
           <div style="display:flex;align-items:flex-start;padding:7px 0;"><span style="font-size:12px;color:#374151;flex-shrink:0;min-width:110px;">Partners</span><span style="font-size:12px;font-weight:600;color:#111827;text-align:right;flex:1;">${pushPartners2}</span></div>
         </div>
       </div>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Nigh — In real life. Presence is the point.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --purple-deep: #4A1BB5;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --pink-light: #FCC3C4;
+            --white: #FFFFFF;
+            --off-white: #F7F5FF;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --gradient-brand: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+            --gradient-warm: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+            --gradient-glow: linear-gradient(135deg, var(--teal), var(--blue), var(--purple), var(--pink));
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(11,11,26,0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 72px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo img, .nav-logo svg { height: 36px; width: auto; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta {
+            background: var(--pink) !important; color: #fff !important;
+            padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; transition: all 0.2s !important;
+        }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+        .mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 16px 36px; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: inherit;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-pink { background: var(--pink); color: #fff; }
+        .btn-pink:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(236,25,119,0.3); }
+
+        /* ===== SECTION BASE ===== */
+        section { padding: 120px 24px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+        }
+
+        /* ===== ABOUT / NIGH VISION ===== */
+        .about-section {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .about-text h2 {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em;
+            margin-bottom: 20px; line-height: 1.15;
+        }
+        .about-text p { color: var(--text-secondary); font-size: 1rem; line-height: 1.75; margin-bottom: 16px; font-weight: 400; }
+        .about-visual {
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .about-stat {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 32px;
+            display: flex; align-items: center; gap: 20px;
+            transition: all 0.3s;
+        }
+        .about-stat:hover { border-color: var(--blue); }
+        .about-stat-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0; background: rgba(14,78,245,0.1);
+        }
+        .about-stat h4 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+        .about-stat p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; font-weight: 400; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px;
+        }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col h4 {
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 18px; color: var(--text-secondary);
+        }
+        .footer-col a {
+            display: block; color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400;
+        }
+        .footer-col a:hover { color: var(--text); }
+        .footer-app-links { display: flex; gap: 12px; margin-top: 16px; }
+        .footer-app-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.78rem; font-weight: 600;
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .footer-app-link:hover { border-color: var(--teal); color: var(--teal); }
+        .footer-app-link svg { width: 14px; height: 14px; }
+        .footer-bottom {
+            max-width: 1200px; margin: 48px auto 0;
+            padding-top: 24px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; color: #555; font-weight: 400;
+        }
+        .footer-bottom a { color: #555; text-decoration: none; }
+        .footer-bottom a:hover { color: var(--text-secondary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .about-grid { grid-template-columns: 1fr; gap: 48px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            section { padding: 80px 20px; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <div class="nav-inner">
+        <a href="nigh-drops.html" class="nav-logo">
+            <img src="Nigh_Logo.svg" alt="Nigh" style="height: 36px; width: auto; display: block;">
+        </a>
+        <div class="nav-links">
+            <a href="nigh-drops.html#drops">Nigh Drops</a>
+            <a href="nigh-drops.html#how">How It Works</a>
+            <a href="about.html">About</a>
+            <a href="foundation.html">Foundation</a>
+            <a href="for-businesses.html">For Businesses</a>
+            <a href="for-businesses.html" class="nav-cta">Host a Drop</a>
+        </div>
+        <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ===== ABOUT NIGH ===== -->
+<section class="about-section" style="margin-top: 72px;">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-text fade-up">
+                <div class="section-label">About Nigh</div>
+                <h2>In real life.<br><span style="color: var(--teal);">Presence is the point.</span></h2>
+                <p>
+                    Nigh helps businesses create real-life moments worth people showing up for. The internet optimized for attention. <span style="color: var(--teal); font-weight: 700;">Nigh optimizes for IRL presence.</span>
+                </p>
+                <p>
+                    We built Nigh for two kinds of people: businesses who want control over when customers show up, and people who want to discover moments worth leaving the house for.
+                </p>
+                <p>
+                    No endless feed. No algorithm. Just real places, real people, and real moments — at the right time.
+                </p>
+            </div>
+            <div class="about-visual fade-up">
+                <div class="about-stat">
+                    <div class="about-stat-icon" style="background: rgba(236,25,119,0.1);">&#x1F3EA;</div>
+                    <div>
+                        <h4>For Businesses</h4>
+                        <p>Control when customers show up with simple, time-bound moments — no algorithm required</p>
+                    </div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-icon" style="background: rgba(65,239,249,0.1);">&#x1F3DF;</div>
+                    <div>
+                        <h4>For People</h4>
+                        <p>Discover and show up for moments worth leaving the house for — no endless feed</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="nigh-drops.html" class="nav-logo" style="margin-bottom:4px">
+                <img src="Nigh_Logo.svg" alt="Nigh" style="height: 30px; width: auto; display: block;">
+            </a>
+            <p>Making real life worth showing up for again. The IRL Human Network.</p>
+            <div class="footer-app-links">
+                <a href="#" class="footer-app-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.99 2.97 12.5 4.7 9.56C5.55 8.1 7.04 7.18 8.67 7.16C9.95 7.14 11.17 8.02 11.95 8.02C12.73 8.02 14.23 6.96 15.79 7.13C16.44 7.16 18.12 7.4 19.17 8.98C19.08 9.04 16.95 10.29 16.97 12.87C17 15.96 19.64 16.96 19.67 16.97C19.64 17.05 19.23 18.39 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+                    App Store
+                </a>
+                <a href="#" class="footer-app-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M3.18 23.04L13.22 12.99L3.17 2.95C2.87 3.39 2.71 3.91 2.71 4.48V21.52C2.71 22.09 2.87 22.61 3.18 23.04ZM14.63 11.59L17.35 8.87L5.27 2.04L14.63 11.59ZM14.63 14.4L5.27 23.96L17.35 17.13L14.63 14.4ZM21.29 11.59C21.29 11.12 21.06 10.65 20.6 10.41L18.57 9.28L15.63 12.22L18.57 15.16L20.6 14.03C21.06 13.79 21.29 13.32 21.29 12.85V11.59Z"/></svg>
+                    Google Play
+                </a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Product</h4>
+            <a href="nigh-drops.html#drops">Nigh Drops</a>
+            <a href="nigh-drops.html#how">How It Works</a>
+            <a href="for-businesses.html">For Businesses</a>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="about.html">About Nigh</a>
+            <a href="foundation.html">The Nigh Foundation</a>
+            <a href="#">Blog</a>
+            <a href="#">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Community</a>
+            <a href="#">Careers</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh. All rights reserved.</span>
+        <div style="display:flex;gap:24px;">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

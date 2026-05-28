@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denver Broncos · Nigh Enterprise</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f1f5f9; color:#0f172a; font-size:14px; }
+table { width:100%; border-collapse:collapse; }
+select, input, textarea, button { font-family:inherit; }
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ─────────────────────────────────────────────────────────────
+// ICONS
+// ─────────────────────────────────────────────────────────────
+const I = {
+  home:       '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  store:      '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/>',
+  zap:        '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/>',
+  layers:     '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  user:       '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users:      '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
+  chart:      '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  creditCard: '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  settings:   '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
+  check:      '<polyline points="20 6 9 17 4 12"/>',
+  x:          '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  map:        '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',
+  bell:       '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
+  send:       '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/>',
+  search:     '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  cal:        '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  clock:      '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  dollar:     '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>',
+  target:     '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  trending:   '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  shield:     '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+};
+function ic(n,s){return`<svg width="${s||20}" height="${s||20}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;">${I[n]||''}</svg>`;}
+function nighBug(s){s=s||18;return`<svg width="${s}" height="${s}" viewBox="0 0 360 360" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg>`;}
+
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+const S = {
+  page:'dashboard',
+  hierarchyView:'location',   // 'zone' | 'location'
+  zoneFilter:'all',
+  locationDetail:null,
+  dropsTab:'all',
+  analyticsSort:'checkins',
+  pushModal:false,
+  pushStep:1,
+  userRoleFilter:'all',
+  collectionDetail:null,
+  collectionFilter:'all',
+  newCollModal:false,
+  newCollStep:1,
+  newCollType:'internal',
+};
+
+// ─────────────────────────────────────────────────────────────
+// VENUE & ZONES
+// ─────────────────────────────────────────────────────────────
+const VENUE = { name:'Denver Broncos', stadium:'Empower Field at Mile High', color:'#FB4F14', navy:'#002244', abbr:'DEN', capacity:76125 };
+
+const ZONES = [
+  { id:'Z01', name:'Field Level',     color:'#FB4F14', abbr:'FL'  },
+  { id:'Z02', name:'Club Level',      color:'#002244', abbr:'CL'  },
+  { id:'Z03', name:'Lower Concourse', color:'#0ea5e9', abbr:'LC'  },
+  { id:'Z04', name:'Upper Concourse', color:'#7c3aed', abbr:'UC'  },
+  { id:'Z05', name:'South Stands',    color:'#10b981', abbr:'SS'  },
+  { id:'Z06', name:'Suite Level',     color:'#f59e0b', abbr:'STE' },
+  { id:'Z07', name:'Plaza &amp; Entry',   color:'#64748b', abbr:'PLZ' },
+];
+
+// ─────────────────────────────────────────────────────────────
+// LOCATIONS (20)
+// ─────────────────────────────────────────────────────────────
+const LOCATIONS = [
+  // Field Level (Z01)
+  { id:'L01', name:'Broncos Tunnel Club',      zone:'Z01', manager:'Marco Reyes',  status:'active',   activeDrop:true,  mtdDrops:12, mtdCheckins:1840, mtdRevenue:54200,  showRate:94, vendorType:'broncos-owned', category:'vip'        },
+  { id:'L02', name:'Gatorade Sideline Stand',  zone:'Z01', manager:'Priya Shah',   status:'active',   activeDrop:false, mtdDrops:8,  mtdCheckins:920,  mtdRevenue:8280,   showRate:82, vendorType:'3rd-party',     category:'food'       },
+  { id:'L03', name:'Field Access Experience',  zone:'Z01', manager:'Luis Torres',  status:'active',   activeDrop:true,  mtdDrops:6,  mtdCheckins:480,  mtdRevenue:28800,  showRate:91, vendorType:'broncos-owned', category:'vip'        },
+  // Club Level (Z02)
+  { id:'L04', name:'United Club Lounge',       zone:'Z02', manager:'Ava Kim',      status:'active',   activeDrop:true,  mtdDrops:14, mtdCheckins:2140, mtdRevenue:64200,  showRate:88, vendorType:'3rd-party',     category:'vip'        },
+  { id:'L05', name:'Empower Premier Bar',      zone:'Z02', manager:'James Carter', status:'active',   activeDrop:false, mtdDrops:10, mtdCheckins:1560, mtdRevenue:23400,  showRate:85, vendorType:'3rd-party',     category:'food'       },
+  { id:'L06', name:'Nike Pro Shop Club',       zone:'Z02', manager:'Sofia Nguyen', status:'active',   activeDrop:true,  mtdDrops:9,  mtdCheckins:1240, mtdRevenue:37200,  showRate:79, vendorType:'3rd-party',     category:'merch'      },
+  { id:'L07', name:'Coors Light Draft Bar',    zone:'Z02', manager:'Riley West',   status:'active',   activeDrop:false, mtdDrops:11, mtdCheckins:1890, mtdRevenue:22680,  showRate:83, vendorType:'3rd-party',     category:'food'       },
+  // Lower Concourse (Z03)
+  { id:'L08', name:'Broncos Team Store',       zone:'Z03', manager:'Dana Price',   status:'active',   activeDrop:true,  mtdDrops:18, mtdCheckins:3240, mtdRevenue:97200,  showRate:90, vendorType:'broncos-owned', category:'merch'      },
+  { id:'L09', name:"McDonald's West Gate",     zone:'Z03', manager:'Chris Bell',   status:'active',   activeDrop:false, mtdDrops:7,  mtdCheckins:2100, mtdRevenue:25200,  showRate:77, vendorType:'3rd-party',     category:'food'       },
+  { id:'L10', name:'Pepsi Fan Zone',           zone:'Z03', manager:'Taylor Moon',  status:'active',   activeDrop:true,  mtdDrops:8,  mtdCheckins:1720, mtdRevenue:20640,  showRate:81, vendorType:'3rd-party',     category:'food'       },
+  { id:'L11', name:'Verizon Experience Hub',   zone:'Z03', manager:'Jordan Lee',   status:'active',   activeDrop:false, mtdDrops:5,  mtdCheckins:840,  mtdRevenue:16800,  showRate:72, vendorType:'3rd-party',     category:'experience' },
+  // Upper Concourse (Z04)
+  { id:'L12', name:'Coors Light Upper Deck',   zone:'Z04', manager:'Quinn Adams',  status:'active',   activeDrop:false, mtdDrops:9,  mtdCheckins:1980, mtdRevenue:23760,  showRate:80, vendorType:'3rd-party',     category:'food'       },
+  { id:'L13', name:'Ring of Fame Display',     zone:'Z04', manager:'Alex Rivera',  status:'active',   activeDrop:true,  mtdDrops:4,  mtdCheckins:620,  mtdRevenue:31000,  showRate:86, vendorType:'broncos-owned', category:'merch'      },
+  { id:'L14', name:'Bud Light End Zone Bar',   zone:'Z04', manager:'Sam Pierce',   status:'active',   activeDrop:false, mtdDrops:10, mtdCheckins:2200, mtdRevenue:26400,  showRate:78, vendorType:'3rd-party',     category:'food'       },
+  // South Stands (Z05)
+  { id:'L15', name:'Mile High Grill',          zone:'Z05', manager:'Morgan Stone', status:'active',   activeDrop:false, mtdDrops:6,  mtdCheckins:1340, mtdRevenue:16080,  showRate:75, vendorType:'3rd-party',     category:'food'       },
+  { id:'L16', name:'Kia Tailgate Zone',        zone:'Z05', manager:'Blake Ryan',   status:'inactive', activeDrop:false, mtdDrops:3,  mtdCheckins:280,  mtdRevenue:5600,   showRate:62, vendorType:'3rd-party',     category:'experience' },
+  // Suite Level (Z06)
+  { id:'L17', name:'Empower Retirement Suite', zone:'Z06', manager:'Casey Ford',   status:'active',   activeDrop:true,  mtdDrops:8,  mtdCheckins:560,  mtdRevenue:112000, showRate:96, vendorType:'3rd-party',     category:'vip'        },
+  { id:'L18', name:'United Airlines Suite',    zone:'Z06', manager:'Reese Chan',   status:'active',   activeDrop:false, mtdDrops:7,  mtdCheckins:420,  mtdRevenue:84000,  showRate:93, vendorType:'3rd-party',     category:'vip'        },
+  // Plaza & Entry (Z07)
+  { id:'L19', name:'Broncos Main Pro Shop',    zone:'Z07', manager:'Jamie Wells',  status:'active',   activeDrop:true,  mtdDrops:20, mtdCheckins:4120, mtdRevenue:123600, showRate:88, vendorType:'broncos-owned', category:'merch'      },
+  { id:'L20', name:'Blue Moon Beer Garden',    zone:'Z07', manager:'Avery Cole',   status:'active',   activeDrop:false, mtdDrops:7,  mtdCheckins:1580, mtdRevenue:18960,  showRate:76, vendorType:'3rd-party',     category:'food'       },
+];
+
+// ─────────────────────────────────────────────────────────────
+// CORP_DROPS (9 game-day drops)
+// ─────────────────────────────────────────────────────────────
+const CORP_DROPS = [
+  { id:'D01', title:'Pre-Game Coors Light Special',        type:'food',       status:'live',     scope:'Club Level',      scopeDetail:'2 locations', timing:'pre-game',  cap:400, res:381, checkins:340, showRate:89, price:0,   vendorType:'3rd-party',     broadcastHrs:3 },
+  { id:'D02', title:'Broncos Alumni Autograph Session',    type:'meet',       status:'live',     scope:'Field Level',     scopeDetail:'1 location',  timing:'pre-game',  cap:60,  res:60,  checkins:54,  showRate:90, price:0,   vendorType:'broncos-owned', broadcastHrs:4 },
+  { id:'D03', title:'Pepsi Halftime Refill Deal',          type:'food',       status:'live',     scope:'Lower Concourse', scopeDetail:'2 locations', timing:'in-game',   cap:500, res:462, checkins:388, showRate:84, price:0,   vendorType:'3rd-party',     broadcastHrs:1 },
+  { id:'D04', title:'Verizon Charging Lounge Access',      type:'experience', status:'live',     scope:'Lower Concourse', scopeDetail:'1 location',  timing:'in-game',   cap:120, res:98,  checkins:79,  showRate:81, price:0,   vendorType:'3rd-party',     broadcastHrs:2 },
+  { id:'D05', title:'2026 Limited Edition Jersey Drop',    type:'merch',      status:'live',     scope:'All Zones',       scopeDetail:'4 locations', timing:'in-game',   cap:200, res:200, checkins:184, showRate:92, price:149, vendorType:'broncos-owned', broadcastHrs:3 },
+  { id:'D06', title:'Post-Game Locker Room Tour',          type:'vip',        status:'upcoming', scope:'Field Level',     scopeDetail:'1 location',  timing:'post-game', cap:25,  res:0,   checkins:0,   showRate:0,  price:75,  vendorType:'broncos-owned', broadcastHrs:1 },
+  { id:'D07', title:'Win Celebration Drink Special',       type:'food',       status:'upcoming', scope:'All Zones',       scopeDetail:'6 locations', timing:'post-game', cap:999, res:0,   checkins:0,   showRate:0,  price:0,   vendorType:'3rd-party',     broadcastHrs:0 },
+  { id:'D08', title:'United Club Champagne Toast',         type:'vip',        status:'upcoming', scope:'Suite Level',     scopeDetail:'2 locations', timing:'post-game', cap:80,  res:0,   checkins:0,   showRate:0,  price:45,  vendorType:'3rd-party',     broadcastHrs:1 },
+  { id:'D09', title:'Early-Bird Fan Merch Preview',        type:'merch',      status:'ended',    scope:'Plaza &amp; Entry',   scopeDetail:'2 locations', timing:'pre-game',  cap:150, res:148, checkins:132, showRate:89, price:0,   vendorType:'broncos-owned', broadcastHrs:24},
+];
+
+// Placeholder arrays
+let COLLECTIONS_DATA = [];
+let USERS_DATA       = [];
+
+// ─────────────────────────────────────────────────────────────
+// GAME INFO (live-feel scoreboard data)
+// ─────────────────────────────────────────────────────────────
+const GAME = { away:'Kansas City Chiefs', kickoff:'Sun Mar 29, 2026 · 2:25 PM MT', status:'in-progress', quarter:'3rd', timeLeft:'8:42', broncos:17, chiefs:14 };
+
+// ─────────────────────────────────────────────────────────────
+// GEO TIERS (stadium-specific)
+// ─────────────────────────────────────────────────────────────
+const GEO_TIERS = {
+  concession: { label:'Specific Stand / Concession (~100 ft)', short:'~100 ft'    },
+  zone:       { label:'Stadium Zone (~500 ft)',                  short:'~500 ft'    },
+  stadium:    { label:'Full Stadium (~1,500 ft)',                short:'~1,500 ft'  },
+  plaza:      { label:'Stadium &amp; Plazas (~2,500 ft)',            short:'~2,500 ft'  },
+};
+
+// GAME TIMING WINDOWS
+const GAME_TIMING = {
+  'pre-game':  { label:'Pre-Game (~2 hrs before kickoff)', short:'Pre-Game',  color:'#16a34a' },
+  'in-game':   { label:'In-Game (live during play)',        short:'In-Game',   color:'#0057B8' },
+  'post-game': { label:'Post-Game (after final whistle)',   short:'Post-Game', color:'#7c3aed' },
+};
+
+// ─────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────
+function go(page){ ss({page,locationDetail:null,collectionDetail:null}); }
+function ss(patch){ Object.assign(S,patch); render(); }
+function zoneById(id){ return ZONES.find(z=>z.id===id); }
+function filteredLocations(){
+  let ls = LOCATIONS;
+  if(S.zoneFilter!=='all') ls=ls.filter(l=>l.zone===S.zoneFilter);
+  return ls;
+}
+function badge(status){
+  const map={active:'background:#dcfce7;color:#16a34a',inactive:'background:#fee2e2;color:#dc2626',live:'background:#dbeafe;color:#1d4ed8',upcoming:'background:#fef3c7;color:#d97706',ended:'background:#f1f5f9;color:#94a3b8',confirmed:'background:#dcfce7;color:#16a34a',pending:'background:#fef3c7;color:#d97706'};
+  return `<span style="${map[status]||'background:#f1f5f9;color:#64748b'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${status.charAt(0).toUpperCase()+status.slice(1)}</span>`;
+}
+function vendorBadge(type){
+  if(type==='broncos-owned') return `<span style="background:#fff3ec;color:#c2410c;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid #fed7aa;white-space:nowrap;">🐴 Broncos</span>`;
+  if(type==='3rd-party')     return `<span style="background:#e8edf7;color:#1e3a5f;font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid #bfcfea;white-space:nowrap;">🤝 Partner</span>`;
+  return '';
+}
+function timingBadge(timing){
+  const t=GAME_TIMING[timing];
+  if(!t) return '';
+  return `<span style="background:${t.color}18;color:${t.color};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;white-space:nowrap;">${t.short}</span>`;
+}
+function catBadge(cat){
+  const map={vip:'background:#ede9fe;color:#5b21b6',merch:'background:#dbeafe;color:#1d4ed8',food:'background:#fef3c7;color:#92400e',experience:'background:#dcfce7;color:#15803d'};
+  return `<span style="${map[cat]||'background:#f1f5f9;color:#64748b'};font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;">${cat}</span>`;
+}
+function pct(a,b){ return b?Math.round(a/b*100):0; }
+function fmtMoney(n){ return n>=1000000?'$'+(n/1000000).toFixed(1)+'M':n>=1000?'$'+(n/1000).toFixed(0)+'K':'$'+n; }
+function fmtNum(n){ return n>=1000?(n/1000).toFixed(1)+'K':String(n); }
+function showColor(r){ return r>=85?'#16a34a':r>=70?'#d97706':'#dc2626'; }
+function infoRow(l,v){ return v?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.82rem;"><span style="color:#64748b;">${l}</span><span style="font-weight:700;">${v}</span></div>`:''; }
+
+// ─────────────────────────────────────────────────────────────
+// LAYOUT
+// ─────────────────────────────────────────────────────────────
+function layout(){
+  return `
+    <div style="display:flex;height:100vh;overflow:hidden;">
+      ${sidebar()}
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        ${topbar()}
+        <div style="flex:1;overflow-y:auto;padding:24px;">
+          ${renderPage()}
+        </div>
+      </div>
+    </div>
+    ${S.pushModal    ? pushModal()    : ''}
+    ${S.newCollModal ? newCollModal() : ''}
+  `;
+}
+
+function sidebar(){
+  const nav=[
+    {id:'dashboard',  icon:'home',       label:'Dashboard'},
+    {id:'locations',  icon:'store',      label:'Locations'},
+    {id:'drops',      icon:'zap',        label:'Drops'},
+    {id:'collections',icon:'layers',     label:'Collections'},
+    {id:'customers',  icon:'user',       label:'Fans'},
+    {id:'analytics',  icon:'chart',      label:'Analytics'},
+    {id:'users',      icon:'users',      label:'Users'},
+    {id:'billing',    icon:'creditCard', label:'Billing'},
+    {id:'settings',   icon:'settings',   label:'Settings'},
+  ];
+  const totalCI  = LOCATIONS.reduce((a,l)=>a+l.mtdCheckins,0);
+  const liveDrops= CORP_DROPS.filter(d=>d.status==='live').length;
+  return `
+    <div style="width:210px;flex-shrink:0;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;height:100vh;overflow-y:auto;">
+      <div style="padding:18px 16px 14px;border-bottom:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:34px;height:34px;background:linear-gradient(135deg,#FB4F14,#002244);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:0.75rem;flex-shrink:0;">DEN</div>
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;line-height:1.2;">Denver Broncos</div>
+            <div style="font-size:0.7rem;color:#64748b;margin-top:1px;">20 Locations · 7 Zones</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;background:#f8f9fb;border-radius:8px;padding:7px 10px;">
+          <div style="color:#0f172a;">${nighBug(30)}</div>
+          <div>
+            <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;">Nigh Enterprise</div>
+            <div style="font-size:0.7rem;font-weight:700;color:#0f172a;">Game-Day Dashboard</div>
+          </div>
+        </div>
+      </div>
+
+      <nav style="flex:1;padding:10px 8px;">
+        ${nav.map(n=>`
+          <button onclick="go('${n.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;border:none;cursor:pointer;margin-bottom:2px;background:${S.page===n.id?'#fff3ec':'transparent'};color:${S.page===n.id?'#FB4F14':'#475569'};font-weight:${S.page===n.id?'800':'600'};font-size:0.82rem;text-align:left;transition:background 0.1s;">
+            <span style="opacity:${S.page===n.id?'1':'0.6'};">${ic(n.icon,16)}</span>${n.label}
+            ${n.id==='drops'&&liveDrops?`<span style="margin-left:auto;background:#FB4F14;color:#fff;font-size:0.6rem;font-weight:800;padding:1px 6px;border-radius:20px;">${liveDrops}</span>`:''}
+          </button>
+        `).join('')}
+      </nav>
+
+      <div style="padding:12px 14px;border-top:1px solid #f1f5f9;">
+        <div style="font-size:0.62rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Season MTD</div>
+        <div style="font-size:0.72rem;color:#475569;margin-bottom:3px;">Check-ins: <strong>${fmtNum(totalCI)}</strong></div>
+        <div style="font-size:0.72rem;color:#475569;margin-bottom:3px;">Live Drops: <strong style="color:#FB4F14;">${liveDrops}</strong></div>
+        <div style="font-size:0.72rem;color:#475569;">Partners: <strong>16</strong> of 20</div>
+      </div>
+    </div>
+  `;
+}
+
+function topbar(){
+  const titles={dashboard:'Enterprise Dashboard',locations:'Locations',drops:'Drops',collections:'Collections',customers:'Fans',analytics:'Analytics',users:'Users & Access',billing:'Billing & Subscription',settings:'Settings'};
+  const hPages=['locations','analytics'];
+  return `
+    <div style="height:56px;flex-shrink:0;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 24px;gap:14px;">
+      <div style="font-weight:900;font-size:1rem;flex:1;">${titles[S.page]||S.page}</div>
+
+      ${hPages.includes(S.page) ? `
+        <div style="display:flex;background:#f8f9fb;border-radius:10px;padding:4px;gap:2px;">
+          ${[['zone','By Zone'],['location','By Location']].map(([v,l])=>`
+            <button onclick="ss({hierarchyView:'${v}'})" style="background:${S.hierarchyView===v?'#fff':'transparent'};border:none;padding:5px 12px;border-radius:7px;font-weight:700;font-size:0.75rem;cursor:pointer;color:${S.hierarchyView===v?'#0f172a':'#94a3b8'};box-shadow:${S.hierarchyView===v?'0 1px 3px rgba(0,0,0,0.08)':'none'};white-space:nowrap;">${l}</button>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- Live game ticker -->
+      <div style="background:linear-gradient(90deg,#002244,#FB4F14);border-radius:8px;padding:5px 12px;display:flex;align-items:center;gap:8px;color:#fff;">
+        <span style="font-size:0.62rem;font-weight:800;opacity:0.8;">LIVE · Q${GAME.quarter} ${GAME.timeLeft}</span>
+        <span style="font-size:0.78rem;font-weight:900;">DEN ${GAME.broncos}</span>
+        <span style="font-size:0.68rem;opacity:0.7;">vs</span>
+        <span style="font-size:0.78rem;font-weight:700;">KC ${GAME.chiefs}</span>
+      </div>
+
+      <button onclick="ss({pushModal:true,pushStep:1})" style="background:#FB4F14;color:#fff;border:none;padding:8px 16px;border-radius:9px;font-weight:700;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+        ${ic('zap',14)} Push Drop
+      </button>
+      <div style="width:34px;height:34px;background:#002244;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#FB4F14;">${nighBug(22)}</div>
+    </div>
+  `;
+}
+
+function renderPage(){
+  if(S.locationDetail){ return locationDetail(S.locationDetail); }
+  if(S.collectionDetail){ return collectionDetailPanel(S.collectionDetail); }
+  switch(S.page){
+    case 'dashboard':   return rDashboard();
+    case 'locations':   return rLocations();
+    case 'drops':       return rDrops();
+    case 'collections': return rCollections();
+    case 'customers':   return rCustomers();
+    case 'analytics':   return rAnalytics();
+    case 'users':       return rUsers();
+    case 'billing':     return rBilling();
+    case 'settings':    return rSettings();
+    default:            return rDashboard();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// KPI / STATUS HELPERS
+// ─────────────────────────────────────────────────────────────
+function kpi(label,val,sub,color){
+  return `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;">
+    <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:6px;">${label}</div>
+    <div style="font-size:1.55rem;font-weight:900;color:${color||'#0f172a'};">${val}</div>
+    ${sub?`<div style="font-size:0.72rem;color:#64748b;margin-top:4px;">${sub}</div>`:''}
+  </div>`;
+}
+function statusBar(label,val,total,color){
+  const p=pct(val,total);
+  return `<div style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:4px;"><span style="color:#475569;font-weight:600;">${label}</span><span style="font-weight:800;">${val} <span style="color:#94a3b8;font-weight:400;">/ ${total}</span></span></div>
+    <div style="height:6px;border-radius:4px;background:#f1f5f9;"><div style="height:100%;width:${p}%;background:${color};border-radius:4px;"></div></div>
+  </div>`;
+}
+function miniStat(l,v,c){ return `<div style="background:#f8f9fb;border-radius:10px;padding:12px 14px;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:4px;">${l}</div><div style="font-weight:900;font-size:1rem;color:${c||'#0f172a'};">${v}</div></div>`; }
+
+// ─────────────────────────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────────────────────────
+function rDashboard(){
+  const totalCI    = LOCATIONS.reduce((a,l)=>a+l.mtdCheckins,0);
+  const totalDrops = LOCATIONS.reduce((a,l)=>a+l.mtdDrops,0);
+  const totalRev   = LOCATIONS.reduce((a,l)=>a+l.mtdRevenue,0);
+  const avgShow    = Math.round(LOCATIONS.reduce((a,l)=>a+l.showRate,0)/LOCATIONS.length);
+  const liveDrops  = CORP_DROPS.filter(d=>d.status==='live').length;
+  const upcomingD  = CORP_DROPS.filter(d=>d.status==='upcoming').length;
+  const activeL    = LOCATIONS.filter(l=>l.status==='active').length;
+  const maxCI      = Math.max(...ZONES.map(z=>LOCATIONS.filter(l=>l.zone===z.id).reduce((a,l)=>a+l.mtdCheckins,0)));
+
+  return `
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+      ${kpi('Drops Live Today',liveDrops,`${upcomingD} upcoming`,'#FB4F14')}
+      ${kpi('Fans Checked In',fmtNum(totalCI),'Season MTD')}
+      ${kpi('Total Reservations',fmtNum(CORP_DROPS.reduce((a,d)=>a+d.res,0)),'Across all drops')}
+      ${kpi('Revenue MTD',fmtMoney(totalRev),'All 20 locations')}
+      ${kpi('Avg Show Rate',avgShow+'%','Stadium-wide',showColor(avgShow))}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:18px;margin-bottom:18px;">
+      <!-- Zone performance chart -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="font-weight:800;font-size:0.92rem;margin-bottom:3px;">Zone Performance</div>
+        <div style="font-size:0.75rem;color:#64748b;margin-bottom:18px;">Season MTD check-ins by stadium zone</div>
+        ${ZONES.map(z=>{
+          const ls   = LOCATIONS.filter(l=>l.zone===z.id);
+          const ci   = ls.reduce((a,l)=>a+l.mtdCheckins,0);
+          const rev  = ls.reduce((a,l)=>a+l.mtdRevenue,0);
+          const show = ls.length?Math.round(ls.reduce((a,l)=>a+l.showRate,0)/ls.length):0;
+          const w    = maxCI?Math.round(ci/maxCI*100):0;
+          return `
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="background:${z.color}18;color:${z.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${z.abbr}</span>
+                  <span style="font-weight:700;font-size:0.82rem;">${z.name}</span>
+                  <span style="font-size:0.7rem;color:#94a3b8;">${ls.length} loc${ls.length!==1?'s':''}</span>
+                </div>
+                <div style="text-align:right;font-size:0.72rem;">
+                  <span style="font-weight:900;">${fmtNum(ci)}</span>
+                  <span style="color:#94a3b8;margin:0 5px;">·</span>
+                  <span style="font-weight:700;color:${showColor(show)};">${show}%</span>
+                  <span style="color:#94a3b8;margin:0 5px;">·</span>
+                  <span style="font-weight:700;color:#64748b;">${fmtMoney(rev)}</span>
+                </div>
+              </div>
+              <div style="height:8px;background:#f1f5f9;border-radius:6px;overflow:hidden;">
+                <div style="height:100%;width:${w}%;background:${z.color};border-radius:6px;transition:width 0.4s;"></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Right column -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- Scoreboard card -->
+        <div style="background:linear-gradient(135deg,#002244,#1a3a6b);border-radius:14px;padding:18px;color:#fff;">
+          <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;opacity:0.7;margin-bottom:10px;">🏈 Live · Q${GAME.quarter} · ${GAME.timeLeft} remaining</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="text-align:center;">
+              <div style="font-size:0.72rem;font-weight:700;opacity:0.8;margin-bottom:4px;">DENVER</div>
+              <div style="font-size:2.2rem;font-weight:900;color:#FB4F14;">${GAME.broncos}</div>
+            </div>
+            <div style="font-size:1rem;font-weight:800;opacity:0.5;">VS</div>
+            <div style="text-align:center;">
+              <div style="font-size:0.72rem;font-weight:700;opacity:0.8;margin-bottom:4px;">KANSAS CITY</div>
+              <div style="font-size:2.2rem;font-weight:900;opacity:0.9;">${GAME.chiefs}</div>
+            </div>
+          </div>
+          <div style="font-size:0.68rem;opacity:0.6;text-align:center;">${GAME.kickoff}</div>
+        </div>
+
+        <!-- Drop timing breakdown -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <div style="font-weight:800;font-size:0.85rem;margin-bottom:12px;">Drops by Game Phase</div>
+          ${['pre-game','in-game','post-game'].map(t=>{
+            const ds = CORP_DROPS.filter(d=>d.timing===t);
+            const live = ds.filter(d=>d.status==='live').length;
+            const up   = ds.filter(d=>d.status==='upcoming').length;
+            const gt   = GAME_TIMING[t];
+            return `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8f9fb;">
+                <span style="background:${gt.color}18;color:${gt.color};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${gt.short}</span>
+                <div style="font-size:0.75rem;color:#64748b;">
+                  ${live?`<span style="color:#16a34a;font-weight:700;">${live} live</span> · `:''}
+                  <span>${up} upcoming</span>
+                </div>
+                <span style="font-weight:800;font-size:0.82rem;">${ds.length} drops</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Vendor split -->
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;">
+          <div style="font-weight:800;font-size:0.85rem;margin-bottom:12px;">Location Breakdown</div>
+          ${statusBar('Broncos Owned', LOCATIONS.filter(l=>l.vendorType==='broncos-owned').length, 20, '#FB4F14')}
+          ${statusBar('Partner / Sponsor', LOCATIONS.filter(l=>l.vendorType==='3rd-party').length, 20, '#002244')}
+          ${statusBar('Active', activeL, 20, '#10b981')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Top locations + live drops -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <!-- Top locations -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="font-weight:800;font-size:0.92rem;margin-bottom:14px;">Top Locations by Check-ins</div>
+        ${[...LOCATIONS].sort((a,b)=>b.mtdCheckins-a.mtdCheckins).slice(0,5).map((l,i)=>{
+          const z=zoneById(l.zone);
+          return `
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f8f9fb;" onclick="ss({locationDetail:l.id,page:'locations'})" style="cursor:pointer;">
+              <span style="font-weight:900;font-size:0.8rem;color:${i===0?'#d97706':i===1?'#9ca3af':i===2?'#cd7c2f':'#cbd5e1'};width:14px;flex-shrink:0;">${i+1}</span>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.83rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.name}</div>
+                <div style="font-size:0.68rem;color:#94a3b8;">${z?.name}</div>
+              </div>
+              <span style="background:${z?.color}15;color:${z?.color};font-size:0.62rem;font-weight:800;padding:2px 6px;border-radius:20px;">${z?.abbr}</span>
+              <div style="text-align:right;font-size:0.78rem;font-weight:800;">${fmtNum(l.mtdCheckins)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Live drops -->
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-weight:800;font-size:0.92rem;">Active Drops Right Now</div>
+          <button onclick="go('drops')" style="font-size:0.72rem;color:#FB4F14;font-weight:700;background:none;border:none;cursor:pointer;">See all →</button>
+        </div>
+        ${CORP_DROPS.filter(d=>d.status==='live').map(d=>`
+          <div style="padding:10px 0;border-bottom:1px solid #f8f9fb;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
+              ${timingBadge(d.timing)}
+              ${vendorBadge(d.vendorType)}
+              ${catBadge(d.type)}
+            </div>
+            <div style="font-weight:700;font-size:0.83rem;margin-bottom:3px;">${d.title}</div>
+            <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#64748b;">
+              <span>${d.scope} · ${d.scopeDetail}</span>
+              <span style="font-weight:700;color:${showColor(d.showRate)};">${d.showRate}% show</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// LOCATIONS
+// ─────────────────────────────────────────────────────────────
+function rLocations(){
+  return `
+    ${filterBar()}
+    ${S.hierarchyView==='zone' ? rLocByZone() : rLocByLocation()}
+    ${S.locationDetail ? locationDetail(S.locationDetail) : ''}
+  `;
+}
+
+function filterBar(){
+  return `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+      <select onchange="ss({zoneFilter:this.value})" style="border:1px solid #e5e7eb;border-radius:8px;padding:7px 28px 7px 10px;font-size:0.78rem;font-weight:600;background:#fff;cursor:pointer;">
+        <option value="all">All Zones (${LOCATIONS.length})</option>
+        ${ZONES.map(z=>`<option value="${z.id}" ${S.zoneFilter===z.id?'selected':''}>${z.name} (${LOCATIONS.filter(l=>l.zone===z.id).length})</option>`).join('')}
+      </select>
+      <div style="font-size:0.78rem;color:#94a3b8;">${filteredLocations().length} location${filteredLocations().length!==1?'s':''} shown</div>
+      <button onclick="ss({pushModal:true,pushStep:1})" style="margin-left:auto;background:#FB4F14;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">⚡ Push Drop</button>
+    </div>
+  `;
+}
+
+function rLocByZone(){
+  return ZONES.map(z=>{
+    const ls = filteredLocations().filter(l=>l.zone===z.id);
+    if(!ls.length) return '';
+    return `
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${z.color};flex-shrink:0;"></div>
+          <span style="font-weight:900;font-size:0.92rem;">${z.name}</span>
+          <span style="background:${z.color}15;color:${z.color};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${z.abbr}</span>
+          <span style="font-size:0.75rem;color:#94a3b8;">${ls.length} location${ls.length!==1?'s':''}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+          ${ls.map(l=>locationCard(l)).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function rLocByLocation(){
+  const ls = filteredLocations();
+  return `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">
+      ${ls.map(l=>locationCard(l)).join('')}
+    </div>
+  `;
+}
+
+function locationCard(l){
+  const z=zoneById(l.zone);
+  return `
+    <div onclick="ss({locationDetail:'${l.id}'})" style="background:#fff;border:1px solid ${l.activeDrop?'#FB4F14':'#e5e7eb'};border-radius:14px;padding:16px;cursor:pointer;transition:box-shadow 0.15s;position:relative;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+      ${l.activeDrop?`<div style="position:absolute;top:12px;right:12px;background:#FB4F14;color:#fff;font-size:0.58rem;font-weight:800;padding:2px 7px;border-radius:20px;">DROP LIVE</div>`:''}
+      <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;padding-right:${l.activeDrop?'60px':'0'};">${l.name}</div>
+      <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:10px;">${z?.name}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="background:${z?.color}15;color:${z?.color};font-size:0.65rem;font-weight:800;padding:2px 7px;border-radius:20px;">${z?.abbr}</span>
+        ${vendorBadge(l.vendorType)}
+        ${catBadge(l.category)}
+        ${badge(l.status)}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        ${miniStat('Check-ins MTD',fmtNum(l.mtdCheckins))}
+        ${miniStat('Show Rate',l.showRate+'%',showColor(l.showRate))}
+        ${miniStat('Revenue',fmtMoney(l.mtdRevenue))}
+      </div>
+      <div style="font-size:0.72rem;color:#64748b;">Manager: <strong>${l.manager}</strong> · ${l.mtdDrops} drops MTD</div>
+    </div>
+  `;
+}
+
+function locationDetail(id){
+  const l=LOCATIONS.find(x=>x.id===id);
+  if(!l) return '';
+  const z=zoneById(l.zone);
+  const drops=CORP_DROPS.filter(d=>d.scope.includes(z?.name)||d.scope==='All Zones');
+  return `
+    <div style="position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:200;display:flex;align-items:center;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:520px;max-height:88vh;overflow-y:auto;padding:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+          <div>
+            <div style="font-weight:900;font-size:1.05rem;">${l.name}</div>
+            <div style="font-size:0.75rem;color:#64748b;margin-top:3px;">${z?.name} · ${l.category}</div>
+          </div>
+          <button onclick="ss({locationDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:28px;height:28px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+        <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:16px;">
+          ${infoRow('Zone',z?.name)}
+          ${infoRow('Vendor Type',l.vendorType==='broncos-owned'?'Broncos Owned':'3rd Party Partner')}
+          ${infoRow('Category',l.category)}
+          ${infoRow('Status',l.status)}
+          ${infoRow('Manager',l.manager)}
+          ${infoRow('Geo-fence','Full Stadium (~1,500 ft) — all drops geo-fenced to Empower Field')}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          ${miniStat('Check-ins MTD',fmtNum(l.mtdCheckins))}
+          ${miniStat('Drops MTD',String(l.mtdDrops))}
+          ${miniStat('Revenue MTD',fmtMoney(l.mtdRevenue))}
+          ${miniStat('Show Rate',l.showRate+'%',showColor(l.showRate))}
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="ss({pushModal:true,pushStep:1,locationDetail:null})" style="flex:1;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">⚡ Push Drop Here</button>
+          <button onclick="ss({locationDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DROPS
+// ─────────────────────────────────────────────────────────────
+function rDrops(){
+  const tabs=['all','pre-game','in-game','post-game','ended'];
+  const filtered = S.dropsTab==='all' ? CORP_DROPS : S.dropsTab==='ended' ? CORP_DROPS.filter(d=>d.status==='ended') : CORP_DROPS.filter(d=>d.timing===S.dropsTab&&d.status!=='ended');
+  const statusBg={live:'#dbeafe',upcoming:'#fef3c7',ended:'#f1f5f9'};
+  const statusColors={live:'#1d4ed8',upcoming:'#d97706',ended:'#94a3b8'};
+  return `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      ${tabs.map(t=>{
+        const gt=GAME_TIMING[t];
+        return `<button onclick="ss({dropsTab:'${t}'})" style="background:${S.dropsTab===t?'#0f172a':'#fff'};color:${S.dropsTab===t?'#fff':'#475569'};border:1px solid ${S.dropsTab===t?'#0f172a':'#e5e7eb'};padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.76rem;cursor:pointer;white-space:nowrap;">${gt?gt.short:t.charAt(0).toUpperCase()+t.slice(1)}</button>`;
+      }).join('')}
+      <button onclick="ss({pushModal:true,pushStep:1})" style="margin-left:auto;background:#FB4F14;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">⚡ Push New Drop</button>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;margin-bottom:18px;">
+      <table>
+        <thead>
+          <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+            ${['Drop','Phase','Type','Vendor','Scope','Cap','Res','Check-ins','Show Rate','Status'].map((h,i)=>`
+              <th style="padding:11px 12px;text-align:${i>4?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;white-space:nowrap;">${h}</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map((d,i)=>{
+            const sr=d.cap>0&&d.checkins>0?pct(d.checkins,d.res):null;
+            return `
+              <tr style="border-bottom:1px solid #f8f9fb;${i%2?'background:#fafafa':''}">
+                <td style="padding:11px 12px;">
+                  <div style="font-weight:700;font-size:0.83rem;">${d.title}</div>
+                  ${d.price>0?`<div style="font-size:0.68rem;color:#16a34a;font-weight:700;">$${d.price}</div>`:`<div style="font-size:0.68rem;color:#94a3b8;">Free</div>`}
+                </td>
+                <td style="padding:11px 12px;">${timingBadge(d.timing)}</td>
+                <td style="padding:11px 12px;">${catBadge(d.type)}</td>
+                <td style="padding:11px 12px;">${vendorBadge(d.vendorType)}</td>
+                <td style="padding:11px 12px;">
+                  <div style="font-size:0.8rem;font-weight:600;">${d.scope}</div>
+                  <div style="font-size:0.68rem;color:#94a3b8;">${d.scopeDetail}</div>
+                </td>
+                <td style="padding:11px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${d.cap>=999?'∞':d.cap}</td>
+                <td style="padding:11px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${d.res||'—'}</td>
+                <td style="padding:11px 12px;text-align:right;font-size:0.8rem;font-weight:800;">${d.checkins||'—'}</td>
+                <td style="padding:11px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                <td style="padding:11px 12px;text-align:right;">${badge(d.status)}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Game timing explainer -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;">
+      <div style="font-weight:800;font-size:0.88rem;margin-bottom:12px;">Game-Day Drop Windows</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        ${Object.entries(GAME_TIMING).map(([key,gt])=>{
+          const ds=CORP_DROPS.filter(d=>d.timing===key);
+          const live=ds.filter(d=>d.status==='live').length;
+          const res=ds.reduce((a,d)=>a+d.res,0);
+          return `
+            <div style="background:${gt.color}08;border:1px solid ${gt.color}28;border-radius:12px;padding:14px;">
+              <span style="background:${gt.color}18;color:${gt.color};font-size:0.68rem;font-weight:800;padding:3px 10px;border-radius:20px;">${gt.short}</span>
+              <div style="font-size:0.72rem;color:#64748b;margin-top:8px;margin-bottom:4px;">${gt.label}</div>
+              <div style="font-weight:900;font-size:1.1rem;color:${gt.color};">${ds.length} drops</div>
+              <div style="font-size:0.72rem;color:#64748b;margin-top:3px;">${live?`${live} live · `:''}${fmtNum(res)} reservations</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// FANS (CUSTOMERS)
+// ─────────────────────────────────────────────────────────────
+const CUSTOMER_DATA = [
+  { id:'F01', name:'Tyler Morrison',   tier:'Season Ticket',   zone:'Club Level',      drops:8,  checkins:7,  revenue:1243, joined:'Aug 2024' },
+  { id:'F02', name:'Jessica Wade',     tier:'Suite Owner',     zone:'Suite Level',     drops:12, checkins:12, revenue:4800, joined:'Sep 2023' },
+  { id:'F03', name:'Marcus Bell',      tier:'General Admission',zone:'Lower Concourse',drops:4,  checkins:3,  revenue:89,   joined:'Jan 2026' },
+  { id:'F04', name:'Kayla Reyes',      tier:'Club Member',     zone:'Club Level',      drops:9,  checkins:8,  revenue:620,  joined:'Mar 2025' },
+  { id:'F05', name:'Devon Park',       tier:'Season Ticket',   zone:'Upper Concourse', drops:6,  checkins:5,  revenue:340,  joined:'Jul 2024' },
+  { id:'F06', name:'Amber Collins',    tier:'General Admission',zone:'South Stands',   drops:3,  checkins:2,  revenue:47,   joined:'Nov 2025' },
+  { id:'F07', name:'Ryan Torres',      tier:'Suite Owner',     zone:'Suite Level',     drops:10, checkins:10, revenue:3960, joined:'Oct 2022' },
+  { id:'F08', name:'Nadia Shah',       tier:'Club Member',     zone:'Field Level',     drops:7,  checkins:6,  revenue:890,  joined:'May 2025' },
+  { id:'F09', name:'Blake Nguyen',     tier:'Season Ticket',   zone:'Lower Concourse', drops:5,  checkins:4,  revenue:210,  joined:'Aug 2025' },
+  { id:'F10', name:'Camille Foster',   tier:'Club Member',     zone:'Club Level',      drops:11, checkins:10, revenue:1120, joined:'Feb 2024' },
+  { id:'F11', name:'Eli Hawkins',      tier:'General Admission',zone:'Upper Concourse',drops:2,  checkins:2,  revenue:30,   joined:'Mar 2026' },
+  { id:'F12', name:'Sierra Chen',      tier:'Season Ticket',   zone:'Plaza &amp; Entry',   drops:6,  checkins:5,  revenue:185,  joined:'Sep 2024' },
+];
+
+function rCustomers(){
+  const tierColors={'Suite Owner':'#f59e0b','Club Member':'#FB4F14','Season Ticket':'#002244','General Admission':'#64748b'};
+  const tiers=['all','Suite Owner','Club Member','Season Ticket','General Admission'];
+  const fans = S.userRoleFilter==='all' ? CUSTOMER_DATA : CUSTOMER_DATA.filter(f=>f.tier===S.userRoleFilter);
+  const totalRevenue = CUSTOMER_DATA.reduce((a,f)=>a+f.revenue,0);
+  const avgDrops     = Math.round(CUSTOMER_DATA.reduce((a,f)=>a+f.drops,0)/CUSTOMER_DATA.length*10)/10;
+  const suiteOwners  = CUSTOMER_DATA.filter(f=>f.tier==='Suite Owner');
+
+  return `
+    <!-- Fan insight -->
+    <div style="background:linear-gradient(135deg,#002244,#1a3a6b);border-radius:14px;padding:18px 22px;margin-bottom:20px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;opacity:0.7;margin-bottom:4px;">Season Fan Engagement</div>
+        <div style="font-size:1.3rem;font-weight:900;">Suite &amp; Club members average <span style="color:#FB4F14;">${Math.round(suiteOwners.reduce((a,f)=>a+f.drops,0)/suiteOwners.length*10)/10}x</span> more drops than GA fans</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        ${miniStat('Tracked Fans',String(CUSTOMER_DATA.length))}
+        ${miniStat('Avg Drops/Fan',String(avgDrops))}
+        ${miniStat('Fan Revenue',fmtMoney(totalRevenue),'#FB4F14')}
+        ${miniStat('Top Zone','Club Level')}
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+      ${tiers.map(t=>`<button onclick="ss({userRoleFilter:'${t}'})" style="background:${S.userRoleFilter===t?'#0f172a':'#fff'};color:${S.userRoleFilter===t?'#fff':'#475569'};border:1px solid ${S.userRoleFilter===t?'#0f172a':'#e5e7eb'};padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.76rem;cursor:pointer;white-space:nowrap;">${t==='all'?'All Fans':t}</button>`).join('')}
+    </div>
+
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <table>
+        <thead>
+          <tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+            ${['Fan','Tier','Favorite Zone','Drops Claimed','Check-ins','Revenue Generated','Member Since'].map((h,i)=>`<th style="padding:11px 14px;text-align:${i>2?'right':'left'};font-size:0.65rem;font-weight:800;text-transform:uppercase;color:#64748b;">${h}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${fans.map((f,i)=>`
+            <tr style="border-bottom:1px solid #f8f9fb;${i%2?'background:#fafafa':''}">
+              <td style="padding:12px 14px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:30px;height:30px;background:${tierColors[f.tier]||'#e5e7eb'}20;color:${tierColors[f.tier]};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;">${f.name.split(' ').map(n=>n[0]).join('')}</div>
+                  <span style="font-weight:700;font-size:0.83rem;">${f.name}</span>
+                </div>
+              </td>
+              <td style="padding:12px 14px;"><span style="background:${tierColors[f.tier]||'#e5e7eb'}18;color:${tierColors[f.tier]};font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;">${f.tier}</span></td>
+              <td style="padding:12px 14px;font-size:0.8rem;color:#475569;font-weight:600;">${f.zone}</td>
+              <td style="padding:12px 14px;text-align:right;font-weight:800;font-size:0.85rem;">${f.drops}</td>
+              <td style="padding:12px 14px;text-align:right;font-weight:800;font-size:0.85rem;">${f.checkins}</td>
+              <td style="padding:12px 14px;text-align:right;font-weight:800;font-size:0.85rem;color:#16a34a;">${fmtMoney(f.revenue)}</td>
+              <td style="padding:12px 14px;text-align:right;font-size:0.8rem;color:#64748b;">${f.joined}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────────────────────
+// COLLECTIONS
+// ─────────────────────────────────────────────────────────────
+COLLECTIONS_DATA = [
+  {
+    id:'COL01', type:'internal', name:'Game Day Drop Series', theme:'Mile High Magic',
+    status:'live', windowStart:'Mar 1, 2026', windowEnd:'Dec 31, 2026',
+    scope:'Empower Field', creator:'Jordan Hayes', createdDate:'Feb 10, 2026',
+    geoFence:{ enabled:true, boundaryType:'stadium', address:'Empower Field at Mile High, 1701 Bryant St, Denver, CO 80204', customerMessage:"You're inside Empower Field — game-day drops are live. Check in!" },
+    guardrails:{ price:'Free–$149', capRange:'20–500 spots', broadcastWindow:'1–4 hrs before', themeReq:'Game-day experience — all drop types welcome' },
+    description:'Ongoing season-long collection covering all game-day drops at Empower Field. Every home game activates a new set of drops across all 20 locations.',
+    locations:20, revenue:487200, totalCheckins:28420, showRate:87,
+    participation:[
+      { locId:'L01', status:'confirmed', dropTitle:'Tunnel Club Pre-Game',           cap:60,  res:58,  ci:52 },
+      { locId:'L08', status:'confirmed', dropTitle:'Limited Edition Jersey Drop',    cap:200, res:200, ci:184 },
+      { locId:'L17', status:'confirmed', dropTitle:'Suite VIP Pre-Game Reception',   cap:30,  res:30,  ci:29 },
+      { locId:'L19', status:'confirmed', dropTitle:'Fan Merch Preview',              cap:150, res:148, ci:132 },
+      { locId:'L04', status:'confirmed', dropTitle:'United Club Pre-Game Happy Hour',cap:120, res:114, ci:98  },
+    ],
+  },
+  {
+    id:'COL02', type:'venue', name:'Coors Light Tailgate Partners', theme:'Rocky Mountain Refreshment',
+    status:'live', windowStart:'Mar 15, 2026', windowEnd:'Dec 31, 2026',
+    scope:'Beer Concession Zones', creator:'Morgan Chen', createdDate:'Mar 1, 2026',
+    geoFence:{ enabled:true, boundaryType:'zone', address:'Club Level & Lower Concourse, Empower Field', customerMessage:"You're near a Coors Light bar — exclusive halftime deals are live!" },
+    guardrails:{ price:'Free–$15', capRange:'100–500 spots', broadcastWindow:'30 min–2 hrs', themeReq:'Beer & beverage drops only — Coors Light branding required' },
+    description:'Official Coors Light sponsored collection. Licensed beer partners run geo-fenced halftime and in-game drink specials across stadium bar zones.',
+    locations:3, revenue:48600, totalCheckins:5840, showRate:82,
+    participation:[
+      { bizName:'Coors Light Draft Bar',  bizType:'3rd Party', bizCategory:'Beverage', status:'live',   dropTitle:'Halftime Refill Special', cap:300, res:278, ci:238 },
+      { bizName:'Coors Light Upper Deck', bizType:'3rd Party', bizCategory:'Beverage', status:'live',   dropTitle:'Upper Deck Crush Deal',   cap:200, res:168, ci:140 },
+      { bizName:'Empower Premier Bar',    bizType:'3rd Party', bizCategory:'Bar',      status:'pending',dropTitle:null,                      cap:0,   res:0,   ci:0   },
+    ],
+  },
+  {
+    id:'COL03', type:'internal', name:'Suite & Premium Experience Bundle', theme:'VIP Access All Areas',
+    status:'upcoming', windowStart:'Apr 6, 2026', windowEnd:'Jun 1, 2026',
+    scope:'Suite Level + Field Level', creator:'Jordan Hayes', createdDate:'Mar 20, 2026',
+    geoFence:{ enabled:true, boundaryType:'zone', address:'Suite Level, Empower Field at Mile High', customerMessage:"Premium access drops are live — check your Nigh app!" },
+    guardrails:{ price:'$25–$150', capRange:'10–80 spots', broadcastWindow:'1–24 hrs before', themeReq:'VIP / premium experience drops only' },
+    description:'Curated premium collection for suite owners and club members. Includes field access passes, locker room tours, and pre-game reception drops.',
+    locations:4, revenue:0, totalCheckins:0, showRate:0,
+    participation:[
+      { locId:'L01', status:'pending',   dropTitle:null,                    cap:0,  res:0, ci:0 },
+      { locId:'L03', status:'confirmed', dropTitle:'Field Access Pass Drop', cap:25, res:0, ci:0 },
+      { locId:'L17', status:'pending',   dropTitle:null,                    cap:0,  res:0, ci:0 },
+      { locId:'L18', status:'confirmed', dropTitle:'Suite Champagne Toast',  cap:40, res:0, ci:0 },
+    ],
+  },
+  {
+    id:'COL04', type:'internal', name:'AFC West Rivalry Week', theme:'Orange Crush',
+    status:'upcoming', windowStart:'Oct 12, 2026', windowEnd:'Oct 13, 2026',
+    scope:'All Zones', creator:'Alex Rivera', createdDate:'Mar 25, 2026',
+    geoFence:{ enabled:true, boundaryType:'stadium', address:'Empower Field at Mile High, Denver, CO', customerMessage:"Orange Crush Week — exclusive rivalry drops are live all day!" },
+    guardrails:{ price:'Free–$75', capRange:'25–999 spots', broadcastWindow:'1–48 hrs before', themeReq:'Orange Crush / rivalry theme required' },
+    description:'Special two-day collection tied to the biggest AFC West matchup of the season. All 20 locations create rivalry-themed drops.',
+    locations:20, revenue:0, totalCheckins:0, showRate:0,
+    participation:[
+      { locId:'L08', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+      { locId:'L19', status:'pending', dropTitle:null, cap:0, res:0, ci:0 },
+    ],
+  },
+  {
+    id:'COL05', type:'internal', name:'Super Bowl Celebration 2026', theme:'Back to Back',
+    status:'ended', windowStart:'Feb 8, 2026', windowEnd:'Feb 9, 2026',
+    scope:'All Zones', creator:'Jordan Hayes', createdDate:'Jan 20, 2026',
+    geoFence:{ enabled:true, boundaryType:'plaza', address:'Empower Field at Mile High &amp; Surrounding Plazas, Denver', customerMessage:"Championship celebration is live — exclusive drops await!" },
+    guardrails:{ price:'Free', capRange:'50–999 spots', broadcastWindow:'24–48 hrs', themeReq:'Championship theme — Super Bowl celebration only' },
+    description:'Post-Super Bowl celebration collection. All locations ran free fan celebration drops across the stadium and surrounding plazas.',
+    locations:20, revenue:92400, totalCheckins:62100, showRate:91,
+    participation:[
+      { locId:'L19', status:'confirmed', dropTitle:'Championship Merch Drop',       cap:500, res:498, ci:468 },
+      { locId:'L08', status:'confirmed', dropTitle:'Limited Championship Gear',      cap:300, res:300, ci:285 },
+      { locId:'L01', status:'confirmed', dropTitle:'Champions Tunnel Experience',    cap:40,  res:40,  ci:38  },
+    ],
+  },
+];
+
+function collStat(l,v,c){return`<div style="text-align:center;"><div style="font-size:0.62rem;color:#94a3b8;margin-bottom:3px;">${l}</div><div style="font-weight:900;font-size:1.05rem;color:${c||'#0f172a'};">${v}</div></div>`;}
+
+function rCollections(){
+  const filters=['all','live','upcoming','ended','internal','venue'];
+  const filtered=S.collectionFilter==='all'?COLLECTIONS_DATA:COLLECTIONS_DATA.filter(c=>{
+    if(['live','upcoming','ended'].includes(S.collectionFilter)) return c.status===S.collectionFilter;
+    return c.type===S.collectionFilter;
+  });
+  const statusBg={live:'#dbeafe',upcoming:'#fef3c7',ended:'#f1f5f9'};
+  const statusColors={live:'#1d4ed8',upcoming:'#d97706',ended:'#94a3b8'};
+
+  return `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      ${filters.map(f=>`<button onclick="ss({collectionFilter:'${f}'})" style="background:${S.collectionFilter===f?'#0f172a':'#fff'};color:${S.collectionFilter===f?'#fff':'#475569'};border:1px solid ${S.collectionFilter===f?'#0f172a':'#e5e7eb'};padding:7px 14px;border-radius:8px;font-weight:700;font-size:0.76rem;cursor:pointer;white-space:nowrap;">${f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
+      <button onclick="ss({newCollModal:true,newCollStep:1,newCollType:'internal'})" style="margin-left:auto;background:#FB4F14;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-weight:700;font-size:0.78rem;cursor:pointer;">+ New Collection</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      ${filtered.map(col=>`
+        <div onclick="ss({collectionDetail:'${col.id}'})" style="background:#fff;border:1px solid ${col.status==='live'?'#FB4F14':'#e5e7eb'};border-radius:16px;padding:20px;cursor:pointer;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.07)'" onmouseout="this.style.boxShadow='none'">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:12px;">
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+                <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+                <span style="background:${col.type==='venue'?'#fdf4ff':'#f0f9ff'};color:${col.type==='venue'?'#7c3aed':'#0369a1'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${col.type==='venue'?'🤝 Partner Collection':'🐴 Internal'}</span>
+              </div>
+              <div style="font-weight:900;font-size:0.97rem;">${col.name}</div>
+              <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">${col.theme} · ${col.scope}</div>
+            </div>
+            <div style="display:flex;gap:16px;flex-shrink:0;">
+              ${collStat('Locations',col.locations)}
+              ${col.revenue?collStat('Revenue',fmtMoney(col.revenue),'#16a34a'):''}
+              ${col.totalCheckins?collStat('Check-ins',fmtNum(col.totalCheckins)):''}
+              ${col.showRate?collStat('Show Rate',col.showRate+'%',showColor(col.showRate)):''}
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:#475569;line-height:1.6;margin-bottom:10px;">${col.description}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.72rem;color:#94a3b8;">
+            <span>${ic('map',12)} <span style="color:#d97706;font-weight:700;">${GEO_TIERS[col.geoFence?.boundaryType]?.label||col.geoFence?.boundaryType}</span></span>
+            <span>${col.windowStart} → ${col.windowEnd}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    ${S.collectionDetail ? collectionDetailPanel(S.collectionDetail) : ''}
+  `;
+}
+
+function collectionDetailPanel(id){
+  const col=COLLECTIONS_DATA.find(c=>c.id===id);
+  if(!col) return '';
+  const statusBg={live:'#dbeafe',upcoming:'#fef3c7',ended:'#f1f5f9'};
+  const statusColors={live:'#1d4ed8',upcoming:'#d97706',ended:'#94a3b8'};
+  const tierLabel=col.geoFence?(GEO_TIERS[col.geoFence.boundaryType]?.label||col.geoFence.boundaryType):null;
+  return `
+    <div onclick="ss({collectionDetail:null})" style="position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:680px;max-height:88vh;overflow-y:auto;padding:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+          <div>
+            <div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+              <span style="background:${statusBg[col.status]};color:${statusColors[col.status]};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${col.status.charAt(0).toUpperCase()+col.status.slice(1)}</span>
+              <span style="background:${col.type==='venue'?'#fdf4ff':'#f0f9ff'};color:${col.type==='venue'?'#7c3aed':'#0369a1'};font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:20px;">${col.type==='venue'?'🤝 Partner Collection':'🐴 Internal'}</span>
+            </div>
+            <div style="font-weight:900;font-size:1.1rem;">${col.name}</div>
+            <div style="font-size:0.75rem;color:#64748b;margin-top:3px;">${col.theme}</div>
+          </div>
+          <button onclick="ss({collectionDetail:null})" style="background:#f1f5f9;border:none;border-radius:8px;width:28px;height:28px;font-size:0.9rem;cursor:pointer;color:#475569;">✕</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          ${miniStat('Locations',String(col.locations))}
+          ${miniStat('Revenue',col.revenue?fmtMoney(col.revenue):'—','#16a34a')}
+          ${miniStat('Check-ins',col.totalCheckins?fmtNum(col.totalCheckins):'—')}
+          ${miniStat('Show Rate',col.showRate?col.showRate+'%':'—',col.showRate?showColor(col.showRate):'#94a3b8')}
+        </div>
+
+        <div style="background:#f8f9fb;border-radius:12px;padding:16px;margin-bottom:16px;">
+          ${infoRow('Scope',col.scope)}
+          ${infoRow('Window',col.windowStart+' → '+col.windowEnd)}
+          ${infoRow('Coverage Tier',tierLabel)}
+          ${infoRow('Center Point',col.geoFence?.address)}
+          ${infoRow('Guest Message',col.geoFence?.customerMessage)}
+          ${infoRow('Created By',col.creator+' · '+col.createdDate)}
+        </div>
+
+        <div style="background:#fefce8;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.75rem;color:#78350f;line-height:1.6;">
+          <strong>Guardrails:</strong> Price: ${col.guardrails.price} · Capacity: ${col.guardrails.capRange} · Broadcast: ${col.guardrails.broadcastWindow} · Theme: ${col.guardrails.themeReq}
+        </div>
+
+        <div style="font-weight:800;font-size:0.85rem;margin-bottom:10px;">Participating ${col.type==='venue'?'Businesses':'Locations'}</div>
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:16px;">
+          <table>
+            <thead><tr style="background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+              ${col.type==='venue'
+                ? ['Business','Category','Status','Drop Title','Cap','Res','Check-ins','Show Rate'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>3?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;color:#94a3b8;">${h}</th>`).join('')
+                : ['Location','Zone','Status','Drop Title','Cap','Res','Check-ins','Show Rate'].map((h,i)=>`<th style="padding:9px 12px;text-align:${i>3?'right':'left'};font-size:0.62rem;font-weight:800;text-transform:uppercase;color:#94a3b8;">${h}</th>`).join('')
+              }
+            </tr></thead>
+            <tbody>
+              ${col.participation.map((p,i)=>{
+                const sr=p.res>0&&p.ci>0?pct(p.ci,p.res):null;
+                if(col.type==='venue'){
+                  return `<tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                    <td style="padding:9px 12px;font-weight:700;font-size:0.8rem;">${p.bizName}</td>
+                    <td style="padding:9px 12px;font-size:0.72rem;color:#64748b;">${p.bizCategory}</td>
+                    <td style="padding:9px 12px;">${badge(p.status)}</td>
+                    <td style="padding:9px 12px;font-size:0.75rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                  </tr>`;
+                } else {
+                  const loc=LOCATIONS.find(l=>l.id===p.locId);
+                  const z=loc?zoneById(loc.zone):null;
+                  return `<tr style="border-bottom:1px solid #e5e7eb;background:${i%2?'#fafafa':'#fff'}">
+                    <td style="padding:9px 12px;font-weight:700;font-size:0.8rem;">${loc?.name||p.locId}</td>
+                    <td style="padding:9px 12px;"><span style="background:${z?.color||'#e5e7eb'}15;color:${z?.color||'#64748b'};font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:20px;">${z?.abbr||'—'}</span></td>
+                    <td style="padding:9px 12px;">${badge(p.status)}</td>
+                    <td style="padding:9px 12px;font-size:0.75rem;font-weight:600;color:${p.dropTitle?'#0f172a':'#94a3b8'};font-style:${p.dropTitle?'normal':'italic'};">${p.dropTitle||'Not yet set'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.cap||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.res||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:700;">${p.ci||'—'}</td>
+                    <td style="padding:9px 12px;text-align:right;font-size:0.8rem;font-weight:800;color:${sr?showColor(sr):'#94a3b8'};">${sr?sr+'%':'—'}</td>
+                  </tr>`;
+                }
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${col.type==='venue'?`<div style="background:#f8f9fb;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:0.72rem;color:#64748b;"><strong style="color:#0f172a;">🔒 Data Privacy:</strong> Each partner business owns its own fan data. Aggregate metrics are visible, but individual fan identities are not shared.</div>`:''}
+        <div style="display:flex;gap:10px;">
+          ${col.status!=='ended'&&col.type!=='venue'?`<button style="flex:1;background:#0f172a;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Reminder to Pending</button>`:''}
+          ${col.status!=='ended'&&col.type==='venue'?`<button style="flex:1;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Invite More Partners</button>`:''}
+          <button onclick="ss({collectionDetail:null})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Close</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── ANALYTICS ──────────────────────────────────────────────────────────────
+function rAnalytics(){
+  const drops=CORP_DROPS.filter(d=>d.status!=='draft');
+  const sorted=[...drops].sort((a,b)=>(b.checkins||0)-(a.checkins||0));
+  const zoneStats=ZONES.map(z=>{
+    const zDrops=drops.filter(d=>d.scope===z.name||d.scope==='All Zones');
+    const totalCI=zDrops.reduce((s,d)=>s+(d.checkins||0),0);
+    const totalRes=zDrops.reduce((s,d)=>s+(d.res||0),0);
+    return {...z,dropCount:zDrops.length,checkins:totalCI,res:totalRes,conv:totalRes>0?Math.round(totalCI/totalRes*100):0};
+  }).sort((a,b)=>b.checkins-a.checkins);
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Analytics</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">Season &middot; ${drops.length} active drops &middot; ${fmtNum(drops.reduce((s,d)=>s+(d.checkins||0),0))} total check-ins</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({hierarchyView:'zone'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='zone'?'#FB4F14':'#f1f5f9'};color:${S.hierarchyView==='zone'?'#fff':'#475569'};">By Zone</button>
+        <button onclick="ss({hierarchyView:'location'})" style="padding:8px 16px;border-radius:8px;border:none;font-weight:700;font-size:0.78rem;cursor:pointer;background:${S.hierarchyView==='location'?'#FB4F14':'#f1f5f9'};color:${S.hierarchyView==='location'?'#fff':'#475569'};">By Drop</button>
+      </div>
+    </div>
+    ${S.hierarchyView==='zone'?rAnalyticsByZone(zoneStats,sorted):`
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;">
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+        <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px 80px;gap:8px;">
+          ${['Drop','Timing','Scope','Type','Check-ins','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+        </div>
+        ${sorted.map((d,i)=>{
+          const conv=d.res>0?pct(d.checkins,d.res):0;
+          return `<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1fr 1fr 1fr 80px 80px;gap:8px;align-items:center;">
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+              <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">${d.checkins} check-ins &middot; ${d.res} reserved</div>
+            </div>
+            <div>${timingBadge(d.timing)}</div>
+            <div style="font-size:0.75rem;color:#475569;">${d.scope}</div>
+            <div>${catBadge(d.type)}</div>
+            <div style="font-size:0.9rem;font-weight:800;color:#0f172a;">${fmtNum(d.checkins)}</div>
+            <div style="font-size:0.9rem;font-weight:800;color:${showColor(conv)};">${conv}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${zoneStats.slice(0,5).map(z=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="background:${z.color}20;color:${z.color};font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${z.abbr}</span>
+            <span style="font-size:0.8rem;font-weight:700;color:#0f172a;">${z.name}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${miniStat('Check-ins',fmtNum(z.checkins),'#0f172a')}
+            ${miniStat('Conv %',z.conv+'%',showColor(z.conv))}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`}
+  </div>`;
+}
+
+function rAnalyticsByZone(zoneStats,sorted){
+  return `<div style="display:flex;flex-direction:column;gap:16px;">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      ${zoneStats.map(z=>`<div style="background:#fff;border-radius:12px;border:2px solid ${z.color}30;padding:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="background:${z.color};color:#fff;font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${z.abbr}</span>
+          <span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${z.name}</span>
+        </div>
+        <div style="font-size:1.6rem;font-weight:900;color:${z.color};">${fmtNum(z.checkins)}</div>
+        <div style="font-size:0.7rem;color:#64748b;margin-top:2px;">check-ins &middot; ${z.conv}% conv &middot; ${z.dropCount} drops</div>
+        <div style="margin-top:8px;background:#f1f5f9;border-radius:20px;height:5px;overflow:hidden;">
+          <div style="height:5px;border-radius:20px;background:${z.color};width:${Math.min(z.conv,100)}%;"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;">
+        ${['Zone','Drops','Reserved','Check-ins','Conv %'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${zoneStats.map((z,i)=>`<div style="padding:12px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 80px 80px 80px 80px;gap:8px;align-items:center;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="background:${z.color}20;color:${z.color};font-size:0.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">${z.abbr}</span>
+          <span style="font-size:0.82rem;font-weight:700;color:#0f172a;">${z.name}</span>
+        </div>
+        <div style="font-size:0.85rem;font-weight:700;">${z.dropCount}</div>
+        <div style="font-size:0.85rem;font-weight:700;">${fmtNum(z.res)}</div>
+        <div style="font-size:0.85rem;font-weight:800;color:#0f172a;">${fmtNum(z.checkins)}</div>
+        <div style="font-size:0.85rem;font-weight:800;color:${showColor(z.conv)};">${z.conv}%</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── USERS ──────────────────────────────────────────────────────────────────
+USERS_DATA=[
+  {id:'U01',name:'Marcus Webb',email:'m.webb@broncos.nfl.com',role:'Corporate Admin',team:'Broncos Org',lastLogin:'Today 9:14 AM',status:'active'},
+  {id:'U02',name:'Sandra Kole',email:'s.kole@broncos.nfl.com',role:'Venue Manager',team:'Broncos Org',lastLogin:'Today 11:02 AM',status:'active'},
+  {id:'U03',name:'Tony Reyes',email:'t.reyes@broncos.nfl.com',role:'Zone Manager',team:'Field Level',lastLogin:'Yesterday',status:'active'},
+  {id:'U04',name:'Jill Park',email:'j.park@broncos.nfl.com',role:'Zone Manager',team:'Club Level',lastLogin:'Today 8:45 AM',status:'active'},
+  {id:'U05',name:'Derek Osman',email:'d.osman@broncos.nfl.com',role:'Zone Manager',team:'Lower Concourse',lastLogin:'2 days ago',status:'active'},
+  {id:'U06',name:'Caitlin Moss',email:'c.moss@broncos.nfl.com',role:'Zone Manager',team:'Suite Level',lastLogin:'Today 10:30 AM',status:'active'},
+  {id:'U07',name:'Hiro Tanaka',email:'h.tanaka@broncos.nfl.com',role:'Location Manager',team:'Field Level',lastLogin:'Today 7:58 AM',status:'active'},
+  {id:'U08',name:'Lisa Grant',email:'l.grant@broncos.nfl.com',role:'Location Manager',team:'Club Level',lastLogin:'Today 9:22 AM',status:'active'},
+  {id:'U09',name:'Ray Dominguez',email:'r.dom@coors.com',role:'Partner Manager',team:'Coors Light / AB InBev',lastLogin:'Today 11:45 AM',status:'active'},
+  {id:'U10',name:'Alicia Ford',email:'a.ford@millerlite.com',role:'Partner Manager',team:'Miller Lite Grille',lastLogin:'3 days ago',status:'active'},
+  {id:'U11',name:'Brett Kim',email:'b.kim@verizon.com',role:'Partner Manager',team:'Verizon Tech Zone',lastLogin:'Today 8:10 AM',status:'active'},
+  {id:'U12',name:'Dana Wu',email:'d.wu@broncos.nfl.com',role:'Corporate Admin',team:'Broncos Org',lastLogin:'1 week ago',status:'inactive'},
+];
+
+function rUsers(){
+  const roleColors={'Corporate Admin':'#7c3aed','Venue Manager':'#FB4F14','Zone Manager':'#0057B8','Location Manager':'#16a34a','Partner Manager':'#0891b2'};
+  return `<div style="padding:28px 32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+      <div>
+        <div style="font-size:1.3rem;font-weight:800;color:#0f172a;">Team &amp; Access</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-top:2px;">${USERS_DATA.filter(u=>u.status==='active').length} active users &middot; 5 roles</div>
+      </div>
+      <button style="background:#FB4F14;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">+ Invite User</button>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:20px;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 120px 80px;gap:8px;">
+        ${['Name','Email','Role','Team/Scope','Last Login','Status'].map(h=>`<div style="font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;">${h}</div>`).join('')}
+      </div>
+      ${USERS_DATA.map((u,i)=>`<div style="padding:11px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 120px 80px;gap:8px;align-items:center;">
+        <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${u.name}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${u.email}</div>
+        <div><span style="background:${roleColors[u.role]}15;color:${roleColors[u.role]};font-size:0.68rem;font-weight:800;padding:3px 8px;border-radius:20px;">${u.role}</span></div>
+        <div style="font-size:0.75rem;color:#475569;">${u.team}</div>
+        <div style="font-size:0.75rem;color:#64748b;">${u.lastLogin}</div>
+        <div><span style="background:${u.status==='active'?'#dcfce7':'#f1f5f9'};color:${u.status==='active'?'#16a34a':'#94a3b8'};font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${u.status}</span></div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">Access Hierarchy</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        ${[
+          {role:'Corporate Admin',color:'#7c3aed',can:['All venues','All zones','All locations','All partners','Billing &amp; settings']},
+          {role:'Venue Manager',color:'#FB4F14',can:['Venue settings','All zones','All locations','All partners','View billing']},
+          {role:'Zone Manager',color:'#0057B8',can:['Assigned zone only','Zone locations','Zone drops','Zone analytics','No billing']},
+          {role:'Location Manager',color:'#16a34a',can:['Assigned location','Location drops','Check-in data','No zone data','No billing']},
+          {role:'Partner Manager',color:'#0891b2',can:['Partner drops only','Partner analytics','Fan check-ins','No other data','No billing']},
+        ].map(r=>`<div style="padding:14px;border-right:1px solid #e5e7eb;">
+          <div style="font-size:0.72rem;font-weight:800;color:${r.color};margin-bottom:8px;">${r.role}</div>
+          ${r.can.map(c=>`<div style="font-size:0.68rem;color:#475569;padding:3px 0;border-bottom:1px solid #f8f9fb;">&#10003; ${c}</div>`).join('')}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── BILLING ────────────────────────────────────────────────────────────────
+function rBilling(){
+  const locs=20,ppL=299,monthly=locs*ppL;
+  const invoices=[
+    {date:'Mar 1, 2026',desc:'Venue Pro &middot; 20 locations',amt:monthly,status:'paid'},
+    {date:'Feb 1, 2026',desc:'Venue Pro &middot; 20 locations',amt:monthly,status:'paid'},
+    {date:'Jan 1, 2026',desc:'Venue Pro &middot; 20 locations',amt:monthly,status:'paid'},
+  ];
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Billing &amp; Plan</div>
+    <div style="background:linear-gradient(135deg,#002244 0%,#FB4F14 100%);border-radius:16px;padding:24px 28px;color:#fff;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:0.75rem;font-weight:700;opacity:0.8;letter-spacing:0.08em;margin-bottom:6px;">CURRENT PLAN</div>
+        <div style="font-size:1.8rem;font-weight:900;">Venue Pro</div>
+        <div style="font-size:0.85rem;opacity:0.85;margin-top:4px;">Enterprise stadium management &middot; Unlimited drops &amp; push &middot; Full analytics</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:0.75rem;opacity:0.8;margin-bottom:4px;">MONTHLY TOTAL</div>
+        <div style="font-size:2.8rem;font-weight:900;">${fmtMoney(monthly)}</div>
+        <div style="font-size:0.8rem;opacity:0.75;">${locs} locations &times; ${fmtMoney(ppL)}/loc/mo</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+      ${[
+        {label:'Active Locations',val:'20',sub:'Empower Field'},
+        {label:'Monthly Cost',val:fmtMoney(monthly),sub:'Auto-renews Apr 1'},
+        {label:'Cost per Drop',val:fmtMoney(Math.round(monthly/CORP_DROPS.length)),sub:`${CORP_DROPS.length} total drops`},
+        {label:'Est. ROI',val:'14.2x',sub:'Based on fan spend lift'},
+      ].map(s=>`<div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;padding:16px 18px;">
+        <div style="font-size:0.72rem;color:#64748b;font-weight:600;margin-bottom:4px;">${s.label}</div>
+        <div style="font-size:1.5rem;font-weight:900;color:#0f172a;">${s.val}</div>
+        <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${s.sub}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
+      <div style="padding:14px 18px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;">
+        <div style="font-size:0.82rem;font-weight:800;color:#0f172a;">Invoice History</div>
+      </div>
+      ${invoices.map((inv,i)=>`<div style="padding:14px 18px;border-bottom:1px solid #f1f5f9;background:${i%2?'#fafafa':'#fff'};display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-weight:700;font-size:0.82rem;">${inv.desc}</div>
+          <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">${inv.date}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-weight:800;font-size:0.9rem;">${fmtMoney(inv.amt)}</div>
+          <span style="background:#dcfce7;color:#16a34a;font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:20px;">${inv.status}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── SETTINGS ───────────────────────────────────────────────────────────────
+function rSettings(){
+  function sCard(title,content){
+    return `<div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;margin-bottom:16px;">
+      <div style="font-size:0.9rem;font-weight:800;color:#0f172a;margin-bottom:14px;">${title}</div>
+      ${content}
+    </div>`;
+  }
+  function sRow(label,val,sub){
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+      <div><div style="font-size:0.82rem;font-weight:600;color:#0f172a;">${label}</div>${sub?`<div style="font-size:0.7rem;color:#94a3b8;margin-top:1px;">${sub}</div>`:''}</div>
+      <div style="font-size:0.82rem;font-weight:700;color:#475569;">${val}</div>
+    </div>`;
+  }
+  return `<div style="padding:28px 32px;">
+    <div style="font-size:1.3rem;font-weight:800;color:#0f172a;margin-bottom:22px;">Settings</div>
+    ${sCard('Venue Settings',
+      sRow('Venue Name','Denver Broncos')+
+      sRow('Stadium','Empower Field at Mile High')+
+      sRow('Capacity','76,125 seats')+
+      sRow('Primary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#FB4F14;display:inline-block;"></span>#FB4F14 Broncos Orange</span>')+
+      sRow('Secondary Color','<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:3px;background:#002244;display:inline-block;"></span>#002244 Navy Blue</span>')+
+      sRow('Timezone','Mountain Time (MT)')
+    )}
+    ${sCard('Drop Policies',
+      sRow('Max Simultaneous Drops','10 per zone','Across all game timing windows')+
+      sRow('Min Geo-Fence Radius','~100 ft (Concession tier)','Tightest pinpoint accuracy')+
+      sRow('Default Broadcast Window','3 hours','Adjustable per drop')+
+      sRow('Auto-expire after game','Enabled','Drops auto-close post-game +2 hrs')+
+      sRow('Sponsor drop approval','Required','All partner drops need venue review')
+    )}
+    ${sCard('Hierarchy: Team &rarr; Venue &rarr; Zone &rarr; Location',`
+      <div style="display:flex;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:10px;">
+        ${['Denver Broncos (Team)','Empower Field (Venue)','7 Zones','20 Locations'].map((l,i)=>`<div style="flex:1;padding:10px 12px;background:${i%2?'#f8f9fb':'#fff'};border-right:1px solid #e5e7eb;text-align:center;">
+          <div style="font-size:0.68rem;font-weight:800;color:#64748b;text-transform:uppercase;">${['Level 1','Level 2','Level 3','Level 4'][i]}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:#0f172a;margin-top:3px;">${l}</div>
+        </div>`).join('')}
+      </div>
+    `)}
+    ${sCard('Geo-Fence Tiers',
+      Object.entries(GEO_TIERS).map(([k,v])=>sRow(v.short,v.label)).join('')
+    )}
+    ${sCard('Game Timing Windows',
+      Object.entries(GAME_TIMING).map(([k,v])=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${timingBadge(k)}
+          <span style="font-size:0.78rem;color:#475569;">${v.label}</span>
+        </div>
+        <div style="width:10px;height:10px;border-radius:50%;background:${v.color};"></div>
+      </div>`).join('')
+    )}
+    ${sCard('Alerts &amp; Notifications',
+      sRow('Check-in spike alerts','Enabled','Notify when zone check-ins +30% in 15 min')+
+      sRow('Capacity warnings','Enabled','Alert at 85% and 95% of drop cap')+
+      sRow('Game timing reminders','Enabled','15 min before each timing window')+
+      sRow('Partner drop pending','Enabled','New sponsor drops awaiting approval')
+    )}
+  </div>`;
+}
+
+// ── NEW COLLECTION MODAL ────────────────────────────────────────────────────
+function newCollModal(){
+  const step=S.newCollStep||1;
+  const steps=['Details','Geo-Fence','Review'];
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showNewColl:false,newCollStep:1})">
+    <div style="background:#fff;border-radius:18px;width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:linear-gradient(135deg,#002244 0%,#FB4F14 100%);padding:20px 24px;border-radius:18px 18px 0 0;">
+        <div style="color:#fff;font-size:1.1rem;font-weight:800;">New Collection</div>
+        <div style="display:flex;gap:6px;margin-top:14px;">
+          ${steps.map((s,i)=>`<div style="flex:1;">
+            <div style="height:4px;border-radius:2px;background:${i+1<=step?'#fff':'rgba(255,255,255,0.3)'};margin-bottom:5px;"></div>
+            <div style="font-size:0.65rem;font-weight:700;color:${i+1<=step?'#fff':'rgba(255,255,255,0.5)'};">Step ${i+1}: ${s}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Collection Name</label>
+            <input placeholder="e.g. Game Day Specials Week 14" style="width:100%;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:0.85rem;box-sizing:border-box;">
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Collection Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              ${[{v:'venue',l:'Venue-Wide',s:'All zones and partner drops',e:'&#127967;'},{v:'zone',l:'Zone-Specific',s:'Single zone collection',e:'&#128506;'}].map(t=>`<div style="border:2px solid ${S.newCollType===t.v?'#FB4F14':'#e5e7eb'};border-radius:10px;padding:12px;cursor:pointer;background:${S.newCollType===t.v?'#fff8f5':'#fff'};" onclick="ss({newCollType:'${t.v}'})">
+                <div style="font-size:1.2rem;">${t.e}</div>
+                <div style="font-weight:700;font-size:0.82rem;margin-top:4px;">${t.l}</div>
+                <div style="font-size:0.7rem;color:#64748b;">${t.s}</div>
+              </div>`).join('')}
+            </div>
+          </div>
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Game Timing Window</label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${Object.entries(GAME_TIMING).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollTiming===k?v.color:'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollTiming===k?v.color+'10':'#fff'};">
+                <input type="radio" name="collTiming" ${S.newCollTiming===k?'checked':''} onclick="ss({newCollTiming:'${k}'})">
+                ${timingBadge(k)}
+                <span style="font-size:0.78rem;color:#475569;">${v.label}</span>
+              </label>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===2?`
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem;font-weight:700;color:#0f172a;display:block;margin-bottom:6px;">Geo-Fence Tier</label>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${Object.entries(GEO_TIERS).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.newCollGeo===k?'#FB4F14':'#e5e7eb'};border-radius:8px;padding:10px 12px;cursor:pointer;background:${S.newCollGeo===k?'#fff8f5':'#fff'};">
+                <input type="radio" name="collGeo" ${S.newCollGeo===k?'checked':''} onclick="ss({newCollGeo:'${k}'})">
+                <div>
+                  <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${v.short}</div>
+                  <div style="font-size:0.7rem;color:#64748b;">${v.label}</div>
+                </div>
+              </label>`).join('')}
+            </div>
+          </div>
+        `:''}
+        ${step===3?`
+          <div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div style="font-weight:800;font-size:0.85rem;color:#0f172a;margin-bottom:10px;">Collection Summary</div>
+            ${infoRow('Type',S.newCollType==='venue'?'Venue-Wide':'Zone-Specific')}
+            ${infoRow('Game Timing',S.newCollTiming?GAME_TIMING[S.newCollTiming].short:'Not set')}
+            ${infoRow('Geo-Fence',S.newCollGeo?GEO_TIERS[S.newCollGeo].short:'Not set')}
+          </div>
+          <div style="background:#fff3ec;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;font-size:0.78rem;color:#9a3412;">
+            This collection will be active for the selected game timing window and geo-fence range. Drops can be added after creation.
+          </div>
+        `:''}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({newCollStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({newCollStep:${step+1}})" style="flex:2;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next: ${steps[step]}</button>`:`<button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:2;background:#002244;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Create Collection</button>`}
+          <button onclick="ss({showNewColl:false,newCollStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── PUSH MODAL ──────────────────────────────────────────────────────────────
+function pushModal(){
+  const step=S.pushStep||1;
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)ss({showPush:false,pushStep:1})">
+    <div style="background:#fff;border-radius:18px;width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="background:#FB4F14;padding:20px 24px;border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#fff;font-size:1.1rem;font-weight:800;">Push Drop</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:0.78rem;margin-top:2px;">Step ${step} of 3</div>
+        </div>
+        <button onclick="ss({showPush:false,pushStep:1})" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;">X</button>
+      </div>
+      <div style="padding:24px;">
+        ${step===1?pushStep1():step===2?pushStep2():pushStep3()}
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          ${step>1?`<button onclick="ss({pushStep:${step-1}})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#475569;">Back</button>`:''}
+          ${step<3?`<button onclick="ss({pushStep:${step+1}})" style="flex:2;background:#FB4F14;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Next</button>`:`<button onclick="ss({showPush:false,pushStep:1})" style="flex:2;background:#002244;color:#fff;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;">Send Push</button>`}
+          ${step===1?`<button onclick="ss({showPush:false,pushStep:1})" style="flex:1;background:#f1f5f9;border:none;padding:11px;border-radius:10px;font-weight:700;font-size:0.82rem;cursor:pointer;color:#94a3b8;">Cancel</button>`:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function pushStep1(){
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Select a Drop to Push</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;">
+      ${CORP_DROPS.filter(d=>d.status==='live').map(d=>`<div style="border:2px solid ${S.pushDrop===d.id?'#FB4F14':'#e5e7eb'};border-radius:10px;padding:12px 14px;cursor:pointer;background:${S.pushDrop===d.id?'#fff8f5':'#fff'};" onclick="ss({pushDrop:'${d.id}'})">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:0.82rem;color:#0f172a;">${d.title}</div>
+          ${timingBadge(d.timing)}
+        </div>
+        <div style="font-size:0.7rem;color:#64748b;margin-top:4px;">${d.scope} &middot; ${d.checkins} check-ins so far</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep2(){
+  const scopes=['All Zones','Field Level','Club Level','Lower Concourse','Upper Concourse','Suite Level','Plaza &amp; Entry'];
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Notification Scope</div>
+    <div style="font-size:0.75rem;color:#64748b;margin-bottom:12px;">Which fans receive this push notification?</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
+      ${scopes.map(sc=>`<div onclick="ss({pushScope:'${sc}'})" style="padding:8px 14px;border-radius:20px;border:2px solid ${S.pushScope===sc?'#FB4F14':'#e5e7eb'};background:${S.pushScope===sc?'#fff8f5':'#fff'};font-size:0.78rem;font-weight:700;cursor:pointer;color:${S.pushScope===sc?'#FB4F14':'#475569'};">${sc}</div>`).join('')}
+    </div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:8px;">Game Timing</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${Object.entries(GAME_TIMING).map(([k,v])=>`<label style="display:flex;align-items:center;gap:10px;border:2px solid ${S.pushTiming===k?v.color:'#e5e7eb'};border-radius:8px;padding:9px 12px;cursor:pointer;background:${S.pushTiming===k?v.color+'10':'#fff'};">
+        <input type="radio" name="pushTiming" ${S.pushTiming===k?'checked':''} onclick="ss({pushTiming:'${k}'})">
+        ${timingBadge(k)}
+        <span style="font-size:0.75rem;color:#475569;">${v.label}</span>
+      </label>`).join('')}
+    </div>
+  </div>`;
+}
+
+function pushStep3(){
+  const drop=CORP_DROPS.find(d=>d.id===S.pushDrop);
+  return `<div>
+    <div style="font-size:0.85rem;font-weight:800;color:#0f172a;margin-bottom:12px;">Preview &amp; Confirm</div>
+    <div style="background:#0f172a;border-radius:16px;padding:16px;margin-bottom:16px;">
+      <div style="background:#1e293b;border-radius:12px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:36px;height:36px;border-radius:8px;background:#FB4F14;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:0.9rem;">DEN</div>
+          <div>
+            <div style="color:#fff;font-size:0.78rem;font-weight:700;">Denver Broncos &middot; Nigh</div>
+            <div style="color:#94a3b8;font-size:0.7rem;">now</div>
+          </div>
+        </div>
+        <div style="color:#fff;font-weight:800;font-size:0.88rem;margin-bottom:4px;">${drop?drop.title:'Drop Selected'}</div>
+        <div style="color:#cbd5e1;font-size:0.78rem;">${S.pushScope||'All Zones'} &middot; Tap to redeem</div>
+      </div>
+    </div>
+    <div style="background:#f8f9fb;border-radius:10px;padding:14px 16px;">
+      ${infoRow('Drop',drop?drop.title:'Not selected')}
+      ${infoRow('Scope',S.pushScope||'Not set')}
+      ${infoRow('Timing',S.pushTiming?GAME_TIMING[S.pushTiming].short:'Not set')}
+      ${infoRow('Est. Reach','~'+(S.pushScope==='All Zones'?'76,000':S.pushScope==='Suite Level'?'4,200':S.pushScope==='Field Level'?'3,800':'12,000')+' fans')}
+    </div>
+  </div>`;
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('app').innerHTML=`
+    ${layout()}
+    ${S.showNewColl?newCollModal():''}
+    ${S.showPush?pushModal():''}
+  `;
+}
+
+window.ss=function(patch){Object.assign(S,patch);render();};
+window.go=function(page){S.page=page;render();};
+window.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>

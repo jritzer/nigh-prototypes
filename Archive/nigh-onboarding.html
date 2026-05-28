@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nigh Drops - Onboarding</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Roboto,sans-serif;background:#1B2A4A;color:#fff}
+    #app{display:flex;height:100vh;align-items:center;justify-content:center;padding:20px}
+    .onb-container{width:100%;max-width:400px;display:flex;flex-direction:column;padding:0 16px}
+    @media(min-width:600px){.onb-container{max-width:420px;box-shadow:0 4px 24px rgba(0,0,0,0.3);border-radius:16px;background:rgba(27,42,74,0.8);padding:32px 24px;margin:0 auto}}
+    @media(min-width:900px){.onb-container{max-width:420px;padding:32px 24px}}
+    .onb-step{display:none;animation:fadeIn .3s ease-out}
+    .onb-step.active{display:flex;flex-direction:column}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .onb-logo{width:60px;height:60px;background:linear-gradient(135deg,#6226E9,#0E4EF5);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;margin:0 auto 32px;color:#fff}
+    .onb-title{font-size:28px;font-weight:700;margin-bottom:8px;text-align:center}
+    .onb-subtitle{font-size:14px;color:rgba(255,255,255,0.60);text-align:center;margin-bottom:32px}
+    .onb-input{width:100%;padding:13px 14px;background:#2a3d5a;border:1px solid rgba(255,255,255,0.12);border-radius:12px;font-size:16px;color:#fff;margin-bottom:12px;font-family:inherit;min-height:44px}
+    .onb-input::placeholder{color:rgba(255,255,255,0.38)}
+    .onb-input:focus{outline:none;border-color:rgba(14,78,245,0.5);background:#3a4d6a}
+    .onb-btn{width:100%;padding:13px;background:#0E4EF5;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-top:16px;transition:background .2s;min-height:44px;display:flex;align-items:center;justify-content:center}
+    .onb-btn:hover{background:#0d42d0}
+    .onb-btn:active{transform:scale(0.98)}
+    .onb-link{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,0.60)}
+    .onb-link a{color:#0E4EF5;text-decoration:none}
+    .onb-link a:hover{text-decoration:underline}
+    .onb-progress{display:flex;gap:6px;margin-bottom:32px;justify-content:center}
+    .onb-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background .2s}
+    .onb-dot.active{background:#0E4EF5}
+    .onb-code-input{display:flex;gap:6px;justify-content:center;margin:24px 0}
+    .onb-code-input input{width:44px;height:56px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:#2a3d5a;font-size:24px;font-weight:700;text-align:center;color:#fff;min-height:56px}
+    .onb-code-input input:focus{outline:none;border-color:#0E4EF5;background:#3a4d6a}
+    .onb-error{color:#EF4444;font-size:12px;margin-top:-8px;margin-bottom:12px}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="onb-container">
+      <!-- Step 1: Phone -->
+      <div class="onb-step active" id="step1">
+        <div class="onb-logo">N</div>
+        <h1 class="onb-title">Nigh Drops</h1>
+        <p class="onb-subtitle">Drop in. Sell out. Repeat.</p>
+        <div class="onb-progress">
+          <div class="onb-dot active"></div>
+          <div class="onb-dot"></div>
+          <div class="onb-dot"></div>
+        </div>
+        <label style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600">Phone Number</label>
+        <input type="tel" class="onb-input" id="phoneInput" placeholder="(303) 555-0123">
+        <button class="onb-btn" onclick="goToStep2()">Send Code</button>
+        <div class="onb-link">Already have an account? <a href="#" onclick="alert('Login coming soon')">Log in</a></div>
+      </div>
+
+      <!-- Step 2: Verification -->
+      <div class="onb-step" id="step2">
+        <h1 class="onb-title">Check your SMS</h1>
+        <p class="onb-subtitle">We sent a 6-digit code to your phone</p>
+        <div class="onb-progress">
+          <div class="onb-dot active"></div>
+          <div class="onb-dot active"></div>
+          <div class="onb-dot"></div>
+        </div>
+        <div class="onb-code-input">
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)" autofocus>
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)">
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)">
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)">
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)">
+          <input type="text" maxlength="1" class="code-digit" onkeyup="handleCodeInput(this)">
+        </div>
+        <button class="onb-btn" onclick="goToStep3()">Verify Code</button>
+        <div class="onb-link"><a href="#" onclick="goToStep1();return false">Go back</a></div>
+      </div>
+
+      <!-- Step 3: Account -->
+      <div class="onb-step" id="step3">
+        <h1 class="onb-title">Create your account</h1>
+        <p class="onb-subtitle">Just a few more details</p>
+        <div class="onb-progress">
+          <div class="onb-dot active"></div>
+          <div class="onb-dot active"></div>
+          <div class="onb-dot active"></div>
+        </div>
+        <label style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;display:block">Full Name</label>
+        <input type="text" class="onb-input" id="nameInput" placeholder="Alex Rivera">
+        <label style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px;margin-top:12px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;display:block">Username</label>
+        <input type="text" class="onb-input" id="usernameInput" placeholder="@alexr">
+        <label style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px;margin-top:12px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;display:block">Email (optional)</label>
+        <input type="email" class="onb-input" id="emailInput" placeholder="alex@gmail.com">
+        <label style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px;margin-top:12px;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;display:block">Date of Birth (optional)</label>
+        <input type="date" class="onb-input" id="dobInput">
+        <button class="onb-btn" onclick="enterNigh()">Enter Nigh Drops</button>
+        <div class="onb-link"><a href="#" onclick="goToStep2();return false">Go back</a></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function goToStep1() {
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step3').classList.remove('active');
+    }
+    
+    function goToStep2() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (phone.length < 5) {
+        alert('Please enter a valid phone number');
+        return;
+      }
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('active');
+      document.getElementById('step3').classList.remove('active');
+      document.querySelector('.code-digit').focus();
+    }
+    
+    function goToStep3() {
+      const codes = document.querySelectorAll('.code-digit');
+      const allFilled = Array.from(codes).every(c => c.value.length === 1);
+      if (!allFilled) {
+        alert('Please enter all 6 digits');
+        return;
+      }
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step3').classList.add('active');
+      document.getElementById('nameInput').focus();
+    }
+    
+    function handleCodeInput(input) {
+      if (input.value.length === 1) {
+        const next = input.nextElementSibling;
+        if (next && next.classList.contains('code-digit')) {
+          next.focus();
+        }
+      }
+    }
+    
+    function enterNigh() {
+      const name = document.getElementById('nameInput').value.trim();
+      const username = document.getElementById('usernameInput').value.trim();
+      if (!name || !username) {
+        alert('Please fill in name and username');
+        return;
+      }
+      window.location.href = 'nigh-feed.html';
+    }
+  </script>
+</body>
+</html>

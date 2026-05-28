@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Nigh Drops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-purple: #6226E9;
+            --color-blue: #0E4EF5;
+            --color-teal: #41EFF9;
+            --color-pink: #EC1977;
+            --color-bg: #0B0B1A;
+            --color-surface: #12122A;
+            --color-text: #FFFFFF;
+            --color-text-muted: #A0A0A0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: rgba(11, 11, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(66, 38, 233, 0.1);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .nav-logo-text {
+            color: var(--color-blue);
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-teal);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-blue), var(--color-teal));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--color-blue), var(--color-purple));
+            color: var(--color-text);
+            padding: 0.625rem 1.25rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 78, 245, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(98, 38, 233, 0.1), rgba(14, 78, 245, 0.05));
+            border-bottom: 1px solid rgba(65, 239, 249, 0.1);
+            text-align: center;
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(65, 239, 249, 0.1);
+            border: 1px solid rgba(65, 239, 249, 0.3);
+            border-radius: 50px;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-teal);
+        }
+
+        .hero-badge svg {
+            width: 16px;
+            height: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 4px rgba(65, 239, 249, 0.6));
+            }
+            50% {
+                opacity: 0.6;
+                filter: drop-shadow(0 0 12px rgba(65, 239, 249, 0.3));
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-text), var(--color-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--color-text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        /* Section Container */
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(65, 239, 249, 0.1);
+            border: 1px solid rgba(65, 239, 249, 0.3);
+            border-radius: 50px;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-teal);
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-text), var(--color-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 4rem 2rem;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background-color: rgba(18, 18, 42, 0.5);
+            border: 1px solid rgba(98, 38, 233, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background-color: rgba(18, 18, 42, 0.8);
+            border-color: rgba(65, 239, 249, 0.3);
+        }
+
+        .faq-item.active {
+            border-color: rgba(65, 239, 249, 0.4);
+            background-color: rgba(18, 18, 42, 0.8);
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: rgba(98, 38, 233, 0.1);
+        }
+
+        .faq-question h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0;
+            flex: 1;
+            text-align: left;
+        }
+
+        .faq-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-blue), var(--color-purple));
+            border-radius: 50%;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+            color: var(--color-text);
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 1.5rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(98, 38, 233, 0.15), rgba(14, 78, 245, 0.1));
+            border-top: 1px solid rgba(65, 239, 249, 0.1);
+            border-bottom: 1px solid rgba(65, 239, 249, 0.1);
+            text-align: center;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-text), var(--color-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-section p {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-blue), var(--color-purple));
+            color: var(--color-text);
+            box-shadow: 0 8px 24px rgba(14, 78, 245, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(14, 78, 245, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(65, 239, 249, 0.1);
+            padding: 3rem 2rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-teal);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: var(--color-teal);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(65, 239, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-socials a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .footer-socials a:hover {
+            color: var(--color-teal);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-logo {
+                gap: 0.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+                margin-top: 70px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .faq-section,
+            .cta-section {
+                padding: 2rem 1rem;
+            }
+
+            .faq-question h3 {
+                font-size: 0.95rem;
+            }
+
+            .faq-question {
+                padding: 1.25rem;
+            }
+
+            .faq-answer {
+                padding: 0 1.25rem !important;
+            }
+
+            .faq-item.active .faq-answer {
+                padding: 0 1.25rem 1.25rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M242.8,82.1c-0.2-4-1.7-7.8-4.1-10.7c-0.4-0.5-0.8-0.9-1.2-1.3c-3.3-3.3-7.8-5.3-12.9-5.3h-94.1c-0.3,0-0.6,0-0.9,0h-0.1c-7.9,0.1-15.3,2.5-21.4,6.6c-10.5,7-17.5,19.1-17.5,32.7V71.4C90.7,56.3,103,44,118.2,44h86.6c17,0.5,31.4,11.9,36.2,27.5C242.1,74.8,242.7,78.4,242.8,82.1z" fill="#6226E9"/>
+                    <path d="M264.5,143.9v43c0,6.9-2.8,13.4-7.7,18.2l-79.2,76.4l-50.7-48.9c0,0,0,0,0,0l-3.6-5.2c-7.1-10.1-10.9-22.2-10.9-34.5v-12c0.1,5.2,2.2,10.1,6,13.7l59.2,56.7l-0.3,0.2h0.5l-0.3-0.2l59.3-56.8l7.2-6.9c8.2-7.9,14-17.9,16.8-28.9L264.5,143.9z" fill="#0E4EF5"/>
+                    <path d="M123.3,227.4l3.6,5.2c0,0,0,0,0,0l-28.5-27.5c-4.9-4.8-7.7-11.3-7.7-18.2v-82.7c0-13.6,6.9-25.7,17.5-32.7c6.1-4.1,13.5-6.5,21.4-6.6c-5.3,0.3-9.9,2.8-13.1,6.6c-2.6,3.1-4.1,7.2-4.1,11.5v97.6c0,0.1,0,0.2,0,0.3v12C112.4,205.2,116.2,217.3,123.3,227.4z" fill="#41EFF9"/>
+                    <path d="M242.8,83v97.6c0,5.3-2.1,10.3-6,14l-59.3,56.8l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-97.9,0-97.9c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6h0.1c0.3,0,95,0,95,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7C242.8,82.4,242.8,82.7,242.8,83z" fill="#FFFFFF"/>
+                    <path d="M264.5,71.4v72.5l-3.7,14.8c-2.8,11-8.6,21-16.8,28.9l-7.2,6.9c3.8-3.7,6-8.7,6-14V85.5v-2.2c0-0.1,0-0.2,0-0.3c0-0.3,0-0.6,0-0.9c-0.1-3.7-0.7-7.3-1.8-10.7c-4.9-15.6-19.2-26.9-36.2-27.5H237c7.6,0,14.5,3.1,19.4,8C261.4,57,264.5,63.8,264.5,71.4z" fill="#EC1977"/>
+                    <polygon points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5" fill="#0E4EF5"/>
+                    <ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4" fill="#0E4EF5"/>
+                    <path d="M171.2,214.8c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6c-3.5-3.5-9.1-3.5-12.6,0c0,0,0,0,0,0C167.7,205.7,167.7,211.3,171.2,214.8C171.1,214.8,171.2,214.8,171.2,214.8z" fill="#0E4EF5"/>
+                </svg>
+                <span class="nav-logo-text">Nigh</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Nigh Drops</a></li>
+                <li><a href="index.html#how">How It Works</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="foundation.html">Foundation</a></li>
+                <li><a href="pricing.html">Pricing</a></li>
+                <li><a href="pricing.html" class="nav-cta">Host a Drop</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="section-label">FAQ</div>
+            <h1>Common questions</h1>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="faq-container">
+            <div class="faq-items">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item active">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>What is a Nigh Drop?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">A Nigh Drop is an exclusive, time-specific real-world experience that motivates people to show up in person. Every Drop is tied to a real place, a real time, and a real offering — not a discount or a deal.</div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Who can host a Nigh Drop?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">Any brick-and-mortar business — restaurants, retail stores, fitness studios, salons, venues, service providers, entertainment spaces. If you have a physical location where people can show up, you can host a Drop.</div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Is this a deal or coupon platform?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">No. Nigh Drops are designed to elevate your brand and pricing power, not compress margins. They create experiences worth attending — not deals that train customers to wait for discounts.</div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Can Drops be scheduled in advance?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">Yes. Drops can be planned and scheduled ahead of time, or launched spontaneously. You have full control over when your Drop goes live.</div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Do people need the app?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">People can preview Nigh Drops in a browser, but to claim a ticket and unlock proximity-aware features, they use the Nigh Drops app — available on the App Store and Google Play.</div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>How do people find out about Drops?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">Through the Nigh Drops app, push notifications, QR codes, shared links, and word of mouth. No algorithm decides who sees your Drop — it's proximity and presence-based.</div>
+                </div>
+
+                <!-- FAQ Item 7 -->
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>What does a proof-of-attendance ticket look like?</h3>
+                        <div class="faq-toggle">▼</div>
+                    </div>
+                    <div class="faq-answer">Each ticket is a unique, animated digital collectible that proves you were there. Think of it as a memory artifact — not just a receipt.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Still have questions?</h2>
+            <p>We'd love to hear from you. Reach out and our team will get back to you.</p>
+            <a href="#" class="btn btn-primary">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="index.html">Nigh Drops</a></li>
+                    <li><a href="index.html#how">How It Works</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                    <li><a href="pricing.html">Host a Drop</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="foundation.html">Foundation</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                    <li><a href="#">Report a Problem</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Download</h4>
+                <ul>
+                    <li><a href="#">Apple App Store</a></li>
+                    <li><a href="#">Google Play Store</a></li>
+                    <li><a href="#">Web App</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copyright">&copy; 2025 Nigh Drops. All rights reserved.</p>
+            <div class="footer-socials">
+                <a href="#" title="Twitter">X</a>
+                <a href="#" title="Instagram">IG</a>
+                <a href="#" title="TikTok">TK</a>
+                <a href="#" title="Discord">DC</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const allItems = document.querySelectorAll('.faq-item');
+
+            allItems.forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                }
+            });
+
+            faqItem.classList.toggle('active');
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for fade-up animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = getComputedStyle(entry.target).animation;
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe animated sections
+        document.querySelectorAll('.faq-section, .cta-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

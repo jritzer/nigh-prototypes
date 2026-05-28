@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nigh Drops — v3 (Heads Up)</title>
+<title>Nigh — Consumer App</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -43,7 +43,7 @@ input:focus,textarea:focus{outline:none}
 <body>
 <div id="app"><div id="scr"></div><div class="tb" id="tb"></div><div id="mr" style="position:absolute;inset:0;z-index:500;pointer-events:none"></div></div>
 <script>
-let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true}};
+let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,verifySelfie:false,verifyResult:null};
 
 // ── Niya Icon ─────────────────────────────────────────
 // To roll back to original: change NIYA_ICON = NIYA_ICON_OLD
@@ -84,6 +84,12 @@ edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="
 phone:'<path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.08 2.18 2 2 0 012.08 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>',
 mail:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
 shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>',
+personLock:'<circle cx="8" cy="5.5" r="4"/><path d="M1 20c0-5.5 3-8 7-8 3 0 5 1.5 6 3.5"/><rect x="14" y="15" width="9" height="7.5" rx="2"/><path d="M16.5 15v-2.5a2 2 0 014 0V15"/><circle cx="18.5" cy="18.5" r="1" fill="currentColor" stroke="none"/>',
+billing:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+history:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M2 12a10 10 0 0110-10"/>',
+info:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+chevRight:'<polyline points="9 18 15 12 9 6"/>',
 file:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>',
 settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
 logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
@@ -102,6 +108,14 @@ send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 };
 function ic(n,s=20,c='currentColor',vb='0 0 24 24'){return`<svg width="${s}" height="${s}" viewBox="${vb}" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
+function _vSvg(s){return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#0E4EF5"/><path d="M8 12.5l2.5 2.5 5.5-5.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
+function _isVerified(nameOrUname){if(!nameOrUname)return false;const f=friendsList.find(x=>x.name===nameOrUname||x.uname===nameOrUname||x.av===nameOrUname);return !!(f&&f.verified);}
+function fBadge(f,s=14){return f&&f.verified?_vSvg(s):'';}
+function fAvOverlay(f,s=12){return f&&f.verified?`<div style="position:absolute;bottom:-1px;right:-1px;width:${s+2}px;height:${s+2}px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2">${_vSvg(s)}</div>`:'';}
+function mAvOverlay(m,s=12){const v=m&&(m.verified||_isVerified(m.name)||_isVerified(m.uname));return v?`<div style="position:absolute;bottom:-1px;right:-1px;width:${s+2}px;height:${s+2}px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2">${_vSvg(s)}</div>`:'';}
+function vBadge(s=14){return currentUser.verified?_vSvg(s):'';}
+function vAvOverlay(s=12){return currentUser.verified?`<div style="position:absolute;bottom:-1px;right:-1px;width:${s+2}px;height:${s+2}px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2">${_vSvg(s)}</div>`:'';}
+function hAvOverlay(p,s=12){return p&&p.verified?`<div style="position:absolute;bottom:-1px;right:-1px;width:${s+2}px;height:${s+2}px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2">${_vSvg(s)}</div>`:'';}
 
 // ── Open Maps ───────────────────────────────────────────
 function openMaps(address){
@@ -112,7 +126,7 @@ function openMaps(address){
 }
 
 // ── Data ───────────────────────────────────────────────
-const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-0188',email:'jritzer@gmail.com',
+const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-0188',email:'jritzer@gmail.com',verified:false,
   nCredits:{
     balance:12.50,
     history:[
@@ -137,7 +151,7 @@ const feedDrops=[
    partners:[{handle:'@sladogboulder',name:'Sladoga Winery'}],
    status:'Live',timing:'Start Time',start:'7:00 PM',date:'Apr 20',
    closesIn:'4h 30m',startsIn:'3h 00m',price:65,cap:10,spotsLeft:4,age21:true,
-   media:'photo',maxPerUser:2,
+   media:'photo',maxPerUser:2,phoneRequest:'optional',
    liked:false,likeCount:31,
    desc:'An intimate four-course farm-to-table dinner featuring locally sourced ingredients from Boulder County farms. Executive Chef Dana Park will walk you through each course, paired with selections from Sladoga Winery. Limited to 10 guests. Smart casual attire. Valid ID required at door.',
    slug:'shineboulder/DT72PX'},
@@ -146,7 +160,7 @@ const feedDrops=[
    partners:[{handle:'@kendallj',name:'Kendall Jenner'}],
    status:'Live',timing:'Arrival Window',start:'6:30 PM',endTime:'8:00 PM',date:'Apr 20',
    closesIn:'5h 00m',startsIn:'2h 15m',price:45,cap:12,spotsLeft:3,age21:true,
-   media:'photo',maxPerUser:2,myTicket:'TK003',
+   media:'photo',maxPerUser:2,phoneRequest:'required',myTicket:'TK003',
    liked:false,likeCount:23,
    desc:'5-course tasting menu with seasonal organic ingredients, paired with natural wines. Chef Maria will guide you through each course. Arrive within your window — late arrivals may forfeit their seat. Smart casual dress code. Parking validated in the Pearl St garage.',
    slug:'wholefoodsboulder/CF89QW'},
@@ -200,7 +214,7 @@ const feedDrops=[
    partners:[],
    status:'Upcoming',timing:'Doors Open',start:'6:00 PM',date:'Apr 8',
    closesIn:'',startsIn:'6d 8h',price:18,cap:60,spotsLeft:22,age21:false,
-   media:'photo',maxPerUser:2,
+   media:'photo',maxPerUser:2,phoneRequest:'optional',
    liked:false,likeCount:27,
    desc:'Best-selling author Matt Haig visits Boulder Book Store for an intimate evening discussing his new novel. Ticket includes reserved seating, a signed copy of the book, and a live Q&A. Doors at 6 PM, talk at 7 PM.',
    slug:'boulderbookstore/HAIG8'},
@@ -236,7 +250,7 @@ const feedDrops=[
    partners:[{handle:'@coorslight',name:'Coors Light'}],
    status:'Upcoming',timing:'Doors Open',start:'5:30 PM',date:'Apr 4',
    closesIn:'',startsIn:'1d 12h',price:20,cap:120,spotsLeft:45,age21:true,
-   media:'video',maxPerUser:4,
+   media:'video',maxPerUser:4,phoneRequest:'required',
    liked:false,likeCount:71,
    desc:'Watch the Buffs vs Arizona State on the Fox Theatre main stage screen. Ticket includes entry and a Coors Light on arrival. Cash bar all night. Doors 5:30 PM, tip-off 6 PM. Must be 21+ with valid ID. Standing room floor only.',
    slug:'foxtheatreboulder/BUFF4'},
@@ -407,7 +421,7 @@ const inboxMessages=[
    }},
   {id:3,type:'friend',title:'Alex Rivera got a ticket',subtitle:"Whole Foods Chef's Table · Mar 5",description:'5-course tasting menu with seasonal organic ingredients',time:'35 min ago',unread:false,
    detail:{friend:'Alex Rivera',action:'just got a ticket to',drop:"Whole Foods Chef's Table",date:'Wednesday, March 5 · 6:30 PM – 8:00 PM',message:'Alex is going to experience a 5-course tasting menu with seasonal organic ingredients.'}},
-  {id:4,type:'nigh',title:'Training: How to Use Nigh Drops',author:'The Nigh Team',subtitle:'Quick tutorial',time:'2 hours ago',unread:false,
+  {id:4,type:'nigh',title:'Training: How to Use Nigh',author:'The Nigh Team',subtitle:'Quick tutorial',time:'2 hours ago',unread:false,
    detail:{category:'How-To Training',description:'Get started with Nigh. This tutorial walks you through discovering drops, getting tickets, and checking in at experiences.'}},
   {id:5,type:'friend',title:'Jordan Lee checked in',subtitle:'Nike Air Max Day Access · Today',description:'Early access to the newest Air Max releases',time:'4 hours ago',unread:false,
    detail:{friend:'Jordan Lee',action:'just checked in to',drop:'Nike Air Max Day Access',date:'Today at 2:00 PM',message:"Jordan is now at the Nike Boulder exclusive event. They're experiencing early access to the newest Air Max releases."}},
@@ -419,13 +433,13 @@ const inboxMessages=[
    detail:{status:'Starting soon',location:'1600 38th St, Boulder, CO',time:'Starts tonight at 5:00 PM',message:'Doors open in 2 hours. 7 spots remaining. Meet your crew at the bar.',dropId:'D005'}},
   {id:9,type:'friend',title:'Zoe Martinez got a ticket',subtitle:"REI Gear Demo Day · Apr 3",description:"Arc'teryx spring collection demo with brand experts.",time:'1 hour ago',unread:true,
    detail:{friend:'Zoe Martinez',action:'just got a ticket to',drop:"REI Boulder: Arc'teryx Gear Demo",date:'Thursday, April 3 · 10:00 AM – 1:00 PM',message:"Zoe is going to demo Arc'teryx's new spring collection at REI Boulder."}},
-  {id:10,type:'nigh',title:'Local Picks for You This Weekend',author:'Nigh Drops',subtitle:'3 drops near Pearl St',time:'2 hours ago',unread:false,
+  {id:10,type:'nigh',title:'Local Picks for You This Weekend',author:'Nigh',subtitle:'3 drops near Pearl St',time:'2 hours ago',unread:false,
    detail:{category:'Personalized Picks',description:"Based on what you've liked, here are picks this weekend: Chautauqua Sunrise Yoga (Apr 5), Spruce Confections Pastry Drop (Apr 3), and Patagonia Repair Clinic (Apr 5). Tap any drop in the feed to explore."}},
   {id:11,type:'drop',title:'REI Gear Demo Day — Confirmed',subtitle:'REI Boulder · Apr 3, 10:00 AM',description:'Your spot is reserved. Arrival window 10 AM – 1 PM.',time:'3 hours ago',unread:false,
    detail:{status:'Confirmed',location:'1789 28th St, Boulder, CO',time:'Arrival Window: 10:00 AM – 1:00 PM',message:"Your spot is reserved for REI Arc'teryx Gear Demo Day. REI membership required at door.",dropId:'D006'}},
   {id:12,type:'friend',title:'Tyler Brooks is going',subtitle:'Fox Theatre Watch Party · Apr 4',description:'CU Buffs vs Arizona State — big screen, live atmosphere.',time:'5 hours ago',unread:false,
    detail:{friend:'Tyler Brooks',action:'just got a ticket to',drop:'Fox Theatre: CU Buffs Watch Party',date:'Friday, April 4 · Doors 5:30 PM',message:'Tyler is going to the Buffs watch party at Fox Theatre. 21+ event, Coors Light on arrival.'}},
-  {id:13,type:'nigh',title:'3 New Drops Near You',author:'Nigh Drops',subtitle:'Pearl St & The Hill',time:'1 day ago',unread:false,
+  {id:13,type:'nigh',title:'3 New Drops Near You',author:'Nigh',subtitle:'Pearl St & The Hill',time:'1 day ago',unread:false,
    detail:{category:'Discovery',description:"The Sink, Illegal Pete's, and Spruce Confections all posted new drops near Pearl Street today. Open the feed to grab deals before they expire."}},
   {id:9901, type:'activity', title:'Sarah Mitchell got a ticket', subtitle:'Nike Air Max Day Access · 2 spots left', time:'12m ago', unread:false,
    detail:{friend:'Sarah Mitchell', friendAv:'SM', dropId:'D001', dropTitle:'Nike Air Max Day Access', spotsLeft:2}},
@@ -447,15 +461,15 @@ const inboxMessages=[
 ];
 
 const friendsList=[
-  {id:'F001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',mutual:2,hasTicket:'D001',ticketPrivacy:'friends'},
-  {id:'F002',name:'James Kim',uname:'@jamesk',av:'JK',mutual:5,hasTicket:'D001',ticketPrivacy:'only_me'},
-  {id:'F003',name:'Maya Torres',uname:'@mayat',av:'MT',mutual:1,hasTicket:'D003',ticketPrivacy:'friends'},
-  {id:'F004',name:'Chris Park',uname:'@chrisp',av:'CP',mutual:0,hasTicket:null,ticketPrivacy:'friends'},
-  {id:'F005',name:'Zoe Martinez',uname:'@zoemar',av:'ZM',mutual:3,hasTicket:'D006',ticketPrivacy:'friends'},
-  {id:'F006',name:'Tyler Brooks',uname:'@tylerb',av:'TB',mutual:1,hasTicket:'D013',ticketPrivacy:'friends'},
-  {id:'F007',name:'Priya Nair',uname:'@priyan',av:'PN',mutual:2,hasTicket:'D005',ticketPrivacy:'friends'},
-  {id:'F008',name:'Dev Singh',uname:'@devs',av:'DS',mutual:0,hasTicket:null,ticketPrivacy:'friends'},
-  {id:'F009',name:'Aisha Johnson',uname:'@aishaj',av:'AJ',mutual:4,hasTicket:'D007',ticketPrivacy:'friends'},
+  {id:'F001',name:'Sarah Mitchell',uname:'@sarahm',av:'SM',mutual:2,hasTicket:'D001',ticketPrivacy:'friends',verified:true},
+  {id:'F002',name:'James Kim',uname:'@jamesk',av:'JK',mutual:5,hasTicket:'D001',ticketPrivacy:'only_me',verified:true},
+  {id:'F003',name:'Maya Torres',uname:'@mayat',av:'MT',mutual:1,hasTicket:'D003',ticketPrivacy:'friends',verified:false},
+  {id:'F004',name:'Chris Park',uname:'@chrisp',av:'CP',mutual:0,hasTicket:null,ticketPrivacy:'friends',verified:true},
+  {id:'F005',name:'Zoe Martinez',uname:'@zoemar',av:'ZM',mutual:3,hasTicket:'D006',ticketPrivacy:'friends',verified:false},
+  {id:'F006',name:'Tyler Brooks',uname:'@tylerb',av:'TB',mutual:1,hasTicket:'D013',ticketPrivacy:'friends',verified:true},
+  {id:'F007',name:'Priya Nair',uname:'@priyan',av:'PN',mutual:2,hasTicket:'D005',ticketPrivacy:'friends',verified:false},
+  {id:'F008',name:'Dev Singh',uname:'@devs',av:'DS',mutual:0,hasTicket:null,ticketPrivacy:'friends',verified:false},
+  {id:'F009',name:'Aisha Johnson',uname:'@aishaj',av:'AJ',mutual:4,hasTicket:'D007',ticketPrivacy:'friends',verified:true},
 ];
 
 // Returns friends who have a ticket to a drop AND whose privacy allows visibility.
@@ -529,140 +543,141 @@ const proProfiles={
   '@nikeboulder':{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',
     addr:'1800 29th St, Boulder, CO 80301',phone:'(303) 555-0175',email:'boulder@nike.com',
     bio:'Nike Boulder brings the latest footwear and athletic apparel to the heart of Boulder. Exclusive drops, member events, and first-access releases before they go online.',
-    cat:'Retail',following:true,
+    cat:'Retail',following:true,verified:true,
     friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'James Kim',av:'JK'}],
     recentDrops:['Nike Air Max Day Access']},
   '@wholefoodsboulder':{name:'Whole Foods Market',handle:'@wholefoodsboulder',short:'WFM',
     addr:'2905 Pearl St, Boulder, CO 80301',phone:'(303) 555-0210',email:'boulder@wholefoods.com',
     bio:"Boulder's premier organic grocery and market. Regular culinary events, chef tastings, and exclusive food experiences curated for our community.",
-    cat:'Food & Grocery',following:true,
+    cat:'Food & Grocery',following:true,verified:true,
     friendsFollowing:[{name:'Maya Torres',av:'MT'}],
     recentDrops:["Whole Foods Chef's Table"]},
   '@fatebrewing':{name:'Fate Brewing Co',handle:'@fatebrewing',short:'FATE',
     addr:'1600 38th St, Boulder, CO 80301',phone:'(303) 555-0299',email:'hello@fatebrewing.com',
     bio:'Award-winning Boulder craft brewery. Known for bold Colorado ales and innovative tap collaborations. Regular exclusive tap events and limited beer releases.',
-    cat:'Food & Drink',following:true,
+    cat:'Food & Drink',following:true,verified:true,
     friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Priya Nair',av:'PN'}],
     recentDrops:['Colorado Limited Tap Takeover']},
   '@reiboulder':{name:'REI Boulder',handle:'@reiboulder',short:'REI',
     addr:'1789 28th St, Boulder, CO 80301',phone:'(303) 555-0180',email:'boulder@rei.com',
     bio:"Boulder's outdoor adventure headquarters. Member-exclusive events, gear demos, and first access to new collections from top outdoor brands like Arc'teryx, Patagonia, and Black Diamond.",
-    cat:'Outdoor & Sports',following:true,
+    cat:'Outdoor & Sports',following:true,verified:true,
     friendsFollowing:[{name:'Zoe Martinez',av:'ZM'},{name:'James Kim',av:'JK'}],
     recentDrops:["REI Boulder: Arc'teryx Gear Demo"]},
   '@shineboulder':{name:'Shine Restaurant',handle:'@shineboulder',short:'SR',
     addr:'2027 13th St, Boulder, CO 80302',phone:'(303) 555-0422',email:'hello@shinerestaurant.com',
     bio:'Vegetarian and vegan fine dining in Boulder. Seasonal menus sourced from local farms, wine pairings, and intimate culinary events.',
-    cat:'Food & Drink',following:true,
+    cat:'Food & Drink',following:true,verified:true,
     friendsFollowing:[{name:'Maya Torres',av:'MT'}],
     recentDrops:['Shine Restaurant: Farm-to-Table Dinner']},
   '@chautauqua':{name:'Chautauqua Park',handle:'@chautauqua',short:'CHA',
     addr:'900 Baseline Rd, Boulder, CO 80302',phone:'(303) 442-3282',email:'events@chautauqua.com',
     bio:"Boulder's iconic Chautauqua Park and historic Auditorium. Outdoor concerts, wellness events, and community experiences with breathtaking Flatirons views.",
-    cat:'Outdoors & Parks',following:true,
+    cat:'Outdoors & Parks',following:true,verified:true,
     friendsFollowing:[{name:'Sarah Mitchell',av:'SM'}],
     recentDrops:['Chautauqua Sunrise Yoga']},
   '@boulderbookstore':{name:'Boulder Book Store',handle:'@boulderbookstore',short:'BBS',
     addr:'1107 Pearl St, Boulder, CO 80302',phone:'(303) 447-2074',email:'events@boulderbookstore.com',
     bio:"Boulder's independent bookstore since 1973. Author events, book clubs, signing sessions, and literary experiences in the heart of Pearl Street.",
-    cat:'Books & Culture',following:true,
+    cat:'Books & Culture',following:true,verified:true,
     friendsFollowing:[{name:'James Kim',av:'JK'}],
     recentDrops:['Boulder Book Store: Matt Haig Author Night']},
   '@bestbuyboulder':{name:'Best Buy Boulder',handle:'@bestbuyboulder',short:'BBY',
     addr:'1855 29th St, Boulder, CO 80301',phone:'(303) 555-0515',email:'boulder@bestbuy.com',
     bio:"Boulder's tech destination. Exclusive product launches, hands-on demos with brand reps, Geek Squad services, and first access to new releases.",
-    cat:'Electronics',following:true,
+    cat:'Electronics',following:true,verified:true,
     friendsFollowing:[{name:'Tyler Brooks',av:'TB'},{name:'Dev Singh',av:'DS'}],
     recentDrops:['Samsung Galaxy S25 Ultra Launch']},
   '@patagoniabouldercO':{name:'Patagonia Boulder',handle:'@patagoniabouldercO',short:'PAT',
     addr:'1630 30th St, Boulder, CO 80301',phone:'(303) 555-0630',email:'boulder@patagonia.com',
     bio:'Environmental outdoor apparel. Worn Wear repairs, sustainability workshops, and exclusive access to end-of-season and sample sales.',
-    cat:'Outdoor & Sports',following:false,
+    cat:'Outdoor & Sports',following:false,verified:true,
     friendsFollowing:[{name:'Zoe Martinez',av:'ZM'}],
     recentDrops:['Patagonia Worn Wear + Repair Clinic']},
   '@thesinkboulder':{name:'The Sink',handle:'@thesinkboulder',short:'SINK',
     addr:'1165 13th St, Boulder, CO 80302',phone:'(303) 444-7465',email:'hello@thesink.com',
     bio:"Boulder's original dive bar, serving the Hill since 1949. Famous burgers, cold beer, and CU energy. Flash deals and local events weekly.",
-    cat:'Food & Drink',following:false,
+    cat:'Food & Drink',following:false,verified:false,
     friendsFollowing:[{name:'Aisha Johnson',av:'AJ'},{name:'Tyler Brooks',av:'TB'}],
     recentDrops:["The Sink: Burger Night"]},
   '@illegalpetes':{name:"Illegal Pete's",handle:'@illegalpetes',short:'IP',
     addr:'1447 Pearl St, Boulder, CO 80302',phone:'(303) 440-3955',email:'boulder@illegalpetes.com',
     bio:"Boulder's home of Mission-style burritos. Flash deals, local music partnerships, and community events on Pearl Street.",
-    cat:'Food & Drink',following:false,
+    cat:'Food & Drink',following:false,verified:true,
     friendsFollowing:[{name:'Chris Park',av:'CP'}],
     recentDrops:["Illegal Pete's: Monday BOGO Burrito"]},
   '@foxtheatreboulder':{name:'Fox Theatre',handle:'@foxtheatreboulder',short:'FOX',
     addr:'1135 13th St, Boulder, CO 80302',phone:'(303) 447-0095',email:'events@foxtheatre.com',
     bio:"Boulder's legendary music and events venue on The Hill. Concerts, watch parties, private events, and special screenings since 1992.",
-    cat:'Entertainment',following:false,
+    cat:'Entertainment',following:false,verified:true,
     friendsFollowing:[{name:'Tyler Brooks',av:'TB'}],
     recentDrops:['Fox Theatre: CU Buffs Watch Party']},
   '@spruceboulder':{name:'Spruce Confections',handle:'@spruceboulder',short:'SC',
     addr:'767 Pearl St, Boulder, CO 80302',phone:'(303) 449-6773',email:'hello@spruceboulder.com',
     bio:"Boulder's artisan bakery. Fresh-baked seasonal pastries, weekend drops, and special-occasion cakes. Limited quantities — early birds win.",
-    cat:'Food & Drink',following:false,
+    cat:'Food & Drink',following:false,verified:false,
     friendsFollowing:[{name:'Maya Torres',av:'MT'},{name:'Aisha Johnson',av:'AJ'}],
     recentDrops:['Spruce Confections: Weekend Pastry Drop']},
   '@centroboulder':{name:'Centro Mexican Kitchen',handle:'@centroboulder',short:'Centro',
     addr:'950 Pearl St, Boulder, CO 80302',phone:'(720) 555-0145',email:'hello@centro.com',
     bio:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder. Regular exclusive tasting events and chef collaborations.',
-    cat:'Food & Drink',following:true,
+    cat:'Food & Drink',following:true,verified:true,
     friendsFollowing:[{name:'Maya Torres',av:'MT'},{name:'Sarah Mitchell',av:'SM'}],
     recentDrops:['Friday Night Jazz & Tapas']},
   '@nike':{name:'Nike',handle:'@nike',short:'NK',cat:'Apparel & Footwear',brand:true,
     bio:'Members-only drops, early access launches, and exclusive collabs. Be first when Nike goes live near you.',
-    following:true,friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'James Kim',av:'JK'}],
+    following:true,verified:true,friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'James Kim',av:'JK'}],
     recentDrops:['Air Max 2026 Member Launch','Boulder Run Club x Nike Drop','Nike By You Studio Pop-Up']},
   '@patagonia':{name:'Patagonia',handle:'@patagonia',short:'PAT',cat:'Outdoor & Apparel',brand:true,
     bio:'Worn Wear repair events, sustainability workshops, and end-of-season sample sales. For the long haul.',
-    following:true,friendsFollowing:[{name:'Maya Torres',av:'MT'}],
+    following:true,verified:true,friendsFollowing:[{name:'Maya Torres',av:'MT'}],
     recentDrops:['Worn Wear Repair Clinic — Boulder','End-of-Season Sample Sale']},
   '@rei':{name:'REI Co-op',handle:'@rei',short:'REI',cat:'Outdoor & Sports',brand:true,
     bio:'Gear drops, member dividend events, and REI Garage Sale near you. Member-exclusive access on Nigh.',
-    following:true,friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Zoe Martinez',av:'ZM'}],
+    following:true,verified:true,friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Zoe Martinez',av:'ZM'}],
     recentDrops:['REI Garage Sale — Denver','Member Early Access: Spring Gear']},
   '@wholefoodsmarket':{name:'Whole Foods Market',handle:'@wholefoodsmarket',short:'WFM',cat:'Food & Grocery',brand:true,
     bio:'Flash deals, local vendor spotlights, and seasonal drops at your nearest store.',
-    following:true,friendsFollowing:[{name:'Aisha Johnson',av:'AJ'}],
+    following:true,verified:true,friendsFollowing:[{name:'Aisha Johnson',av:'AJ'}],
     recentDrops:["Chef's Table Tasting — Pearl St",'Local Vendor Market Pop-Up']},
   '@titosvodka':{name:"Tito's Vodka",handle:'@titosvodka',short:'TITO',cat:'Spirits & Beverages',brand:true,
     bio:"Handmade vodka from Austin, Texas. Tito's partners with local venues for exclusive cocktail events, branded nights, and community sponsorships.",
-    following:false,friendsFollowing:[{name:'Chris Park',av:'CP'}],
+    following:false,verified:true,friendsFollowing:[{name:'Chris Park',av:'CP'}],
     recentDrops:["Tito's Cocktail Night — Fate Brewing",'Summer Sip Series']},
   '@sladogboulder':{name:'Sladoga Winery',handle:'@sladogboulder',short:'SLW',cat:'Food & Drink',brand:false,
     addr:'Boulder, CO',bio:'Small-batch Colorado winery. Private tastings, vineyard events, and limited-release bottle drops for our followers.',
-    following:false,friendsFollowing:[],
+    following:false,verified:false,friendsFollowing:[],
     recentDrops:['Sladoga Private Tasting','Harvest Release Drop']},
   '@kendallj':{name:'Kendall Jenner',handle:'@kendallj',short:'KJ',cat:'Creator / Influencer',brand:true,
     bio:'Model, entrepreneur, and founder of 818 Tequila. Exclusive appearances, brand collab events, and fan experiences.',
-    following:false,friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'Maya Torres',av:'MT'}],
+    following:false,verified:true,friendsFollowing:[{name:'Sarah Mitchell',av:'SM'},{name:'Maya Torres',av:'MT'}],
     recentDrops:['818 Tequila x Shine Dinner','Kendall x Nike Collab Drop']},
   '@samsung':{name:'Samsung',handle:'@samsung',short:'SAM',cat:'Electronics',brand:true,
     bio:'Official Samsung brand account. Product launch events, hands-on demo days, and early access drops for Galaxy fans.',
-    following:false,friendsFollowing:[{name:'Dev Singh',av:'DS'}],
+    following:false,verified:true,friendsFollowing:[{name:'Dev Singh',av:'DS'}],
     recentDrops:['Galaxy S25 Ultra Launch — Best Buy Boulder','Samsung Experience Pop-Up']},
   '@oskarblues':{name:'Oskar Blues Brewery',handle:'@oskarblues',short:'OB',cat:'Food & Drink',brand:false,
     addr:'1800 Pike Rd, Longmont, CO 80501',bio:"Colorado's original craft can brewery. Tap takeovers, limited can releases, and exclusive brewery events.",
-    following:false,friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Tyler Brooks',av:'TB'}],
+    following:false,verified:true,friendsFollowing:[{name:'Chris Park',av:'CP'},{name:'Tyler Brooks',av:'TB'}],
     recentDrops:["Oskar Blues Tap Takeover",'Dales Pale Ale Anniversary Drop']},
   '@arcteryx':{name:"Arc'teryx",handle:'@arcteryx',short:'ARC',cat:'Outdoor & Sports',brand:true,
     bio:"Premium technical outdoor gear. Gear demo days, athlete events, and exclusive Veilance drops at select retail partners.",
-    following:false,friendsFollowing:[{name:'Zoe Martinez',av:'ZM'},{name:'James Kim',av:'JK'}],
+    following:false,verified:true,friendsFollowing:[{name:'Zoe Martinez',av:'ZM'},{name:'James Kim',av:'JK'}],
     recentDrops:["Arc'teryx Gear Demo — REI Boulder",'Alpha SL Drop — Limited']},
   '@lululemon':{name:'Lululemon',handle:'@lululemon',short:'LULU',cat:'Retail',brand:true,
     bio:'Premium athletic apparel and accessories. Community sweat sessions, ambassador meet-ups, and early access to new collections.',
-    following:false,friendsFollowing:[{name:'Maya Torres',av:'MT'},{name:'Sarah Mitchell',av:'SM'}],
+    following:false,verified:true,friendsFollowing:[{name:'Maya Torres',av:'MT'},{name:'Sarah Mitchell',av:'SM'}],
     recentDrops:['Lululemon Community Run x Chautauqua','New Arrivals Early Access']},
   '@coorslight':{name:'Coors Light',handle:'@coorslight',short:'CL',cat:'Spirits & Beverages',brand:true,
     bio:"Colorado's original mountain brew. Sponsoring game-day events, live sports screenings, and fan experiences across the Front Range.",
-    following:false,friendsFollowing:[{name:'Tyler Brooks',av:'TB'}],
+    following:false,verified:true,friendsFollowing:[{name:'Tyler Brooks',av:'TB'}],
     recentDrops:['Coors Light Watch Party — Fox Theatre','Mountain Cold Tailgate Drop']},
 };
 
 // ── Groups Data ────────────────────────────────────────
 const socialGroups=[
   {id:'SG001',name:'Boulder Sneakerheads',type:'social',av:'BS',color:'#6226E9',
+   visibility:'friends',
    inviteLink:'nigh.com/g/boulder-sneakerheads-k8m2',unread:3,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Mar 12, 2026',
@@ -680,6 +695,7 @@ const socialGroups=[
      {av:'JL',text:'Wait how?? I missed it',time:'just now',mine:false,name:'Jordan'},
    ]},
   {id:'SG002',name:'Whole Foods Crew',type:'social',av:'WC',color:'#16A34A',
+   visibility:'private',
    inviteLink:'nigh.com/g/whole-foods-crew-p3n7',unread:0,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Feb 28, 2026',
@@ -696,6 +712,7 @@ const socialGroups=[
      {av:'JK',text:'Same! See you there',time:'30m ago',mine:false,name:'James'},
    ]},
   {id:'SG003',name:'Boulder Foodies',type:'social',av:'BF',color:'#16A34A',
+   visibility:'public',
    inviteLink:'nigh.com/g/boulder-foodies-r5j1',unread:5,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Jan 15, 2026',
@@ -714,6 +731,7 @@ const socialGroups=[
      {av:'SM',text:"I'll be there",time:'15m ago',mine:false,name:'Sarah'},
    ]},
   {id:'SG005',name:'Weekend Squad',type:'social',av:'WS',color:'#0E4EF5',
+   visibility:'private',
    inviteLink:'nigh.com/g/weekend-squad-w4t6',unread:3,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Mar 1, 2026',
@@ -732,7 +750,61 @@ const socialGroups=[
      {av:'JL',text:'Same here. Let me know where you land, I could meet by 4:30',time:'8m ago',mine:false,name:'Jordan'},
      {av:'MT',text:'Just checked Nigh — Fate Brewing has a tap takeover at 5. 7 spots left',time:'3m ago',mine:false,name:'Maya'},
    ]},
+  {id:'SG006',name:'CU Trail Runners',type:'social',av:'TR',color:'#0891B2',
+   visibility:'public',
+   inviteLink:'nigh.com/g/cu-trail-runners-t8k2',unread:0,
+   allowMemberInvite:true,allowInviteLink:true,requireApproval:false,
+   createdBy:'Maya Torres',createdDate:'Jan 20, 2026',
+   members:[
+     {name:'Maya Torres',uname:'@mayat',av:'MT',role:'admin'},
+     {name:'Sarah Mitchell',uname:'@sarahm',av:'SM',role:'member'},
+     {name:'Aisha Johnson',uname:'@aishaj',av:'AJ',role:'member'},
+     {name:'Tyler Brooks',uname:'@tylerb',av:'TB',role:'member'},
+     {name:'Priya Nair',uname:'@priyan',av:'PN',role:'member'},
+     {name:'Liam Chen',uname:'@liamc',av:'LC',role:'member'},
+   ],
+   lastMsg:{text:'6am meetup at Chautauqua trailhead tomorrow?',sender:'Maya Torres',time:'5h ago'},
+   drops:[],
+   chat:[
+     {av:'MT',text:'6am meetup at Chautauqua trailhead tomorrow?',time:'5h ago',mine:false,name:'Maya'},
+     {av:'SM',text:'Count me in!',time:'4h ago',mine:false,name:'Sarah'},
+     {av:'AJ',text:'Same. Bringing water for everyone',time:'3h ago',mine:false,name:'Aisha'},
+   ]},
+  {id:'SG007',name:'Boulder Vinyl Collectors',type:'social',av:'VC',color:'#9333EA',
+   visibility:'friends',
+   inviteLink:'nigh.com/g/vinyl-collectors-v3m9',unread:0,
+   allowMemberInvite:true,allowInviteLink:true,requireApproval:true,
+   createdBy:'James Kim',createdDate:'Dec 5, 2025',
+   members:[
+     {name:'James Kim',uname:'@jamesk',av:'JK',role:'admin'},
+     {name:'Sarah Mitchell',uname:'@sarahm',av:'SM',role:'member'},
+     {name:'Dev Singh',uname:'@devs',av:'DS',role:'member'},
+     {name:'Zoe Martinez',uname:'@zoemar',av:'ZM',role:'member'},
+   ],
+   lastMsg:{text:'Found a mint condition Blue Note pressing at Bart\'s',sender:'Dev Singh',time:'1d ago'},
+   drops:[],
+   chat:[
+     {av:'DS',text:'Found a mint condition Blue Note pressing at Bart\'s',time:'1d ago',mine:false,name:'Dev'},
+     {av:'JK',text:'No way. How much?',time:'1d ago',mine:false,name:'James'},
+   ]},
+  {id:'SG008',name:'Pearl St Yoga',type:'social',av:'PY',color:'#EC4899',
+   visibility:'public',
+   inviteLink:'nigh.com/g/pearl-st-yoga-y6p1',unread:0,
+   allowMemberInvite:true,allowInviteLink:true,requireApproval:false,
+   createdBy:'Priya Nair',createdDate:'Feb 1, 2026',
+   members:[
+     {name:'Priya Nair',uname:'@priyan',av:'PN',role:'admin'},
+     {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member'},
+     {name:'Zoe Martinez',uname:'@zoemar',av:'ZM',role:'member'},
+   ],
+   lastMsg:{text:'Sunrise session Saturday at 7am — Pearl St lawn',sender:'Priya Nair',time:'2d ago'},
+   drops:[],
+   chat:[
+     {av:'PN',text:'Sunrise session Saturday at 7am — Pearl St lawn',time:'2d ago',mine:false,name:'Priya'},
+     {av:'MT',text:'Love it. Bringing my mat',time:'2d ago',mine:false,name:'Maya'},
+   ]},
   {id:'SG004',name:'Pearl St Crew',type:'social',av:'PS',color:'#D97706',
+   visibility:'private',
    inviteLink:'nigh.com/g/pearl-st-crew-d9v3',unread:0,
    allowMemberInvite:false,allowInviteLink:false,
    createdBy:'Tyler Brooks',createdDate:'Feb 10, 2026',
@@ -754,7 +826,7 @@ const socialGroups=[
 // Event groups auto-derive from multi-spot tickets
 const eventGroups=[
   {id:'EG-TK003',name:"Whole Foods Chef's Table",type:'event',av:'WF',color:'#0E4EF5',
-   ticketId:'TK003',orderId:'ORD-7291',
+   visibility:'private',ticketId:'TK003',orderId:'ORD-7291',
    inviteLink:'nigh.com/g/ev/chefs-table-7291',unread:1,
    members:[
      {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
@@ -769,7 +841,7 @@ const eventGroups=[
      {av:'JR',text:'Arrival window 6:30–8 PM — see you all there',time:'Mar 4 · 3:00 PM',mine:true,name:'You'},
    ]},
   {id:'EG-TK005',name:'Fate Brewing Tap Night',type:'event',av:'FB',color:'#DC2626',
-   ticketId:'TK005',orderId:'ORD-5192',
+   visibility:'private',ticketId:'TK005',orderId:'ORD-5192',
    inviteLink:'nigh.com/g/ev/fate-tap-5192',unread:2,
    members:[
      {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
@@ -784,6 +856,18 @@ const eventGroups=[
 ];
 
 // ── Helpers ────────────────────────────────────────────
+function addFriendToGroup(gId,fname,funame,fav,invKey){
+  var grp=socialGroups.find(function(x){return x.id===gId;});
+  if(grp)grp.members.push({name:fname,uname:funame,av:fav,role:'member'});
+  S.pendingGroupInvites=[].concat(S.pendingGroupInvites||[],[invKey]);
+  render();
+}
+function inviteFriendToGroup(invKey,gname){
+  S.pendingGroupInvites=[].concat(S.pendingGroupInvites||[],[invKey]);
+  S.joinRequestToast=gname;
+  render();
+  setTimeout(function(){S.joinRequestToast=null;render();},3000);
+}
 function go(scr,x){
   if(x)Object.assign(S,x);
   // Intercept password-protected drops
@@ -793,6 +877,7 @@ function go(scr,x){
       S.scr='passwordDrop';S.modal=null;S.dropMenu=null;S.pwError=false;render();return;
     }
   }
+  if(scr==='placeOrder'){S.guestPhone='';S.sharePhone=true;S.termsAgreed=false;}
   S.scr=scr;S.modal=null;S.dropMenu=null;render();
 }
 function modal(m){S.modal=m;render();}
@@ -845,7 +930,7 @@ function renderOnboarding(){
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%,rgba(14,78,245,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(98,38,233,0.12) 0%,transparent 50%)"></div>
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:0 32px;gap:18px">
       <img src="Nigh_Bug.svg" style="width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 8px 24px rgba(14,78,245,0.4))"/>
-      <div style="font-family:'Poppins',sans-serif;font-size:38px;font-weight:600;color:#0E4EF5;letter-spacing:-0.5px;text-shadow:0 0 18px rgba(14,78,245,0.55)">Nigh Drops</div>
+      <div style="font-family:'Poppins',sans-serif;font-size:38px;font-weight:600;color:#0E4EF5;letter-spacing:-0.5px;text-shadow:0 0 18px rgba(14,78,245,0.55)">Nigh</div>
     </div>
     <div style="padding:0 24px 48px;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center">
       <button onclick="S.obStep=1;render()" style="width:72%;background:#0E4EF5;color:#fff;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:700;box-shadow:0 4px 20px rgba(14,78,245,0.45)">Log In with Mobile</button>
@@ -916,7 +1001,7 @@ function renderNiyaOnboarding(){
   const userMsg=(text)=>({from:'user',text});
 
   // Always shown: Niya intro
-  msgs.push(niyaMsg("Hey! I'm Niya — welcome to Nigh Drops. 👋",0));
+  msgs.push(niyaMsg("Hey! I'm Niya — welcome to Nigh. 👋",0));
   msgs.push(niyaMsg("I help you discover real experiences happening around you.",1));
   msgs.push(niyaMsg("Let's get your account set up — it only takes a minute.",2));
   msgs.push(niyaMsg("What's your first name?",3));
@@ -1353,7 +1438,7 @@ function renderDropDetail(){
     <!-- Venue row (tappable → profile/map) -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px">
       <button onclick="openProfile('${d.host.handle}')" style="width:100%;background:none;border:none;padding:0;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer">
-        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${d.host.short.charAt(0)}</div>
+        <div style="position:relative;flex-shrink:0"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff">${d.host.short.charAt(0)}</div>${hAvOverlay(proProfiles[d.host.handle]||d.host,14)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">${d.host.name}</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.60);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.host.addr}</div>
@@ -1376,7 +1461,7 @@ function renderDropDetail(){
       <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">
         ${friendsOn.map(f=>`
         <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${f.av}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative">${f.av}</div>
           <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.7);white-space:nowrap">${f.name.split(' ')[0]}</div>
         </div>`).join('')}
       </div>`:`
@@ -1489,6 +1574,7 @@ function renderPlaceOrder(){
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
   const fullDate=d.date.replace(/^(\w+)/,m=>monthFull[m]||m);
   const agreed=S.termsAgreed||false;
+  const canConfirm=agreed;
   return`
   <!-- Dark sticky header -->
   <div style="position:sticky;top:0;z-index:99;background:#0a0a0a;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08)">
@@ -1507,7 +1593,7 @@ function renderPlaceOrder(){
       ${[
         [`${qty} Spot${qty>1?'s':''}`,d.price===0?'Free':'$'+subtotal.toFixed(2)],
         ...(tax>0?[['Sales Tax (8.85%)','$'+tax.toFixed(2)]]:  []),
-        ...(creditAmt>0?[['⚡ N Credits Applied','-$'+creditAmt.toFixed(2)]]:  []),
+        ...(creditAmt>0?[['N Credits Applied','-$'+creditAmt.toFixed(2)]]:  []),
       ].map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="font-size:12px;color:${l.includes('N Credits')?'#41EFF9':'rgba(255,255,255,0.60)'}">${l}</span><span style="font-size:12px;font-weight:600;color:${v.startsWith('-')?'#41EFF9':'#fff'}">${v}</span></div>`).join('')}
       <div style="display:flex;justify-content:space-between;padding:13px 14px">
         <span style="font-size:15px;font-weight:700;color:#fff">Total</span>
@@ -1530,22 +1616,6 @@ function renderPlaceOrder(){
       </div>
     </div>`:''}
 
-    <!-- N Credits -->
-    ${d.price>0&&creditBal>0?`<div style="background:#1c1c1c;border-radius:14px;border:1px solid ${useCredits?'rgba(65,239,249,0.25)':'rgba(255,255,255,0.08)'};padding:14px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#0E4EF5,#41EFF9);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <span style="font-size:14px;font-weight:800;color:#fff">N</span>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600;color:#fff">N Credits</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.55)">Balance: $${creditBal.toFixed(2)}${useCredits?' · Saving $'+creditAmt.toFixed(2):''}</div>
-        </div>
-        ${hasAutoApply?`<div style="font-size:10px;font-weight:700;color:#41EFF9;background:rgba(65,239,249,0.1);padding:4px 8px;border-radius:6px">AUTO</div>`
-        :`<button onclick="S.useNCredits=${useCredits?'false':'true'};render()" style="width:44px;height:24px;border-radius:12px;border:none;background:${useCredits?'#0E4EF5':'rgba(255,255,255,0.15)'};position:relative;cursor:pointer;transition:background 0.2s">
-          <div style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;${useCredits?'right:2px':'left:2px'};transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
-        </button>`}
-      </div>
-    </div>`:''}
 
     <!-- Location & timing -->
     <div style="background:#1c1c1c;border-radius:14px;border:1px solid rgba(255,255,255,0.08);padding:13px 14px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start">
@@ -1554,9 +1624,55 @@ function renderPlaceOrder(){
         <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px">${d.host.name}</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.6)">${d.host.addr}</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px">${arrivalLine}</div>
-        <button onclick="openMaps('${d.host.addr}')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;margin-top:6px;font-family:inherit;display:inline-flex;align-items:center;gap:4px">${ic('right',10,'#0E4EF5')} Get Directions</button>
       </div>
     </div>
+
+    <!-- Reservation Details — Data Shared -->
+    ${(()=>{
+      const pr=d.phoneRequest;
+      const hasPhone=pr&&pr!=='none';
+      const isReq=pr==='required';
+      const phoneChecked=hasPhone?(isReq?true:(S.sharePhone!==false)):false;
+      const rowStyle='display:flex;align-items:center;gap:10px;padding:10px 0';
+      const divider='border-bottom:1px solid rgba(255,255,255,0.06)';
+      const labelStyle='font-size:13px;color:#fff';
+      const valStyle='font-size:13px;color:rgba(255,255,255,0.55);margin-left:auto;text-align:right';
+      const subStyle='font-size:10px;color:rgba(255,255,255,0.45);line-height:1.3';
+      const chk=(on,interactive,onClick)=>{const sc=interactive?'#fff':'rgba(255,255,255,0.3)';return `<div ${interactive?`onclick="${onClick}"`:''}style="width:18px;height:18px;border-radius:5px;border:2px solid ${on?(interactive?'#0E4EF5':'rgba(255,255,255,0.3)'):'rgba(255,255,255,0.3)'};background:${on?(interactive?'#0E4EF5':'rgba(255,255,255,0.25)'):'transparent'};flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:${interactive?'pointer':'default'};transition:all 0.15s">${on?`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${sc}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div>`;};
+      return `<div style="background:#1c1c1c;border-radius:14px;border:1px solid rgba(255,255,255,0.08);margin-bottom:14px;overflow:hidden">
+        <div style="padding:13px 14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div style="color:#fff">${ic('user',14)}</div>
+            <span style="font-size:12px;font-weight:600;color:#fff">Your reservation details</span>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:6px;line-height:1.4">The following information is shared with ${d.host.name} when you make this reservation.</div>
+
+          <!-- Name + Photo -->
+          <div style="${rowStyle};${divider}">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${currentUser.av}</div>
+            <div style="flex:1">
+              <div style="${labelStyle};display:flex;align-items:center">${currentUser.name}</div>
+              <div style="${subStyle}">${currentUser.uname}</div>
+            </div>
+            ${chk(true,false,'')}
+          </div>
+
+
+          <!-- Phone Number -->
+          <div style="${rowStyle};padding-bottom:${hasPhone?'6px':'10px'}">
+            <div style="width:28px;display:flex;justify-content:center;flex-shrink:0;color:rgba(255,255,255,0.5)">${ic('phone',14,'rgba(255,255,255,0.5)')}</div>
+            <div style="flex:1">
+              <div style="${labelStyle}">Phone Number</div>
+              <div style="${subStyle}">${hasPhone?(phoneChecked?currentUser.phone:'Not shared'):'Not shared'}</div>
+            </div>
+            ${hasPhone?chk(phoneChecked,!isReq,"S.sharePhone=!S.sharePhone;render()"):chk(false,false,'')}
+          </div>
+          ${hasPhone?`<div style="padding:0 0 8px 38px">
+            <div style="${subStyle}">${isReq?d.host.name+' requires your phone number to complete this reservation.':phoneChecked?d.host.name+' would like your number for this reservation. Uncheck to not share your number.':'Your phone number will not be shared with the host for this reservation.'}</div>
+          </div>`:''}
+        </div>
+      </div>`;
+    })()}
 
     <!-- Terms & Conditions -->
     <div style="background:#1c1c1c;border-radius:14px;border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;overflow:hidden">
@@ -1607,7 +1723,7 @@ function renderPlaceOrder(){
     })()}
 
     <!-- Confirm button -->
-    <div style="text-align:center;margin-bottom:10px"><button onclick="${agreed?`go('orderConfirmation',{drop:S.drop,orderQty:S.orderQty,orderTotal:'${total.toFixed(2)}',creditUsed:'${creditAmt.toFixed(2)}'})`:'void(0)'}" style="background:${agreed?'#0E4EF5':'rgba(255,255,255,0.1)'};color:${agreed?'#fff':'rgba(255,255,255,0.25)'};border:none;border-radius:24px;padding:14px 36px;font-size:15px;font-weight:700;${agreed?'box-shadow:4px -4px 0px rgba(0,0,0,0.3);':''}transition:all 0.2s;cursor:${agreed?'pointer':'not-allowed'}">${d.price===0?'Confirm Reservation':total===0?'Confirm · Covered by N Credits':'Confirm & Pay · $'+total.toFixed(2)}</button></div>
+    <div style="text-align:center;margin-bottom:10px"><button onclick="${canConfirm?`go('orderConfirmation',{drop:S.drop,orderQty:S.orderQty,orderTotal:'${total.toFixed(2)}',creditUsed:'${creditAmt.toFixed(2)}'})`:'void(0)'}" style="background:${canConfirm?'#0E4EF5':'rgba(255,255,255,0.1)'};color:${canConfirm?'#fff':'rgba(255,255,255,0.25)'};border:none;border-radius:24px;padding:14px 36px;font-size:15px;font-weight:700;${canConfirm?'box-shadow:4px -4px 0px rgba(0,0,0,0.3);':''}transition:all 0.2s;cursor:${canConfirm?'pointer':'not-allowed'}">${d.price===0?'Confirm Reservation':total===0?'Confirm · Covered by N Credits':'Confirm & Pay · $'+total.toFixed(2)}</button></div>
     ${d.price>0?`<div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.44)">Payment secured by Stripe</div>`:''}
   </div>`;
 }
@@ -2588,6 +2704,7 @@ function renderMenu(){
   if(S.menuSub==='settingsLegal')return renderSettings();
   if(S.menuSub==='payment')return renderPayment();
   if(S.menuSub==='addPayment')return renderAddPayment();
+  if(S.menuSub==='verify')return renderUserVerify();
   const row=(icon,label,sub,action)=>`<button onclick="${action}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic(icon,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${label}</div>${sub?`<div style="font-size:11px;color:#6B7280;margin-top:1px">${sub}</div>`:''}</div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`;
   const ncBal=currentUser.nCredits.balance;
   const ncActive=currentUser.nCredits.history.filter(h=>h.type==='issued');
@@ -2700,7 +2817,7 @@ function renderSettings(){
     ${row('msgCircle','Send Feedback',"modal('feedback')")}
     ${row('file','Legal',"S.menuSub='settingsLegal';render()")}
     <div style="text-align:center;margin-top:14px"><button onclick="S.scr='onboarding';S.obStep=0;S.menuSub=null;render()" style="padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444">Log Out</button></div>
-    <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Drops v1.0</div>
+    <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh v1.0</div>
   </div>`;
 }
 
@@ -3206,8 +3323,9 @@ function renderFriendDetail(){
 
   // Data
   const allGroups=[...socialGroups,...eventGroups];
-  const sharedGroups=allGroups.filter(g=>g.members.some(m=>m.uname===f.uname));
-  const notInGroups=socialGroups.filter(g=>!g.members.some(m=>m.uname===f.uname));
+  const myUname='@joshr';
+  const sharedGroups=allGroups.filter(g=>{const friendIn=g.members.some(m=>m.uname===f.uname);if(!friendIn)return false;const meIn=g.members.some(m=>m.uname===myUname);if(meIn)return true;return g.visibility==='public'||g.visibility==='friends';});
+  const myGroups=socialGroups.filter(g=>g.members.some(m=>m.uname===myUname)&&!g.members.some(m=>m.uname===f.uname));
   const pastDrops=_friendDrops[f.id]||[];
   const friendFoll=_friendFollowing[f.id]||[];
   const showAddGroup=S.addToGroupFriend===f.id;
@@ -3250,41 +3368,80 @@ function renderFriendDetail(){
             <div style="font-size:13px;font-weight:600;color:#111827">${p.name}</div>
             <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${p.handle||p.cat}</div>
           </div>
-          <button onclick="event.stopPropagation();(function(){var h='${p.handle}',a=S.followedHosts||[];S.followedHosts=a.includes(h)?a.filter(x=>x!==h):[...a,h];render();})()" style="flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;border:${isFollowed?'1.5px solid #E5E7EB':'none'};background:${isFollowed?'#fff':'#0E4EF5'};color:${isFollowed?'#374151':'#fff'};cursor:pointer;font-family:inherit">${isFollowed?'Following':'Follow'}</button>
+          ${isFollowed?`<div style="flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid #E5E7EB;background:#fff;color:#374151;font-family:inherit;display:flex;align-items:center;gap:4px">${ic('check',12,'#374151')} Following</div>`:`<button onclick="event.stopPropagation();(function(){var h='${p.handle}',a=S.followedHosts||[];S.followedHosts=[...a,h];render();})()" style="flex-shrink:0;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;font-family:inherit">Follow</button>`}
         </div>`;}).join('')
       :`<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No hosts followed</div>`;
   } else if(tab==='groups'){
-    const groupRows=sharedGroups.length
-      ?sharedGroups.map(g=>`<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6">
-          <div style="width:38px;height:38px;border-radius:10px;background:${g.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">${g.av}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:600;color:#111827">${g.name}</div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${g.members.length} members</div>
-          </div>
-        </div>`).join('')
-      :`<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No groups in common</div>`;
+    const _visLabel=v=>v==='public'?'Public':v==='friends'?'Friends of Members':'Private';
+    const _visColor=v=>v==='public'?'#16A34A':v==='friends'?'#0E4EF5':'#9CA3AF';
+    const _visIcon=v=>v==='public'?ic('globe',9,_visColor(v)):v==='friends'?ic('users',9,_visColor(v)):ic('lock',9,_visColor(v));
+    const _visBg=v=>v==='public'?'#F0FDF4':v==='friends'?'#EFF6FF':'#F3F4F6';
+    const imIn=g=>g.members.some(m=>m.uname===myUname);
+    const sharedIn=sharedGroups.filter(g=>imIn(g));
+    const sharedNotIn=sharedGroups.filter(g=>!imIn(g));
+    const pendingJoins=S.pendingGroupJoins||[];
 
-    const addGroupPicker=`
-      <div style="margin-top:20px">
-        <button onclick="S.addToGroupFriend=S.addToGroupFriend==='${f.id}'?null:'${f.id}';render()" style="padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;border:1px solid #E5E7EB;background:${showAddGroup?'#F3F4F6':'#fff'};color:#374151;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">${ic('users',14)} Add ${firstName} to a Group</button>
-        ${showAddGroup?`<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:12px;padding:12px;margin-top:8px">
-          <div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:10px">Choose a group</div>
-          ${notInGroups.length?notInGroups.map(g=>`
-            <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6">
-              <div style="width:32px;height:32px;border-radius:8px;background:${g.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">${g.av}</div>
-              <div style="flex:1;font-size:13px;font-weight:600;color:#111827">${g.name}</div>
-              <button onclick="alert('${firstName} added to ${g.name}!');S.addToGroupFriend=null;render()" style="padding:5px 14px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;font-family:inherit">Add</button>
-            </div>`).join('')
-          :`<div style="font-size:12px;color:#9CA3AF;text-align:center;padding:8px 0">${firstName} is already in all your groups</div>`}
-        </div>`:''}
-      </div>`;
+    const groupCard=(g,showAction)=>{
+      const needsApproval=g.requireApproval!==false;
+      const isPending=pendingJoins.includes(g.id);
+      let actionBtn='';
+      if(showAction){
+        if(isPending){
+          actionBtn='<div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:3px"><div style="padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid #E5E7EB;background:#F9FAFB;color:#9CA3AF">Requested</div><div style="font-size:9px;color:#9CA3AF;padding-right:4px">Pending admin approval</div></div>';
+        }else if(needsApproval){
+          actionBtn='<button onclick="event.stopPropagation();S.pendingGroupJoins=[...(S.pendingGroupJoins||[]),\''+g.id+'\'];S.joinRequestToast=\''+g.name.replace(/'/g,"\\'")+'\';render();setTimeout(function(){S.joinRequestToast=null;render()},3000)" style="padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;font-family:inherit;flex-shrink:0">Request to Join</button>';
+        }else{
+          actionBtn='<button onclick="event.stopPropagation();(function(){var grp=[].concat(socialGroups,eventGroups).find(function(x){return x.id===\''+g.id+'\';});if(grp)grp.members.push({name:currentUser.name,uname:\'@joshr\',av:\'JR\',role:\'member\'});render();})()" style="padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;font-family:inherit;flex-shrink:0">Join Group</button>';
+        }
+      }
+      const tipId='visTip_'+g.id;
+      return'<div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6"><div style="width:38px;height:38px;border-radius:10px;background:'+g.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">'+g.av+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:5px">'+g.name+'<span onclick="event.stopPropagation();var t=document.getElementById(\''+tipId+'\');if(t)t.style.display=t.style.display===\'none\'?\'inline-flex\':\'none\'" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:'+_visBg(g.visibility)+';cursor:pointer;flex-shrink:0">'+_visIcon(g.visibility)+'</span><span id="'+tipId+'" style="display:none;font-size:9px;font-weight:600;color:'+_visColor(g.visibility)+';background:'+_visBg(g.visibility)+';padding:2px 7px;border-radius:6px;white-space:nowrap">'+_visLabel(g.visibility)+'</span></div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">'+g.members.length+' members</div></div>'+actionBtn+'</div>';
+    };
+
+    let groupRows='';
+    if(sharedIn.length){
+      groupRows+='<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-top:8px;margin-bottom:4px">Groups You Share</div>';
+      groupRows+=sharedIn.map(g=>groupCard(g,false)).join('');
+    }
+    if(sharedNotIn.length){
+      groupRows+='<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-top:18px;margin-bottom:4px">'+firstName+'\'s Groups</div>';
+      groupRows+=sharedNotIn.map(g=>groupCard(g,true)).join('');
+    }
+    if(!sharedIn.length&&!sharedNotIn.length){
+      groupRows='<div style="text-align:center;padding:40px 0;color:#9CA3AF;font-size:13px">No visible groups</div>';
+    }
+
+    const pendingInvites=S.pendingGroupInvites||[];
+    const _inviteRow=(g)=>{
+      const iAmAdmin=g.members.some(m=>(m.uname==='@joshr')&&m.role==='admin');
+      const inviteKey=g.id+'_'+f.id;
+      const alreadyInvited=pendingInvites.includes(inviteKey);
+      const av='<div style="width:32px;height:32px;border-radius:8px;background:'+g.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">'+g.av+'</div>';
+      const wrap=(inner)=>'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F3F4F6">'+av+'<div style="flex:1;min-width:0">'+inner+'</div>';
+      const nm='<div style="font-size:13px;font-weight:600;color:#111827">'+g.name+'</div>';
+      const sub=(t)=>'<div style="font-size:10px;color:#9CA3AF;margin-top:1px">'+t+'</div>';
+      if(alreadyInvited){
+        return wrap(nm+sub(iAmAdmin?firstName+' added':'Invite sent to admin'))+'<div style="padding:5px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1.5px solid #E5E7EB;background:#F9FAFB;color:#9CA3AF">'+(iAmAdmin?'Added':'Sent')+'</div></div>';
+      }
+      if(iAmAdmin){
+        const oc='event.stopPropagation();addFriendToGroup('+JSON.stringify(g.id)+','+JSON.stringify(f.name)+','+JSON.stringify(f.uname)+','+JSON.stringify(f.av)+','+JSON.stringify(inviteKey)+')';
+        return wrap(nm+sub('You are admin'))+'<button onclick="'+oc+'" style="padding:5px 14px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;font-family:inherit">Add</button></div>';
+      }
+      const oc2='event.stopPropagation();inviteFriendToGroup('+JSON.stringify(inviteKey)+','+JSON.stringify(g.name)+')';
+      return wrap(nm+sub('Requires admin approval'))+'<button onclick="'+oc2+'" style="padding:5px 14px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid #0E4EF5;background:#fff;color:#0E4EF5;cursor:pointer;font-family:inherit">Invite</button></div>';
+    };
+    let pickerRows='';
+    if(myGroups.length){pickerRows=myGroups.map(g=>_inviteRow(g)).join('');}
+    else{pickerRows='<div style="font-size:12px;color:#9CA3AF;text-align:center;padding:8px 0">'+firstName+' is already in all your groups</div>';}
+
+    const addGroupPicker='<div style="margin-top:14px"><button onclick="S.addToGroupFriend=S.addToGroupFriend===\''+f.id+'\'?null:\''+f.id+'\';render()" style="padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;border:1px solid #E5E7EB;background:'+(showAddGroup?'#F3F4F6':'#fff')+';color:#374151;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">'+ic('users',14)+' Invite '+firstName+' to a Group</button>'+(showAddGroup?'<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:12px;padding:12px;margin-top:8px"><div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:10px">Your groups</div>'+pickerRows+'</div>':'')+'</div>';
     tabContent=groupRows+addGroupPicker;
   }
 
   return`${hdr(f.name,null,"S.friendDetail=null;S.friendDetailTab=null;S.friendDetailMenu=null;S.addToGroupFriend=null;render()",dotMenu)}
   <!-- Profile + actions -->
   <div style="padding:20px 16px 16px;border-bottom:1px solid #F3F4F6;text-align:center">
-    <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 10px">${f.av}</div>
+    <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;margin:0 auto 10px;position:relative">${f.av}${fAvOverlay(f,18)}</div>
     <div style="font-size:17px;font-weight:700;color:#111827">${f.name}</div>
     <div style="font-size:13px;color:#9CA3AF;margin-top:2px">${f.uname}</div>
     <div style="display:flex;justify-content:center;margin-top:16px">
@@ -3562,7 +3719,7 @@ function renderFriends(){
         <button onclick="modal('inviteMobile')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:inherit">${ic('phone',14)} Invite by Mobile</button>
       </div>
       ${friendsList.map(f=>`<div onclick="S.friendDetail='${f.id}';render()" style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6;cursor:pointer">
-        ${av(f.av,42)}
+        <div style="position:relative;flex-shrink:0">${av(f.av,42)}${fAvOverlay(f,14)}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div>
           <div style="font-size:11px;color:#9CA3AF">${f.uname}</div>
@@ -3602,7 +3759,7 @@ function renderBlockedFriends(){
       </div>
       ${blocked.length?blocked.map(f=>`
         <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-          ${av(f.av,42)}
+          <div style="position:relative;flex-shrink:0">${av(f.av,42)}${fAvOverlay(f,14)}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:14px;font-weight:600;color:#111827">${f.name}</div>
             <div style="font-size:12px;color:#9CA3AF;margin-top:1px">${f.uname}</div>
@@ -3698,7 +3855,7 @@ function renderFollowing(){
 
     ${filtered.length?filtered.map(p=>`
       <div onclick="openProfile('${p.handle}')" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">
-        <div style="width:42px;height:42px;border-radius:${p.hostType==='people'?'50%':'10px'};background:linear-gradient(135deg,${avatarGradient(p.hostType)});display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">${p.short.charAt(0)}</div>
+        <div style="position:relative;flex-shrink:0"><div style="width:42px;height:42px;border-radius:${p.hostType==='people'?'50%':'10px'};background:linear-gradient(135deg,${avatarGradient(p.hostType)});display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff">${p.short.charAt(0)}</div>${hAvOverlay(p,14)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:700;color:#111827">${p.name}</div>
           <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${p.handle} · ${p.cat}</div>
@@ -3738,7 +3895,7 @@ function renderProProfile(){
   <div style="padding:14px 16px">
     <!-- Header card -->
     <div style="background:${p.brand?'linear-gradient(135deg,#111827,#374151)':'linear-gradient(135deg,#1B2A4A,#0E4EF5)'};border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;position:relative">
-      <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 10px">${p.short.charAt(0)}</div>
+      <div style="position:relative;display:inline-block;margin:0 auto 10px"><div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff">${p.short.charAt(0)}</div>${hAvOverlay(p,18)}</div>
       <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:2px">${p.name}</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:14px">${p.handle}</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:8px">
@@ -3767,6 +3924,184 @@ function renderProProfile(){
 }
 
 // ── USER ACCOUNT ───────────────────────────────────────
+function renderUserVerify(){
+  var step=S.verifyStep||'welcome';
+  var backToAcct="S.menuSub='userAccount';render()";
+  var resetV="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.verifySelfie=false;S.verifyResult=null;";
+
+  if(step==='welcome'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Identity Verification','Verify your identity',backToAcct)+
+      '<div style="flex:1;overflow-y:auto;padding:16px">'+
+        '<div style="text-align:center;margin:16px 0 24px">'+
+          '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#4F46E5">'+ic('shield',36)+'</div></div>'+
+          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Identity</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Quick verification to get your verified badge across all of Nigh.</div>'+
+        '</div>'+
+        '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
+          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You\'ll Need</div></div>'+
+          ['Government-issued photo ID','A well-lit space for a quick selfie','About 2 minutes'].map(function(item,i,arr){
+            return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>';
+          }).join('')+
+        '</div>'+
+        '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
+          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You Get</div></div>'+
+          ['Verified badge on your profile','Verified badge visible to hosts','Higher trust when reserving drops','Verified checkmark across all Nigh apps'].map(function(item,i,arr){
+            return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
+          }).join('')+
+        '</div>'+
+        '<div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">'+
+          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your data is encrypted and processed securely via Stripe Identity. Nigh never stores your ID photos.</div></div>'+
+        '</div>'+
+        '<button onclick="S.verifyStep=\'id-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
+        '<button onclick="'+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Maybe Later</button>'+
+      '</div></div>';
+  }
+
+  if(step==='id-type'){
+    var idTypes=[
+      {key:'license',label:"Driver's License",desc:'Front & back required',icon:'billing'},
+      {key:'passport',label:'Passport',desc:'Photo page only',icon:'globe'},
+      {key:'national-id',label:'National ID Card',desc:'Front & back required',icon:'personLock'}
+    ];
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Select ID Type','Step 1 of 3',"S.verifyStep='welcome';render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">Choose Your ID Type</div><div style="font-size:12px;color:#6B7280">Select the document you\'d like to use.</div></div>'+
+        idTypes.map(function(t){
+          return '<button onclick="S.verifyIdType=\''+t.key+'\';S.verifyStep=\'id-front\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
+        }).join('')+
+      '</div></div>';
+  }
+
+  if(step==='id-front'){
+    var isPassport=S.verifyIdType==='passport';
+    var label=isPassport?'Passport Photo Page':'Front of ID';
+    var nextStep=isPassport?'selfie':'id-back';
+    var totalSteps=isPassport?1:2;
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Scan Document','Document 1 of '+totalSteps,"S.verifyStep='id-type';S.verifyIdFront=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">'+label+'</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Position your ID within the frame</div>'+
+        '<div onclick="'+(S.verifyIdFront?'':'S.verifyIdFront=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdFront?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdFront?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
+          (S.verifyIdFront?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.verifyIdFront?
+          '<button onclick="S.verifyStep=\''+nextStep+'\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: '+(isPassport?'Selfie':'Back of ID')+' '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.verifyIdFront=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
+          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
+        )+
+      '</div></div>';
+  }
+
+  if(step==='id-back'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Scan Document','Document 2 of 2',"S.verifyStep='id-front';S.verifyIdBack=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Back of ID</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Flip your ID over and capture the back</div>'+
+        '<div onclick="'+(S.verifyIdBack?'':'S.verifyIdBack=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdBack?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdBack?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
+          (S.verifyIdBack?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.verifyIdBack?
+          '<button onclick="S.verifyStep=\'selfie\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Selfie '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.verifyIdBack=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
+          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
+        )+
+      '</div></div>';
+  }
+
+  if(step==='selfie'){
+    var prevStep=S.verifyIdType==='passport'?'id-front':'id-back';
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Selfie Verification','Liveness check',"S.verifyStep='"+prevStep+"';S.verifySelfie=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Take a Selfie</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">We\'ll match your face to your ID photo.</div>'+
+        '<div style="width:200px;height:200px;border-radius:50%;border:3px '+(S.verifySelfie?'solid #16A34A':'dashed #6B7280')+';background:'+(S.verifySelfie?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px">'+
+          (S.verifySelfie?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#9CA3AF">'+ic('user',40)+'</div>')+
+        '</div>'+
+        (S.verifySelfie?
+          '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">Liveness check passed</span></div></div>'+
+          '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
+          '<button onclick="S.verifySelfie=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Selfie</button>'
+          :
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">'+
+            ['Face the camera','Good lighting','Remove glasses','Neutral expression'].map(function(t){return '<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>';}).join('')+
+          '</div>'+
+          '<button onclick="S.verifySelfie=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Capture Selfie</button>'
+        )+
+      '</div></div>';
+  }
+
+  if(step==='processing'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Verifying','Please wait',null,null,true)+
+      '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">'+
+        '<style>@keyframes uvSpin{to{transform:rotate(360deg)}}</style>'+
+        '<div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#0E4EF5;animation:uvSpin 1s linear infinite;margin-bottom:24px"></div>'+
+        '<div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Verifying Your Identity</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">This usually takes just a few seconds.</div>'+
+        '<div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">'+
+          ['Document quality check','Face matching','Identity validation'].map(function(s,i){
+            return '<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:uvSpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>';
+          }).join('')+
+        '</div>'+
+      '</div></div>';
+  }
+
+  if(step==='result'){
+    var res=S.verifyResult||'success';
+    if(res==='success'){
+      return '<div style="display:flex;flex-direction:column;height:100%">'+
+        hdr('Verified','',null,null,true)+
+        '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+          '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#16A34A">'+ic('shield',44)+'</div></div>'+
+          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Identity Verified!</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your verified badge is now visible across all Nigh apps — to hosts, other guests, and on your profile.</div>'+
+          '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
+            '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Active</div></div>'+
+            ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark in Host & Support apps'].map(function(f,i,arr){
+              return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+f+'</span></div>';
+            }).join('')+
+          '</div>'+
+          '<button onclick="currentUser.verified=true;'+resetV+'S.menuSub=\'userAccount\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to Account</button>'+
+          '<button onclick="currentUser.verified=true;'+resetV+'S.menuSub=null;S.scr=\'feed\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Feed</button>'+
+        '</div></div>';
+    }
+    if(res==='failure'){
+      return '<div style="display:flex;flex-direction:column;height:100%">'+
+        hdr('Verification Failed','',backToAcct,null,true)+
+        '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+          '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><svg width="44" height="44" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>'+
+          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Verification Failed</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn\'t verify your identity. Please try again with clearer photos.</div>'+
+          '<button onclick="'+resetV+'S.verifyStep=\'welcome\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Try Again</button>'+
+          '<button onclick="'+resetV+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Back to Account</button>'+
+        '</div></div>';
+    }
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Under Review','',null,null,true)+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FFFBEB;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#D97706">'+ic('history',44)+'</div></div>'+
+        '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Under Review</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your verification needs a quick manual review. We\'ll notify you within 24 hours.</div>'+
+        '<button onclick="'+resetV+'S.menuSub=\'userAccount\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to Account</button>'+
+        '<button onclick="'+resetV+'S.menuSub=null;S.scr=\'feed\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Feed</button>'+
+      '</div></div>';
+  }
+
+  return '<div>'+hdr('Verify','','S.menuSub=\'userAccount\';render()')+'<div style="padding:20px;text-align:center;color:#6B7280">Unknown step</div></div>';
+}
 function renderUserAccount(){
   const verifiedBadge=`<span style="display:inline-flex;align-items:center;gap:3px;background:#ECFDF5;border:1px solid #6EE7B7;border-radius:20px;padding:1px 7px;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:9px;font-weight:700;color:#059669;letter-spacing:0.02em">Verified</span></span>`;
   const row=(label,value,action,actionLabel,sub)=>`
@@ -3813,6 +4148,18 @@ function renderUserAccount(){
         </div>
       </div>
       <div style="font-size:12px;color:#6B7280;margin-top:8px">Joined March 2025</div>
+    </div>
+
+    <!-- Identity Verification -->
+    <div style="background:#fff;border-radius:12px;border:1px solid ${currentUser.verified?'#BBF7D0':'#E5E7EB'};padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;border-radius:50%;background:${currentUser.verified?'#DCFCE7':'linear-gradient(135deg,#EEF2FF,#E0E7FF)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${currentUser.verified?'#16A34A':'#4F46E5'}">${currentUser.verified?ic('shield',20):ic('personLock',20)}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:#111827">${currentUser.verified?'Identity Verified':'Verify Your Identity'}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:1px">${currentUser.verified?'Selfie + ID confirmed · Verified badge active':'Optional · Unlock verified badge across Nigh'}</div>
+      </div>
+      ${currentUser.verified?
+        '<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">'+ic('check',10)+' Active</span>':
+        '<button onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="flex-shrink:0;padding:7px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>'}
     </div>
 
     <!-- Name — editable -->
@@ -4059,7 +4406,7 @@ function renderGroups(){
           <div style="font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px"><span style="font-weight:500">${g.lastMsg.sender==='You'?'You':g.lastMsg.sender.split(' ')[0]}:</span> ${g.lastMsg.text}</div>
           ${g.unread?`<div style="min-width:18px;height:18px;border-radius:9px;background:#0E4EF5;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 4px;flex-shrink:0">${g.unread}</div>`:''}
         </div>
-        <div style="margin-top:4px;display:flex;align-items:center;gap:4px">${avatarStack(g.members)}<span style="font-size:10px;color:#9CA3AF;margin-left:4px">${g.members.length} members</span></div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:4px">${avatarStack(g.members)}<span style="font-size:10px;color:#9CA3AF;margin-left:4px">${g.members.length} members</span>${(g.visibility||'private')==='private'?`<span style="font-size:9px;color:#9CA3AF;display:inline-flex;align-items:center;gap:2px;margin-left:4px">${ic('lock',9,'#9CA3AF')} Private</span>`:(g.visibility==='friends'?`<span style="font-size:9px;color:#0E4EF5;display:inline-flex;align-items:center;gap:2px;margin-left:4px">${ic('users',9,'#0E4EF5')} Friends of Members</span>`:`<span style="font-size:9px;color:#16A34A;display:inline-flex;align-items:center;gap:2px;margin-left:4px">${ic('globe',9,'#16A34A')} Public</span>`)}</div>
       </div>
     </div>`).join('');
 
@@ -4176,13 +4523,14 @@ function renderGroupDetail(){
       }
       const statusBadge=isEvent?`<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:${m.status==='accepted'?'rgba(22,163,74,0.1)':m.status==='pending'?'rgba(245,166,35,0.1)':'rgba(14,78,245,0.08)'};color:${m.status==='accepted'?'#16A34A':m.status==='pending'?'#F5A623':'#0E4EF5'}">${m.status==='accepted'?'Accepted':m.status==='pending'?'Pending':'You'}</span>`:'';
       const isSelf=m.uname==='@joshr'||m.name==='Josh Ritzer';
-      const removeBtn=isAdmin&&!isSelf?`<button onclick="S.confirmRemoveMember={gId:'${gId}',uname:'${m.uname||''}',name:'${m.name}'};S.modal='removeGroupMember';render()" style="padding:5px 10px;border-radius:8px;border:1px solid #E5E7EB;background:none;font-size:11px;font-weight:600;color:#9CA3AF;cursor:pointer;flex-shrink:0">Remove</button>`:'';
+      const isGroupCreator=m.name===(rawG.createdBy||'');
+      const removeBtn=isAdmin&&!isSelf&&!isGroupCreator?`<button onclick="S.confirmRemoveMember={gId:'${gId}',uname:'${m.uname||''}',name:'${m.name}'};S.modal='removeGroupMember';render()" style="padding:5px 10px;border-radius:8px;border:1px solid #E5E7EB;background:none;font-size:11px;font-weight:600;color:#9CA3AF;cursor:pointer;flex-shrink:0">Remove</button>`:'';
       return`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F3F4F6">
-        <div style="width:40px;height:40px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151;flex-shrink:0">${m.av}</div>
+        <div style="position:relative;flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151">${m.av}</div>${isSelf&&currentUser.verified?fAvOverlay({verified:true},14):mAvOverlay(m,14)}</div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px">
             <div style="font-size:14px;font-weight:600;color:#111827">${m.name}</div>
-            ${m.role==='admin'?`<span style="font-size:10px;font-weight:600;color:#6226E9;background:rgba(98,38,233,0.1);padding:1px 6px;border-radius:4px">Admin</span>`:''}
+            ${isGroupCreator?`<span style="font-size:10px;font-weight:600;color:#0E4EF5;background:rgba(14,78,245,0.08);padding:1px 6px;border-radius:4px">Creator</span>`:m.role==='admin'?`<span style="font-size:10px;font-weight:600;color:#6226E9;background:rgba(98,38,233,0.1);padding:1px 6px;border-radius:4px">Admin</span>`:''}
             ${statusBadge}
           </div>
           <div style="font-size:12px;color:#9CA3AF">${m.uname||''}${isEvent&&m.spot?` · Spot ${m.spot} · TKT-${gId.replace('EG-TK','')}-${m.spot}`:''}</div>
@@ -4256,6 +4604,25 @@ function renderGroupDetail(){
         </div>
       </div>
 
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-top:28px;margin-bottom:14px">Privacy</div>
+
+      <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden">
+        ${['private','friends','public'].map(v=>{
+          const cur=rawG.visibility||'private';
+          const sel=cur===v;
+          const labels={private:'Private',friends:'Friends of Members',public:'Public'};
+          const descs={private:'Only members know this group exists',friends:'Friends of group members can see this group and request to join',public:'Discoverable by anyone on Nigh'};
+          const icons={private:'lock',friends:'users',public:'globe'};
+          const locked=v==='public'&&!currentUser.verified;
+          const descText=locked?'Requires a verified account':descs[v];
+          const radioEl=sel?'<div style="width:12px;height:12px;border-radius:50%;background:#0E4EF5"></div>':'';
+          const indicator=locked?('<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#9CA3AF">'+ic('lock',14)+'</div>'):('<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+(sel?'#0E4EF5':'#D1D5DB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+radioEl+'</div>');
+          const onclick=locked?'':("var grpAll=[...socialGroups,...eventGroups,...(S.friendGroups||[])];var grp=grpAll.find(x=>x.id==='"+gId+"');if(grp)grp.visibility='"+v+"';render()");
+          return'<button onclick="'+onclick+'" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;background:'+(sel?'rgba(14,78,245,0.04)':'none')+';border:none;border-bottom:1px solid #F3F4F6;cursor:'+(locked?'not-allowed':'pointer')+';text-align:left;font-family:inherit;opacity:'+(locked?'0.45':'1')+'"><div style="width:36px;height:36px;border-radius:10px;background:'+(sel?'#EEF2FF':'#F9FAFB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;color:'+(sel?'#0E4EF5':'#9CA3AF')+'">'+ic(icons[v],16)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">'+labels[v]+'</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px">'+descText+'</div></div>'+indicator+'</button>';
+        }).join('')}
+      </div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:8px;padding:0 4px;line-height:1.5">${(rawG.visibility||'private')==='private'?'Private groups will not appear on friend profiles.':'Friends of members can see this group, its members, and request to join.'}</div>
+
       <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden;margin-top:28px">
         <button onclick="S.modal='groupAdminPicker';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit">
           <div style="flex:1">
@@ -4297,9 +4664,9 @@ function renderGroupDetail(){
         <div style="font-size:12px;color:#374151;line-height:1.55">This group is invite-only. Only admins can add new members or share the group link.</div>
       </div>`:''}
 
-      <div style="margin-top:28px;text-align:center">
-        <button style="padding:12px 28px;border:none;background:none;font-size:13px;font-weight:600;color:#EF4444;cursor:pointer;font-family:inherit">Delete Group</button>
-      </div>
+      ${(rawG.createdBy||'')==='Josh Ritzer'||currentUser.name===(rawG.createdBy||'')?`<div style="margin-top:28px;text-align:center">
+        <button onclick="S.deleteGroupId='${gId}';S.deleteGroupName='${g.name}';S.modal='deleteGroupConfirm';render()" style="padding:12px 28px;border:none;background:none;font-size:13px;font-weight:600;color:#EF4444;cursor:pointer;font-family:inherit">Delete Group</button>
+      </div>`:''}
     </div>`;
   }
 
@@ -4346,7 +4713,7 @@ function renderCreateGroup(){
   const knobStyle=(on)=>`position:absolute;top:2px;${on?'right:2px':'left:2px'};width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)`;
 
   return`<div style="height:100%;overflow-y:auto;background:#fff">
-    ${hdr('New Group',null,"S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.friendsTab='groups';S.menuSub='friends';S.scr='menu';render()",`<button onclick="if(S.newGroupName){const ng={id:'SG'+Date.now(),name:S.newGroupName,type:'social',av:S.newGroupName.slice(0,2).toUpperCase(),color:'#6226E9',inviteLink:'nigh.com/g/'+S.newGroupName.toLowerCase().replace(/\\s+/g,'-')+'-'+Math.random().toString(36).slice(2,6),unread:0,allowMemberInvite:S.newGroupAllowMemberInvite!==false,allowInviteLink:S.newGroupAllowInviteLink!==false,requireApproval:S.newGroupRequireApproval!==false,members:[{name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},...(S.newGroupMembers||[]).map(h=>({name:h,uname:h,av:h.replace('@','').slice(0,2).toUpperCase(),role:'member'}))],lastMsg:{text:'Group created',sender:'You',time:'just now'},drops:[],chat:[{av:'JR',text:'Welcome to the group!',time:'just now',mine:true,name:'You'}]};socialGroups.push(ng);S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;go('groupDetail',{groupId:ng.id})}" style="background:${name?'#0E4EF5':'#E5E7EB'};border:none;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:${name?'#fff':'#9CA3AF'}">Create</button>`)}
+    ${hdr('New Group',null,"S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;S.friendsTab='groups';S.menuSub='friends';S.scr='menu';render()",`<button onclick="if(S.newGroupName){const ng={id:'SG'+Date.now(),name:S.newGroupName,type:'social',av:S.newGroupName.slice(0,2).toUpperCase(),color:'#6226E9',inviteLink:'nigh.com/g/'+S.newGroupName.toLowerCase().replace(/\\s+/g,'-')+'-'+Math.random().toString(36).slice(2,6),unread:0,allowMemberInvite:S.newGroupAllowMemberInvite!==false,allowInviteLink:S.newGroupAllowInviteLink!==false,requireApproval:S.newGroupRequireApproval!==false,visibility:S.newGroupVisibility||'private',members:[{name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},...(S.newGroupMembers||[]).map(h=>({name:h,uname:h,av:h.replace('@','').slice(0,2).toUpperCase(),role:'member'}))],lastMsg:{text:'Group created',sender:'You',time:'just now'},drops:[],chat:[{av:'JR',text:'Welcome to the group!',time:'just now',mine:true,name:'You'}]};socialGroups.push(ng);S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;go('groupDetail',{groupId:ng.id})}" style="background:${name?'#0E4EF5':'#E5E7EB'};border:none;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:${name?'#fff':'#9CA3AF'}">Create</button>`)}
     <div style="padding:16px">
       <div style="background:#F3F4F6;border-radius:14px;padding:14px 16px;margin-bottom:16px">
         <input
@@ -4396,6 +4763,21 @@ function renderCreateGroup(){
         </div>
       </div>
       <div style="font-size:11px;color:#9CA3AF;margin-top:8px;padding:0 4px;line-height:1.5">${!ami&&!ali?'This group will be invite-only. Only you can add new members.':'You can change these settings anytime from the group settings tab.'}</div>
+
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-top:24px;margin-bottom:10px">Group Privacy</div>
+      <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden">
+        ${[['private','Private','Only members know this group exists','lock'],['friends','Friends of Members','Friends of group members can see and request to join','users'],['public','Public','Discoverable by anyone on Nigh','globe']].map(([v,label,desc,icon])=>{
+          const cur=S.newGroupVisibility||'private';
+          const sel=cur===v;
+          const locked=v==='public'&&!currentUser.verified;
+          const descText=locked?'Requires a verified account':desc;
+          const radioEl=sel?'<div style="width:10px;height:10px;border-radius:50%;background:#0E4EF5"></div>':'';
+          const indicator=locked?('<div style="width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#9CA3AF">'+ic('lock',12)+'</div>'):('<div style="width:20px;height:20px;border-radius:50%;border:2px solid '+(sel?'#0E4EF5':'#D1D5DB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+radioEl+'</div>');
+          const onclick=locked?'':"S.newGroupVisibility='"+v+"';render()";
+          return'<button onclick="'+onclick+'" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;background:'+(sel?'rgba(14,78,245,0.04)':'none')+';border:none;border-bottom:1px solid #F3F4F6;cursor:'+(locked?'not-allowed':'pointer')+';text-align:left;font-family:inherit;opacity:'+(locked?'0.45':'1')+'"><div style="width:32px;height:32px;border-radius:8px;background:'+(sel?'#EEF2FF':'#fff')+';border:1px solid '+(sel?'#C7D2FE':'#E5E7EB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;color:'+(sel?'#0E4EF5':'#9CA3AF')+'">'+ic(icon,14)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+label+'</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">'+descText+'</div></div>'+indicator+'</button>';
+        }).join('')}
+      </div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:6px;padding:0 4px;line-height:1.5">${(S.newGroupVisibility||'private')==='private'?'Recommended — this group will not appear on friend profiles.':'Friends of members can see this group, its members, and request to join.'}</div>
     </div>
   </div>`;
 }
@@ -4414,7 +4796,7 @@ function renderTB(){
   ];
   const active=S.scr==='niya'?'niya':
                (['ticketView','dropDetail','placeOrder','orderConfirmation'].includes(S.scr))?'feed':
-               (['friends','following','groups','userAccount'].includes(S.menuSub))?'menu':
+               (S.scr==='menu'&&['friends','following','groups','userAccount'].includes(S.menuSub))?'menu':
                (['groupDetail','createGroup'].includes(S.scr))?'menu':
                S.scr==='alerts'?'inbox':S.scr;
   document.getElementById('tb').innerHTML=tabs.map(t=>`
@@ -5836,7 +6218,7 @@ function renderModal(){
       ${members.map(f=>{
         const isSelf=false;
         return`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6">
-          ${av(f.av,40)}
+          <div style="position:relative;flex-shrink:0">${av(f.av,40)}${fAvOverlay(f,14)}</div>
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:6px">
               <div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div>
@@ -5852,7 +6234,7 @@ function renderModal(){
       ${addable&&nonMembers.length?`
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin:16px 0 8px">Add Members</div>
       ${nonMembers.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6">
-        ${av(f.av,40)}
+        <div style="position:relative;flex-shrink:0">${av(f.av,40)}${fAvOverlay(f,14)}</div>
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div><div style="font-size:11px;color:#9CA3AF">${f.uname}</div></div>
         <button onclick="var g=(S.friendGroups||[]).find(x=>x.id==='${gId}');if(g&&!g.members.includes('${f.id}'))g.members.push('${f.id}');modal('groupSettings_${gId}')" style="font-size:12px;font-weight:600;color:#0E4EF5;background:#EEF2FF;border:none;border-radius:8px;padding:6px 12px;cursor:pointer">Add</button>
       </div>`).join('')}`:''}
@@ -5891,7 +6273,7 @@ function renderModal(){
       </div>
       <div style="font-size:11px;color:#9CA3AF;margin-bottom:16px">Shared group · ${members.length} member${members.length!==1?'s':''}</div>
       ${members.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6">
-        ${av(f.av,40)}
+        <div style="position:relative;flex-shrink:0">${av(f.av,40)}${fAvOverlay(f,14)}</div>
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:6px">
             <div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div>
@@ -5911,7 +6293,7 @@ function renderModal(){
     const memberRow=f=>{
       const on=sel.includes(f.id);
       return`<div onclick="var idx=(S.newGroupMembers||[]).indexOf('${f.id}');if(!S.newGroupMembers)S.newGroupMembers=[];if(idx>-1)S.newGroupMembers.splice(idx,1);else S.newGroupMembers.push('${f.id}');modal('newGroup')" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6;cursor:pointer">
-        ${av(f.av,40)}
+        <div style="position:relative;flex-shrink:0">${av(f.av,40)}${fAvOverlay(f,14)}</div>
         <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div><div style="font-size:11px;color:#9CA3AF">${f.uname}</div></div>
         <div style="width:22px;height:22px;border-radius:50%;border:2px solid ${on?'#0E4EF5':'#D1D5DB'};background:${on?'#0E4EF5':'transparent'};display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">${on?ic('check',12):''}</div>
       </div>`;
@@ -5960,7 +6342,7 @@ function renderModal(){
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">${isTos?'Terms of Service':'Privacy Policy'}</div>
       <div style="font-size:11px;color:#9CA3AF;margin-bottom:14px">Last updated January 1, 2026</div>
       <div style="font-size:12px;color:#374151;line-height:1.6">${isTos
-        ?'By using Nigh Drops, you agree to use the platform solely to discover and reserve drops. Reservations are non-transferable unless the host enables spot transfers. Nigh is not responsible for cancellations by hosts. Payments are processed securely via Stripe. Continued use of the app constitutes acceptance of these terms.'
+        ?'By using Nigh, you agree to use the platform solely to discover and reserve drops. Reservations are non-transferable unless the host enables spot transfers. Nigh is not responsible for cancellations by hosts. Payments are processed securely via Stripe. Continued use of the app constitutes acceptance of these terms.'
         :'Nigh collects your mobile number and account information to provide the service. We do not sell your personal data. Drop activity (reservations, check-ins) is shared with the host Pro account. Push notifications are optional and can be managed per account in your Following settings. Contact privacy@nigh.com with any questions.'}</div>
     </div></div>`;return;
   }
@@ -6180,14 +6562,16 @@ function renderModal(){
       <div style="font-size:13px;color:#9CA3AF;margin-bottom:16px">Tap a member to toggle admin role.</div>
       ${mems.map(m=>{
         const isSelf=m.uname==='@joshr'||m.name==='Josh Ritzer';
+        const isCreator=m.name===(grp.createdBy||'');
+        const isLocked=isSelf||isCreator;
         const isAdm=m.role==='admin';
-        return`<button onclick="${isSelf?'':`(function(){var grp=[].concat(socialGroups,eventGroups,S.friendGroups||[]).find(function(x){return x.id==='${gId}';});if(grp){var mem=grp.members.find(function(x){return (x.uname||'')==='${m.uname||''}';});if(mem)mem.role=mem.role==='admin'?'member':'admin';}renderModal();})()`}" style="display:flex;align-items:center;gap:10px;padding:11px 0;border:none;background:none;width:100%;text-align:left;cursor:${isSelf?'default':'pointer'};border-bottom:1px solid #F3F4F6;font-family:inherit${isSelf?';opacity:0.6':''}">
-          <div style="width:36px;height:36px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#374151;flex-shrink:0">${m.av}</div>
+        return`<button onclick="${isLocked?'':`(function(){var grp=[].concat(socialGroups,eventGroups,S.friendGroups||[]).find(function(x){return x.id==='${gId}';});if(grp){var mem=grp.members.find(function(x){return (x.uname||'')==='${m.uname||''}';});if(mem)mem.role=mem.role==='admin'?'member':'admin';}renderModal();})()`}" style="display:flex;align-items:center;gap:10px;padding:11px 0;border:none;background:none;width:100%;text-align:left;cursor:${isLocked?'default':'pointer'};border-bottom:1px solid #F3F4F6;font-family:inherit${isLocked?';opacity:0.6':''}">
+          <div style="position:relative;flex-shrink:0"><div style="width:36px;height:36px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#374151">${m.av}</div>${isSelf&&currentUser.verified?fAvOverlay({verified:true},13):mAvOverlay(m,13)}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:14px;font-weight:600;color:#111827">${m.name}${isSelf?' (you)':''}</div>
-            <div style="font-size:12px;color:#9CA3AF">${m.uname||''}</div>
+            <div style="font-size:12px;color:#9CA3AF">${m.uname||''}${isCreator?' · Creator':''}</div>
           </div>
-          <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${isAdm?'#6226E9':'#D1D5DB'};background:${isAdm?'#6226E9':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${isAdm?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div>
+          ${isCreator?'<div style="font-size:10px;font-weight:700;color:#6226E9;background:rgba(98,38,233,0.1);padding:3px 8px;border-radius:6px;flex-shrink:0">Creator</div>':'<div style="width:22px;height:22px;border-radius:6px;border:2px solid '+(isAdm?'#6226E9':'#D1D5DB')+';background:'+(isAdm?'#6226E9':'#fff')+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(isAdm?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'')+'</div>'}
         </button>`;
       }).join('')}
       <div style="margin-top:14px;text-align:center">
@@ -6619,6 +7003,12 @@ function render(){
     default: html=renderFeed();
   }
   scrEl.innerHTML=html;
+  // Join request toast
+  var toastEl=document.getElementById('joinToast');
+  if(S.joinRequestToast){
+    if(!toastEl){toastEl=document.createElement('div');toastEl.id='joinToast';document.getElementById('shell').appendChild(toastEl);}
+    toastEl.innerHTML='<div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:14px 20px;border-radius:14px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.2);max-width:320px;text-align:center;line-height:1.5"><div>Request sent!</div><div style="font-size:11px;font-weight:400;color:#9CA3AF;margin-top:4px">A group admin will review your request to join '+S.joinRequestToast+'</div></div>';
+  }else if(toastEl){toastEl.innerHTML='';}
   if(onFeed){
     scrEl.scrollTop=S.drop*762;
   } else if(S.scr==='dm'){
