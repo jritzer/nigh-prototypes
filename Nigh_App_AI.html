@@ -43,7 +43,7 @@ input:focus,textarea:focus{outline:none}
 <body>
 <div id="app"><div id="scr"></div><div class="tb" id="tb"></div><div id="mr" style="position:absolute;inset:0;z-index:500;pointer-events:none"></div></div>
 <script>
-let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',selfie1:false,selfie2:false,selfie3:false,verifyResult:null};
+let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null};
 
 // ── Niya Icon ─────────────────────────────────────────
 // To roll back to original: change NIYA_ICON = NIYA_ICON_OLD
@@ -3927,20 +3927,22 @@ function renderProProfile(){
 function renderUserVerify(){
   var step=S.verifyStep||'welcome';
   var backToAcct="S.menuSub='userAccount';render()";
-  var resetV="S.verifyStep='welcome';S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;";
+  var resetV="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;";
+  // progress bar helper: 6 segments for id-type, id-front, id-back, selfie-front, selfie-left, selfie-right
+  var pbar=function(n){var h='';for(var i=0;i<6;i++){h+='<div style="flex:1;height:4px;border-radius:2px;background:'+(i<n?'#0E4EF5':'#E5E7EB')+'"></div>';}return '<div style="display:flex;gap:4px;margin-bottom:20px;width:100%;max-width:300px">'+h+'</div>';};
 
   if(step==='welcome'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Verification','Prove you\'re real',backToAcct)+
+      hdr('Verification','Confirm you\'re real',backToAcct)+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
         '<div style="text-align:center;margin:16px 0 24px">'+
           '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#4F46E5">'+ic('shield',36)+'</div></div>'+
-          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Prove You\'re Real</div>'+
-          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">We use this to confirm you\'re real. Bots and fraudsters are not welcome.</div>'+
+          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Confirm You\'re Real</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Bots and fraudsters are not welcome.</div>'+
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You\'ll Need</div></div>'+
-          ['A well-lit space for 3 quick selfies','Front-facing photo + left & right side profiles','About 1 minute of your time'].map(function(item,i,arr){
+          ['Government-issued photo ID (front & back)','A well-lit space for 3 quick selfies','About 2 minutes of your time'].map(function(item,i,arr){
             return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>';
           }).join('')+
         '</div>'+
@@ -3951,19 +3953,84 @@ function renderUserVerify(){
           }).join('')+
         '</div>'+
         '<div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">'+
-          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your selfies are processed securely and only used for verification purposes.</div></div>'+
+          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your ID and selfies are processed securely and only used for verification purposes.</div></div>'+
         '</div>'+
-        '<button onclick="S.verifyStep=\'selfie-front\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
+        '<button onclick="S.verifyStep=\'id-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
         '<button onclick="'+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Maybe Later</button>'+
+      '</div></div>';
+  }
+
+  // ── ID Type Selection ──
+  if(step==='id-type'){
+    var idTypes=[
+      {key:'license',label:"Driver's License",desc:'Front & back required',icon:'billing'},
+      {key:'passport',label:'Passport',desc:'Photo page only',icon:'globe'},
+      {key:'national-id',label:'National ID Card',desc:'Front & back required',icon:'personLock'}
+    ];
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Select ID Type','Step 1 of 6',"S.verifyStep='welcome';render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px">'+
+        pbar(1)+
+        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">Choose Your ID Type</div><div style="font-size:12px;color:#6B7280">Select the document you\'d like to use.</div></div>'+
+        idTypes.map(function(t){
+          return '<button onclick="S.verifyIdType=\''+t.key+'\';S.verifyStep=\'id-front\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
+        }).join('')+
+      '</div></div>';
+  }
+
+  // ── ID Front ──
+  if(step==='id-front'){
+    var isPassport=S.verifyIdType==='passport';
+    var label=isPassport?'Passport Photo Page':'Front of ID';
+    var nextStep=isPassport?'selfie-front':'id-back';
+    var nextLabel=isPassport?'Selfie':'Back of ID';
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Scan Document','Step 2 of 6',"S.verifyStep='id-type';S.verifyIdFront=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        pbar(2)+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">'+label+'</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Position your ID within the frame</div>'+
+        '<div onclick="'+(S.verifyIdFront?'':'S.verifyIdFront=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdFront?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdFront?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
+          (S.verifyIdFront?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.verifyIdFront?
+          '<button onclick="S.verifyStep=\''+nextStep+'\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: '+nextLabel+' '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.verifyIdFront=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
+          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
+        )+
+      '</div></div>';
+  }
+
+  // ── ID Back ──
+  if(step==='id-back'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Scan Document','Step 3 of 6',"S.verifyStep='id-front';S.verifyIdBack=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        pbar(3)+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Back of ID</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Flip your ID over and capture the back</div>'+
+        '<div onclick="'+(S.verifyIdBack?'':'S.verifyIdBack=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdBack?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdBack?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
+          (S.verifyIdBack?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.verifyIdBack?
+          '<button onclick="S.verifyStep=\'selfie-front\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Selfie '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.verifyIdBack=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
+          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
+        )+
       '</div></div>';
   }
 
   // ── Selfie 1: Front Face ──
   if(step==='selfie-front'){
+    var prevIdStep=(S.verifyIdType==='passport')?'id-front':'id-back';
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Front Selfie','Step 1 of 3',"S.verifyStep='welcome';S.selfie1=false;render()")+
+      hdr('Front Selfie','Step 4 of 6',"S.verifyStep=\'"+prevIdStep+"\';S.selfie1=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        pbar(4)+
         '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Face the Camera</div>'+
         '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Look straight ahead with a neutral expression</div>'+
         '<div onclick="'+(S.selfie1?'':'S.selfie1=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie1?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie1?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
@@ -3984,9 +4051,9 @@ function renderUserVerify(){
   // ── Selfie 2: Left Side ──
   if(step==='selfie-left'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Left Side','Step 2 of 3',"S.verifyStep='selfie-front';S.selfie2=false;render()")+
+      hdr('Left Side','Step 5 of 6',"S.verifyStep='selfie-front';S.selfie2=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        pbar(5)+
         '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Left</div>'+
         '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the left side of your face</div>'+
         '<div onclick="'+(S.selfie2?'':'S.selfie2=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie2?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie2?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
@@ -4007,16 +4074,16 @@ function renderUserVerify(){
   // ── Selfie 3: Right Side ──
   if(step==='selfie-right'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Right Side','Step 3 of 3',"S.verifyStep='selfie-left';S.selfie3=false;render()")+
+      hdr('Right Side','Step 6 of 6',"S.verifyStep='selfie-left';S.selfie3=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>'+
+        pbar(6)+
         '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Right</div>'+
         '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the right side of your face</div>'+
         '<div onclick="'+(S.selfie3?'':'S.selfie3=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie3?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie3?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
           (S.selfie3?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#0E4EF5"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M22 12l-3-3"/></svg></div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
         '</div>'+
         (S.selfie3?
-          '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">All 3 photos captured</span></div></div>'+
+          '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">All photos captured</span></div></div>'+
           '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
           '<button onclick="S.selfie3=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
           :
@@ -4038,8 +4105,8 @@ function renderUserVerify(){
         '<div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Making sure you\'re real...</div>'+
         '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">This only takes a few seconds.</div>'+
         '<div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">'+
-          ['Photo quality check','Liveness detection','Identity confirmation'].map(function(s,i){
-            return '<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:uvSpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>';
+          ['Document quality check','Face matching','Liveness detection','Identity confirmation'].map(function(s,i){
+            return '<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<3?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<3?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:uvSpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<3?'#374151':'#9CA3AF')+'">'+s+'</span></div>';
           }).join('')+
         '</div>'+
       '</div></div>';
@@ -4071,10 +4138,10 @@ function renderUserVerify(){
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><svg width="44" height="44" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>'+
           '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">We Couldn\'t Confirm You\'re Real</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Sorry, we couldn\'t confirm you\'re real. This usually happens if the selfies were unclear or inconsistent — give it another shot!</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Sorry, we couldn\'t confirm you\'re real. This usually happens if the photos were unclear or inconsistent — give it another shot!</div>'+
           '<div class="card" style="padding:14px;margin-bottom:16px;width:100%">'+
             '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Common reasons:</div>'+
-            ['Blurry or poorly lit photos','Faces don\'t appear to match across angles','Face partially obscured or out of frame','Liveness check not passed'].map(function(r){return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>';}).join('')+
+            ['Blurry or poorly lit photos','ID photo does not match selfies','Face partially obscured or out of frame','Liveness check not passed'].map(function(r){return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>';}).join('')+
           '</div>'+
           '<button onclick="'+resetV+'S.verifyStep=\'welcome\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Try Again</button>'+
           '<button onclick="'+resetV+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Back to Account</button>'+
@@ -4086,7 +4153,7 @@ function renderUserVerify(){
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
         '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FFFBEB;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#D97706">'+ic('history',44)+'</div></div>'+
         '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Almost There</div>'+
-        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your selfies need a quick human review (by an actual human). We\'ll let you know within 24 hours.</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your verification needs a quick human review (by an actual human). We\'ll let you know within 24 hours.</div>'+
         '<div class="card" style="padding:14px;background:#FFFBEB;border:1px solid #FDE68A;width:100%;margin-bottom:16px">'+
           '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#D97706;min-width:16px;margin-top:1px">'+ic('info',14)+'</div><div style="font-size:11px;color:#92400E;line-height:1.4">You can continue using Nigh while your verification is reviewed.</div></div>'+
         '</div>'+
@@ -4150,7 +4217,7 @@ function renderUserAccount(){
       <div style="width:40px;height:40px;border-radius:50%;background:${currentUser.verified?'#DCFCE7':'linear-gradient(135deg,#EEF2FF,#E0E7FF)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${currentUser.verified?'#16A34A':'#4F46E5'}">${currentUser.verified?ic('shield',20):ic('personLock',20)}</div>
       <div style="flex:1">
         <div style="font-size:13px;font-weight:700;color:#111827">${currentUser.verified?'Verified':'Prove You\'re Real'}</div>
-        <div style="font-size:11px;color:#6B7280;margin-top:1px">${currentUser.verified?'You\'re real! Confirmed.':'Free · Takes about a minute · One account per person'}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:1px">${currentUser.verified?'You\'re real! Confirmed.':'Free · Takes about a minute'}</div>
       </div>
       ${currentUser.verified?
         '<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">'+ic('check',10)+' Active</span>':
@@ -4866,8 +4933,8 @@ function renderModal(){
   if(S.modal==='verifyId'){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;text-align:center"><div class="mh"></div>
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:8px auto 16px;color:#4F46E5">${ic('shield',30)}</div>
-      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Prove You're Real</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">Quick selfie verification to get your verified badge. Takes about a minute.</div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Confirm You're Real</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">Bots and fraudsters are not welcome. Quick selfie verification — takes about a minute.</div>
       <button onclick="modal(null);S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">Get Verified</button>
       <button onclick="modal(null)" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Maybe Later</button>
     </div></div>`;return;
