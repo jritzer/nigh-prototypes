@@ -1290,11 +1290,11 @@ function renderHome(){
     const dayHasDraft=dayDrafts.length>0;
     const showCreate=!isPast&&!dayHasActiveDrop&&!dayHasDraft&&canFull('drops');
     const dayKey=dk(today);
-    const dayHeadsUp=isVerified()&&S.headsUp&&S.headsUp.date===dayKey?S.headsUp:null;
+    const dayHeadsUp=S.headsUp&&S.headsUp.date===dayKey?S.headsUp:null;
     const huCard=dayHeadsUp?`<div style="margin-top:6px;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;overflow:hidden"><div style="background:rgba(109,40,217,0.1);padding:8px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #DDD6FE"><span style="color:#7C3AED;display:flex;flex-shrink:0">${ic('headsupIc',12)}</span><span style="font-size:11px;font-weight:800;color:#7C3AED;letter-spacing:0.05em;margin-left:-3px;min-width:62px">HEADS UP</span><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;margin-left:12px"></span><span style="font-size:11px;font-weight:700;color:#7C3AED">LIVE</span><button onclick="modal('audience-headsup')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:${dayHeadsUp.visibility==='followers'?'#7C3AED':'#6B7280'};margin-left:8px;flex-shrink:0;cursor:pointer;padding:0" title="${audIc(dayHeadsUp.visibility).label}">${ic(audIc(dayHeadsUp.visibility).icon,15)}</button><span style="margin-left:auto;font-size:11px;color:#9CA3AF">Expires at midnight</span></div><div style="padding:10px 14px"><div style="font-size:13px;color:#4C1D95;line-height:1.5">"${dayHeadsUp.text}"</div><button onclick="S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.niyaFabContext='home';S.scr='niya';render()" style="margin-top:8px;background:none;border:none;padding:0;font-size:11px;font-weight:600;color:#7C3AED;cursor:pointer">Edit with Niya →</button></div></div>`:'';
     const huBtn=`<button onclick="S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.niyaFabContext='home';S.scr='niya';render()" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;box-sizing:border-box"><div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Post a Heads Up</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">Post a daily announcement — expires at midnight</div></div><span style="color:#D1D5DB">${ic('right',16)}</span></button>`;
-    const huBtnInCreate=(!dayHeadsUp&&isVerified()&&canFull('headsup'))?huBtn:'';
-    const huSection=(!showCreate&&!isPast&&!dayHeadsUp&&isVerified()&&canFull('headsup'))?`<div style="padding-top:14px">${huBtn}</div>`:'';
+    const huBtnInCreate=(!dayHeadsUp&&canFull('headsup'))?huBtn:'';
+    const huSection=(!showCreate&&!isPast&&!dayHeadsUp&&canFull('headsup'))?`<div style="padding-top:14px">${huBtn}</div>`:'';
     const createHtml=showCreate?`<div style="padding-top:24px;display:flex;flex-direction:column;gap:8px">
       <!-- 1. Create a drop with Niya — primary hero -->
       <button onclick="S.niyaFabContext='create';S.scr='niya';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;render()" style="width:100%;background:linear-gradient(140deg,#0D0030 0%,#2D0B6B 55%,#5B21B6 100%);border:none;border-radius:20px;padding:22px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;text-align:left;box-sizing:border-box;box-shadow:0 4px 20px rgba(91,33,182,0.3)">
@@ -1483,15 +1483,15 @@ function renderCreate(){
         <span style="color:#D1D5DB">${ic('right',16)}</span>
       </button>
 
-      <!-- 3. Heads Up (verified hosts only) -->
-      ${isVerified()?`<button onclick="S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.niyaFabContext='create';S.scr='niya';render()" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;box-sizing:border-box">
+      <!-- 3. Heads Up (all hosts — unverified limited to followers) -->
+      <button onclick="S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.niyaFabContext='create';S.scr='niya';render()" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;box-sizing:border-box">
         <div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:600;color:#111827">Post a Heads Up</div>
-          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Post a daily announcement — expires at midnight</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${isVerified()?'Post a daily announcement — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Verify</a> to reach public'}</div>
         </div>
         <span style="color:#D1D5DB">${ic('right',16)}</span>
-      </button>`:''}
+      </button>
 
       <!-- 4. Repeat a past drop -->
       ${pastDrops.length?`
@@ -1782,11 +1782,12 @@ function renderCreate(){
     <div style="margin-bottom:22px">
       <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;display:block">Who Can Reserve Tickets <span style="color:#EF4444">*</span></label>
       ${(()=>{
-        const aud=S.dropAudience||(isVerified()?'public':'groups');
+        const aud=S.dropAudience||(isVerified()?'public':'followers');
         const selGroups=S.dropAudienceGroups||[];
         const grps=audienceGroups();
         const audOpts=[
-          ...(isVerified()?[{v:'public',label:'Anyone on Nigh',icn:'globe'},{v:'followers',label:'Followers Only',icn:'twoPeople'}]:[]),
+          {v:'public',label:'Anyone on Nigh',icn:'globe',locked:!isVerified()},
+          {v:'followers',label:'Followers Only',icn:'twoPeople'},
           {v:'groups',label:'Select Specific List',icn:'personLock'},
           {v:'link',label:'Anyone with the Link',icn:'link'},
           {v:'password',label:'Password Protected Link',icn:'lock'},
@@ -1817,6 +1818,11 @@ function renderCreate(){
                   </button>`;
                 }).join(''):'');
               }
+              if(o.locked) return `<button onclick="S.showAudDrop=false;S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:11px 14px;border:none;${i<audOpts.length-1?'border-bottom:1px solid #F3F4F6;':''}background:#F9FAFB;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;box-sizing:border-box;opacity:0.7">
+                <span style="display:flex;align-items:center;flex-shrink:0;color:#9CA3AF">${ic(o.icn,16)}</span>
+                <span style="font-size:13px;font-weight:400;color:#9CA3AF">${o.label}</span>
+                <span style="margin-left:auto;font-size:10px;font-weight:600;color:#0E4EF5;background:#EEF2FF;padding:2px 8px;border-radius:6px">Verify to unlock</span>
+              </button>`;
               return `<button onclick="S.dropAudience='${o.v}';S.showAudDrop=false;S.audGrpExpanded=false;render()" style="width:100%;padding:11px 14px;border:none;${i<audOpts.length-1?'border-bottom:1px solid #F3F4F6;':''}background:${aud===o.v?'#F0F9FF':'#fff'};cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;box-sizing:border-box">
                 <span style="display:flex;align-items:center;flex-shrink:0;color:${aud===o.v?'#0E4EF5':'#6B7280'}">${ic(o.icn,16)}</span>
                 <span style="font-size:13px;font-weight:${aud===o.v?'600':'400'};color:${aud===o.v?'#0E4EF5':'#111827'}">${o.label}</span>
@@ -1825,9 +1831,9 @@ function renderCreate(){
             }).join('')}
           </div>`:''}
         </div>
-        ${!isVerified()?`<div style="background:#FEF3C7;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:#92400E;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-          <span style="flex-shrink:0;margin-top:1px">${ic('alert',13,'#F59E0B')}</span>
-          <span>Public drops are available to verified hosts (places, brands & mobile hosts). Your drops are visible only to your guest list, groups, or via shared links.</span>
+        ${!isVerified()?`<div style="background:#EEF2FF;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:#3730A3;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+          <span style="flex-shrink:0;margin-top:1px">${ic('shield',13,'#4F46E5')}</span>
+          <span><strong>Verify to unlock public drops.</strong> Until verified, your drops are visible to followers, guest lists, groups, or via shared links. <a onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="color:#0E4EF5;font-weight:600;cursor:pointer;text-decoration:underline">Verify now</a></span>
         </div>`:''}
         ${aud==='password'?`<div style="background:#EEF2FF;border-radius:8px;padding:10px 12px;font-size:11px;color:#1d4ed8;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
           <span style="flex-shrink:0;margin-top:1px">${ic('lock',13,'#0E4EF5')}</span>
@@ -2039,11 +2045,11 @@ function renderCreate(){
     const partnerDisplay=partnerHandles.length
       ?partnerHandles.map(h=>{const p=partnersList.find(x=>'@'+x.handle===h||x.handle===h);if(!p)return h;return p.name+' <span style="color:#9CA3AF">'+p.handle+'</span>';}).join('<br>')
       :'None';
-    const audLabel=(()=>{const a=S.dropAudience||(isVerified()?'public':'guests');if(a==='public')return'Anyone on Nigh';if(a==='followers')return'Only Followers';if(a==='guests')return isPersonal()?'My Guest List':'All in Guest List';if(a==='link')return'Shared Link Only';if(a==='groups'){const sg=S.dropAudienceGroups||[];const grps=audienceGroups();return sg.map(id=>{const g=grps.find(x=>x.id===id);return g?g.name:id;}).join(', ')||'No groups selected';}return a;})();
+    const audLabel=(()=>{const a=S.dropAudience||(isVerified()?'public':'followers');if(a==='public')return'Anyone on Nigh';if(a==='followers')return'Only Followers';if(a==='guests')return isPersonal()?'My Guest List':'All in Guest List';if(a==='link')return'Shared Link Only';if(a==='groups'){const sg=S.dropAudienceGroups||[];const grps=audienceGroups();return sg.map(id=>{const g=grps.find(x=>x.id===id);return g?g.name:id;}).join(', ')||'No groups selected';}return a;})();
     const rows=[
       ['cal','Date',dateDisplay],
       ['clock','Time',src.start],
-      ...(isVerified()?[['radio','Broadcasting',bcastDisplay]]:[]),
+      ['radio','Broadcasting',isVerified()?bcastDisplay:'<span style="color:#9CA3AF">Verify to unlock</span>'],
       ['map','Location',locDisplay],
       ['users','Tickets',src.cap+' spots available'],
       ...((src.price>0||(S.priceTiers&&S.priceTiers.length>1))?[['dollar','Ticket Price',pl]]:[]),
@@ -2251,7 +2257,7 @@ function renderLive(){
       ${row('users','Tickets',`${d.cap} spots available`)}
       ${row('dollar','Ticket Price',priceLabel)}
       ${taxLabel?row('percent','Sales Tax',taxLabel):''}
-      ${isVerified()?row('shield','Age Restriction',ageLabel):''}
+      ${row('shield','Age Restriction',ageLabel)}
       ${row('user','Host',acct().name)}
       ${d.partners&&d.partners.length?`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6"><div style="width:28px;display:flex;justify-content:center;flex-shrink:0;padding-top:1px;color:#9CA3AF">${ic('link',13)}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px">Partners</div><div style="display:flex;flex-direction:column;gap:4px">${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:9px;background:${p.status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${p.status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div><div style="font-size:12px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#6B7280">${p.handle}</div></div><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;background:${p.status==='Accepted'?'#DCFCE7':'#FEF3C7'};color:${p.status==='Accepted'?'#16A34A':'#D97706'}">${p.status}</span></div>`).join('')}</div></div></div>`:''}
 `;
@@ -3753,7 +3759,7 @@ function renderVerify(){
   const step=S.verifyStep||'welcome';
   const a=acct();
   const backToSub="S.menuSub='subscription';render()";
-  const resetVerify="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.verifySelfie=false;S.verifyResult=null;";
+  const resetVerify="S.verifyStep='welcome';S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;";
 
   // ── Welcome / Overview ──
   if(step==='welcome'){
@@ -3765,14 +3771,14 @@ function renderVerify(){
             <div style="color:#4F46E5">${ic('shield',36)}</div>
           </div>
           <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Identity</div>
-          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Quick verification to unlock public drops, priced events, and payouts.</div>
+          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Quick selfie verification to unlock public drops, priced events, and payouts.</div>
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
           <div style="padding:14px 16px;border-bottom:1px solid #F3F4F6">
             <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">What You'll Need</div>
           </div>
-          ${['Government-issued photo ID (driver\'s license, passport, or national ID)','A well-lit space for a quick selfie','About 2 minutes of your time'].map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>').join('')}
+          ${['A well-lit space for 3 quick selfies','Front-facing photo + left & right side profiles','About 1 minute of your time'].map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>').join('')}
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
@@ -3785,141 +3791,119 @@ function renderVerify(){
         <div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">
           <div style="display:flex;gap:8px;align-items:flex-start">
             <div style="color:#0284C7;min-width:16px;margin-top:1px">${ic('shield',14)}</div>
-            <div style="font-size:11px;color:#0369A1;line-height:1.4">Your data is encrypted and processed securely via Stripe Identity. Nigh never stores your ID photos.</div>
+            <div style="font-size:11px;color:#0369A1;line-height:1.4">Your selfies are encrypted and processed securely. Nigh uses facial recognition to verify you are a real person and to prevent fraud.</div>
           </div>
         </div>
 
-        <button onclick="S.verifyStep='id-type';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>
+        <button onclick="S.verifyStep='selfie-front';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>
         <button onclick="${backToSub}" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Maybe Later</button>
       </div>
     </div>`;
   }
 
-  // ── ID Type Selector ──
-  if(step==='id-type'){
-    const idTypes=[
-      {key:'license',label:"Driver's License",desc:'Front & back required',icon:'billing'},
-      {key:'passport',label:'Passport',desc:'Photo page only',icon:'globe'},
-      {key:'national-id',label:'National ID Card',desc:'Front & back required',icon:'personLock'}
-    ];
+  // ── Selfie 1: Front Face ──
+  if(step==='selfie-front'){
     return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Select ID Type','Step 1 of 3',"S.verifyStep='welcome';render()")}
-      <div style="flex:1;overflow-y:auto;padding:16px">
-        <div style="text-align:center;margin-bottom:20px">
-          <div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">Choose Your ID Type</div>
-          <div style="font-size:12px;color:#6B7280">Select the document you'd like to use for verification.</div>
-        </div>
-        ${idTypes.map(t=>'<button onclick="S.verifyIdType=\''+t.key+'\';S.verifyStep=\'id-front\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>').join('')}
-      </div>
-    </div>`;
-  }
-
-  // ── ID Front Capture ──
-  if(step==='id-front'){
-    const isPassport=S.verifyIdType==='passport';
-    const label=isPassport?'Passport Photo Page':'Front of ID';
-    const nextStep=isPassport?'selfie':'id-back';
-    const totalDocSteps=isPassport?1:2;
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Scan Document','Document 1 of '+totalDocSteps,"S.verifyStep='id-type';S.verifyIdFront=false;render()")}
+      ${hdr('Front Selfie','Step 1 of 3',"S.verifyStep='welcome';S.selfie1=false;render()")}
       <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
 
         <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">
           <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:${isPassport?'#E5E7EB':'#E5E7EB'}"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div>
           <div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div>
         </div>
 
-        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">${label}</div>
-        <div style="font-size:12px;color:#6B7280;margin-bottom:16px">Position your ID within the frame</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Face the Camera</div>
+        <div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Look straight ahead with a neutral expression</div>
 
-        <div onclick="${!S.verifyIdFront?'S.verifyIdFront=true;render()':''}" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed ${S.verifyIdFront?'#16A34A':'#0E4EF5'};background:${S.verifyIdFront?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative;overflow:hidden">
-          ${S.verifyIdFront?
-            '<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':
-            '<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>'}
-        </div>
-
-        ${!S.verifyIdFront?
-          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
-          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
-          :
-          '<button onclick="S.verifyStep=\''+nextStep+'\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: '+(isPassport?'Selfie':'Back of ID')+' '+ic('chevRight',16)+'</button>'+
-          '<button onclick="S.verifyIdFront=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
-        }
-
-        ${!S.verifyIdFront?'<div style="margin-top:16px;padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;max-width:300px"><div style="font-size:11px;color:#92400E;line-height:1.4"><strong>Tips:</strong> Good lighting, no glare, all text and photo visible.</div></div>':''}
-      </div>
-    </div>`;
-  }
-
-  // ── ID Back Capture ──
-  if(step==='id-back'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Scan Document','Document 2 of 2',"S.verifyStep='id-front';S.verifyIdBack=false;render()")}
-      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
-
-        <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">
-          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div>
-        </div>
-
-        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Back of ID</div>
-        <div style="font-size:12px;color:#6B7280;margin-bottom:16px">Flip your ID over and capture the back</div>
-
-        <div onclick="${!S.verifyIdBack?'S.verifyIdBack=true;render()':''}" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed ${S.verifyIdBack?'#16A34A':'#0E4EF5'};background:${S.verifyIdBack?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">
-          ${S.verifyIdBack?
-            '<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':
-            '<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>'}
-        </div>
-
-        ${!S.verifyIdBack?
-          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
-          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
-          :
-          '<button onclick="S.verifyStep=\'selfie\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Selfie '+ic('chevRight',16)+'</button>'+
-          '<button onclick="S.verifyIdBack=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
-        }
-      </div>
-    </div>`;
-  }
-
-  // ── Selfie / Liveness ──
-  if(step==='selfie'){
-    const prevStep=S.verifyIdType==='passport'?'id-front':'id-back';
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Selfie Verification','Liveness check',"S.verifyStep='"+prevStep+"';S.verifySelfie=false;render()")}
-      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
-
-        <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">
-          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
-        </div>
-
-        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Take a Selfie</div>
-        <div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">We'll match your face to your ID photo.</div>
-
-        <div style="width:200px;height:200px;border-radius:50%;border:3px ${S.verifySelfie?'solid #16A34A':'dashed #6B7280'};background:${S.verifySelfie?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px;position:relative">
-          ${S.verifySelfie?
+        <div onclick="${!S.selfie1?'S.selfie1=true;render()':''}" style="width:200px;height:200px;border-radius:50%;border:3px ${S.selfie1?'solid #16A34A':'dashed #0E4EF5'};background:${S.selfie1?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">
+          ${S.selfie1?
             '<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':
-            '<div style="color:#9CA3AF">'+ic('user',40)+'</div>'}
+            '<div style="color:#0E4EF5">'+ic('user',40)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>'}
         </div>
 
-        ${!S.verifySelfie?`
+        ${!S.selfie1?`
           <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">
-            ${['Face the camera','Good lighting','Remove glasses','Neutral expression'].map(t=>'<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>').join('')}
+            ${['Face straight ahead','Good lighting','Remove glasses','Neutral expression'].map(t=>'<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>').join('')}
           </div>
-          <button onclick="S.verifySelfie=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">${ic('cam',18)} Capture Selfie</button>
+          <button onclick="S.selfie1=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">${ic('cam',18)} Take Photo</button>
+        `:`
+          <button onclick="S.verifyStep='selfie-left';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Left Side ${ic('chevRight',16)}</button>
+          <button onclick="S.selfie1=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>
+        `}
+      </div>
+    </div>`;
+  }
+
+  // ── Selfie 2: Left Side ──
+  if(step==='selfie-left'){
+    return `<div style="display:flex;flex-direction:column;height:100%">
+      ${hdr('Left Side','Step 2 of 3',"S.verifyStep='selfie-front';S.selfie2=false;render()")}
+      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
+
+        <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">
+          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div>
+        </div>
+
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Left</div>
+        <div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the left side of your face</div>
+
+        <div onclick="${!S.selfie2?'S.selfie2=true;render()':''}" style="width:200px;height:200px;border-radius:50%;border:3px ${S.selfie2?'solid #16A34A':'dashed #0E4EF5'};background:${S.selfie2?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">
+          ${S.selfie2?
+            '<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':
+            '<div style="color:#0E4EF5"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M2 12l3-3"/></svg></div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>'}
+        </div>
+
+        ${!S.selfie2?`
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">
+            ${['Turn head left ~45 degrees','Keep eyes visible','Stay in frame'].map(t=>'<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>').join('')}
+          </div>
+          <button onclick="S.selfie2=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">${ic('cam',18)} Take Photo</button>
+        `:`
+          <button onclick="S.verifyStep='selfie-right';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Right Side ${ic('chevRight',16)}</button>
+          <button onclick="S.selfie2=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>
+        `}
+      </div>
+    </div>`;
+  }
+
+  // ── Selfie 3: Right Side ──
+  if(step==='selfie-right'){
+    return `<div style="display:flex;flex-direction:column;height:100%">
+      ${hdr('Right Side','Step 3 of 3',"S.verifyStep='selfie-left';S.selfie3=false;render()")}
+      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
+
+        <div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">
+          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div>
+        </div>
+
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Right</div>
+        <div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the right side of your face</div>
+
+        <div onclick="${!S.selfie3?'S.selfie3=true;render()':''}" style="width:200px;height:200px;border-radius:50%;border:3px ${S.selfie3?'solid #16A34A':'dashed #0E4EF5'};background:${S.selfie3?'#F0FDF4':'#F9FAFB'};display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">
+          ${S.selfie3?
+            '<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':
+            '<div style="color:#0E4EF5"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M22 12l-3-3"/></svg></div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>'}
+        </div>
+
+        ${!S.selfie3?`
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">
+            ${['Turn head right ~45 degrees','Keep eyes visible','Stay in frame'].map(t=>'<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>').join('')}
+          </div>
+          <button onclick="S.selfie3=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">${ic('cam',18)} Take Photo</button>
         `:`
           <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px">
             <div style="display:flex;gap:8px;align-items:center">
               <div style="color:#16A34A">${ic('check',14)}</div>
-              <span style="font-size:12px;color:#15803D;font-weight:500">Liveness check passed</span>
+              <span style="font-size:12px;color:#15803D;font-weight:500">All 3 photos captured</span>
             </div>
           </div>
           <button onclick="S.verifyStep='processing';render();setTimeout(()=>{S.verifyResult='success';S.verifyStep='result';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>
-          <button onclick="S.verifySelfie=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Selfie</button>
+          <button onclick="S.selfie3=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>
         `}
       </div>
     </div>`;
@@ -3928,15 +3912,15 @@ function renderVerify(){
   // ── Processing ──
   if(step==='processing'){
     return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Verifying','Step 3 of 3',null,null,true)}
+      ${hdr('Verifying','Processing...',null,null,true)}
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">
         <style>@keyframes verifySpin{to{transform:rotate(360deg)}}</style>
         <div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#0E4EF5;animation:verifySpin 1s linear infinite;margin-bottom:24px"></div>
         <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Verifying Your Identity</div>
-        <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">Securely checking your documents. This usually takes just a few seconds.</div>
+        <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">Analyzing your selfies for facial consistency. This usually takes just a few seconds.</div>
 
         <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
-          ${['Document quality check','Face matching','Identity validation'].map((s,i)=>'<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:verifySpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>').join('')}
+          ${['Photo quality check','Facial consistency analysis','Identity validation'].map((s,i)=>'<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:verifySpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>').join('')}
         </div>
       </div>
     </div>`;
@@ -3978,11 +3962,11 @@ function renderVerify(){
             <svg width="44" height="44" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
           </div>
           <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Verification Failed</div>
-          <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn't verify your identity. This can happen if the photos were unclear or didn't match.</div>
+          <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn't verify your identity. This can happen if the selfies were unclear or inconsistent.</div>
 
           <div class="card" style="padding:14px;margin-bottom:16px;width:100%">
             <div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Common reasons:</div>
-            ${['Blurry or glare on ID photo','Face didn\'t match the ID','Expired document','Liveness check not passed'].map(r=>'<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>').join('')}
+            ${['Blurry or poorly lit photos','Faces don\'t appear to match across angles','Face partially obscured or out of frame','Liveness check not passed'].map(r=>'<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>').join('')}
           </div>
 
           <button onclick="${resetVerify}S.verifyStep='welcome';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Try Again</button>
@@ -4065,7 +4049,7 @@ function renderSubscription(){
           <div style="width:32px;height:32px;border-radius:50%;background:${pVerified?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${pVerified?'#16A34A':'#F59E0B'}">${pVerified?ic('shield',16):ic('personLock',16)}</div>
           <div style="flex:1">
             <div style="font-size:13px;font-weight:700;color:#111827">${pVerified?'Identity Verified':'Identity Not Verified'}</div>
-            <div style="font-size:11px;color:#6B7280">${pVerified?'Selfie + ID confirmed · Applies to all your accounts':'Verify your identity to unlock public & paid drops'}</div>
+            <div style="font-size:11px;color:#6B7280">${pVerified?'Selfie verification confirmed · Applies to all your accounts':'Verify your identity to unlock public & paid drops'}</div>
           </div>
           ${pVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Active</span>`:''}
         </div>
@@ -4153,7 +4137,7 @@ function renderSubscription(){
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:700;color:#111827">Your Identity</div>
-          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Selfie + ID confirmed':'Verify yourself to manage this account'}</div>
+          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Selfie verification confirmed':'Verify yourself to manage this account'}</div>
         </div>
         ${isVerifiedAcct?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<button onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>'}
       </div>
@@ -4227,7 +4211,7 @@ function renderSubscription(){
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:700;color:#111827">Your Identity</div>
-          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Selfie + ID confirmed':'Verify yourself to unlock paid drops'}</div>
+          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Selfie verification confirmed':'Verify yourself to unlock paid drops'}</div>
         </div>
         ${isVerifiedAcct?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>`}
       </div>
