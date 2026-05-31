@@ -43,7 +43,7 @@ input:focus,textarea:focus{outline:none}
 <body>
 <div id="app"><div id="scr"></div><div class="tb" id="tb"></div><div id="mr" style="position:absolute;inset:0;z-index:500;pointer-events:none"></div></div>
 <script>
-let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,verifySelfie:false,verifyResult:null};
+let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obFirstName:'',obHandle:'',obListening:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',selfie1:false,selfie2:false,selfie3:false,verifyResult:null};
 
 // ── Niya Icon ─────────────────────────────────────────
 // To roll back to original: change NIYA_ICON = NIYA_ICON_OLD
@@ -3927,138 +3927,125 @@ function renderProProfile(){
 function renderUserVerify(){
   var step=S.verifyStep||'welcome';
   var backToAcct="S.menuSub='userAccount';render()";
-  var resetV="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.verifySelfie=false;S.verifyResult=null;";
+  var resetV="S.verifyStep='welcome';S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;";
 
   if(step==='welcome'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Identity Verification','Verify your identity',backToAcct)+
+      hdr('Verification','Prove you\'re real',backToAcct)+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
         '<div style="text-align:center;margin:16px 0 24px">'+
           '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#4F46E5">'+ic('shield',36)+'</div></div>'+
-          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Identity</div>'+
-          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Quick verification to get your verified badge across all of Nigh.</div>'+
+          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Prove You\'re Real</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">We use this to confirm you\'re real. Bots and fraudsters are not welcome.</div>'+
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You\'ll Need</div></div>'+
-          ['Government-issued photo ID','A well-lit space for a quick selfie','About 2 minutes'].map(function(item,i,arr){
+          ['A well-lit space for 3 quick selfies','Front-facing photo + left & right side profiles','About 1 minute of your time'].map(function(item,i,arr){
             return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>';
           }).join('')+
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You Get</div></div>'+
-          ['Verified badge on your profile','Verified badge visible to hosts','Higher trust when reserving drops','Verified checkmark across all Nigh apps'].map(function(item,i,arr){
+          ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark across all Nigh apps'].map(function(item,i,arr){
             return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
           }).join('')+
         '</div>'+
         '<div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">'+
-          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your data is encrypted and processed securely via Stripe Identity. Nigh never stores your ID photos.</div></div>'+
+          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your selfies are processed securely and only used for verification purposes.</div></div>'+
         '</div>'+
-        '<button onclick="S.verifyStep=\'id-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
+        '<button onclick="S.verifyStep=\'selfie-front\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
         '<button onclick="'+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Maybe Later</button>'+
       '</div></div>';
   }
 
-  if(step==='id-type'){
-    var idTypes=[
-      {key:'license',label:"Driver's License",desc:'Front & back required',icon:'billing'},
-      {key:'passport',label:'Passport',desc:'Photo page only',icon:'globe'},
-      {key:'national-id',label:'National ID Card',desc:'Front & back required',icon:'personLock'}
-    ];
+  // ── Selfie 1: Front Face ──
+  if(step==='selfie-front'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Select ID Type','Step 1 of 3',"S.verifyStep='welcome';render()")+
-      '<div style="flex:1;overflow-y:auto;padding:16px">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
-        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">Choose Your ID Type</div><div style="font-size:12px;color:#6B7280">Select the document you\'d like to use.</div></div>'+
-        idTypes.map(function(t){
-          return '<button onclick="S.verifyIdType=\''+t.key+'\';S.verifyStep=\'id-front\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
-        }).join('')+
-      '</div></div>';
-  }
-
-  if(step==='id-front'){
-    var isPassport=S.verifyIdType==='passport';
-    var label=isPassport?'Passport Photo Page':'Front of ID';
-    var nextStep=isPassport?'selfie':'id-back';
-    var totalSteps=isPassport?1:2;
-    return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Scan Document','Document 1 of '+totalSteps,"S.verifyStep='id-type';S.verifyIdFront=false;render()")+
+      hdr('Front Selfie','Step 1 of 3',"S.verifyStep='welcome';S.selfie1=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
         '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
-        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">'+label+'</div>'+
-        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Position your ID within the frame</div>'+
-        '<div onclick="'+(S.verifyIdFront?'':'S.verifyIdFront=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdFront?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdFront?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
-          (S.verifyIdFront?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Face the Camera</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Look straight ahead with a neutral expression</div>'+
+        '<div onclick="'+(S.selfie1?'':'S.selfie1=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie1?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie1?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
+          (S.selfie1?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#0E4EF5">'+ic('user',40)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
         '</div>'+
-        (S.verifyIdFront?
-          '<button onclick="S.verifyStep=\''+nextStep+'\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: '+(isPassport?'Selfie':'Back of ID')+' '+ic('chevRight',16)+'</button>'+
-          '<button onclick="S.verifyIdFront=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
-          :
-          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
-          '<button onclick="S.verifyIdFront=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
-        )+
-      '</div></div>';
-  }
-
-  if(step==='id-back'){
-    return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Scan Document','Document 2 of 2',"S.verifyStep='id-front';S.verifyIdBack=false;render()")+
-      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
-        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Back of ID</div>'+
-        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px">Flip your ID over and capture the back</div>'+
-        '<div onclick="'+(S.verifyIdBack?'':'S.verifyIdBack=true;render()')+'" style="width:100%;max-width:300px;aspect-ratio:1.6/1;border-radius:16px;border:2px dashed '+(S.verifyIdBack?'#16A34A':'#0E4EF5')+';background:'+(S.verifyIdBack?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer">'+
-          (S.verifyIdBack?'<div style="color:#16A34A">'+ic('check',40)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:8px">Photo Captured</div>':'<div style="color:#0E4EF5">'+ic('cam',32)+'</div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
-        '</div>'+
-        (S.verifyIdBack?
-          '<button onclick="S.verifyStep=\'selfie\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Selfie '+ic('chevRight',16)+'</button>'+
-          '<button onclick="S.verifyIdBack=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
-          :
-          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'+
-          '<button onclick="S.verifyIdBack=true;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Upload from Gallery</button>'
-        )+
-      '</div></div>';
-  }
-
-  if(step==='selfie'){
-    var prevStep=S.verifyIdType==='passport'?'id-front':'id-back';
-    return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Selfie Verification','Liveness check',"S.verifyStep='"+prevStep+"';S.verifySelfie=false;render()")+
-      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>'+
-        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Take a Selfie</div>'+
-        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">We\'ll match your face to your ID photo.</div>'+
-        '<div style="width:200px;height:200px;border-radius:50%;border:3px '+(S.verifySelfie?'solid #16A34A':'dashed #6B7280')+';background:'+(S.verifySelfie?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:12px">'+
-          (S.verifySelfie?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#9CA3AF">'+ic('user',40)+'</div>')+
-        '</div>'+
-        (S.verifySelfie?
-          '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">Liveness check passed</span></div></div>'+
-          '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
-          '<button onclick="S.verifySelfie=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Selfie</button>'
+        (S.selfie1?
+          '<button onclick="S.verifyStep=\'selfie-left\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Left Side '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.selfie1=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
           :
           '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">'+
-            ['Face the camera','Good lighting','Remove glasses','Neutral expression'].map(function(t){return '<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>';}).join('')+
+            ['Face straight ahead','Good lighting','Remove glasses','Neutral expression'].map(function(t){return '<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>';}).join('')+
           '</div>'+
-          '<button onclick="S.verifySelfie=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Capture Selfie</button>'
+          '<button onclick="S.selfie1=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'
         )+
       '</div></div>';
   }
 
+  // ── Selfie 2: Left Side ──
+  if(step==='selfie-left'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Left Side','Step 2 of 3',"S.verifyStep='selfie-front';S.selfie2=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Left</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the left side of your face</div>'+
+        '<div onclick="'+(S.selfie2?'':'S.selfie2=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie2?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie2?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
+          (S.selfie2?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#0E4EF5"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M2 12l3-3"/></svg></div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.selfie2?
+          '<button onclick="S.verifyStep=\'selfie-right\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Right Side '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.selfie2=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">'+
+            ['Turn head left ~45 degrees','Keep eyes visible','Stay in frame'].map(function(t){return '<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>';}).join('')+
+          '</div>'+
+          '<button onclick="S.selfie2=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'
+        )+
+      '</div></div>';
+  }
+
+  // ── Selfie 3: Right Side ──
+  if(step==='selfie-right'){
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Right Side','Step 3 of 3',"S.verifyStep='selfie-left';S.selfie3=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Turn Right</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Show the right side of your face</div>'+
+        '<div onclick="'+(S.selfie3?'':'S.selfie3=true;render()')+'" style="width:200px;height:200px;border-radius:50%;border:3px '+(S.selfie3?'solid #16A34A':'dashed #0E4EF5')+';background:'+(S.selfie3?'#F0FDF4':'#F9FAFB')+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;position:relative">'+
+          (S.selfie3?'<div style="color:#16A34A">'+ic('check',48)+'</div><div style="font-size:12px;color:#16A34A;font-weight:600;margin-top:6px">Captured</div>':'<div style="color:#0E4EF5"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M22 12l-3-3"/></svg></div><div style="font-size:11px;color:#6B7280;margin-top:8px">Tap to capture</div>')+
+        '</div>'+
+        (S.selfie3?
+          '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">All 3 photos captured</span></div></div>'+
+          '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
+          '<button onclick="S.selfie3=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
+          :
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">'+
+            ['Turn head right ~45 degrees','Keep eyes visible','Stay in frame'].map(function(t){return '<span style="font-size:10px;color:#6B7280;background:#F3F4F6;padding:4px 10px;border-radius:20px">'+t+'</span>';}).join('')+
+          '</div>'+
+          '<button onclick="S.selfie3=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('cam',18)+' Take Photo</button>'
+        )+
+      '</div></div>';
+  }
+
+  // ── Processing ──
   if(step==='processing'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Verifying','Please wait',null,null,true)+
+      hdr('Verifying','Processing...',null,null,true)+
       '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">'+
         '<style>@keyframes uvSpin{to{transform:rotate(360deg)}}</style>'+
         '<div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#0E4EF5;animation:uvSpin 1s linear infinite;margin-bottom:24px"></div>'+
-        '<div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Verifying Your Identity</div>'+
-        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">This usually takes just a few seconds.</div>'+
+        '<div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Making sure you\'re real...</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">This only takes a few seconds.</div>'+
         '<div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">'+
-          ['Document quality check','Face matching','Identity validation'].map(function(s,i){
+          ['Photo quality check','Liveness detection','Identity confirmation'].map(function(s,i){
             return '<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:uvSpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>';
           }).join('')+
         '</div>'+
       '</div></div>';
   }
 
+  // ── Result ──
   if(step==='result'){
     var res=S.verifyResult||'success';
     if(res==='success'){
@@ -4066,11 +4053,11 @@ function renderUserVerify(){
         hdr('Verified','',null,null,true)+
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#16A34A">'+ic('shield',44)+'</div></div>'+
-          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Identity Verified!</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your verified badge is now visible across all Nigh apps — to hosts, other guests, and on your profile.</div>'+
+          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">You\'re Verified</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Confirmed — you\'re real! This applies to all accounts you manage.</div>'+
           '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
             '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Active</div></div>'+
-            ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark in Host & Support apps'].map(function(f,i,arr){
+            ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark across all Nigh apps'].map(function(f,i,arr){
               return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+f+'</span></div>';
             }).join('')+
           '</div>'+
@@ -4083,18 +4070,26 @@ function renderUserVerify(){
         hdr('Verification Failed','',backToAcct,null,true)+
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><svg width="44" height="44" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>'+
-          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Verification Failed</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn\'t verify your identity. Please try again with clearer photos.</div>'+
+          '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">We Couldn\'t Confirm You\'re Real</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Sorry, we couldn\'t confirm you\'re real. This usually happens if the selfies were unclear or inconsistent — give it another shot!</div>'+
+          '<div class="card" style="padding:14px;margin-bottom:16px;width:100%">'+
+            '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Common reasons:</div>'+
+            ['Blurry or poorly lit photos','Faces don\'t appear to match across angles','Face partially obscured or out of frame','Liveness check not passed'].map(function(r){return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>';}).join('')+
+          '</div>'+
           '<button onclick="'+resetV+'S.verifyStep=\'welcome\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Try Again</button>'+
           '<button onclick="'+resetV+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Back to Account</button>'+
         '</div></div>';
     }
+    // ── Pending / Manual Review ──
     return '<div style="display:flex;flex-direction:column;height:100%">'+
       hdr('Under Review','',null,null,true)+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
         '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FFFBEB;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#D97706">'+ic('history',44)+'</div></div>'+
-        '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Under Review</div>'+
-        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your verification needs a quick manual review. We\'ll notify you within 24 hours.</div>'+
+        '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Almost There</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your selfies need a quick human review (by an actual human). We\'ll let you know within 24 hours.</div>'+
+        '<div class="card" style="padding:14px;background:#FFFBEB;border:1px solid #FDE68A;width:100%;margin-bottom:16px">'+
+          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#D97706;min-width:16px;margin-top:1px">'+ic('info',14)+'</div><div style="font-size:11px;color:#92400E;line-height:1.4">You can continue using Nigh while your verification is reviewed.</div></div>'+
+        '</div>'+
         '<button onclick="'+resetV+'S.menuSub=\'userAccount\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to Account</button>'+
         '<button onclick="'+resetV+'S.menuSub=null;S.scr=\'feed\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Feed</button>'+
       '</div></div>';
@@ -4154,8 +4149,8 @@ function renderUserAccount(){
     <div style="background:#fff;border-radius:12px;border:1px solid ${currentUser.verified?'#BBF7D0':'#E5E7EB'};padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
       <div style="width:40px;height:40px;border-radius:50%;background:${currentUser.verified?'#DCFCE7':'linear-gradient(135deg,#EEF2FF,#E0E7FF)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${currentUser.verified?'#16A34A':'#4F46E5'}">${currentUser.verified?ic('shield',20):ic('personLock',20)}</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:#111827">${currentUser.verified?'Identity Verified':'Verify Your Identity'}</div>
-        <div style="font-size:11px;color:#6B7280;margin-top:1px">${currentUser.verified?'Selfie + ID confirmed · Verified badge active':'Optional · Unlock verified badge across Nigh'}</div>
+        <div style="font-size:13px;font-weight:700;color:#111827">${currentUser.verified?'Verified':'Prove You\'re Real'}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:1px">${currentUser.verified?'You\'re real! Confirmed.':'Free · Takes about a minute · One account per person'}</div>
       </div>
       ${currentUser.verified?
         '<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">'+ic('check',10)+' Active</span>':
@@ -4218,33 +4213,22 @@ function renderUserAccount(){
       <button onclick="modal('editField-locVisiting')" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Edit</button>
     </div>
 
-    <!-- Identity Verification -->
-    ${S.idVerified?`
-    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
-      <div style="width:40px;height:40px;border-radius:10px;background:#FEFCE8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-      </div>
+    <!-- Verification -->
+    ${currentUser.verified?`
+    <div style="background:#fff;border-radius:12px;border:1px solid #BBF7D0;padding:14px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+      <div style="width:40px;height:40px;border-radius:10px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#16A34A">${ic('shield',20)}</div>
       <div style="flex:1">
-        <div style="font-size:13px;font-weight:600;color:#111827">Identity Verification</div>
-        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-          <span style="display:inline-flex;align-items:center;gap:3px;background:#FEFCE8;border:1px solid #FDE68A;border-radius:20px;padding:1px 7px">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#CA8A04" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            <span style="font-size:9px;font-weight:700;color:#CA8A04;letter-spacing:0.02em">ID Verified</span>
-          </span>
-        </div>
+        <div style="font-size:13px;font-weight:600;color:#111827">Verified</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">You're real! Confirmed.</div>
       </div>
+      <span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">${ic('check',10)} Active</span>
     </div>`:`
-    <div onclick="modal('verifyId')" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer">
+    <div onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer">
       <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
-        <div style="width:40px;height:40px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/><circle cx="9" cy="9" r="2" stroke="#D97706"/></svg>
-        </div>
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#4F46E5">${ic('shield',20)}</div>
         <div>
-          <div style="font-size:13px;font-weight:600;color:#111827">Identity Verification</div>
-          <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
-            <div style="width:6px;height:6px;border-radius:50%;background:#F59E0B;flex-shrink:0"></div>
-            <div style="font-size:11px;color:#92400E;font-weight:500">Not verified</div>
-          </div>
+          <div style="font-size:13px;font-weight:600;color:#111827">Prove You're Real</div>
+          <div style="font-size:11px;color:#6B7280;margin-top:2px">Free · Takes about a minute</div>
         </div>
       </div>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -4880,123 +4864,12 @@ function renderModal(){
 
   // ── Account modals ──────────────────────────────────────
   if(S.modal==='verifyId'){
-    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
-      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Verify Your Identity</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">A government-issued ID is required to access age-restricted drops.</div>
-      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px">Select ID Type</div>
-      <button onclick="S.verifyIdType='Drivers License';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
-        <span style="font-size:22px">🪪</span>
-        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Driver's License</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button onclick="S.verifyIdType='Passport';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
-        <span style="font-size:22px">📘</span>
-        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Passport</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Photo page only</div></div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button onclick="S.verifyIdType='State ID';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
-        <span style="font-size:22px">🪪</span>
-        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">State ID</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button onclick="S.verifyIdType='Military ID';modal('verifyIdScan')" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px;border-radius:12px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
-        <span style="font-size:22px">🎖️</span>
-        <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Military ID</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Front &amp; back required</div></div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div></div>`;return;
-  }
-  if(S.modal==='verifyIdScan'){
-    const idType=(S.verifyIdType==='Drivers License'?"Driver's License":S.verifyIdType)||"Driver's License";
-    const needsBack=idType!=='Passport';
-    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
-      <button onclick="modal('verifyId')" style="background:none;border:none;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        <span style="font-size:12px;color:#6B7280">Back</span>
-      </button>
-      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">${idType}</div>
-      <div style="font-size:13px;color:#6B7280;margin-bottom:20px">${needsBack?'Scan or upload the front and back of your ID.':'Scan or upload the photo page of your passport.'}</div>
-
-      <!-- Front -->
-      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Front</div>
-      <div style="border:2px dashed #D1D5DB;border-radius:14px;padding:28px 16px;text-align:center;margin-bottom:${needsBack?'16px':'20px'};background:#F9FAFB;position:relative">
-        <div style="width:48px;height:48px;border-radius:12px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/></svg>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px">Front of ${idType}</div>
-        <div style="display:flex;gap:8px;justify-content:center">
-          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#0E4EF5;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            Take Photo
-          </button>
-          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#fff;color:#374151;border:1px solid #E5E7EB;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Upload</button>
-        </div>
-      </div>
-
-      ${needsBack?`<!-- Back -->
-      <div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Back</div>
-      <div style="border:2px dashed #D1D5DB;border-radius:14px;padding:28px 16px;text-align:center;margin-bottom:20px;background:#F9FAFB">
-        <div style="width:48px;height:48px;border-radius:12px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 10h2M16 14h2M6 10h6M6 14h4"/></svg>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px">Back of ${idType}</div>
-        <div style="display:flex;gap:8px;justify-content:center">
-          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#0E4EF5;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            Take Photo
-          </button>
-          <button onclick="" style="padding:8px 16px;border-radius:8px;background:#fff;color:#374151;border:1px solid #E5E7EB;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Upload</button>
-        </div>
-      </div>`:''}
-
-      <button onclick="modal('verifyIdSelfie')" style="padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:block;margin:0 auto">Continue</button>
-    </div></div>`;return;
-  }
-  if(S.modal==='verifyIdSelfie'){
-    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
-      <button onclick="modal('verifyIdScan')" style="background:none;border:none;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        <span style="font-size:12px;color:#6B7280">Back</span>
-      </button>
-      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Take a Selfie</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:20px">We need to confirm the photo on your ID matches you. Look directly at the camera in good lighting.</div>
-
-      <!-- Selfie viewfinder -->
-      <div style="position:relative;border-radius:16px;overflow:hidden;background:#1a1a1a;margin-bottom:20px;aspect-ratio:3/4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
-        <!-- Face outline guide -->
-        <svg width="140" height="170" viewBox="0 0 140 170" fill="none" style="opacity:0.5">
-          <ellipse cx="70" cy="85" rx="58" ry="72" stroke="#fff" stroke-width="2" stroke-dasharray="6 4"/>
-        </svg>
-        <div style="position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:12px;color:rgba(255,255,255,0.6)">Center your face in the oval</div>
-        <!-- Corner brackets -->
-        <div style="position:absolute;top:12px;left:12px;width:20px;height:20px;border-top:2.5px solid #0E4EF5;border-left:2.5px solid #0E4EF5;border-radius:2px 0 0 0"></div>
-        <div style="position:absolute;top:12px;right:12px;width:20px;height:20px;border-top:2.5px solid #0E4EF5;border-right:2.5px solid #0E4EF5;border-radius:0 2px 0 0"></div>
-        <div style="position:absolute;bottom:12px;left:12px;width:20px;height:20px;border-bottom:2.5px solid #0E4EF5;border-left:2.5px solid #0E4EF5;border-radius:0 0 0 2px"></div>
-        <div style="position:absolute;bottom:12px;right:12px;width:20px;height:20px;border-bottom:2.5px solid #0E4EF5;border-right:2.5px solid #0E4EF5;border-radius:0 0 2px 0"></div>
-      </div>
-
-      <!-- Liveness tips -->
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-        ${[
-          ['Remove glasses or hats','👓'],
-          ['Find good lighting — avoid backlighting','💡'],
-          ['You may be asked to blink or turn your head','🔄'],
-        ].map(([tip,icon])=>`<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#6B7280"><span>${icon}</span><span>${tip}</span></div>`).join('')}
-      </div>
-
-      <button onclick="modal('verifyIdProcessing')" style="padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:block;margin:0 auto">
-        Take Selfie
-      </button>
-    </div></div>`;return;
-  }
-  if(S.modal==='verifyIdProcessing'){
-    mr.innerHTML=`<div class="modal-bg"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;text-align:center"><div class="mh"></div>
-      <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:8px auto 16px">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-      </div>
-      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:8px">Submitted</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">We're reviewing your ID. This usually takes just a few minutes. We'll notify you once verification is complete.</div>
-      <button onclick="S.idVerified=true;modal(null)" style="padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:block;margin:0 auto">Done</button>
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;text-align:center"><div class="mh"></div>
+      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:8px auto 16px;color:#4F46E5">${ic('shield',30)}</div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Prove You're Real</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">Quick selfie verification to get your verified badge. Takes about a minute.</div>
+      <button onclick="modal(null);S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">Get Verified</button>
+      <button onclick="modal(null)" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Maybe Later</button>
     </div></div>`;return;
   }
   if(S.modal==='changePhoto'){
