@@ -1488,7 +1488,7 @@ function renderCreate(){
         <div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:600;color:#111827">Post a Heads Up</div>
-          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${isVerified()?'Post a daily announcement — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Get verified</a> to go public'}</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${isVerified()?'Post a daily announcement — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Verify</a> to go public'}</div>
         </div>
         <span style="color:#D1D5DB">${ic('right',16)}</span>
       </button>
@@ -1833,7 +1833,7 @@ function renderCreate(){
         </div>
         ${!isVerified()?`<div style="background:#EEF2FF;border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:#3730A3;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
           <span style="flex-shrink:0;margin-top:1px">${ic('shield',13,'#4F46E5')}</span>
-          <span><strong>Public drops are for verified humans only.</strong> Until verified, your drops reach followers, guest lists, groups, or shared links. <a onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="color:#0E4EF5;font-weight:600;cursor:pointer;text-decoration:underline">Prove your humanness</a></span>
+          <span><strong>Public drops require verification.</strong> Until verified, your drops reach followers, guest lists, groups, or shared links. <a onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="color:#0E4EF5;font-weight:600;cursor:pointer;text-decoration:underline">Get verified</a></span>
         </div>`:''}
         ${aud==='password'?`<div style="background:#EEF2FF;border-radius:8px;padding:10px 12px;font-size:11px;color:#1d4ed8;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
           <span style="flex-shrink:0;margin-top:1px">${ic('lock',13,'#0E4EF5')}</span>
@@ -3764,14 +3764,14 @@ function renderVerify(){
   // ── Welcome / Overview ──
   if(step==='welcome'){
     return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Human Verification','Prove your humanness',backToSub)}
+      ${hdr('Verification','Prove you\'re real',backToSub)}
       <div style="flex:1;overflow-y:auto;padding:16px">
         <div style="text-align:center;margin:16px 0 24px">
           <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
             <div style="color:#4F46E5">${ic('shield',36)}</div>
           </div>
-          <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Prove Your Humanness</div>
-          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">We use this to confirm you're human. Bots and fraudsters are not welcome.</div>
+          <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Prove You're Real</div>
+          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">We use this to confirm you're real. Bots and fraudsters are not welcome.</div>
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
@@ -3791,7 +3791,7 @@ function renderVerify(){
         <div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">
           <div style="display:flex;gap:8px;align-items:flex-start">
             <div style="color:#0284C7;min-width:16px;margin-top:1px">${ic('shield',14)}</div>
-            <div style="font-size:11px;color:#0369A1;line-height:1.4">Your selfies are processed securely, and never shared. We only use them to keep Nigh real.</div>
+            <div style="font-size:11px;color:#0369A1;line-height:1.4">One account per human — that's how we keep Nigh real. Your selfies are processed securely and never shared.</div>
           </div>
         </div>
 
@@ -3916,11 +3916,11 @@ function renderVerify(){
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">
         <style>@keyframes verifySpin{to{transform:rotate(360deg)}}</style>
         <div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#0E4EF5;animation:verifySpin 1s linear infinite;margin-bottom:24px"></div>
-        <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Checking for humanness...</div>
+        <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Making sure you're real...</div>
         <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">Making sure you're real. This only takes a few seconds.</div>
 
         <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">
-          ${['Photo quality check','Liveness detection','Human verification'].map((s,i)=>'<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:verifySpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>').join('')}
+          ${['Photo quality check','Liveness detection','Identity confirmation'].map((s,i)=>'<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:verifySpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>').join('')}
         </div>
       </div>
     </div>`;
@@ -4041,20 +4041,20 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Human Verification -->
-    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Human Verification</div>
+    <!-- Verification -->
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Verification</div>
     <div class="card" style="margin-bottom:16px;overflow:hidden">
       <div style="padding:14px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:${pVerified?'0':'10'}px">
           <div style="width:32px;height:32px;border-radius:50%;background:${pVerified?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${pVerified?'#16A34A':'#F59E0B'}">${pVerified?ic('shield',16):ic('personLock',16)}</div>
           <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:#111827">${pVerified?'Verified Human':'Not Yet Verified'}</div>
-            <div style="font-size:11px;color:#6B7280">${pVerified?'Confirmed real human! Applies to all your accounts.':'Prove your humanness to unlock public & paid drops'}</div>
+            <div style="font-size:13px;font-weight:700;color:#111827">${pVerified?'Verified':'Not Yet Verified'}</div>
+            <div style="font-size:11px;color:#6B7280">${pVerified?'You\'re real! Applies to all your accounts.':'Verify to unlock public & paid drops'}</div>
           </div>
           ${pVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Active</span>`:''}
         </div>
-        ${!pVerified?`<button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:10px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:12px;font-weight:600;cursor:pointer">Prove My Humanness</button>
-        <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:6px">Free · Takes about a minute · Bots and fraudsters not welcome</div>`:''}
+        ${!pVerified?`<button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:10px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:12px;font-weight:600;cursor:pointer">Get Verified</button>
+        <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:6px">Free · Takes about a minute · One account per person</div>`:''}
       </div>
     </div>
 
@@ -4136,8 +4136,8 @@ function renderSubscription(){
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Confirmed real human!':'Prove your humanness to manage this account'}</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Verification</div>
+          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'You\'re real! Confirmed.':'Verify to manage this account'}</div>
         </div>
         ${isVerifiedAcct?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<button onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>'}
       </div>
@@ -4210,8 +4210,8 @@ function renderSubscription(){
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'Confirmed real human!':'Prove your humanness to unlock paid drops'}</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Verification</div>
+          <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'You\'re real! Confirmed.':'Verify to unlock paid drops'}</div>
         </div>
         ${isVerifiedAcct?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>`}
       </div>
@@ -4227,7 +4227,7 @@ function renderSubscription(){
         </div>
         ${isBizVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:${isVerifiedAcct?'#0E4EF5':'#E5E7EB'};color:${isVerifiedAcct?'#fff':'#9CA3AF'};font-size:11px;font-weight:600;cursor:pointer;${isVerifiedAcct?'':'pointer-events:none'}" ${isVerifiedAcct?'':'title="Verify your identity first"'}>Verify Business</button>`}
       </div>
-      ${!isBizVerified&&!isVerifiedAcct?'<div style="padding:0 14px 10px"><div style="font-size:10px;color:#D97706;display:flex;align-items:center;gap:4px">'+ic('info',10)+' Prove your humanness first to unlock business verification</div></div>':''}
+      ${!isBizVerified&&!isVerifiedAcct?'<div style="padding:0 14px 10px"><div style="font-size:10px;color:#D97706;display:flex;align-items:center;gap:4px">'+ic('info',10)+' Get verified first to unlock business verification</div></div>':''}
     </div>
 
     <!-- Fees & Pricing -->
