@@ -3938,7 +3938,7 @@ function renderUserVerify(){
         '<div style="text-align:center;margin:16px 0 24px">'+
           '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#4F46E5">'+ic('shield',36)+'</div></div>'+
           '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Confirm You\'re Real</div>'+
-          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Bots and fraudsters are not welcome.</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Fraudsters and bots are not welcome.</div>'+
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You\'ll Need</div></div>'+
@@ -3948,12 +3948,9 @@ function renderUserVerify(){
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You Get</div></div>'+
-          ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark across all Nigh apps'].map(function(item,i,arr){
+          ['Verified badge on profile','Badge visible to hosts','Higher trust across Nigh'].map(function(item,i,arr){
             return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
           }).join('')+
-        '</div>'+
-        '<div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">'+
-          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Your ID and selfies are processed securely and only used for verification purposes.</div></div>'+
         '</div>'+
         '<button onclick="S.verifyStep=\'id-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>'+
         '<button onclick="'+backToAcct+'" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer">Maybe Later</button>'+
@@ -4934,7 +4931,7 @@ function renderModal(){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px;text-align:center"><div class="mh"></div>
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:8px auto 16px;color:#4F46E5">${ic('shield',30)}</div>
       <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Confirm You're Real</div>
-      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">Bots and fraudsters are not welcome. Quick selfie verification — takes about a minute.</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.6;margin-bottom:24px">Fraudsters and bots are not welcome. Quick selfie verification — takes about a minute.</div>
       <button onclick="modal(null);S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:12px 32px;border-radius:12px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">Get Verified</button>
       <button onclick="modal(null)" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Maybe Later</button>
     </div></div>`;return;

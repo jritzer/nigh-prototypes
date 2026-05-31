@@ -3778,7 +3778,7 @@ function renderVerify(){
             <div style="color:#4F46E5">${ic('shield',36)}</div>
           </div>
           <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Confirm You're Real</div>
-          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Bots and fraudsters are not welcome.</div>
+          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Fraudsters and bots are not welcome.</div>
         </div>
 
         <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
@@ -3790,16 +3790,9 @@ function renderVerify(){
 
         <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
           <div style="padding:14px 16px;border-bottom:1px solid #F3F4F6">
-            <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">What Verification Unlocks</div>
+            <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">What You Get</div>
           </div>
-          ${['Public drops visible on Discover feed','Priced drops with ticket sales','Payouts & earnings from events','Verified badge on your profile','Higher trust with guests'].map((item,i,arr)=>'<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>').join('')}
-        </div>
-
-        <div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">
-          <div style="display:flex;gap:8px;align-items:flex-start">
-            <div style="color:#0284C7;min-width:16px;margin-top:1px">${ic('shield',14)}</div>
-            <div style="font-size:11px;color:#0369A1;line-height:1.4">Your ID and selfies are processed securely and only used for verification purposes.</div>
-          </div>
+          ${['Verified badge on profile','Badge visible to hosts','Higher trust across Nigh'].map((item,i,arr)=>'<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>').join('')}
         </div>
 
         <button onclick="S.verifyStep='id-type';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Begin Verification</button>
