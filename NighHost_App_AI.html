@@ -220,19 +220,22 @@ function audIc(aud){if(aud==='public')return{icon:'globe',label:'Public — Anyo
 
 // Data
 // hostType: 'place' | 'mobile' | 'brand' | 'personal'
-// verified: true for place/mobile/brand accounts; false for personal (consumer) hosts
+// entity: true for business/org accounts that need separate business verification; absent/false for personal & non-entity brand accounts
+// Verification model: person verification (ID+selfie) cascades to all non-entity accounts (personal, non-entity brands).
+// Entity accounts (businesses, orgs, clubs) also require business verification (docs+EIN+domain) on top of person verification.
 let userVerified=true; // human verification (selfie-based) — confirms real person, shared across all accounts this user manages
 const accts=[
   {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Free',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',businessVerified:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Nike Boulder',short:'Nike',brandName:'Nike',hostType:'brand',businessVerified:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Avery Brewing Co',short:'Avery',brandName:'Avery Brewing Co',hostType:'place',businessVerified:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',tags:['Craft Beer','Barrel-Aged','Brewery Tours','Taproom'],operationMode:'Fixed',plan:'Starter',maxPartners:5,parentOrg:'Avery Brewing, Inc.',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',businessVerified:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''}
+  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
+  {name:'Nike Boulder',short:'Nike',brandName:'Nike',hostType:'brand',entity:true,businessVerified:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
+  {name:'Avery Brewing Co',short:'Avery',brandName:'Avery Brewing Co',hostType:'place',entity:true,businessVerified:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',tags:['Craft Beer','Barrel-Aged','Brewery Tours','Taproom'],operationMode:'Fixed',plan:'Starter',maxPartners:5,parentOrg:'Avery Brewing, Inc.',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
+  {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',entity:true,businessVerified:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
-const isFullyVerified=()=>isVerified()&&(isPersonal()||isBusinessVerified()); // both layers complete
+const isEntity=()=>acct().entity===true; // is this a business/org that needs separate entity verification?
+const isFullyVerified=()=>isVerified()&&(!isEntity()||isBusinessVerified()); // person verification cascades to non-entity accounts; entities also need business verification
 const isPersonal=()=>acct().hostType==='personal';
 // Role helpers — account-level permissions
 function uRole(){const locName=acct().name;const u=team.find(t=>t.name==='Josh Ritzer');if(!u)return 'Check-In Only';const a=u.assignments&&u.assignments.find(a=>a.location===locName);return a?a.role:u.role;}
@@ -3995,7 +3998,7 @@ function renderVerify(){
           </div>
           <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">You're Verified</div>
           <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:6px">Confirmed — you're real! This applies to all accounts you manage.</div>
-          ${!isPersonal()?'<div style="font-size:12px;color:#0369A1;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:8px 12px;margin-bottom:18px;max-width:280px;text-align:center">Next step: Verify your business for the Verified Business badge</div>':''}
+          ${isEntity()?'<div style="font-size:12px;color:#0369A1;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:8px 12px;margin-bottom:18px;max-width:280px;text-align:center">Next step: Verify your business for the Verified Business badge</div>':''}
 
           <div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">
             <div style="padding:12px 16px;border-bottom:1px solid #F3F4F6">
@@ -4198,7 +4201,7 @@ function renderSubscription(){
         ${isVerifiedAcct?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<button onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>'}
       </div>
     </div>
-    <div class="card" style="margin-bottom:16px;overflow:hidden">
+    ${isEntity()?`<div class="card" style="margin-bottom:16px;overflow:hidden">
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
         <div style="flex:1">
@@ -4207,7 +4210,7 @@ function renderSubscription(){
         </div>
         ${isBizVerified?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<span style="font-size:10px;font-weight:500;color:#9CA3AF;background:#F3F4F6;padding:2px 8px;border-radius:10px">Pending</span>'}
       </div>
-    </div>
+    </div>`:''}
 
     <!-- Fees & Pricing -->
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Fees & Pricing</div>
@@ -4273,18 +4276,18 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Business Verification -->
-    <div class="card" style="margin-bottom:16px;overflow:hidden">
+    <!-- Business Verification (entity accounts only) -->
+    ${isEntity()?`<div class="card" style="margin-bottom:16px;overflow:hidden">
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:700;color:#111827">Business Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Business entity confirmed · Verified badge active':'Verify business for trust badge & higher limits'}</div>
+          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Business entity confirmed · Verified Business badge active':'Verify business for Verified Business badge & higher limits'}</div>
         </div>
         ${isBizVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:${isVerifiedAcct?'#0E4EF5':'#E5E7EB'};color:${isVerifiedAcct?'#fff':'#9CA3AF'};font-size:11px;font-weight:600;cursor:pointer;${isVerifiedAcct?'':'pointer-events:none'}" ${isVerifiedAcct?'':'title="Verify your identity first"'}>Verify Business</button>`}
       </div>
       ${!isBizVerified&&!isVerifiedAcct?'<div style="padding:0 14px 10px"><div style="font-size:10px;color:#D97706;display:flex;align-items:center;gap:4px">'+ic('info',10)+' Get verified first to unlock business verification</div></div>':''}
-    </div>
+    </div>`:''}
 
     <!-- Fees & Pricing -->
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Fees & Pricing</div>
