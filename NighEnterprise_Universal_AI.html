@@ -38,7 +38,7 @@ const CONFIGS={
     key:'bestbuy',globalId:'org_98a2fa97',handle:'@bestbuy',short:'Best Buy',name:'Best Buy Co., Inc.',
     color:'#003082',accent:'#FFE000',dark:'#001040',
     grad:'linear-gradient(180deg,#001040 0%,#003082 100%)',
-    plan:'Enterprise Retail Pro',ppl:199,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:15,
+    plan:'Enterprise Retail Pro',ppl:199,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(612) 291-1000',description:'National electronics retailer offering tech products, Geek Squad services, and Totaltech membership benefits across 1,000+ stores.',tags:['Consumer Electronics','Trade-In Program','Totaltech Members','Geek Squad'],
     website:'bestbuy.com',category:'Retail',subcategory:'Electronics',
     brands:[
@@ -112,7 +112,7 @@ const CONFIGS={
     key:'chipotle',globalId:'org_1c246fad',handle:'chipotle',short:'Chipotle',name:'Chipotle Mexican Grill',
     color:'#A81612',accent:'#F5CB5C',dark:'#5D0E0B',
     grad:'linear-gradient(180deg,#5D0E0B 0%,#A81612 100%)',
-    plan:'Enterprise QSR Pro',ppl:149,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
+    plan:'Enterprise QSR Pro',ppl:149,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(949) 524-4000',description:'Fast-casual Mexican grill known for fresh ingredients, customizable burritos, and the Chipotle Rewards loyalty program.',tags:['Burritos & Bowls','Farm Fresh','Rewards Program','Catering'],
     website:'chipotle.com',category:'Restaurant & Dining',subcategory:'Fast Casual',
     hier:['Region','Market','Restaurant'],locLabel:'Restaurant',locsLabel:'Restaurants',
@@ -179,7 +179,7 @@ const CONFIGS={
     color:'#FB4F14',accent:'#002244',dark:'#001229',
     grad:'linear-gradient(180deg,#002244 0%,#1a4a00 50%,#FB4F14 100%)',
     grad:'linear-gradient(180deg,#001229 0%,#002244 60%,#FB4F14 100%)',
-    plan:'Enterprise Venue Pro',ppl:299,allowMultiVenue:true,broadcastLeadHrs:72,broadcastCutoffMins:30,
+    plan:'Enterprise Venue Pro',ppl:299,entity:true,businessVerified:true,allowMultiVenue:true,broadcastLeadHrs:72,broadcastCutoffMins:30,
     orgType:'brand',operationMode:'Fixed',city:'Denver',state:'CO',followers:124000,followersGrowth:4800,phone:'(720) 258-3333',description:"Denver's NFL franchise at Empower Field, delivering fan experiences, gameday activations, and VIP access drops on game day.",tags:['NFL Football','Fan Experiences','Gameday Drops','VIP Access'],
     website:'denverbroncos.com',category:'Sports & Recreation',subcategory:'Football Team',
     hier:[],locLabel:'Venue',locsLabel:'Venues',
@@ -250,7 +250,7 @@ const CONFIGS={
     key:'coachella',globalId:'org_2b65ce08',handle:'coachella',short:'Coachella',name:'Coachella 2026 \u2014 Valley Music &amp; Arts',
     color:'#E8502A',accent:'#2D1B69',dark:'#1a0f3d',
     grad:'linear-gradient(180deg,#2D1B69 0%,#E8502A 100%)',
-    plan:'Festival Pro',ppl:199,allowMultiVenue:true,
+    plan:'Festival Pro',ppl:199,entity:true,businessVerified:true,allowMultiVenue:true,
     orgType:'brand',operationMode:'Fixed',city:'Indio',state:'CA',followers:96400,followersGrowth:3600,phone:'(800) 745-3000',description:'World-renowned annual music and arts festival held across two weekends at the Empire Polo Club in Indio, California.',tags:['Music Festival','Art Installations','Artist Drops','Sponsor Activations'],
     website:'coachella.com',category:'Entertainment',subcategory:'Live Music',
     hier:[],locLabel:'Stage / Venue',locsLabel:'Stages & Venues',
@@ -325,7 +325,7 @@ const CONFIGS={
     key:'disney',globalId:'org_f240a4a0',handle:'disney',short:'Disney Parks',name:'Walt Disney World \u2014 Florida',
     color:'#003087',accent:'#E2002D',dark:'#001440',
     grad:'linear-gradient(180deg,#001440 0%,#003087 100%)',
-    plan:'Enterprise Parks Pro',ppl:299,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
+    plan:'Enterprise Parks Pro',ppl:299,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(407) 939-5277',description:'Walt Disney World Resort in Florida — four iconic theme parks delivering character experiences, exclusive dining, and VIP access drops.',tags:['Theme Park','Character Experiences','Dining Events','VIP Access'],
     website:'disneyworld.com',category:'Entertainment',subcategory:'Theme Park',
     hier:['Park','Area','Location'],locLabel:'Location',locsLabel:'Locations',
@@ -391,7 +391,7 @@ const CONFIGS={
     key:'ufc',globalId:'org_0f1e6af3',handle:'ufc',short:'UFC',name:'UFC \u2014 Ultimate Fighting Championship',
     color:'#D20A0A',accent:'#000000',dark:'#1a0000',
     grad:'linear-gradient(180deg,#000000 0%,#1a0000 40%,#D20A0A 100%)',
-    plan:'Enterprise Events Pro',ppl:299,allowMultiVenue:true,broadcastLeadHrs:48,broadcastCutoffMins:30,
+    plan:'Enterprise Events Pro',ppl:299,entity:true,businessVerified:true,allowMultiVenue:true,broadcastLeadHrs:48,broadcastCutoffMins:30,
     orgType:'brand',operationMode:'Touring',city:'Las Vegas',state:'NV',
     followers:1840000,followersGrowth:62000,
     phone:'(702) 695-2900',description:"The world's premier MMA organization delivering fight night fan experiences, VIP access, and sponsor activations at global events.",tags:['MMA','Live Events','Fan Experiences','VIP Fight Access'],
@@ -461,7 +461,7 @@ const CONFIGS={
     key:'formula1',globalId:'org_bcabb921',handle:'formula1',short:'Formula 1',name:'Formula 1 \u2014 Las Vegas Grand Prix',
     color:'#E10600',accent:'#15151e',dark:'#0a0a0f',
     grad:'linear-gradient(180deg,#0a0a0f 0%,#15151e 50%,#E10600 100%)',
-    plan:'Enterprise Events Pro',ppl:249,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:30,
+    plan:'Enterprise Events Pro',ppl:249,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:30,
     orgType:'brand',operationMode:'Fixed',city:'Las Vegas',state:'NV',followers:88200,followersGrowth:3400,phone:'(702) 555-0100',description:'Formula 1 Las Vegas Grand Prix — three days of racing, fan village experiences, pit lane access, and sponsor activations on the Strip.',tags:['Racing','Grand Prix','Fan Experiences','Sponsor Drops'],
     website:'f1.com',category:'Sports & Recreation',subcategory:'Racing',
     hier:[],locLabel:'Venue',locsLabel:'Venues',
@@ -534,7 +534,7 @@ const CONFIGS={
     key:'vailresorts',globalId:'org_7ba117a3',handle:'vailresorts',short:'Vail Resorts',name:'Vail Resorts \u2014 Epic Pass Network',
     color:'#1B4FA8',accent:'#A8C8FF',dark:'#0D2459',
     grad:'linear-gradient(180deg,#0D2459 0%,#1B4FA8 100%)',
-    plan:'Enterprise Multi-Venue Pro',ppl:299,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
+    plan:'Enterprise Multi-Venue Pro',ppl:299,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(303) 404-1800',description:'Vail Resorts operates 40+ ski destinations across North America, unified under the Epic Pass for seamless mountain access.',tags:['Ski & Snowboard','Epic Pass','Mountain F&B','Gear & Rentals'],
     website:'vailresorts.com',category:'Sports & Recreation',subcategory:'Action Sports',
     hier:['Region','Property Type'],locLabel:'Location',locsLabel:'Locations',
@@ -635,7 +635,7 @@ const CONFIGS={
     key:'topgolf',globalId:'org_5e42b7ae',handle:'topgolf',short:'Topgolf',name:'Topgolf \u2014 Multi-Venue',
     color:'#218B44',accent:'#FFB800',dark:'#0F4220',
     grad:'linear-gradient(180deg,#0F4220 0%,#218B44 100%)',
-    plan:'Enterprise Venue Pro',ppl:249,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
+    plan:'Enterprise Venue Pro',ppl:249,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(214) 374-2600',description:'Topgolf delivers tech-driven golf entertainment across 100+ venues with climate-controlled hitting bays, full-service food, and events.',tags:['Golf Entertainment','Bay Experiences','Corporate Events','F&B'],
     website:'topgolf.com',category:'Sports & Recreation',subcategory:'Golf',
     hier:['Region','State'],locLabel:'Venue',locsLabel:'Venues',
@@ -705,7 +705,7 @@ const CONFIGS={
     key:'flatirons',globalId:'org_1e4ab6ef',handle:'flatirons',short:'Flatirons Mall',name:'Flatirons Mall \u2014 Broomfield, CO',
     color:'#1B5E8A',accent:'#E8A020',dark:'#0D2E44',
     grad:'linear-gradient(180deg,#0D2E44 0%,#1B5E8A 100%)',
-    plan:'Enterprise Retail Pro',ppl:149,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
+    plan:'Enterprise Retail Pro',ppl:149,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(303) 464-1800',description:"Flatirons Crossing is Broomfield's premier open-air shopping destination with 200+ stores, dining, entertainment, and partner drops.",tags:['Shopping Mall','Fashion & Apparel','Dining','Entertainment'],
     website:'flatironscrossing.com',category:'Retail',subcategory:'Shopping Mall',
     hier:['Wing','Level'],locLabel:'Store / Venue',locsLabel:'Stores & Venues',
@@ -824,7 +824,7 @@ const CONFIGS={
     key:'bigRedf',globalId:'org_20dd95eb',handle:'big-red-f',short:'Big Red F',name:'Big Red F Restaurant Group',
     color:'#C62828',accent:'#FFA000',dark:'#7f0000',
     grad:'linear-gradient(180deg,#7f0000 0%,#C62828 100%)',
-    plan:'Enterprise Restaurant Pro',ppl:129,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:30,
+    plan:'Enterprise Restaurant Pro',ppl:129,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:48,broadcastCutoffMins:30,
     operationMode:'Fixed',phone:'(720) 406-8560',description:'Big Red F is a Colorado restaurant group behind Jax Fish House, The Post Brewing, Centro, West End Tavern, and more across Boulder and Denver.',tags:['Colorado Dining','Craft Beer','Local Brands','Happy Hour'],
     website:'bigredf.com',category:'Restaurant & Dining',subcategory:'Casual Dining',
     hier:['Brand','Market'],locLabel:'Restaurant',locsLabel:'Restaurants',
@@ -886,7 +886,7 @@ const CONFIGS={
     key:'landrys',globalId:'org_ea7c8816',handle:'landrys',short:"Landry's",name:"Landry's, Inc.",
     color:'#0D2F5E',accent:'#C9932A',dark:'#071829',
     grad:'linear-gradient(180deg,#071829 0%,#0D2F5E 100%)',
-    plan:'Enterprise Hospitality Pro',ppl:449,allowMultiVenue:true,broadcastLeadHrs:48,broadcastCutoffMins:30,
+    plan:'Enterprise Hospitality Pro',ppl:449,entity:true,businessVerified:true,allowMultiVenue:true,broadcastLeadHrs:48,broadcastCutoffMins:30,
     operationMode:'Fixed',phone:'(713) 850-1010',description:"Landry's, Inc. operates 600+ restaurants, hotels, casinos, and entertainment properties spanning fine dining, casual, and themed concepts.",tags:['Fine Dining','Select Club','Gaming & Hotels','Themed Dining'],
     website:'landrysinc.com',category:'Restaurant & Dining',subcategory:'Fine Dining',
     hier:['Division','Brand'],locLabel:'Property',locsLabel:'Properties',
@@ -961,7 +961,7 @@ const CONFIGS={
     key:'mercantile',globalId:'org_5fa92e70',handle:'mercantile',short:'Mercantile',name:'Mercantile Dining & Provision',
     color:'#8B4513',accent:'#D4A054',dark:'#5C2E0A',
     grad:'linear-gradient(180deg,#5C2E0A 0%,#8B4513 100%)',
-    plan:'Web Pro',ppl:79,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
+    plan:'Web Pro',ppl:79,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(720) 460-3733',description:"Mercantile Dining & Provision is a farm-to-table restaurant and marketplace by Chef Daniel Asher in Denver's Union Station.",tags:["Farm-to-Table","Chef's Table","Local Provisions","Tasting Events"],
     website:'mercantiledenver.com',category:'Restaurant & Dining',subcategory:'Fine Dining',
     hier:[],locLabel:'Location',locsLabel:'Locations',
@@ -1008,7 +1008,7 @@ const CONFIGS={
     key:'williams',globalId:'org_44e7cdc8',handle:'williams-graham',short:'Williams & Graham',name:'Williams & Graham',
     color:'#2C4A1E',accent:'#8B6914',dark:'#1A2C12',
     grad:'linear-gradient(180deg,#1A2C12 0%,#2C4A1E 100%)',
-    plan:'Web Pro',ppl:79,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
+    plan:'Web Pro',ppl:79,entity:true,businessVerified:false,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:15,
     operationMode:'Fixed',phone:'(303) 997-8886',description:'Williams & Graham is a Denver speakeasy-style cocktail bar known for rare whiskey, craft cocktails, and intimate tasting events.',tags:['Craft Cocktails','Rare Spirits','Speakeasy','Tasting Events'],
     website:'williamsandgraham.com',category:'Bar & Nightlife',subcategory:'Cocktail Bar',
     hier:[],locLabel:'Location',locsLabel:'Locations',
@@ -1049,7 +1049,7 @@ const CONFIGS={
     key:'nike',globalId:'org_41fd220f',handle:'nike',short:'Nike',name:'Nike, Inc.',
     color:'#FF6B00',accent:'#111111',dark:'#7A2F00',
     grad:'linear-gradient(180deg,#7A2F00 0%,#FF6B00 100%)',
-    plan:'Enterprise Brand Pro',ppl:0,allowMultiVenue:true,broadcastLeadHrs:72,broadcastCutoffMins:0,
+    plan:'Enterprise Brand Pro',ppl:0,entity:true,businessVerified:true,allowMultiVenue:true,broadcastLeadHrs:72,broadcastCutoffMins:0,
     operationMode:'Fixed',phone:'(503) 671-6453',description:"Nike, Inc. is the world's leading athletic footwear and apparel brand, delivering product launches, collabs, and community experiences.",tags:['Footwear & Apparel','Limited Drops','Run Club','Brand Collabs'],
     website:'nike.com',category:'Consumer Brand',subcategory:'Footwear & Apparel',
     hier:['Entity Type','Location'],locLabel:'Location',locsLabel:'Locations',
@@ -1109,7 +1109,7 @@ const CONFIGS={
     key:'redbull',globalId:'org_776ad0ef',handle:'red-bull',short:'Red Bull',name:'Red Bull North America',
     color:'#CC0000',accent:'#FFD700',dark:'#7A0000',
     grad:'linear-gradient(180deg,#7A0000 0%,#CC0000 100%)',
-    plan:'Brand Pro',ppl:0,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:0,
+    plan:'Brand Pro',ppl:0,entity:true,businessVerified:true,allowMultiVenue:false,broadcastLeadHrs:72,broadcastCutoffMins:0,
     operationMode:'Mobile',phone:'(310) 393-4647',description:'Red Bull North America activates across sport, music, and culture — delivering athlete experiences, live events, and brand drops at partner venues.',tags:['Energy Brand','Athlete Drops','Live Events','Brand Activations'],
     website:'redbull.com',category:'Consumer Brand',subcategory:'Energy & Lifestyle',
     hier:[],locLabel:'Channel',locsLabel:'Channels',
@@ -1158,7 +1158,7 @@ const CONFIGS={
     key:'zoepark',globalId:'org_7d3b92f1',handle:'zoe-park',short:'Zoe Park',name:'Zoe Park Fitness',
     color:'#0891b2',accent:'#67e8f9',dark:'#0e7490',
     grad:'linear-gradient(180deg,#0e7490 0%,#0891b2 100%)',
-    plan:'Brand Pro',ppl:0,allowMultiVenue:false,
+    plan:'Brand Pro',ppl:0,entity:true,businessVerified:false,allowMultiVenue:false,
     allowPerDropLocation:true,
     broadcastLeadHrs:24,broadcastCutoffMins:30,
     orgType:'brand',operationMode:'Mobile',
@@ -1235,7 +1235,7 @@ const CONFIGS={
     key:'maravoss',globalId:'org_acd453f1',handle:'mara-voss',short:'Mara Voss',name:'Mara Voss — Lifestyle Creator',
     color:'#9333EA',accent:'#F9A8D4',dark:'#4C1D95',
     grad:'linear-gradient(180deg,#4C1D95 0%,#9333EA 100%)',
-    plan:'Creator Pro',ppl:0,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:0,
+    plan:'Creator Pro',ppl:0,entity:false,businessVerified:false,allowMultiVenue:false,broadcastLeadHrs:24,broadcastCutoffMins:0,
     orgType:'brand',city:'Los Angeles',state:'CA',followers:94200,followersGrowth:3800,
     operationMode:'Mobile',phone:'(310) 555-0200',description:'Mara Voss is a Los Angeles-based lifestyle creator offering exclusive meet & greets, brand collabs, and wellness experiences to her community.',tags:['Lifestyle Creator','Brand Collabs','Wellness','Limited Drops'],
     website:'maravoss.com',category:'Creator & Influencer',subcategory:'Lifestyle & Wellness',
@@ -1284,7 +1284,7 @@ const CONFIGS={
     key:'bigDawg',globalId:'org_4a2eecf8',handle:'big-dawg-bbq',short:'Big Dawg BBQ',name:'Big Dawg BBQ',
     color:'#b45309',accent:'#fcd34d',dark:'#78350f',
     grad:'linear-gradient(180deg,#78350f 0%,#b45309 100%)',
-    plan:'Mobile Pro',ppl:6,allowMultiVenue:false,
+    plan:'Mobile Pro',ppl:6,entity:true,businessVerified:false,allowMultiVenue:false,
     allowPerDropLocation:true,
     broadcastLeadHrs:4,broadcastCutoffMins:15,
     operationMode:'Mobile',phone:'(720) 555-0182',description:'Big Dawg BBQ is a Boulder food truck serving slow-smoked brisket, ribs, and specialty plates — with daily locations announced via Nigh.',tags:['BBQ','Food Truck','Smoked Meats','Craft Beer'],
@@ -1360,6 +1360,22 @@ function isOwnerOrg(){return(OWNER_ORGS[CURRENT_USER]||[]).includes(S.config);}
 function locById(id){return cfg().locations.find(l=>l.id===id);}
 function dropLocLabel(d){const l=locById(d.locId);if(l)return l.name;const venues=cfg().savedVenues||[];const venue=venues.find(v=>v.id===d.venueId);if(venue){const zone=(venue.zones||[]).find(z=>z.id===d.zoneId);return zone?`${venue.name} \u2014 ${zone.name}`:venue.name;}if(d.venueAddr)return d.venueAddr;return '\u2014';}
 function orgMode(){const c=cfg();if(c.orgType==='brand')return'brand';if(c.locations.length===1)return'single';if(c.hier.length<=1)return'multi';return'enterprise';}
+
+// ── VERIFICATION MODEL ───────────────────────────────────────────────────────
+// Person verification (ID scan + selfies) is global to the logged-in user across all orgs.
+// Entity verification (documents + EIN + domain) is per-org for business/org accounts.
+// Cascade: person verification alone satisfies non-entity accounts (creators).
+// Entity accounts need both person + entity verification to be fully verified.
+let userVerified=true;
+const isVerified=()=>userVerified===true;
+const isBusinessVerified=()=>cfg().businessVerified===true;
+const isEntity=()=>cfg().entity===true;
+const isFullyVerified=()=>isVerified()&&(!isEntity()||isBusinessVerified());
+
+// Verification badges: blue circle checkmark = person/non-entity verified; blue shield checkmark = Verified Business (entity)
+function _vSvg(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#0E4EF5"/><path d="M8 12.5l2.5 2.5 5.5-5.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
+function _vbSvg(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v5c0 5.25 3.4 10.15 8 11.25C16.6 21.15 20 16.25 20 11V6l-8-4z" fill="#0E4EF5"/><path d="M8.5 12.5l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
+function verificationBadge(sz){if(!isVerified()&&!isBusinessVerified())return '';return isEntity()&&isBusinessVerified()?_vbSvg(sz||14):isVerified()?_vSvg(sz||14):'';}
 
 function orgAvatar(c,sz,r){
   sz=sz||44; r=r||Math.round(sz*.22);
@@ -1916,7 +1932,7 @@ function sidebar(){
       ${isOwned?`
       <button onclick="ss({orgSwitcherOpen:!S.orgSwitcherOpen})" style="width:100%;background:${S.orgSwitcherOpen?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.06)'};border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 10px 10px 12px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='${S.orgSwitcherOpen?'rgba(255,255,255,0.12)':'rgba(255,255,255,0.06)'}'">
         <div style="flex:1;min-width:0;">
-          <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.short}</div>
+          <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;">${c.short} ${verificationBadge(12)}</div>
           <div style="color:rgba(255,255,255,0.5);font-size:0.58rem;margin-top:2px;">${modeBadge} · ${mode==='brand'?((c.city||'')+(c.state?', '+c.state:'')||'Brand Org'):mode==='single'&&c.locations.length>0?c.locations[0].city+', '+c.locations[0].state:c.locations.length+' '+c.locsLabel.toLowerCase()}</div>
         </div>
         <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;flex-shrink:0;transition:transform 0.15s;display:inline-block;transform:${S.orgSwitcherOpen?'rotate(180deg)':'rotate(0deg)'}">&#9660;</span>
@@ -1942,7 +1958,7 @@ function sidebar(){
       </div>`:''}
       `:`
       <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 12px;">
-        <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.short}</div>
+        <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;">${c.short} ${verificationBadge(12)}</div>
         <div style="color:rgba(255,255,255,0.5);font-size:0.58rem;margin-top:2px;">${modeBadge} · ${mode==='brand'?((c.city||'')+(c.state?', '+c.state:'')||'Brand Org'):mode==='single'&&c.locations.length>0?c.locations[0].city+', '+c.locations[0].state:c.locations.length+' '+c.locsLabel.toLowerCase()}</div>
       </div>
       `}
@@ -2150,7 +2166,7 @@ function rDashboard(){
 
   return `<div style="padding:28px 32px;">
     <div style="margin-bottom:22px;">
-      <div style="font-size:1.3rem;font-weight:900;color:#0f172a;">${c.name}</div>
+      <div style="font-size:1.3rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:6px;">${c.name} ${verificationBadge(16)}</div>
       <div style="font-size:0.82rem;color:#64748b;margin-top:3px;">${c.plan.replace(/^Web /,'')} &middot; ${mode==='brand'?(()=>{const sv=c.savedVenues||[];const tz=sv.reduce((s,v)=>s+(v.zones||[]).length,0);return tz>0?sv.length+' '+(sv.length===1?'Venue':'Venues')+', '+tz+' Drop Zones':sv.length+' Drop '+(sv.length===1?'Venue':'Venues');})():locs.length+' '+(locs.length===1?c.locLabel:c.locsLabel)}</div>
     </div>
 
@@ -2306,7 +2322,7 @@ function rBrandProfile(showBack){
       ${orgAvatar(c,42,10)}
       <div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${c.name}</div>
+          <div style="font-size:1.1rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:5px;">${c.name} ${verificationBadge(14)}</div>
           <span style="font-size:0.65rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;">Active</span>
         </div>
         <div style="font-size:0.75rem;color:${c.color};font-weight:700;margin-top:1px;">${hAt(c.handle)}</div>
@@ -2455,7 +2471,7 @@ function rLocations(){
             ${orgAvatar(b,42,10)}
             <div>
               <div style="display:flex;align-items:center;gap:8px;">
-                <div style="font-size:1.1rem;font-weight:900;color:#0f172a;">${b.name}</div>
+                <div style="font-size:1.1rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:5px;">${b.name} ${verificationBadge(14)}</div>
                 <span style="font-size:0.65rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;">Active</span>
               </div>
               <div style="font-size:0.75rem;color:${bColor};font-weight:700;margin-top:1px;">${hAt(b.handle)}</div>
@@ -2581,7 +2597,7 @@ function rLocations(){
                 ${orgAvatar(c,44,10)}
                 <div style="flex:1;min-width:0;">
                   <div style="display:flex;align-items:center;gap:7px;">
-                    <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${c.short}</span>
+                    <span style="font-size:0.92rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:4px;">${c.short} ${verificationBadge(12)}</span>
                     <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                   </div>
                   <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(c.handle)}</div>
@@ -2594,7 +2610,7 @@ function rLocations(){
               ${orgAvatar(b,44,10)}
               <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:center;gap:7px;">
-                  <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${b.name}</span>
+                  <span style="font-size:0.92rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:4px;">${b.name} ${verificationBadge(12)}</span>
                   <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                 </div>
                 ${b.handle?`<div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(b.handle)}</div>`:''}
@@ -2607,7 +2623,7 @@ function rLocations(){
               ${orgAvatar(c,44,10)}
               <div style="flex:1;min-width:0;">
                 <div style="display:flex;align-items:center;gap:7px;">
-                  <span style="font-size:0.92rem;font-weight:900;color:#0f172a;">${c.short}</span>
+                  <span style="font-size:0.92rem;font-weight:900;color:#0f172a;display:flex;align-items:center;gap:4px;">${c.short} ${verificationBadge(12)}</span>
                   <span style="font-size:0.6rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:20px;">Active</span>
                 </div>
                 <div style="font-size:0.73rem;color:${c.color};font-weight:700;margin-top:2px;">${hAt(c.handle)}</div>
@@ -7288,6 +7304,49 @@ function rSettings(){
           ].map(r=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f8fafc;font-size:0.78rem;"><span style="color:#64748b;">${r[0]}</span><span style="font-weight:700;color:#0f172a;">${r[1]}</span></div>`).join('')}
         </div>
         `}
+      </div>
+
+      <!-- VERIFICATION -->
+      <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;margin-bottom:14px;">
+        <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:0.85rem;font-weight:800;color:#0f172a;">Verification</div>
+        <!-- Human Verification (person-level) -->
+        <div style="padding:16px 20px;border-bottom:1px solid #f8fafc;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:${isVerified()?'#dcfce7':'#fef3c7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${isVerified()?_vSvg(18):`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>`}
+              </div>
+              <div>
+                <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">Human Verification</div>
+                <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${isVerified()?'You\'re real! Confirmed.':'Verify your identity with an ID scan and selfie photos'}</div>
+              </div>
+            </div>
+            ${isVerified()
+              ?`<span style="font-size:0.68rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;">${_vSvg(11)} Verified</span>`
+              :`<button style="padding:6px 14px;background:#0E4EF5;color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">Verify Now</button>`}
+          </div>
+        </div>
+        <!-- Entity Verification (org-level, only for entity accounts) -->
+        ${isEntity()?`
+        <div style="padding:16px 20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:${isBusinessVerified()?'#dcfce7':'#fef3c7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${isBusinessVerified()?_vbSvg(18):`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2"><path d="M12 2L4 6v5c0 5.25 3.4 10.15 8 11.25C16.6 21.15 20 16.25 20 11V6l-8-4z"/></svg>`}
+              </div>
+              <div>
+                <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">Entity Verification</div>
+                <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${isBusinessVerified()?'Entity confirmed by '+c.name:'Verify this organization with business documents, EIN, and domain'}</div>
+              </div>
+            </div>
+            ${isBusinessVerified()
+              ?`<span style="font-size:0.68rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;">${_vbSvg(11)} Verified</span>`
+              :isVerified()
+                ?`<button style="padding:6px 14px;background:#0E4EF5;color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">Verify Business</button>`
+                :`<button style="padding:6px 14px;background:#e5e7eb;color:#94a3b8;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:not-allowed;" disabled>Complete Human Verification first</button>`}
+          </div>
+        </div>
+        `:''}
       </div>
 
       <!-- LOGIN & SECURITY -->
