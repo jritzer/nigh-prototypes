@@ -4107,8 +4107,8 @@ function renderSubscription(){
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:${pVerified?'0':'10'}px">
           <div style="width:32px;height:32px;border-radius:50%;background:${pVerified?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${pVerified?'#16A34A':'#F59E0B'}">${pVerified?ic('shield',16):ic('personLock',16)}</div>
           <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:#111827">${pVerified?'Verified':'Not Yet Verified'}</div>
-            <div style="font-size:11px;color:#6B7280">${pVerified?'You\'re real! Applies to all your accounts.':'Verify to unlock public & paid drops'}</div>
+            <div style="font-size:13px;font-weight:700;color:#111827">${pVerified?'Human Verification':'Not Yet Verified'}</div>
+            <div style="font-size:11px;color:#6B7280">${pVerified?'You\'re real! Confirmed.':'Verify to unlock public & paid drops'}</div>
           </div>
           ${pVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Active</span>`:''}
         </div>
@@ -4195,7 +4195,7 @@ function renderSubscription(){
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Verification</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
           <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'You\'re real! Confirmed.':'Verify to manage this account'}</div>
         </div>
         ${isVerifiedAcct?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<button onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>'}
@@ -4205,8 +4205,8 @@ function renderSubscription(){
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Business Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Business entity confirmed by '+a.parentOrg:'Managed by organization admin'}</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Entity Verification</div>
+          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+a.parentOrg:'Managed by organization admin'}</div>
         </div>
         ${isBizVerified?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<span style="font-size:10px;font-weight:500;color:#9CA3AF;background:#F3F4F6;padding:2px 8px;border-radius:10px">Pending</span>'}
       </div>
@@ -4269,20 +4269,20 @@ function renderSubscription(){
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isVerifiedAcct?'#DCFCE7':'#FEF3C7'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isVerifiedAcct?'#16A34A':'#F59E0B'}">${isVerifiedAcct?ic('shield',16):ic('personLock',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Verification</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
           <div style="font-size:11px;color:#6B7280">${isVerifiedAcct?'You\'re real! Confirmed.':'Verify to unlock paid drops'}</div>
         </div>
         ${isVerifiedAcct?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>`}
       </div>
     </div>
 
-    <!-- Business Verification (entity accounts only) -->
+    <!-- Entity Verification (entity accounts only) -->
     ${isEntity()?`<div class="card" style="margin-bottom:16px;overflow:hidden">
       <div style="padding:14px;display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Business Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Business entity confirmed · Verified Business badge active':'Verify business for Verified Business badge & higher limits'}</div>
+          <div style="font-size:13px;font-weight:700;color:#111827">Entity Verification</div>
+          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+(a.parentOrg||a.brandName||a.name):'Verify entity for Verified Business badge & higher limits'}</div>
         </div>
         ${isBizVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:${isVerifiedAcct?'#0E4EF5':'#E5E7EB'};color:${isVerifiedAcct?'#fff':'#9CA3AF'};font-size:11px;font-weight:600;cursor:pointer;${isVerifiedAcct?'':'pointer-events:none'}" ${isVerifiedAcct?'':'title="Verify your identity first"'}>Verify Business</button>`}
       </div>
