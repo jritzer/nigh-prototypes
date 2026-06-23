@@ -1204,8 +1204,8 @@ const GP_CAP=5;
 let guestPasses=[
   {id:'GP01',dropId:'P001',rtype:'handle',recipient:'@mayat',qty:2,price:0,status:'Pending'},
   {id:'GP02',dropId:'P001',rtype:'phone',recipient:'(720) 555-0148',qty:1,price:0,status:'Redeemed'},
-  {id:'GP03',dropId:'D001',rtype:'handle',recipient:'@priyap',qty:2,price:25,status:'Pending'},
-  {id:'GP04',dropId:'D001',rtype:'guest',recipient:'Emma Johnson',qty:1,price:25,status:'Redeemed'},
+  {id:'GP03',dropId:'D001',rtype:'handle',recipient:'@priyap',qty:2,price:0,status:'Pending'},
+  {id:'GP04',dropId:'D001',rtype:'guest',recipient:'Emma Johnson',qty:1,price:0,status:'Redeemed'},
 ];
 let _gpSeq=4;
 function gpFor(dropId){return guestPasses.filter(p=>p.dropId===dropId);}
@@ -1217,7 +1217,7 @@ function gpSend(){
   const q=Math.min(S.gpQty||1,Math.min(4,rem));if(q<1)return;
   const disp=S.gpType==='handle'?('@'+r.replace(/^@/,'')):r;
   _gpSeq++;
-  guestPasses.push({id:'GP'+String(_gpSeq).padStart(2,'0'),dropId:d.id,rtype:S.gpType,recipient:disp,qty:q,price:parseFloat(S.gpPrice||0)||0,status:'Pending'});
+  guestPasses.push({id:'GP'+String(_gpSeq).padStart(2,'0'),dropId:d.id,rtype:S.gpType,recipient:disp,qty:q,price:0,status:'Pending'});
   S.gpRecipient='';S.gpGuestId='';S.gpQty=1;S.gpPrice='';S.modal='guestpasses';render();
 }
 function gpResolve(){
@@ -6538,7 +6538,7 @@ function renderModal(){
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#374151">Issued (${used}/${GP_CAP})</div><div style="font-size:11px;color:#6B7280">${rem} left</div></div>
       ${passes.length?passes.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F3F4F6">
           <div style="width:32px;height:32px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#6B7280;flex-shrink:0">${ic(rIcon(p.rtype),16)}</div>
-          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.recipient}</div><div style="font-size:11px;color:#6B7280">${p.qty} pass${p.qty===1?'':'es'} &middot; ${p.price>0?'$'+p.price+' each':'Free'}</div></div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.recipient}</div><div style="font-size:11px;color:#6B7280">${p.qty} pass${p.qty===1?'':'es'} &middot; Free</div></div>
           ${stBadge(p.status)}
           ${p.status==='Pending'?`<button onclick="S.gpActId='${p.id}';S.gpActType='retract';modal('gp-act')" style="border:none;background:none;color:#DC2626;font-size:11px;font-weight:600;cursor:pointer;padding:4px;flex-shrink:0">Retract</button>`:p.status==='Redeemed'?`<button onclick="S.gpActId='${p.id}';S.gpActType='cancel';modal('gp-act')" style="border:none;background:none;color:#DC2626;font-size:11px;font-weight:600;cursor:pointer;padding:4px;flex-shrink:0">Cancel</button>`:''}
         </div>`).join(''):`<div style="text-align:center;padding:18px 0;color:#9CA3AF;font-size:12px">No guest passes issued yet.</div>`}
@@ -6566,10 +6566,7 @@ function renderModal(){
       ${recipientField}
       <div style="font-size:11px;font-weight:700;color:#374151;margin:14px 0 6px">Number of passes <span style="font-weight:400;color:#9CA3AF">(up to ${maxQ})</span></div>
       <select onchange="S.gpQty=parseInt(this.value);render()" style="width:100%;box-sizing:border-box;padding:11px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;font-family:inherit">${Array.from({length:maxQ},(x,k)=>k+1).map(n=>`<option value="${n}" ${(S.gpQty||1)===n?'selected':''}>${n} pass${n===1?'':'es'}</option>`).join('')}</select>
-      <div style="font-size:11px;font-weight:700;color:#374151;margin:14px 0 6px">Price per pass</div>
-      <div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#9CA3AF">$</span><input id="gp-price" value="${S.gpPrice||''}" oninput="S.gpPrice=this.value.replace(/[^0-9.]/g,'')" placeholder="0 (free, comp&#x2019;d)" inputmode="decimal" style="width:100%;box-sizing:border-box;padding:11px 12px 11px 24px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div>
-      <div style="font-size:10px;color:#9CA3AF;margin-top:5px">Guest passes are priced per issuance.</div>
-      <div style="background:#F0FDF4;border:1px solid #DCFCE7;border-radius:10px;padding:9px 11px;margin-top:12px;font-size:11px;color:#166534;line-height:1.5;display:flex;gap:7px"><span style="flex-shrink:0;margin-top:1px">${ic('info',13,'#16A34A')}</span><span>Privately distributed guest passes don&#x2019;t count against spots available for this drop.</span></div>
+      <div style="background:#F0FDF4;border:1px solid #DCFCE7;border-radius:10px;padding:9px 11px;margin-top:14px;font-size:11px;color:#166534;line-height:1.5;display:flex;gap:7px"><span style="flex-shrink:0;margin-top:1px">${ic('info',13,'#16A34A')}</span><span>Guest passes are complimentary (free) and don&#x2019;t count against the spots available for this drop.</span></div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button onclick="modal('guestpasses')" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer;font-family:inherit">Cancel</button>
         <button onclick="gpSend()" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit">${ic('send',14)} Send Pass</button>
@@ -6581,7 +6578,7 @@ function renderModal(){
     const p=guestPasses.find(x=>x.id===S.gpActId);const isCancel=S.gpActType==='cancel';
     mr.innerHTML=`<div class="modal-bg" onclick="modal('guestpasses')"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px">${isCancel?'Cancel Guest Pass?':'Retract Guest Pass?'}</div>
-      <div style="font-size:12px;color:#6B7280;line-height:1.6;margin-bottom:16px">${p?`This ${p.qty>1?p.qty+' passes':'pass'} for <strong>${p.recipient}</strong> will be ${isCancel?'cancelled':'retracted'}.${isCancel?(p.price>0?' The recipient is automatically refunded, the same as any other ticket.':' The recipient is notified it&#x2019;s no longer valid.'):' It hasn&#x2019;t been claimed yet, so the spot frees up to reassign.'}`:''}</div>
+      <div style="font-size:12px;color:#6B7280;line-height:1.6;margin-bottom:16px">${p?`This ${p.qty>1?p.qty+' passes':'pass'} for <strong>${p.recipient}</strong> will be ${isCancel?'cancelled':'retracted'}.${isCancel?' The recipient is notified it&#x2019;s no longer valid.':' It hasn&#x2019;t been claimed yet, so the spot frees up to reassign.'}`:''}</div>
       <div style="display:flex;gap:8px">
         <button onclick="modal('guestpasses')" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer;font-family:inherit">Keep</button>
         <button onclick="gpResolve()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#DC2626;color:#fff;cursor:pointer;font-family:inherit">${isCancel?'Cancel Pass':'Retract'}</button>
