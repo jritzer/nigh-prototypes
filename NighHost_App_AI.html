@@ -250,6 +250,7 @@ const I={
 home:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 qr:'<rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z"/>',
+ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><line x1="14" y1="6" x2="14" y2="18" stroke-dasharray="2 2"/>',
 store:'<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/>',
 users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
 menu2:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
@@ -1194,6 +1195,36 @@ const customerList=[
   {id:'C018',acctName:'Centro Boulder',name:'Rachel Kim',handle:'@rachelk',email:'rachk@icloud.com',phone:'(303) 555-0867',av:'RK',source:'Manual',since:'Mar 2026',drops:['D001'],follower:true},
 ];
 function myCustomers(){return customerList.filter(c=>c.acctName===acct().name);}
+
+// ── GUEST PASSES (privately distributed tickets) ──────────────────
+// A Guest Pass = one ticket the host assigns directly to a specific person.
+// Up to 4 per recipient per send; up to 5 per Drop per host account.
+// Guest Passes do NOT count against the Drop's issued tickets / capacity.
+const GP_CAP=5;
+let guestPasses=[
+  {id:'GP01',dropId:'P001',rtype:'handle',recipient:'@mayat',qty:2,price:0,status:'Pending'},
+  {id:'GP02',dropId:'P001',rtype:'phone',recipient:'(720) 555-0148',qty:1,price:0,status:'Redeemed'},
+  {id:'GP03',dropId:'D001',rtype:'handle',recipient:'@priyap',qty:2,price:25,status:'Pending'},
+  {id:'GP04',dropId:'D001',rtype:'guest',recipient:'Emma Johnson',qty:1,price:25,status:'Redeemed'},
+];
+let _gpSeq=4;
+function gpFor(dropId){return guestPasses.filter(p=>p.dropId===dropId);}
+function gpUsed(dropId){return gpFor(dropId).filter(p=>p.status==='Pending'||p.status==='Redeemed').reduce((n,p)=>n+p.qty,0);}
+function gpRemaining(dropId){return Math.max(0,GP_CAP-gpUsed(dropId));}
+function gpSend(){
+  const d=drops[S.drop||0];const rem=gpRemaining(d.id);
+  const r=(S.gpRecipient||'').trim();if(!r)return;
+  const q=Math.min(S.gpQty||1,Math.min(4,rem));if(q<1)return;
+  const disp=S.gpType==='handle'?('@'+r.replace(/^@/,'')):r;
+  _gpSeq++;
+  guestPasses.push({id:'GP'+String(_gpSeq).padStart(2,'0'),dropId:d.id,rtype:S.gpType,recipient:disp,qty:q,price:parseFloat(S.gpPrice||0)||0,status:'Pending'});
+  S.gpRecipient='';S.gpGuestId='';S.gpQty=1;S.gpPrice='';S.modal='guestpasses';render();
+}
+function gpResolve(){
+  const p=guestPasses.find(x=>x.id===S.gpActId);
+  if(p)p.status=S.gpActType==='cancel'?'Cancelled':'Retracted';
+  S.gpActId=null;S.gpActType=null;S.modal='guestpasses';render();
+}
 function myPartnersList(){return partnersList.filter(p=>p.acctName===acct().name);}
 function myIncomingPartners(){return incomingPartners.filter(p=>p.acctName===acct().name);}
 
@@ -6484,6 +6515,7 @@ function renderModal(){
     const d=drops[S.drop||0];const dEnded=d.status==='Ended';
     const menuItems=[
       ...(dEnded||!canFull('messageGuests')?[]:[{ic:'megaphone',l:'Send Message',d:'Notify all spot holders',act:"modal('broadcast')"}]),
+      ...(['Scheduled','Live','Paused'].includes(d.status)?[{ic:'ticket',l:'Guest Passes',d:gpUsed(d.id)+' of '+GP_CAP+' issued · extra, off-the-books tickets',act:"modal('guestpasses')"}]:[]),
       ...(dEnded?[]:[{ic:'qr',l:'Show QR Code',d:'Display or print drop QR',act:"modal(null)"}]),
       ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'nigh.com/'+d.slug,act:"modal('share-'+(S.drop||0))"}]),
       {ic:'history',l:'Drop History',d:'View all changes & edits',act:"modal('history')"},
@@ -6494,6 +6526,70 @@ function renderModal(){
         <div style="width:36px;height:36px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#374151">${ic(m.ic,18)}</div>
         <div><div style="font-size:13px;font-weight:600;color:#111827">${m.l}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div>
       </button>`).join('')}
+    </div></div>`;
+  }
+  else if(S.modal==='guestpasses'){
+    const d=drops[S.drop||0];const used=gpUsed(d.id);const rem=gpRemaining(d.id);const passes=gpFor(d.id);
+    const stBadge=(s)=>{const m={Pending:['#92400E','#FEF3C7'],Redeemed:['#166534','#DCFCE7'],Retracted:['#6B7280','#F3F4F6'],Cancelled:['#9CA3AF','#F3F4F6']}[s]||['#6B7280','#F3F4F6'];return `<span style="font-size:10px;font-weight:700;color:${m[0]};background:${m[1]};padding:2px 8px;border-radius:8px;flex-shrink:0">${s}</span>`;};
+    const rIcon=(t)=>t==='phone'?'msgCircle':'user';
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic('ticket',18)}</div><div><div style="font-size:15px;font-weight:700;color:#111827">Guest Passes</div><div style="font-size:11px;color:#6B7280">Privately distributed tickets</div></div></div>
+      <div style="background:#EFF6FF;border:1px solid #DBEAFE;border-radius:10px;padding:10px 12px;margin:12px 0;font-size:11px;color:#1d4ed8;line-height:1.5;display:flex;gap:7px"><span style="flex-shrink:0;margin-top:1px">${ic('info',13,'#0E4EF5')}</span><span>Guest Passes are <strong>extra</strong> &#x2014; they don&#x2019;t count against this drop&#x2019;s spots. This drop has <strong>${d.res}/${d.cap}</strong> spots booked, plus <strong>${used}</strong> guest pass${used===1?'':'es'} on top.</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:12px;font-weight:700;color:#374151">Issued (${used}/${GP_CAP})</div><div style="font-size:11px;color:#6B7280">${rem} left</div></div>
+      ${passes.length?passes.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F3F4F6">
+          <div style="width:32px;height:32px;border-radius:50%;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#6B7280;flex-shrink:0">${ic(rIcon(p.rtype),16)}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.recipient}</div><div style="font-size:11px;color:#6B7280">${p.qty} pass${p.qty===1?'':'es'} &middot; ${p.price>0?'$'+p.price+' each':'Free'}</div></div>
+          ${stBadge(p.status)}
+          ${p.status==='Pending'?`<button onclick="S.gpActId='${p.id}';S.gpActType='retract';modal('gp-act')" style="border:none;background:none;color:#DC2626;font-size:11px;font-weight:600;cursor:pointer;padding:4px;flex-shrink:0">Retract</button>`:p.status==='Redeemed'?`<button onclick="S.gpActId='${p.id}';S.gpActType='cancel';modal('gp-act')" style="border:none;background:none;color:#DC2626;font-size:11px;font-weight:600;cursor:pointer;padding:4px;flex-shrink:0">Cancel</button>`:''}
+        </div>`).join(''):`<div style="text-align:center;padding:18px 0;color:#9CA3AF;font-size:12px">No guest passes issued yet.</div>`}
+      <button ${rem<=0?'disabled':''} onclick="${rem<=0?'':"S.gpType='handle';S.gpRecipient='';S.gpGuestId='';S.gpQty=1;S.gpPrice='';modal('gp-issue')"}" style="width:100%;margin-top:14px;padding:13px;border-radius:10px;border:none;background:${rem<=0?'#E5E7EB':'#0E4EF5'};color:${rem<=0?'#9CA3AF':'#fff'};font-size:13px;font-weight:700;cursor:${rem<=0?'default':'pointer'};display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit">${ic('plus',16)} Issue Guest Pass</button>
+      ${rem<=0?`<div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:8px">You&#x2019;ve issued the max of ${GP_CAP} for this drop. Higher limits come with a subscription.</div>`:`<div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:10px">Unclaimed passes expire when the drop starts.</div>`}
+    </div></div>`;
+  }
+  else if(S.modal==='gp-issue'){
+    const d=drops[S.drop||0];const rem=gpRemaining(d.id);const maxQ=Math.max(1,Math.min(4,rem));
+    if((S.gpQty||1)>maxQ)S.gpQty=maxQ;if(!S.gpQty)S.gpQty=1;
+    const guests=myCustomers();
+    const seg=(v,l)=>`<button onclick="S.gpType='${v}';S.gpRecipient='';S.gpGuestId='';render()" style="flex:1;padding:8px 4px;border:none;border-radius:8px;background:${S.gpType===v?'#fff':'transparent'};box-shadow:${S.gpType===v?'0 1px 3px rgba(0,0,0,0.12)':'none'};font-size:12px;font-weight:600;color:${S.gpType===v?'#111827':'#6B7280'};cursor:pointer;font-family:inherit">${l}</button>`;
+    let recipientField='';
+    if(S.gpType==='guest'){
+      recipientField=guests.length?`<select onchange="S.gpRecipient=this.value;render()" style="width:100%;box-sizing:border-box;padding:11px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;font-family:inherit"><option value="">Select a guest&#x2026;</option>${guests.map(g=>`<option value="${g.name}" ${S.gpRecipient===g.name?'selected':''}>${g.name}${g.handle?' ('+g.handle+')':''}</option>`).join('')}</select>`:`<div style="font-size:12px;color:#9CA3AF;padding:11px;background:#F9FAFB;border-radius:10px;text-align:center">No saved guests yet &#x2014; use a handle or phone number.</div>`;
+    } else if(S.gpType==='handle'){
+      recipientField=`<div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#9CA3AF">@</span><input id="gp-recip" value="${(S.gpRecipient||'').replace(/^@/,'')}" oninput="S.gpRecipient=this.value.replace(/^@/,'')" placeholder="handle" style="width:100%;box-sizing:border-box;padding:11px 12px 11px 26px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div>`;
+    } else {
+      recipientField=`<input id="gp-recip" value="${S.gpRecipient||''}" oninput="S.gpRecipient=this.value" placeholder="(555) 555-5555" inputmode="tel" style="width:100%;box-sizing:border-box;padding:11px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit"/>`;
+    }
+    mr.innerHTML=`<div class="modal-bg" onclick="modal('guestpasses')"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic('ticket',18)}</div><div><div style="font-size:15px;font-weight:700;color:#111827">Issue Guest Pass</div><div style="font-size:11px;color:#6B7280">${rem} of ${GP_CAP} remaining for this drop</div></div></div>
+      <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px">Send to</div>
+      <div style="display:flex;gap:4px;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:10px">${seg('guest','Guest')}${seg('handle','Handle')}${seg('phone','Phone')}</div>
+      ${recipientField}
+      <div style="font-size:11px;font-weight:700;color:#374151;margin:14px 0 6px">Number of passes <span style="font-weight:400;color:#9CA3AF">(up to ${maxQ})</span></div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <button onclick="S.gpQty=Math.max(1,(S.gpQty||1)-1);render()" style="width:38px;height:38px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;font-size:18px;color:#374151;cursor:pointer;font-family:inherit">&minus;</button>
+        <div style="font-size:18px;font-weight:700;color:#111827;min-width:24px;text-align:center">${S.gpQty||1}</div>
+        <button onclick="S.gpQty=Math.min(${maxQ},(S.gpQty||1)+1);render()" style="width:38px;height:38px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;font-size:18px;color:#374151;cursor:pointer;font-family:inherit">+</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#374151;margin:14px 0 6px">Price per pass</div>
+      <div style="position:relative"><span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#9CA3AF">$</span><input id="gp-price" value="${S.gpPrice||''}" oninput="S.gpPrice=this.value.replace(/[^0-9.]/g,'')" placeholder="0 (free)" inputmode="decimal" style="width:100%;box-sizing:border-box;padding:11px 12px 11px 24px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:5px">Each pass is priced individually. The recipient pays on claim. Leave at 0 for a free pass.</div>
+      <div style="background:#F0FDF4;border:1px solid #DCFCE7;border-radius:10px;padding:9px 11px;margin-top:12px;font-size:11px;color:#166534;line-height:1.5;display:flex;gap:7px"><span style="flex-shrink:0;margin-top:1px">${ic('info',13,'#16A34A')}</span><span>These ${S.gpQty||1} pass${(S.gpQty||1)===1?'':'es'} are <strong>extra</strong> &#x2014; they won&#x2019;t reduce the ${Math.max(0,d.cap-d.res)} spots still open on this drop.</span></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button onclick="modal('guestpasses')" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer;font-family:inherit">Cancel</button>
+        <button onclick="gpSend()" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit">${ic('send',14)} Send Pass</button>
+      </div>
+    </div></div>`;
+    setTimeout(()=>{const el=document.getElementById('gp-recip');if(el&&!S.gpRecipient)el.focus();},50);
+  }
+  else if(S.modal==='gp-act'){
+    const p=guestPasses.find(x=>x.id===S.gpActId);const isCancel=S.gpActType==='cancel';
+    mr.innerHTML=`<div class="modal-bg" onclick="modal('guestpasses')"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
+      <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px">${isCancel?'Cancel Guest Pass?':'Retract Guest Pass?'}</div>
+      <div style="font-size:12px;color:#6B7280;line-height:1.6;margin-bottom:16px">${p?`This ${p.qty>1?p.qty+' passes':'pass'} for <strong>${p.recipient}</strong> will be ${isCancel?'cancelled':'retracted'}.${isCancel?(p.price>0?' The recipient is automatically refunded, the same as any other ticket.':' The recipient is notified it&#x2019;s no longer valid.'):' It hasn&#x2019;t been claimed yet, so the spot frees up to reassign.'}`:''}</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal('guestpasses')" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer;font-family:inherit">Keep</button>
+        <button onclick="gpResolve()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#DC2626;color:#fff;cursor:pointer;font-family:inherit">${isCancel?'Cancel Pass':'Retract'}</button>
+      </div>
     </div></div>`;
   }
   else if(S.modal==='broadcast'){
