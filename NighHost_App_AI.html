@@ -6515,7 +6515,7 @@ function renderModal(){
     const d=drops[S.drop||0];const dEnded=d.status==='Ended';
     const menuItems=[
       ...(dEnded||!canFull('messageGuests')?[]:[{ic:'megaphone',l:'Send Message',d:'Notify all spot holders',act:"modal('broadcast')"}]),
-      ...(['Scheduled','Live','Paused'].includes(d.status)?[{ic:'ticket',l:'Guest Passes',d:gpUsed(d.id)+' of '+GP_CAP+' issued · extra, off-the-books tickets',act:"modal('guestpasses')"}]:[]),
+      ...(['Scheduled','Live','Paused'].includes(d.status)?[{ic:'ticket',l:'Guest Passes',d:'Privately distributed tickets',act:"modal('guestpasses')"}]:[]),
       ...(dEnded?[]:[{ic:'qr',l:'Show QR Code',d:'Display or print drop QR',act:"modal(null)"}]),
       ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'nigh.com/'+d.slug,act:"modal('share-'+(S.drop||0))"}]),
       {ic:'history',l:'Drop History',d:'View all changes & edits',act:"modal('history')"},
