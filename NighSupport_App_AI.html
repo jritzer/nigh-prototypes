@@ -4109,7 +4109,10 @@ ${(()=>{
       <div class="field"><label class="label">Max Drops / Day</label><input class="input" type="number" value="3" min="1" max="20"/></div>
       <div class="field"><label class="label">Max Capacity / Drop</label><input class="input" type="number" value="100" min="1" max="1000"/></div>
       <div class="field"><label class="label">Advance Scheduling (days)</label><input class="input" type="number" value="${o.advSchedulingDays}" min="1" max="30"/></div>
+      <div class="field"><label class="label">Guest Passes / Drop</label><input class="input" type="number" value="${o.guestPassCap||5}" min="0" max="500"/></div>
+      <div class="field"><label class="label">Guest Passes / Month</label><input class="input" type="number" value="${o.guestPassMonthly||25}" min="0" max="5000"/></div>
     </div>
+    <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Guest Passes are complimentary tickets a host issues outside public booking. They don&#x2019;t count against a drop&#x2019;s capacity. Support can override the per-drop cap from a drop&#x2019;s detail view.</div>
 
     ${secHdr('Behavior')}
     <div class="field"><label class="label">No-Show Policy</label>
@@ -4386,6 +4389,9 @@ function rDropDetail(id){
     ${dropTimeBadge(d.timeType)}
     <button onclick="openModal('drop-link-${d.id}')" style="background:none;border:1px solid #E5E7EB;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#6B7280;padding:4px 10px;border-radius:6px">
       ${svgI('link',11)} Link & QR
+    </button>
+    <button onclick="openModal('issue-gp-${d.id}')" style="background:none;border:1px solid #E5E7EB;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#6B7280;padding:4px 10px;border-radius:6px">
+      ${svgI('ticket',11)} Issue Guest Passes
     </button>
   </div>
 </div>
@@ -5449,6 +5455,21 @@ function renderModal(id){
     <div class="field"><label class="label">Plan</label><select class="select"><option>Free</option><option>Plus</option><option>Pro</option><option>Enterprise</option></select></div>
     <div class="field"><label class="label">Internal Note (optional)</label><textarea class="textarea" placeholder="Why this host is being invited, referral source, etc."></textarea></div>`;
     footer=`<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">${svgI('send',14)} Send Invite</button>`;}
+
+  else if(id.startsWith('issue-gp-')){
+    title='Issue Guest Passes';
+    const d=drops.find(x=>x.id===id.replace('issue-gp-',''))||{};
+    const o=orgs.find(x=>x.name===d.org);
+    const cap=(o&&o.guestPassCap)||5;
+    body=`<div class="alert alert-amber" style="margin-bottom:16px">${svgI('alert',14)} Support override &mdash; issue unlimited Guest Passes, bypassing the host&#x2019;s per-drop cap. Logged with your support ID and timestamp.</div>
+    <div style="padding:10px 12px;background:#F8FAFC;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:14px;font-size:12px;color:#374151"><strong>${d.title||'Drop'}</strong><div style="color:#9CA3AF;font-size:11px;margin-top:3px">${d.org||''} &middot; ${d.cap||0} spots &middot; host cap: ${cap} passes/drop</div></div>
+    <div class="field"><label class="label">Recipient Type</label><select class="select"><option>Phone number</option><option>Nigh handle</option><option>Existing guest</option></select></div>
+    <div class="field"><label class="label">Recipient</label><input class="input" placeholder="(555) 555-5555, @handle, or guest name"/></div>
+    <div class="field"><label class="label">Number of Guest Passes <span style="font-weight:400;color:#6B7280;font-size:11px">&mdash; no cap (support override)</span></label><input class="input" type="number" placeholder="e.g. 25" min="1"/></div>
+    <div class="field"><label class="label">Reason <span style="color:#EF4444">*</span></label><select class="select"><option>Select…</option><option>Venue capacity override</option><option>Partner / VIP event</option><option>Support exception</option><option>Event upgrade</option><option>Error correction</option><option>Other (specify below)</option></select></div>
+    <div class="field"><label class="label">Custom Note (optional)</label><textarea class="textarea" placeholder="Context for this guest-pass issuance…"></textarea></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px"><input type="checkbox" checked style="width:16px;height:16px;accent-color:#16A34A"/><div style="font-size:12px;font-weight:600;color:#15803D">Complimentary (free) — the recipient pays nothing</div></div>`;
+    footer=`<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal()">Issue Guest Passes</button>`;}
 
   else if(id==='issue-credit'){
     title='Issue N Credits';

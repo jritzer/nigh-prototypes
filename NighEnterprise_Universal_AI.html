@@ -23,6 +23,24 @@ function ic(name,sz){sz=sz||16;const d={dashboard:`<svg width="${sz}" height="${
 const TODAY_STR='2026-04-14';
 const S={config:'bestbuy',page:'dashboard',t1:null,t2:null,timing:null,weekend:null,day:null,locationDetail:null,collectionDetail:null,collectionModal:null,brandDetail:null,partnerDetailId:null,partnerDeactivateConfirm:false,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushStep:1,pushLoc:null,pushType:null,pushDualPrice:false,pushCap:0,pushMaxPerGuest:null,pushAudience:'public',pushAudienceGroups:[],pushEditDropId:null,showNewColl:false,collStep:1,collGeo:null,locationEdit:false,locEditTab:'profile',addLocModal:false,guestTab:'all',guestView:'portfolio',guestLocFilter:null,guestLocModal:false,guestLocSelected:[],acctFilter:[],acctFilterModal:false,guestDetailGuest:null,guestMenu:null,guestBlocked:[],teamTab:'members',teamFilter:'all',crmModal:false,crmStep:1,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',dropView:'list',calMonth:3,calYear:2026,headsUpModal:false,headsUpDate:TODAY_STR,headsUpLocId:null,headsUpText:'',headsUpNiya:false,selectedOrder:null,ticketStatusOverrides:{},ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,cancelTicketName:null,guestDetailTab:null,orderGuestFilter:null,manageSubModal:false,selectedPlanTier:null,subModalStep:null,editTags:null,editTagInput:'',brandEdit:false,editAcctType:null,followersTab:'list',pushPhoneRequest:'none'};
 function ss(p){Object.assign(S,p);render();}
+
+// ── GUEST PASSES (privately distributed comp tickets) ──
+const GP_CAP_W=5;
+let gpWeb=[
+  {id:'GW01',dropId:'D01',rtype:'handle',recipient:'@maya',qty:2,status:'Pending'},
+  {id:'GW02',dropId:'D01',rtype:'phone',recipient:'+1 (303) 555-0148',qty:1,status:'CheckedIn'},
+  {id:'GW03',dropId:'D02',rtype:'guest',recipient:'Riley Johnson',qty:1,status:'Redeemed'},
+];
+let _gwSeq=3;
+function gpwFor(id){return gpWeb.filter(p=>p.dropId===id);}
+function gpwActive(id){return gpwFor(id).filter(p=>['Pending','Redeemed','CheckedIn'].includes(p.status));}
+function gpwUsed(id){return gpwActive(id).reduce((n,p)=>n+p.qty,0);}
+function gpwChecked(id){return gpwFor(id).filter(p=>p.status==='CheckedIn').reduce((n,p)=>n+p.qty,0);}
+function gpwRemaining(id){return Math.max(0,GP_CAP_W-gpwUsed(id));}
+function gpwCheckIn(id){const p=gpWeb.find(x=>x.id===id);if(p)p.status='CheckedIn';render();}
+function gpwUndo(id){const p=gpWeb.find(x=>x.id===id);if(p)p.status='Redeemed';render();}
+function gpwSend(){const id=S.locationDetail;const rem=gpwRemaining(id);const r=(S.gwRecip||'').trim();if(!r)return;const q=Math.min(parseInt(S.gwQty||1),Math.min(4,rem));if(q<1)return;const disp=(S.gwType==='handle')?('@'+r.replace(/^@/,'')):r;_gwSeq++;gpWeb.push({id:'GW'+String(_gwSeq).padStart(2,'0'),dropId:id,rtype:S.gwType||'handle',recipient:disp,qty:q,status:'Pending'});S.gwRecip='';S.gwQty=1;ss({dropModal:'guestpasses'});}
+function gpwResolve(){const p=gpWeb.find(x=>x.id===S.gwActId);if(p)p.status=(S.gwActType==='cancel')?'Cancelled':'Retracted';S.gwActId=null;S.gwActType=null;ss({dropModal:'guestpasses'});}
 function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,brandDetail:null,partnerDetailId:null,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushEditDropId:null,pushPhoneRequest:'none',showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,editAssignments:null,editDisplayName:undefined,editConfirm:null,teamFilter:'all',settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null,selectedOrder:null,ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,guestDetailTab:null,orderGuestFilter:null});}
 function refundTicket(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Refunded';ss({ticketStatusOverrides:o,dropModal:null,cancelTicketId:null,cancelTicketName:null});}
 function uncheckIn(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Reserved';ss({ticketStatusOverrides:o});}
@@ -3746,6 +3764,29 @@ function dropDetail(d){
               </div>
             </div>`;
           }).join('')}`}
+          ${gpwActive(d.id).length?`<div style="border-top:8px solid #f8fafc;">
+            <div style="padding:11px 18px 2px;display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.66rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;">Guest Passes</span>
+              <span style="font-size:0.64rem;color:#94a3b8;">· ${gpwUsed(d.id)} issued · ${gpwChecked(d.id)} checked in · not counted in totals</span>
+            </div>
+            ${gpwActive(d.id).map(p=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 240px;padding:11px 18px;border-bottom:1px solid #f8fafc;align-items:center;gap:8px;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <div style="width:30px;height:30px;border-radius:50%;background:${p.status!=='Pending'?'linear-gradient(135deg,#0E4EF5,#8b5cf6)':'#e5e7eb'};display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:800;color:${p.status!=='Pending'?'#fff':'#94a3b8'};flex-shrink:0;">PASS</div>
+                <div><div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${p.recipient}</div><div style="font-size:0.68rem;color:#94a3b8;">${p.qty} spot${p.qty===1?'':'s'} · comp</div></div>
+              </div>
+              <div style="font-size:0.7rem;color:#cbd5e1;text-align:center;">—</div>
+              <div style="font-size:0.7rem;color:#94a3b8;text-align:center;">${p.status==='Pending'?'Not claimed':'Claimed'}</div>
+              <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+                ${p.status==='Pending'
+                  ?`<span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:#fef3c7;color:#92400e;white-space:nowrap;">Invited</span>`
+                  :p.status==='CheckedIn'
+                    ?`<span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:#dcfce7;color:#15803d;white-space:nowrap;">Checked In</span><button onclick="gpwUndo('${p.id}')" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#64748b;cursor:pointer;">Undo</button>`
+                    :(isLive||isPaused||isEnded)
+                      ?`<button onclick="gpwCheckIn('${p.id}')" style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`
+                      :`<span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:#eff6ff;color:#1d4ed8;white-space:nowrap;">Claimed</span>`}
+              </div>
+            </div>`).join('')}
+          </div>`:''}
         </div>`
 
         :activeTab==='comms'?`
@@ -3874,6 +3915,7 @@ function dropDetail(d){
             {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
             {icon:'M2 2h8v8H2zM14 2h8v8h-8zM2 14h8v8H2zM14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
             {icon:'M3 11l19-9v18L3 13M11.6 16.8a3 3 0 1 1-5.8-1.6', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
+            {icon:'M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z', label:'Guest Passes',  sub:gpwUsed(d.id)+' of '+GP_CAP_W+' issued · comp tickets', action:"ss({dropModal:'guestpasses'})"},
             {icon:'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', label:'Edit Drop',     sub:'Modify settings or details', action:"ss({showPush:true,pushStep:1,pushEditDropId:'"+d.id+"',pushLoc:'"+d.locId+"',pushLocOpen:false,pushLocQ:'',pushHostId:'"+(d.locId||'')+"',pushHostOpen:false,pushFormTiming:'start',pushMaxPerGuest:null,pushAudience:'"+(d.audience||'public')+"',pushAudienceGroups:[],pushDualPrice:false,pushCap:"+(d.cap||0)+",pushTaxOn:true,pushPartners:[],pushPartnersOpen:false,pushAgeRestriction:'everyone',pushPhoneRequest:'"+(d.phoneRequest||'none')+"',pushDate:null,pushCalOpen:false,pushCalYear:null,pushCalMonth:null,pushStartTime:null,pushWindowStart:null,pushWindowEnd:null,pushOpenTimePicker:null})"},
           ].map((a,i)=>`
             <button onclick="${a.action}" style="width:100%;padding:11px 14px;background:none;border:none;border-bottom:${i<4?'1px solid #f8fafc':'none'};display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
@@ -4124,11 +4166,52 @@ function dropModalPanel(){
         <button onclick="ss({dropModal:null})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Cancel</button>
         <button onclick="ss({dropModal:null})" style="flex:2;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">📡 Send Broadcast</button>
       </div>`;
+  } else if(m==='guestpasses'){
+    const used=gpwUsed(S.locationDetail); const rem=gpwRemaining(S.locationDetail); const passes=gpwFor(S.locationDetail);
+    const stB=(s)=>{const mm={Pending:['#92400e','#fef3c7'],Redeemed:['#1d4ed8','#eff6ff'],CheckedIn:['#15803d','#dcfce7'],Retracted:['#64748b','#f1f5f9'],Cancelled:['#94a3b8','#f1f5f9']}[s]||['#64748b','#f1f5f9'];const lbl=(s==='CheckedIn')?'Checked In':s;return `<span style="padding:2px 9px;border-radius:8px;font-size:0.62rem;font-weight:700;background:${mm[1]};color:${mm[0]};white-space:nowrap;flex-shrink:0;">${lbl}</span>`;};
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:2px;">Guest Passes</div>
+      <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:12px;">Privately distributed comp tickets</div>
+      <div style="background:#eff6ff;border:1px solid #dbeafe;border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:0.72rem;color:#1d4ed8;line-height:1.5;">Guest Passes don&#39;t count against drop spots. ${used} of ${GP_CAP_W} issued.</div>
+      ${passes.length?passes.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f1f5f9;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:800;color:#64748b;flex-shrink:0;">PASS</div>
+        <div style="flex:1;min-width:0;"><div style="font-size:0.8rem;font-weight:700;color:#0f172a;">${p.recipient}</div><div style="font-size:0.66rem;color:#94a3b8;">${p.qty} spot${p.qty===1?'':'s'} · comp</div></div>
+        ${stB(p.status)}
+        ${p.status==='Pending'?`<button onclick="ss({dropModal:'gp-act',gwActId:'${p.id}',gwActType:'retract'})" style="padding:4px 8px;border-radius:7px;font-size:0.66rem;font-weight:600;border:none;background:none;color:#dc2626;cursor:pointer;flex-shrink:0;">Retract</button>`:p.status==='Redeemed'?`<button onclick="ss({dropModal:'gp-act',gwActId:'${p.id}',gwActType:'cancel'})" style="padding:4px 8px;border-radius:7px;font-size:0.66rem;font-weight:600;border:none;background:none;color:#dc2626;cursor:pointer;flex-shrink:0;">Cancel</button>`:''}
+      </div>`).join(''):`<div style="text-align:center;padding:16px;color:#94a3b8;font-size:0.74rem;">No guest passes issued yet.</div>`}
+      <button ${rem<=0?'disabled':''} onclick="${rem<=0?'':"ss({dropModal:'gp-issue',gwType:'handle',gwRecip:'',gwQty:1})"}" style="width:100%;margin-top:14px;padding:11px;border-radius:10px;border:none;background:${rem<=0?'#e5e7eb':c.color};color:${rem<=0?'#94a3b8':'#fff'};font-size:0.78rem;font-weight:700;cursor:${rem<=0?'default':'pointer'};">+ Issue Guest Pass</button>
+      ${rem<=0?`<div style="font-size:0.64rem;color:#94a3b8;text-align:center;margin-top:8px;">Max of ${GP_CAP_W} for this drop. Higher limits with a subscription.</div>`:`<div style="font-size:0.64rem;color:#94a3b8;text-align:center;margin-top:8px;">Unclaimed passes expire when the drop starts.</div>`}`;
+  } else if(m==='gp-issue'){
+    const rem=gpwRemaining(S.locationDetail); const maxQ=Math.max(1,Math.min(4,rem)); if((S.gwQty||1)>maxQ)S.gwQty=maxQ;
+    const gwT=S.gwType||'handle';
+    const seg=(v,l)=>`<button onclick="ss({gwType:'${v}',gwRecip:''})" style="flex:1;padding:7px;border:none;border-radius:8px;background:${gwT===v?'#fff':'transparent'};box-shadow:${gwT===v?'0 1px 3px rgba(0,0,0,0.1)':'none'};font-size:0.72rem;font-weight:700;color:${gwT===v?'#0f172a':'#94a3b8'};cursor:pointer;">${l}</button>`;
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:2px;">Issue Guest Pass</div>
+      <div style="font-size:0.72rem;color:#94a3b8;margin-bottom:12px;">${rem} of ${GP_CAP_W} remaining · comp (free)</div>
+      <div style="font-size:0.68rem;font-weight:700;color:#64748b;margin-bottom:5px;">Send to</div>
+      <div style="display:flex;gap:4px;background:#f1f5f9;border-radius:9px;padding:3px;margin-bottom:9px;">${seg('guest','Guest')}${seg('handle','Handle')}${seg('phone','Phone')}</div>
+      <input value="${(S.gwRecip||'').replace(/"/g,'&quot;')}" oninput="S.gwRecip=this.value" placeholder="${gwT==='handle'?'@handle':(gwT==='phone'?'(555) 555-5555':'Guest name')}" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #e5e7eb;font-size:0.8rem;outline:none;font-family:inherit;"/>
+      <div style="font-size:0.68rem;font-weight:700;color:#64748b;margin:12px 0 5px;">Number of passes <span style="font-weight:400;color:#94a3b8;">(up to ${maxQ})</span></div>
+      <select onchange="S.gwQty=parseInt(this.value)" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #e5e7eb;font-size:0.8rem;background:#fff;font-family:inherit;">${Array.from({length:maxQ},(x,k)=>k+1).map(n=>`<option value="${n}" ${(S.gwQty||1)===n?'selected':''}>${n} pass${n===1?'':'es'}</option>`).join('')}</select>
+      <div style="background:#f0fdf4;border:1px solid #dcfce7;border-radius:10px;padding:9px 11px;margin-top:12px;font-size:0.7rem;color:#15803d;line-height:1.5;">Guest passes are complimentary and don&#39;t count against the spots available for this drop.</div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button onclick="ss({dropModal:'guestpasses'})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Cancel</button>
+        <button onclick="gpwSend()" style="flex:2;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">Send Pass</button>
+      </div>`;
+  } else if(m==='gp-act'){
+    const p=gpWeb.find(x=>x.id===S.gwActId); const isCancel=S.gwActType==='cancel';
+    inner=`
+      <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:6px;">${isCancel?'Cancel Guest Pass?':'Retract Guest Pass?'}</div>
+      <div style="font-size:0.76rem;color:#64748b;line-height:1.6;margin-bottom:16px;">${p?`This ${p.qty>1?p.qty+' passes':'pass'} for <strong>${p.recipient}</strong> will be ${isCancel?'cancelled &mdash; the recipient is notified it&#39;s no longer valid':'retracted, freeing the spot to reassign'}.`:''}</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="ss({dropModal:'guestpasses'})" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#374151;cursor:pointer;">Keep</button>
+        <button onclick="gpwResolve()" style="flex:1;padding:10px;border-radius:10px;font-size:0.78rem;font-weight:700;border:none;background:#b91c1c;color:#fff;cursor:pointer;">${isCancel?'Cancel Pass':'Retract'}</button>
+      </div>`;
   }
   return `<div onclick="ss({dropModal:null})" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:center;justify-content:center;">
     <div onclick="event.stopPropagation()" style="background:#fff;border-radius:18px;padding:24px;width:440px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;">
       ${inner}
-      ${(m!=='broadcast'&&m!=='cancelTicket'&&m!=='cancelOrder')?`<button onclick="ss({dropModal:null})" style="width:100%;margin-top:14px;padding:9px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#64748b;font-size:0.75rem;font-weight:600;cursor:pointer;">Close</button>`:''}
+      ${(m!=='broadcast'&&m!=='cancelTicket'&&m!=='cancelOrder'&&m!=='gp-issue'&&m!=='gp-act')?`<button onclick="ss({dropModal:null})" style="width:100%;margin-top:14px;padding:9px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;color:#64748b;font-size:0.75rem;font-weight:600;cursor:pointer;">Close</button>`:''}
     </div>
   </div>`;
 }
