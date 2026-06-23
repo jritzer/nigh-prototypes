@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Early Access — Nigh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.13);
+            --text: #F5F5F7;
+            --text-secondary: rgba(245,245,247,0.5);
+        }
+
+        html { height: 100%; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== NAV ===== */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 28px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            height: 72px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo img { height: 100px; width: auto; display: block; }
+
+        .back-link {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .back-link:hover { color: var(--text); }
+
+        /* ===== MAIN ===== */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px 72px;
+        }
+
+        .form-wrap {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        /* ===== PROGRESS ===== */
+        .progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 52px;
+            justify-content: center;
+        }
+
+        .progress-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            transition: background 0.35s, transform 0.35s, width 0.35s;
+        }
+
+        .progress-dot.active {
+            background: var(--pink);
+            transform: scale(1.25);
+        }
+
+        .progress-dot.done {
+            background: rgba(236,25,119,0.35);
+        }
+
+        /* ===== STEPS ===== */
+        .wl-step {
+            display: none;
+        }
+
+        .wl-step.active {
+            display: block;
+            animation: stepIn 0.3s ease both;
+        }
+
+        @keyframes stepIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== QUESTION TEXT ===== */
+        .question-text {
+            font-size: clamp(1.6rem, 4.5vw, 2rem);
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            line-height: 1.18;
+            margin-bottom: 32px;
+            min-height: 1.3em;
+            text-align: center;
+        }
+
+        /* Blinking cursor */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background: var(--pink);
+            margin-left: 2px;
+            vertical-align: -0.12em;
+            border-radius: 1px;
+            animation: blink 0.85s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
+        /* ===== INPUT ===== */
+        .wl-input {
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 16px 18px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s, background 0.2s;
+            margin-bottom: 14px;
+        }
+
+        .wl-input:focus {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .wl-input::placeholder { color: rgba(245,245,247,0.25); }
+
+        /* Pre-filled email display */
+        .prefill-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+        }
+
+        .prefill-email {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .prefill-change {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .prefill-change:hover { color: var(--text); }
+
+        /* ===== PRIMARY BUTTON ===== */
+        .btn-primary {
+            display: block;
+            width: auto;
+            min-width: 200px;
+            margin: 0 auto;
+            background: var(--pink);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 16px 40px;
+            cursor: pointer;
+            font-family: inherit;
+            letter-spacing: -0.01em;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: saturate(0.6); }
+
+        /* ===== OPTION CARDS ===== */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.03);
+            border: 1.5px solid var(--border-light);
+            border-radius: 18px;
+            padding: 20px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s, background 0.2s, transform 0.15s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-card:hover {
+            border-color: rgba(236,25,119,0.45);
+            background: rgba(236,25,119,0.06);
+        }
+
+        .option-card:active { transform: scale(0.97); }
+
+        .option-card.selected {
+            border-color: var(--pink);
+            background: rgba(236,25,119,0.1);
+        }
+
+        .option-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .option-content {
+            flex: 1;
+        }
+
+        .option-label {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 3px;
+        }
+
+        .option-sub {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* ===== CONFIRMATION ===== */
+        .confirm-wrap {
+            text-align: center;
+            animation: stepIn 0.4s ease both;
+        }
+
+        .confirm-check {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: rgba(236,25,119,0.12);
+            border: 1.5px solid rgba(236,25,119,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            font-size: 1.8rem;
+        }
+
+        .confirm-heading {
+            font-size: clamp(2rem, 5vw, 2.4rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 14px;
+            line-height: 1.1;
+        }
+
+        .confirm-sub {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 36px;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .confirm-sub strong { color: var(--text); font-weight: 600; }
+
+        .confirm-meta {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .confirm-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+
+        .btn-ghost {
+            display: inline-block;
+            padding: 14px 32px;
+            background: transparent;
+            border: 1.5px solid var(--border-light);
+            border-radius: 14px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+        /* ===== HELPER TEXT ===== */
+        .field-hint {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            opacity: 0.7;
+            text-align: center;
+        }
+
+        /* ===== WELCOME HEADER ===== */
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .welcome-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--pink);
+            background: rgba(236,25,119,0.1);
+            border: 1px solid rgba(236,25,119,0.2);
+            border-radius: 100px;
+            padding: 5px 14px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-heading {
+            font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: -0.035em;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .welcome-tagline {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.65;
+            margin: 0 auto 8px;
+        }
+
+        .welcome-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            nav { padding: 16px 20px; }
+            .option-card { padding: 16px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <a href="index.html" class="nav-logo">
+        <img src="Nigh_Logo.svg" alt="Nigh">
+    </a>
+    <a class="back-link" href="javascript:history.back()">← Back</a>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main>
+    <div class="form-wrap">
+
+        <!-- Welcome context -->
+        <div class="welcome-header" id="welcomeHeader">
+            <div class="welcome-tag">Early Access</div>
+            <h1 class="welcome-heading" id="welcomeHeading"></h1>
+            <p class="welcome-tagline" id="welcomeTagline"></p>
+            <p class="welcome-sub" id="welcomeSub"></p>
+        </div>
+
+        <!-- Progress dots -->
+        <div class="progress" id="progressDots">
+            <div class="progress-dot active" id="dot1"></div>
+            <div class="progress-dot" id="dot2"></div>
+            <div class="progress-dot" id="dot3"></div>
+        </div>
+
+        <!-- Step 1: Phone -->
+        <div class="wl-step active" id="step1">
+            <div class="question-text" id="q1text"></div>
+            <div id="step1-body"></div>
+        </div>
+
+        <!-- Step 2: What are you interested in? -->
+        <div class="wl-step" id="step2">
+            <div class="question-text" id="q2text"></div>
+            <div class="options-list">
+                <div class="option-card" id="opt-discover" onclick="selectType('discover', this)">
+                    <div class="option-icon">🧑</div>
+                    <div class="option-content">
+                        <div class="option-label">Discover Nigh Drops</div>
+                        <div class="option-sub">Find moments nearby worth showing up for</div>
+                    </div>
+                </div>
+                <div class="option-card" id="opt-host" onclick="selectType('host', this)">
+                    <div class="option-icon">✨</div>
+                    <div class="option-content">
+                        <div class="option-label">Host Nigh Drops</div>
+                        <div class="option-sub">Create moments that bring people together</div>
+                    </div>
+                </div>
+                <div class="option-card" id="opt-both" onclick="selectType('both', this)">
+                    <div class="option-icon">🔥</div>
+                    <div class="option-content">
+                        <div class="option-label">Both</div>
+                        <div class="option-sub">Discover and host Nigh Drops</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" id="step2Btn" disabled onclick="goToStep3()">Continue →</button>
+        </div>
+
+        <!-- Step 3: City -->
+        <div class="wl-step" id="step3">
+            <div class="question-text" id="q3text"></div>
+            <input
+                type="text"
+                class="wl-input"
+                id="cityInput"
+                placeholder="e.g. Denver, CO"
+                autocomplete="off"
+                spellcheck="false"
+            />
+            <button class="btn-primary" id="step3Btn" disabled onclick="submitWaitlist()">Request Early Access →</button>
+            <p class="field-hint">No spam. Just an invite when your spot is ready.</p>
+        </div>
+
+        <!-- Step 4: Confirmation -->
+        <div class="wl-step" id="step4">
+            <div class="confirm-wrap">
+                <div class="confirm-check">✓</div>
+                <div class="confirm-heading">You're in.</div>
+                <p class="confirm-sub">
+                    We'll text you at <strong id="confirmPhone"></strong> when your early access is ready.
+                </p>
+                <div class="confirm-meta">
+                    <span class="confirm-tag" id="confirmType"></span>
+                    <span class="confirm-tag" id="confirmCity"></span>
+                </div>
+                <a class="btn-ghost" href="index.html">← Back to Nigh</a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script>
+    // ── State ──────────────────────────────────────────────────────────
+    let state = { phone: '', type: '', city: '' };
+    let currentStep = 1;
+
+    // Pull phone from URL param if passed from main pages
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlPhone  = (urlParams.get('phone') || '').trim();
+    const urlType   = (urlParams.get('type')  || '').trim(); // 'host' if coming from for-hosts.html
+
+    // ── Typewriter ────────────────────────────────────────────────────
+    function typewrite(el, text, onDone) {
+        el.innerHTML = '';
+        let i = 0;
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        el.appendChild(cursor);
+
+        const tick = setInterval(() => {
+            if (i < text.length) {
+                // Handle line breaks encoded as \n
+                if (text[i] === '\n') {
+                    el.insertBefore(document.createElement('br'), cursor);
+                } else {
+                    el.insertBefore(document.createTextNode(text[i]), cursor);
+                }
+                i++;
+            } else {
+                clearInterval(tick);
+                setTimeout(() => {
+                    cursor.className = 'cursor';
+                    cursor.style.display = 'none';
+                    if (onDone) onDone();
+                }, 280);
+            }
+        }, 32);
+    }
+
+    // ── Progress ──────────────────────────────────────────────────────
+    function updateProgress(step) {
+        const dots = document.getElementById('progressDots');
+        dots.style.display = step >= 4 ? 'none' : 'flex';
+        for (let i = 1; i <= 3; i++) {
+            const d = document.getElementById('dot' + i);
+            if      (i < step)  d.className = 'progress-dot done';
+            else if (i === step) d.className = 'progress-dot active';
+            else                 d.className = 'progress-dot';
+        }
+    }
+
+    // ── Show step ─────────────────────────────────────────────────────
+    function showStep(n) {
+        document.querySelectorAll('.wl-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + n).classList.add('active');
+        currentStep = n;
+        updateProgress(n);
+        // Hide welcome header and progress on confirmation
+        document.getElementById('welcomeHeader').style.display = n >= 4 ? 'none' : 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Step 1: Phone ─────────────────────────────────────────────────
+    function initStep1() {
+        const body = document.getElementById('step1-body');
+        const qEl  = document.getElementById('q1text');
+
+        if (urlPhone) {
+            // Pre-filled — just confirm and continue
+            state.phone = urlPhone;
+            typewrite(qEl, 'A couple quick\nquestions.', () => {
+                const row = document.createElement('div');
+                row.className = 'prefill-row';
+                row.innerHTML = `
+                    <span class="prefill-email">${escHtml(urlPhone)}</span>
+                    <button class="prefill-change" onclick="clearPhone()">Change</button>
+                `;
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.textContent = 'Continue →';
+                btn.style.marginTop = '14px';
+                btn.onclick = goToStep2;
+
+                body.appendChild(row);
+                body.appendChild(btn);
+            });
+        } else {
+            // No phone — ask for it
+            typewrite(qEl, "What's your mobile number?", () => {
+                const input = document.createElement('input');
+                input.type = 'tel';
+                input.className = 'wl-input';
+                input.id = 'phoneInput';
+                input.placeholder = '(555) 555-5555';
+                input.maxLength = 14; // (xxx) xxx-xxxx
+                input.autocomplete = 'tel';
+                input.addEventListener('input', e => {
+                    // Auto-format to (xxx) xxx-xxxx, limit 10 digits
+                    let digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    if (digits.length > 6) {
+                        e.target.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+                    } else if (digits.length > 3) {
+                        e.target.value = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+                    } else if (digits.length > 0) {
+                        e.target.value = '(' + digits;
+                    } else {
+                        e.target.value = '';
+                    }
+                    // Enable button only when 10 digits entered
+                    btn.disabled = digits.length < 10;
+                });
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && !btn.disabled) continuePhone();
+                });
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-primary';
+                btn.textContent = 'Continue →';
+                btn.disabled = true;
+                btn.onclick = continuePhone;
+
+                body.appendChild(input);
+                body.appendChild(btn);
+                setTimeout(() => input.focus(), 50);
+            });
+        }
+    }
+
+    function clearPhone() {
+        // Strip phone param and reload
+        const url = new URL(window.location.href);
+        url.searchParams.delete('phone');
+        url.searchParams.delete('type');
+        window.location.href = url.toString();
+    }
+
+    function continuePhone() {
+        const input = document.getElementById('phoneInput');
+        if (!input || !input.value.trim()) {
+            input && (input.style.borderColor = 'rgba(236,25,119,0.6)');
+            return;
+        }
+        state.phone = input.value.trim();
+        goToStep2();
+    }
+
+    // ── Step 2: Type ──────────────────────────────────────────────────
+    function goToStep2() {
+        showStep(2);
+        typewrite(
+            document.getElementById('q2text'),
+            'What are you\ninterested in?',
+            () => {
+                // If type hinted via URL, pre-select but still show all options
+                if (urlType === 'host') {
+                    document.getElementById('opt-host').classList.add('selected');
+                    state.type = 'host';
+                    document.getElementById('step2Btn').disabled = false;
+                }
+            }
+        );
+    }
+
+    function selectType(type, card) {
+        state.type = type;
+        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        // Enable the Continue button
+        const btn = document.getElementById('step2Btn');
+        if (btn) btn.disabled = false;
+    }
+
+    // ── Step 3: City ──────────────────────────────────────────────────
+    function goToStep3() {
+        showStep(3);
+        typewrite(
+            document.getElementById('q3text'),
+            'What city\nare you in?',
+            () => {
+                setTimeout(() => {
+                    const cityInput = document.getElementById('cityInput');
+                    if (cityInput) cityInput.focus();
+                }, 50);
+            }
+        );
+        const cityEl = document.getElementById('cityInput');
+        const cityBtn = document.getElementById('step3Btn');
+        // Enable button when city has content
+        cityEl.addEventListener('input', () => {
+            cityBtn.disabled = !cityEl.value.trim();
+        });
+        // Allow Enter to submit
+        cityEl.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !cityBtn.disabled) submitWaitlist();
+        });
+    }
+
+    // ── Step 4: Confirmation ──────────────────────────────────────────
+    function submitWaitlist() {
+        const cityInput = document.getElementById('cityInput');
+        const city = (cityInput ? cityInput.value : '').trim();
+        if (!city) {
+            cityInput && (cityInput.style.borderColor = 'rgba(236,25,119,0.6)');
+            return;
+        }
+        state.city = city;
+
+        // Populate confirmation
+        document.getElementById('confirmPhone').textContent = state.phone;
+        const typeLabels = { discover: '🧑 Discover', host: '✨ Host', both: '🔥 Discover & Host' };
+        document.getElementById('confirmType').textContent = typeLabels[state.type] || state.type;
+        document.getElementById('confirmCity').textContent  = '📍 ' + state.city;
+
+        showStep(4);
+
+        // → Wire up real backend POST here when ready
+        // fetch('/api/waitlist', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ phone: state.phone, type: state.type, city: state.city })
+        // });
+        console.log('Waitlist signup:', state);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────
+    function escHtml(str) {
+        return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // ── Welcome header ─────────────────────────────────────────────────
+    function initWelcome() {
+        document.getElementById('welcomeHeading').textContent = 'Sign up for early access to Nigh.';
+        document.getElementById('welcomeTagline').textContent = 'Real humans. Real places. Real moments.';
+        document.getElementById('welcomeSub').textContent = 'We just need a few details to get you started.';
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────
+    initWelcome();
+    initStep1();
+</script>
+
+</body>
+</html>
