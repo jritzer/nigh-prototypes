@@ -3957,12 +3957,7 @@ function renderPartnerDetail(){
       <button style="padding:7px 20px;border-radius:8px;font-size:11px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer">Resend Invite</button>
     </div>`:''}
 
-    ${src==='incoming'&&(p.status==='Pending'||p.status==='Expired')&&p.drop?`
-    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Invited For</div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px">
-      <div style="font-size:13px;font-weight:600;color:#111827">${p.drop}</div>
-    </div>
-    `:`
+    ${src!=='incoming'?`
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Drops Together${sharedDrops.length?' · '+sharedDrops.length:''}</div>
     ${sharedDrops.length?sharedDrops.map(d=>`
     <div onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer">
@@ -3973,10 +3968,87 @@ function renderPartnerDetail(){
       </div>
       <div style="color:#9CA3AF">${ic('chevRight',16)}</div>
     </div>`).join(''):`<div style="background:#F9FAFB;border-radius:10px;padding:20px;text-align:center;font-size:12px;color:#9CA3AF">No drops together yet.</div>`}
-    `}
+    `:p.status==='Active'?`
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Your Partner Drop</div>
+    <div onclick="S.partnerDropId='${p.id}';render()" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer">
+      <div style="width:40px;height:40px;border-radius:10px;background:#F5F3FF;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('eye',18)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.drop}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:1px">Partner view · view only</div>
+      </div>
+      <div style="color:#9CA3AF">${ic('chevRight',16)}</div>
+    </div>
+    `:p.drop?`
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Invited For</div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px">
+      <div style="font-size:13px;font-weight:600;color:#111827">${p.drop}</div>
+    </div>
+    `:''}
   </div>`;
 }
+function pvCode(p){const s=(p.id||'')+'|'+(p.drop||'');let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';for(let i=0;i<6;i++){c+=a[h%a.length];h=Math.floor(h/a.length)+s.charCodeAt(i%s.length)*7;}return c;}
+function pvStat(p,mult){const s=(p.id||'');let h=0;for(let i=0;i<s.length;i++)h=(h*131+s.charCodeAt(i))>>>0;return ((h>>>(mult||0))%17)+3;}
+function renderPartnerDrop(){
+  const p=incomingPartners.find(x=>x.id===S.partnerDropId);
+  if(!p)return renderPartners();
+  const myHandle=(acct().handle||'@host').replace(/^@?/,'');
+  const code=pvCode(p);
+  const shareUrl='nigh.com/drop/'+myHandle+'/'+code;
+  const guests=pvStat(p,0);const views=guests*6+pvStat(p,3);
+  const typeColors={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
+  const typeTextColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
+  return `${hdr('Partner View','View only',"S.partnerDropId=null;render()")}
+  <div style="padding:14px 16px 32px">
+    <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:12px 14px;margin-bottom:18px;display:flex;gap:11px;align-items:flex-start">
+      <div style="color:#7C3AED;flex-shrink:0;margin-top:1px">${ic('eye',18)}</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#5B21B6">You're a partner on this Drop</div>
+        <div style="font-size:11.5px;color:#6D28D9;margin-top:3px;line-height:1.5">View-only access for this Drop only. The host owns it — only they can edit details, see the guest list, or check people in.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:60px;height:60px;border-radius:15px;background:linear-gradient(135deg,#7C3AED,#A855F7);display:flex;align-items:center;justify-content:center;color:#fff;margin:0 auto 12px">${ic('star',26)}</div>
+      <div style="font-size:18px;font-weight:700;color:#111827;line-height:1.25">${p.drop||'Untitled Drop'}</div>
+      <div style="font-size:12.5px;color:#6B7280;margin-top:5px">Hosted by ${p.name} · ${p.handle}</div>
+      <div style="margin-top:9px"><span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;background:${typeColors[p.type]||'#f3f4f6'};color:${typeTextColors[p.type]||'#374151'}">${p.type} partner</span></div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Promote this Drop</div>
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:14px;margin-bottom:18px">
+      <div style="font-size:12px;color:#6B7280;margin-bottom:10px;line-height:1.5">Share your personal link. Every guest who joins through it is credited to you.</div>
+      <div style="display:flex;align-items:center;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:9px 11px;margin-bottom:10px">
+        <div style="flex:1;min-width:0;font-size:12px;font-weight:600;color:#111827;font-family:ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${shareUrl}</div>
+        <button onclick="event.stopPropagation();try{navigator.clipboard&&navigator.clipboard.writeText('https://${shareUrl}')}catch(e){};S._pvToast='Link copied';render();setTimeout(()=>{S._pvToast=null;render()},1400)" style="flex-shrink:0;padding:6px 12px;border-radius:7px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">${ic('copy',13,'#fff')} Copy</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="event.stopPropagation();S._pvToast='Sharing…';render();setTimeout(()=>{S._pvToast=null;render()},1400)" style="flex:1;padding:10px;border-radius:9px;border:1px solid #0E4EF5;background:#EEF2FF;color:#0E4EF5;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">${ic('share',14)} Share</button>
+        <button onclick="event.stopPropagation();S._pvToast='QR ready';render();setTimeout(()=>{S._pvToast=null;render()},1400)" style="flex:1;padding:10px;border-radius:9px;border:1px solid #D1D5DB;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',14)} QR code</button>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Your impact</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <div style="flex:1;background:#fff;border:1px solid #E5E7EB;border-radius:11px;padding:14px 12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:#111827">${guests}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">Guests via your link</div>
+      </div>
+      <div style="flex:1;background:#fff;border:1px solid #E5E7EB;border-radius:11px;padding:14px 12px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:#111827">${views}</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px">Link views</div>
+      </div>
+    </div>
+    <div style="font-size:10.5px;color:#9CA3AF;text-align:center;line-height:1.5">Only the guests credited to your link are shown. The full guest list and totals stay with the host.</div>
+
+    <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:11px;padding:13px 14px;margin-top:18px;display:flex;gap:10px;align-items:flex-start">
+      <div style="color:#9CA3AF;flex-shrink:0;margin-top:1px">${ic('users',16)}</div>
+      <div style="font-size:11.5px;color:#6B7280;line-height:1.5">Need to help run the door or check guests in? Ask ${p.name} to add you to their team.</div>
+    </div>
+  </div>
+  ${S._pvToast?`<div style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;border-radius:20px;z-index:50;box-shadow:0 4px 14px rgba(0,0,0,0.25)">${S._pvToast}</div>`:''}`;
+}
 function renderPartners(){
+  if(S.partnerDropId)return renderPartnerDrop();
   if(S.partnerDetailId)return renderPartnerDetail();
   if(!canView('partners'))return `${hdr('Partners',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Partners')}</div>`;
   const mpl=myPartnersList();const mip=myIncomingPartners();
