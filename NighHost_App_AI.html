@@ -1152,6 +1152,8 @@ const auditLog=[
   {id:'AL020',ts:'Mar 3, 2026 · 10:45 AM',actor:'Josh Ritzer',actorAv:'JR',actorRole:'Account Owner',area:'guest',action:'Imported customers',entity:'Customers',detail:'CSV file imported: 10 customers added'},
 ];
 const partnersList=[
+  {id:'PJ1',acctName:'Josh Ritzer',name:'Alex Rivera',handle:'@alexr',type:'Partner',status:'Active',since:'03/01/26'},
+  {id:'PJ2',acctName:'Josh Ritzer',name:'Sam Chen',handle:'@samc',type:'Partner',status:'Invited',since:'03/12/26'},
   {id:'P001',acctName:'Centro Boulder',name:"Tito's Vodka",handle:'@titosvodka',type:'Brand',status:'Active',since:'02/14/26'},
   {id:'P002',acctName:'Centro Boulder',name:'Kendall Jenner',handle:'@kendallj',type:'Influencer',status:'Active',since:'01/08/26'},
   {id:'P003',acctName:'Centro Boulder',name:'Root Down Restaurant',handle:'@rootdown',type:'Venue',status:'Invited',since:'03/22/26'},
@@ -1166,6 +1168,7 @@ const partnersList=[
 ];
 
 const incomingPartners=[
+  {id:'IPJ1',acctName:'Josh Ritzer',name:'Maya Torres',handle:'@mayat',type:'Partner',status:'Pending',since:'03/14/26',drop:'Game Night at My Place'},
   {id:'IP001',acctName:'Centro Boulder',name:'Avery Brewing Co',handle:'@averybrewing',type:'Brand',status:'Pending',since:'06/02/26',drop:'Beer & Bites Pairing Dinner'},
   {id:'IP002',acctName:'Centro Boulder',name:'Elixir Spa Boulder',handle:'@elixirspa',type:'Venue',status:'Active',since:'02/18/26',drop:'Deep Tissue Massage Event'},
   {id:'IP003',acctName:'Nike Boulder',name:'Red Bull Colorado',handle:'@redbullco',type:'Brand',status:'Pending',since:'06/05/26',drop:'Extreme Sports Showcase'},
@@ -3975,7 +3978,6 @@ function renderPartnerDetail(){
 function renderPartners(){
   if(S.partnerDetailId)return renderPartnerDetail();
   if(!canView('partners'))return `${hdr('Partners',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Partners')}</div>`;
-  if(isPersonal())return `${hdr('Partners','Manage your partners',"S.menuSub=null;render()")}<div style="padding:14px 16px"><div style="text-align:center;padding:40px 0"><div style="color:#D1D5DB;margin-bottom:12px">${ic('users',36)}</div><div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:4px">Partners for Business Accounts</div><div style="font-size:12px;color:#9CA3AF;line-height:1.5">Partners are available for brand and business host accounts. Switch to a business account to manage partnerships.</div></div></div>`;
   const mpl=myPartnersList();const mip=myIncomingPartners();
   const tab=S.partnersTab||'my';
   const statusColor={Active:'#16A34A',Invited:'#0E4EF5',Declined:'#9CA3AF',Suspended:'#F97316',Pending:'#D97706',Expired:'#6B7280',Withdrawn:'#6B7280'};
