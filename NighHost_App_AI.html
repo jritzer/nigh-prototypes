@@ -2694,7 +2694,7 @@ function renderMenu(){
   const items=[
     {ic:'users',    l:'Guests',       d:'Guest lists & import',      act:"S.menuSub='customers';render()", show:canView('guests')},
     {ic:'radio',    l:'Followers',    d:(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length+' followers',  act:"S.followersTab='list';S.menuSub='followers';render()", show:canView('guests'), badge:acct().privateAcct?followRequests.filter(r=>r.status==='pending').length:0},
-    {ic:'dollar',   l:'Orders',        d:'Earnings & payouts',                 act:"S.menuSub='payout';render()", show:canView('orders')},
+    {ic:'ticket',   l:'Reservations',  d:'Orders & Payouts',                   act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
     {ic:'userPlus', l:'Team',         d:'Manage team access',                    act:"S.menuSub='team';render()", show:canView('team')&&!isPersonal()},
     {ic:'link',l:'Partners',d:'Manage & invite partners',   act:"S.menuSub='partners';render()", show:canView('partners')},
@@ -3432,10 +3432,11 @@ function renderVenueDetail(){
 }
 
 function renderPayout(){
-  if(!canView('orders'))return `${hdr('Orders',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Orders')}</div>`;
+  if(!canView('orders'))return `${hdr('Reservations',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Reservations')}</div>`;
   const stripeOk=acct().stripeConnected;
+  const earnReady=isFullyVerified()&&stripeOk;
   const revTab=S.revTab||'orders';
-  return `${hdr('Orders','Earnings & Payouts',"S.menuSub=null;render()")}
+  return `${hdr('Reservations','Orders & Payouts',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
 
     <!-- Tabs -->
@@ -3445,16 +3446,13 @@ function renderPayout(){
       <button onclick="S.revTab='payouts';render()" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:${revTab==='payouts'?'#fff':'transparent'};color:${revTab==='payouts'?'#111827':'#9CA3AF'};box-shadow:${revTab==='payouts'?'0 1px 2px rgba(0,0,0,0.06)':'none'};cursor:pointer">Payouts</button>
     </div>
 
+    ${revTab!=='payouts'?(()=>{const drs=[...new Set(myOrders().map(o=>o.drop))];if(drs.length===0)return '';return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:11px;font-weight:600;color:#6B7280;flex-shrink:0">Drop:</span><select onchange="S.revDrop=this.value;render()" style="flex:1;padding:8px 10px;border-radius:9px;border:1px solid #E5E7EB;font-size:12px;color:#111827;background:#fff;font-family:inherit;outline:none"><option value="" ${!S.revDrop?'selected':''}>All drops</option>${drs.map(dr=>`<option value="${dr.replace(/"/g,'&quot;')}" ${S.revDrop===dr?'selected':''}>${dr}</option>`).join('')}</select></div>`;})():''}
+
     ${revTab==='orders'?`
-    ${(()=>{const mo=myOrders();return !stripeOk?`<div style="text-align:center;padding:40px 16px">
-        <div style="margin-bottom:12px">${ic('dollar',36,'#D1D5DB')}</div>
-        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">No Orders Yet</div>
-        <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:10px">Orders will appear here once you start hosting paid drops.</div>
-        <button onclick="S.revTab='payouts';render()" style="padding:9px 20px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;font-size:12px;font-weight:600;color:#0E4EF5;cursor:pointer;font-family:inherit">Set Up Payouts →</button>
-      </div>`:mo.length===0?`<div style="text-align:center;padding:40px 16px">
-        <div style="margin-bottom:12px">${ic('receipt',36,'#D1D5DB')}</div>
-        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">No Orders Yet</div>
-        <div style="font-size:13px;color:#6B7280;line-height:1.5">Orders will appear here when guests reserve tickets for your paid drops.</div>
+    ${(()=>{const mo=myOrders().filter(o=>!S.revDrop||o.drop===S.revDrop);return mo.length===0?`<div style="text-align:center;padding:40px 16px">
+        <div style="margin-bottom:12px">${ic('ticket',36,'#D1D5DB')}</div>
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">No reservations${S.revDrop?' for this drop':' yet'}</div>
+        <div style="font-size:13px;color:#6B7280;line-height:1.5">Reservations appear here when guests reserve spots for your drops — free or paid.</div>
       </div>`:mo.map(o=>{
       const hasRefund=o.tickets.some(t=>t.status==='Refunded');
       const allRefund=o.tickets.every(t=>t.status==='Refunded'||t.status==='Transferred');
@@ -3475,13 +3473,13 @@ function renderPayout(){
     </div>`;}).join('')})()}
     `:revTab==='revenue'?`
     ${(()=>{
-      if(!stripeOk) return `<div style="text-align:center;padding:40px 16px">
-        <div style="margin-bottom:12px">${ic('dollar',36,'#D1D5DB')}</div>
-        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">No Revenue Yet</div>
-        <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:10px">Connect Stripe to start accepting payments and tracking revenue.</div>
-        <button onclick="S.revTab='payouts';render()" style="padding:9px 20px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;font-size:12px;font-weight:600;color:#0E4EF5;cursor:pointer;font-family:inherit">Set Up Payouts →</button>
+      if(!earnReady) return `<div style="text-align:center;padding:40px 16px">
+        <div style="margin-bottom:12px">${ic('alert',34,'#F59E0B')}</div>
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Set up payments to track revenue</div>
+        <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:10px">${!isFullyVerified()&&!stripeOk?'Verify your account and connect Stripe':!isFullyVerified()?'Verify your account':'Connect Stripe'} to accept payments and track revenue. Free drops work without this.</div>
+        <button onclick="S.revTab='payouts';render()" style="padding:9px 20px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;font-size:12px;font-weight:600;color:#0E4EF5;cursor:pointer;font-family:inherit">Set Up Payments →</button>
       </div>`;
-      const mo=myOrders();const md=myDrops();
+      const mo=myOrders().filter(o=>!S.revDrop||o.drop===S.revDrop);const md=myDrops().filter(d=>!S.revDrop||d.title===S.revDrop);
       const pricedDrops=md.filter(d=>d.price>0);
       if(pricedDrops.length===0&&mo.length===0) return `<div style="text-align:center;padding:40px 16px">
         <div style="margin-bottom:12px">${ic('dollar',36,'#D1D5DB')}</div>
@@ -3525,7 +3523,7 @@ function renderPayout(){
     `:`
     <!-- Payouts Tab -->
 
-    ${stripeOk?(()=>{const mo=myOrders();const paidTk=mo.reduce((s,o)=>s+o.tickets.reduce((ts,t)=>ts+(t.status!=='Refunded'?t.price:0),0),0);const plan=acct().plan||(acct().enterprise?'Pro':'Starter');const fees={Starter:{pct:5,flat:1},Growth:{pct:5,flat:1},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.5}};const f=fees[plan]||fees.Starter;const paidTkCount=mo.reduce((s,o)=>s+o.tickets.filter(t=>t.status!=='Refunded'&&t.price>0).length,0);const totalFees=paidTk*(f.pct/100)+f.flat*paidTkCount;const netRev=Math.max(0,paidTk-totalFees);const avail=Math.round(netRev*0.65);const pending=Math.round(netRev*0.2);const lastPayout=Math.round(netRev*0.45);return paidTk===0?`
+    ${earnReady?(()=>{const mo=myOrders();const paidTk=mo.reduce((s,o)=>s+o.tickets.reduce((ts,t)=>ts+(t.status!=='Refunded'?t.price:0),0),0);const plan=acct().plan||(acct().enterprise?'Pro':'Starter');const fees={Starter:{pct:5,flat:1},Growth:{pct:5,flat:1},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.5}};const f=fees[plan]||fees.Starter;const paidTkCount=mo.reduce((s,o)=>s+o.tickets.filter(t=>t.status!=='Refunded'&&t.price>0).length,0);const totalFees=paidTk*(f.pct/100)+f.flat*paidTkCount;const netRev=Math.max(0,paidTk-totalFees);const avail=Math.round(netRev*0.65);const pending=Math.round(netRev*0.2);const lastPayout=Math.round(netRev*0.45);return paidTk===0?`
     <div style="text-align:center;padding:32px 0">
       <div style="color:#D1D5DB;margin-bottom:12px">${ic('dollar',36)}</div>
       <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:4px">No payouts yet</div>
@@ -3581,8 +3579,9 @@ function renderPayout(){
     <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden">
       <div style="padding:24px 16px;text-align:center">
         <div style="width:56px;height:56px;border-radius:12px;background:#635BFF;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.918 3.757 7.11c0 4.46 2.72 6.467 7.177 8.292 2.862 1.132 3.861 1.907 3.861 3.134 0 1.021-.856 1.621-2.451 1.621-2.164 0-4.964-.975-7.076-2.262L4.3 23.428C6.211 24.517 9.14 25 11.501 25c2.654 0 4.862-.67 6.406-1.934 1.656-1.349 2.49-3.263 2.49-5.681-.029-4.563-2.744-6.507-6.421-8.235z" fill="#fff"/></svg></div>
-        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">Connect Stripe to Get Paid</div>
-        <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:16px">Link your bank account through Stripe to receive payouts from ticket sales on your paid drops.</div>
+        <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">${!isFullyVerified()?'Verify & connect Stripe to get paid':'Connect Stripe to Get Paid'}</div>
+        <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:16px">${!isFullyVerified()?'Verify your account, then link your bank through Stripe':'Link your bank account through Stripe'} to receive payouts from ticket sales on your paid drops.</div>
+        ${!isFullyVerified()?`<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:9px;padding:8px 12px;margin-bottom:14px;font-size:11px;color:#92400E;line-height:1.5;display:flex;gap:7px;text-align:left"><span style="flex-shrink:0;margin-top:1px">${ic('alert',13,'#B45309')}</span><span>Account verification is required before you can accept payments or receive payouts.</span></div>`:''}
         <button onclick="acct().stripeConnected=true;render()" style="padding:12px 28px;border-radius:10px;border:none;background:#635BFF;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.918 3.757 7.11c0 4.46 2.72 6.467 7.177 8.292 2.862 1.132 3.861 1.907 3.861 3.134 0 1.021-.856 1.621-2.451 1.621-2.164 0-4.964-.975-7.076-2.262L4.3 23.428C6.211 24.517 9.14 25 11.501 25c2.654 0 4.862-.67 6.406-1.934 1.656-1.349 2.49-3.263 2.49-5.681-.029-4.563-2.744-6.507-6.421-8.235z" fill="#fff"/></svg> Connect Stripe</button>
       </div>
     </div>
