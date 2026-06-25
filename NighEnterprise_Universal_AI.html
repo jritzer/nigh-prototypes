@@ -6300,11 +6300,11 @@ function rBilling(forceTab){
   const orderTab=S.orderStatusFilter||'All';
   const oso=S.orderStatusOverrides||{};
   const ogf=S.orderGuestFilter||null;
-  const dropTitles=[...new Set(orders.map(o=>o.drop.title))];
-  const odf=(S.orderDropFilter!=null&&S.orderDropFilter!=='')?dropTitles[+S.orderDropFilter]:null;
+  const dropList=[...new Map(orders.map(o=>[o.drop.id,o.drop])).values()];
+  const odf=(S.orderDropFilter!=null&&S.orderDropFilter!=='')?dropList[+S.orderDropFilter]:null;
   const filteredOrders=(orderTab==='All'?orders:orders.filter(o=>(oso[o.id]||o.status)===orderTab))
     .filter(o=>!ogf||o.guest.email===ogf)
-    .filter(o=>!odf||o.drop.title===odf)
+    .filter(o=>!odf||o.drop.id===odf.id)
     .filter(o=>acctSel.length===0||acctSel.includes(o.loc?.id));
 
   // ── Order detail view ──
@@ -6570,7 +6570,7 @@ function rBilling(forceTab){
     ${ogf?(()=>{const gn=orders.find(o=>o.guest.email===ogf)?.guest.name||ogf;return `<div style="display:flex;align-items:center;justify-content:space-between;background:#f0f9ff;border:1px solid ${c.color}30;border-radius:10px;padding:9px 14px;margin-bottom:10px;"><span style="font-size:0.75rem;font-weight:700;color:${c.color};">Showing orders for ${gn}</span><button onclick="ss({orderGuestFilter:null})" style="font-size:0.72rem;font-weight:700;color:#64748b;background:none;border:none;cursor:pointer;padding:0;line-height:1;">✕ Clear</button></div>`;})():''}
     <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
       ${['All','Completed','Reserved','Refunded','Partial Refund','Transferred'].map(s=>`<button onclick="ss({orderStatusFilter:'${s}'})" style="padding:5px 12px;border-radius:20px;border:1px solid ${orderTab===s?c.color:'#e5e7eb'};background:${orderTab===s?c.color+'12':'#fff'};color:${orderTab===s?c.color:'#64748b'};font-size:0.7rem;font-weight:700;cursor:pointer;">${s}</button>`).join('')}
-      ${dropTitles.length>1?`<select onchange="ss({orderDropFilter:this.value})" style="margin-left:auto;padding:6px 10px;border-radius:20px;border:1px solid ${odf?c.color:'#e5e7eb'};background:${odf?c.color+'12':'#fff'};color:${odf?c.color:'#64748b'};font-size:0.7rem;font-weight:700;font-family:inherit;cursor:pointer;outline:none;max-width:240px;"><option value="" ${!odf?'selected':''}>All drops</option>${dropTitles.map((t,i)=>`<option value="${i}" ${String(i)===String(S.orderDropFilter)?'selected':''}>${t}</option>`).join('')}</select>`:''}
+      ${dropList.length>1?`<select onchange="ss({orderDropFilter:this.value})" style="margin-left:auto;padding:6px 10px;border-radius:20px;border:1px solid ${odf?c.color:'#e5e7eb'};background:${odf?c.color+'12':'#fff'};color:${odf?c.color:'#64748b'};font-size:0.7rem;font-weight:700;font-family:inherit;cursor:pointer;outline:none;max-width:300px;"><option value="" ${!odf?'selected':''}>All drops</option>${dropList.map((d,i)=>`<option value="${i}" ${String(i)===String(S.orderDropFilter)?'selected':''}>${d.title} · ${dropDate(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</option>`).join('')}</select>`:''}
     </div>
     <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
       <div style="display:grid;grid-template-columns:2fr 2.5fr 1.2fr 100px 90px;padding:9px 20px;border-bottom:1px solid #f1f5f9;font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.04em;">

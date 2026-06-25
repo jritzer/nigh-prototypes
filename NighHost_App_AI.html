@@ -3436,6 +3436,8 @@ function renderPayout(){
   const stripeOk=acct().stripeConnected;
   const earnReady=isFullyVerified()&&stripeOk;
   const revTab=S.revTab||'orders';
+  const drOpts=[...new Map(myOrders().map(o=>[o.drop+'|||'+(o.dropDate||''),{title:o.drop,date:o.dropDate}])).values()];
+  const selDrop=(S.revDrop!=null&&S.revDrop!=='')?drOpts[+S.revDrop]:null;
   return `${hdr('Reservations','Orders & Payouts',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
 
@@ -3446,10 +3448,10 @@ function renderPayout(){
       <button onclick="S.revTab='payouts';render()" style="flex:1;padding:8px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:${revTab==='payouts'?'#fff':'transparent'};color:${revTab==='payouts'?'#111827':'#9CA3AF'};box-shadow:${revTab==='payouts'?'0 1px 2px rgba(0,0,0,0.06)':'none'};cursor:pointer">Payouts</button>
     </div>
 
-    ${revTab!=='payouts'?(()=>{const drs=[...new Set(myOrders().map(o=>o.drop))];if(drs.length===0)return '';return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:11px;font-weight:600;color:#6B7280;flex-shrink:0">Drop:</span><select onchange="S.revDrop=this.value;render()" style="flex:1;padding:8px 10px;border-radius:9px;border:1px solid #E5E7EB;font-size:12px;color:#111827;background:#fff;font-family:inherit;outline:none"><option value="" ${!S.revDrop?'selected':''}>All drops</option>${drs.map(dr=>`<option value="${dr.replace(/"/g,'&quot;')}" ${S.revDrop===dr?'selected':''}>${dr}</option>`).join('')}</select></div>`;})():''}
+    ${revTab!=='payouts'&&drOpts.length>0?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:11px;font-weight:600;color:#6B7280;flex-shrink:0">Drop:</span><select onchange="S.revDrop=this.value;render()" style="flex:1;padding:8px 10px;border-radius:9px;border:1px solid #E5E7EB;font-size:12px;color:#111827;background:#fff;font-family:inherit;outline:none"><option value="" ${!selDrop?'selected':''}>All drops</option>${drOpts.map((d,i)=>`<option value="${i}" ${String(i)===String(S.revDrop)?'selected':''}>${d.title}${d.date?' · '+d.date:''}</option>`).join('')}</select></div>`:''}
 
     ${revTab==='orders'?`
-    ${(()=>{const mo=myOrders().filter(o=>!S.revDrop||o.drop===S.revDrop);return mo.length===0?`<div style="text-align:center;padding:40px 16px">
+    ${(()=>{const mo=myOrders().filter(o=>!selDrop||(o.drop===selDrop.title&&(o.dropDate||'')===(selDrop.date||'')));return mo.length===0?`<div style="text-align:center;padding:40px 16px">
         <div style="margin-bottom:12px">${ic('ticket',36,'#D1D5DB')}</div>
         <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:6px">No reservations${S.revDrop?' for this drop':' yet'}</div>
         <div style="font-size:13px;color:#6B7280;line-height:1.5">Reservations appear here when guests reserve spots for your drops — free or paid.</div>
@@ -3479,7 +3481,7 @@ function renderPayout(){
         <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:10px">${!isFullyVerified()&&!stripeOk?'Verify your account and connect Stripe':!isFullyVerified()?'Verify your account':'Connect Stripe'} to accept payments and track revenue. Free drops work without this.</div>
         <button onclick="S.revTab='payouts';render()" style="padding:9px 20px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;font-size:12px;font-weight:600;color:#0E4EF5;cursor:pointer;font-family:inherit">Set Up Payments →</button>
       </div>`;
-      const mo=myOrders().filter(o=>!S.revDrop||o.drop===S.revDrop);const md=myDrops().filter(d=>!S.revDrop||d.title===S.revDrop);
+      const mo=myOrders().filter(o=>!selDrop||(o.drop===selDrop.title&&(o.dropDate||'')===(selDrop.date||'')));const md=myDrops().filter(d=>!selDrop||d.title===selDrop.title);
       const pricedDrops=md.filter(d=>d.price>0);
       if(pricedDrops.length===0&&mo.length===0) return `<div style="text-align:center;padding:40px 16px">
         <div style="margin-bottom:12px">${ic('dollar',36,'#D1D5DB')}</div>
