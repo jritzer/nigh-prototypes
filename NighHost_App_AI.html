@@ -1929,6 +1929,7 @@ function renderCreate(){
     const titleMax=60;const descMax=280;
     const titleVal=clone?clone.title:'';const descVal=clone?clone.desc:'';
     const activePartners=partnersList.filter(p=>p.status==='Active');
+    const maxP=acct().maxPartners||3;
     if(S.dropPartners===undefined)S.dropPartners=clone?clone.partners.filter(p=>p.status==='Accepted').map(p=>p.handle):[];
     if(S.dropTaxOn===undefined)S.dropTaxOn=true;
     const selPartners=S.dropPartners;
@@ -1964,22 +1965,22 @@ function renderCreate(){
       </label>
     </div>
     <div style="margin-bottom:14px">
-      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Drop Partners <span style="font-weight:400;color:#9CA3AF">(optional — up to 3)</span></label>
+      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Drop Partners <span style="font-weight:400;color:#9CA3AF">(optional — up to ${maxP})</span></label>
       ${selPartners.length>0?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
         ${selPartners.map(h=>{const p=partnersList.find(x=>x.handle===h);if(!p)return '';const invited=p.status==='Invited';return`<div style="display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:18px;background:${invited?'#FFFBEB':'#EEF2FF'};border:1px solid ${invited?'#FDE68A':'#0E4EF5'};font-size:11px;color:${invited?'#92400E':'#0E4EF5'};font-weight:500">
           ${ic('link',11)} ${p.name}${invited?`<span style="font-size:9px;font-weight:700;background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:6px;margin-left:1px">Invited</span>`:''}
           <button onclick="S.dropPartners=S.dropPartners.filter(x=>x!=='${h}');render()" style="background:none;border:none;padding:0;cursor:pointer;color:${invited?'#92400E':'#0E4EF5'};display:flex">${ic('x',11)}</button>
         </div>`;}).join('')}
       </div>`:''}
-      ${selPartners.length<3?`<button onclick="S.dropPartnersOpen=!S.dropPartnersOpen;render()" style="width:100%;padding:10px 12px;border-radius:${pOpen?'10px 10px 0 0':'10px'};border:1.5px solid ${pOpen?'#0E4EF5':'#E5E7EB'};background:#fff;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px">
+      ${selPartners.length<maxP?`<button onclick="S.dropPartnersOpen=!S.dropPartnersOpen;render()" style="width:100%;padding:10px 12px;border-radius:${pOpen?'10px 10px 0 0':'10px'};border:1.5px solid ${pOpen?'#0E4EF5':'#E5E7EB'};background:#fff;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px">
         <span style="font-size:13px;color:#9CA3AF;flex:1">Add a partner…</span>
         <span style="color:#6B7280">${ic(pOpen?'chevUp':'chevDown',15)}</span>
       </button>`:`<div style="padding:10px 12px;border-radius:10px;border:1.5px solid #E5E7EB;background:#F9FAFB;display:flex;align-items:center;gap:8px">
-        <span style="font-size:12px;color:#9CA3AF;flex:1">Maximum of 3 partners reached</span>
+        <span style="font-size:12px;color:#9CA3AF;flex:1">Maximum of ${maxP} partners reached</span>
       </div>`}
       ${pOpen?`<div style="border:1.5px solid #0E4EF5;border-top:none;border-radius:0 0 10px 10px;background:#fff;overflow:hidden">
         <div style="max-height:220px;overflow-y:auto">
-          ${pFiltered.map(p=>{const isSel=S.dropPartners.includes(p.handle);const atMax=S.dropPartners.length>=3&&!isSel;return`<button onclick="(function(){const idx=S.dropPartners.indexOf('${p.handle}');if(idx>-1){S.dropPartners=S.dropPartners.filter(x=>x!=='${p.handle}');}else if(S.dropPartners.length<3){S.dropPartners=[...S.dropPartners,'${p.handle}'];}S.dropPartnersOpen=true;render();})()" ${atMax?'disabled':''} style="width:100%;padding:10px 12px;border:none;border-bottom:1px solid #F3F4F6;background:${isSel?'#EEF2FF':'#fff'};text-align:left;cursor:${atMax?'not-allowed':'pointer'};display:flex;align-items:center;gap:10px;opacity:${atMax?'0.4':'1'}">
+          ${pFiltered.map(p=>{const isSel=S.dropPartners.includes(p.handle);const atMax=S.dropPartners.length>=maxP&&!isSel;return`<button onclick="(function(){const idx=S.dropPartners.indexOf('${p.handle}');if(idx>-1){S.dropPartners=S.dropPartners.filter(x=>x!=='${p.handle}');}else if(S.dropPartners.length<${maxP}){S.dropPartners=[...S.dropPartners,'${p.handle}'];}S.dropPartnersOpen=true;render();})()" ${atMax?'disabled':''} style="width:100%;padding:10px 12px;border:none;border-bottom:1px solid #F3F4F6;background:${isSel?'#EEF2FF':'#fff'};text-align:left;cursor:${atMax?'not-allowed':'pointer'};display:flex;align-items:center;gap:10px;opacity:${atMax?'0.4':'1'}">
             <div style="flex:1;min-width:0">
               <div style="font-size:13px;font-weight:${isSel?'700':'500'};color:#111827">${p.name}</div>
               <div style="font-size:11px;color:#6B7280">${p.handle}</div>
@@ -1987,7 +1988,7 @@ function renderCreate(){
             ${isSel?`<div style="color:#0E4EF5;flex-shrink:0">${ic('check',15)}</div>`:''}
           </button>`}).join('')}
         </div>
-        ${S.dropPartners.length<3?`<button onclick="S.dropPartnersOpen=false;S.invitePartnerHandle='';S.modal='invite-partner';render();" style="width:100%;padding:11px 12px;border:none;background:#F9FAFB;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px;color:#0E4EF5;font-size:12px;font-weight:600;font-family:inherit">
+        ${S.dropPartners.length<maxP?`<button onclick="S.dropPartnersOpen=false;S.invitePartnerHandle='';S.modal='invite-partner';render();" style="width:100%;padding:11px 12px;border:none;background:#F9FAFB;text-align:left;cursor:pointer;display:flex;align-items:center;gap:8px;color:#0E4EF5;font-size:12px;font-weight:600;font-family:inherit">
           ${ic('plus',14)} Invite new partner
         </button>`:`<div style="padding:11px 12px;background:#F9FAFB;font-size:12px;color:#9CA3AF;text-align:center">Max partners reached</div>`}
       </div>`:''}
@@ -6672,7 +6673,7 @@ function renderModal(){
       <div style="font-size:11px;color:#6B7280;margin-bottom:16px;text-align:center">An invite will be sent to this Nigh account. Typos can't be undone.</div>
       <div style="display:flex;gap:8px">
         <button onclick="S.modal='invite-partner';render()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer">← Edit</button>
-        <button onclick="(function(){const handle='@'+(S.invitePartnerHandle||'').trim();const newP={id:'P'+(partnersList.length+1).toString().padStart(3,'0'),name:handle,handle:handle,type:'Partner',status:'Invited',since:'${new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})}'};partnersList.push(newP);if(S.dropPartners.length<3)S.dropPartners=[...S.dropPartners,handle];S.invitePartnerHandle='';S.modal=null;render();})()" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">${ic('send',14)} Send Invite</button>
+        <button onclick="(function(){const handle='@'+(S.invitePartnerHandle||'').trim();const newP={id:'P'+(partnersList.length+1).toString().padStart(3,'0'),name:handle,handle:handle,type:'Partner',status:'Invited',since:'${new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})}'};partnersList.push(newP);if(S.dropPartners.length<(acct().maxPartners||3))S.dropPartners=[...S.dropPartners,handle];S.invitePartnerHandle='';S.modal=null;render();})()" style="flex:2;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">${ic('send',14)} Send Invite</button>
       </div>
     </div></div>`;
   }
