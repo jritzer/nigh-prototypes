@@ -229,8 +229,15 @@ function openMaps(address){
 }
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
-// Share link credits the sharer (current user / partner). The 6-char code is the unique drop ID.
-function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/d/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
+// Every share link credits the sharer — handle is the referrer. Format: nigh.com/<handle>[/<dropCode>]. 6-char code = unique drop ID.
+function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
+function inviteUrl(){return 'nigh.com/'+currentUser.uname.replace(/^@/,'');}
+function inviteFriends(){
+  const url='https://'+inviteUrl();
+  if(navigator.share){navigator.share({title:'Join me on Nigh',text:currentUser.name+' invited you to Nigh.',url:url}).catch(function(){});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('Invite link copied');}).catch(function(){showToast('Invite link copied');});}
+  else{showToast('Invite link copied');}
+}
 function shareDrop(dropIdx){
   const d=feedDrops[dropIdx];if(!d)return;
   const url=dropShareUrl(d);
@@ -2735,6 +2742,10 @@ function renderInbox(){
   <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:6px">All caught up</div>
   <div style="font-size:12px;color:rgba(255,255,255,0.30);line-height:1.5;margin-bottom:16px">See what friends are interested in doing and share your own interest</div>
   <button onclick="modal('compose')" style="padding:9px 18px;border-radius:20px;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.3);color:#93C5FD;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Post a Heads Up</button>
+  <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08)">
+    <div style="font-size:11px;color:rgba(255,255,255,0.30);line-height:1.5;margin-bottom:10px">Know someone who&#39;d love Nigh? Bring them in.</div>
+    <button onclick="inviteFriends()" style="padding:9px 18px;border-radius:20px;background:none;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">${ic('share',13)} Invite a friend to Nigh</button>
+  </div>
 </div>`;
         if(filter==='places') return`<div style="text-align:center;padding:40px 24px;">
   <div style="font-size:32px;margin-bottom:12px">&#x1F4CD;</div>
@@ -2977,6 +2988,7 @@ function renderMenu(){
     </button>`:''}
     ${row('users','Friends',`${friendsList.length} friends · ${socialGroups.length+eventGroups.length} groups`,"S.menuSub='friends';render()")}
     ${row('heart','Following',`${followingList.length+followingBrands.length+(followingPeople||[]).length+(followingMobile||[]).length} hosts`,"S.menuSub='following';render()")}
+    ${row('share','Invite Friends',`Share your link · ${inviteUrl()}`,"inviteFriends()")}
     ${row('apay','Payment','Apple Pay · Visa ···· 4821',"S.menuSub='payment';render()")}
     ${row('settings','Settings','User account & preferences',"S.menuSub='settings';render()")}
   </div>`;
