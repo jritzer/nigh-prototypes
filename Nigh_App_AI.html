@@ -230,8 +230,9 @@ function openMaps(address){
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
 // Every share link credits the sharer — handle is the referrer. Format: nigh.com/<handle>[/<dropCode>]. 6-char code = unique drop ID.
-function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
-function inviteUrl(){return 'nigh.com/'+currentUser.uname.replace(/^@/,'');}
+function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/drop/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
+function inviteUrl(){return 'nigh.com/invite/'+currentUser.uname.replace(/^@/,'');}
+function groupShareUrl(g){return 'nigh.com/group/'+currentUser.uname.replace(/^@/,'')+'/'+(((g&&g.inviteLink)||'').replace('nigh.com/g/',''));}
 function inviteFriends(){
   const url='https://'+inviteUrl();
   if(navigator.share){navigator.share({title:'Join me on Nigh',text:currentUser.name+' invited you to Nigh.',url:url}).catch(function(){});}
@@ -4962,7 +4963,7 @@ function renderGroupDetail(){
         <div style="padding:16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #F3F4F6">
           <div style="flex:1">
             <div style="font-size:14px;font-weight:600;color:#111827">Invite Link</div>
-            <div style="font-size:13px;color:#6B7280;margin-top:2px">${rawG.inviteLink||'nigh.com/g/...'}</div>
+            <div style="font-size:13px;color:#6B7280;margin-top:2px">${rawG.inviteLink?groupShareUrl(rawG):'nigh.com/group/...'}</div>
           </div>
           <button onclick="alert('Link copied!')" style="padding:5px 12px;border-radius:8px;border:none;background:#1B2A4A;font-size:12px;font-weight:600;color:#fff;cursor:pointer">Copy</button>
         </div>
@@ -5103,7 +5104,7 @@ function renderCreateGroup(){
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Invite Link</div>
       <div style="background:#F3F4F6;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px">
         ${ic('link',16)}
-        <span style="flex:1;font-size:13px;color:#374151">${name?'nigh.com/g/'+name.toLowerCase().split(' ').join('-')+'-xxxx':'nigh.com/g/your-group-name-xxxx'}</span>
+        <span style="flex:1;font-size:13px;color:#374151">nigh.com/group/${currentUser.uname.replace(/^@/,'')}/${name?name.toLowerCase().split(' ').join('-')+'-xxxx':'your-group-name-xxxx'}</span>
         <button style="padding:5px 12px;border-radius:8px;border:none;background:#1B2A4A;color:#fff;font-size:12px;font-weight:600">Copy</button>
       </div>
 
@@ -5595,7 +5596,7 @@ function renderModal(){
 
       <!-- Copy link -->
       <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:10px;padding:10px 14px">
-        <span style="font-size:12px;color:#374151;flex:1">nigh.com/${currentUser.uname.replace(/^@/,'')}/${(d.slug||'').split('/').pop()}</span>
+        <span style="font-size:12px;color:#374151;flex:1">${dropShareUrl(d).replace('https://','')}</span>
         <button onclick="modal(null)" style="padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;border:none;background:#1B2A4A;color:#fff;cursor:pointer;font-family:inherit">Copy</button>
       </div>
     </div></div>`;return;
@@ -6665,7 +6666,7 @@ function renderModal(){
       <div style="font-size:12px;color:#6B7280;margin-bottom:16px">Share this link — anyone with it can ${g.type==='event'?'claim an open spot':'request to join'}.</div>
       <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:12px;padding:12px 14px;margin-bottom:14px">
         <div style="color:#0E4EF5">${ic('link',16)}</div>
-        <span style="font-size:12px;color:#374151;flex:1">${g.inviteLink}</span>
+        <span style="font-size:12px;color:#374151;flex:1">${groupShareUrl(g)}</span>
         <button style="padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;border:none;background:#1B2A4A;color:#fff">Copy</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:16px">
