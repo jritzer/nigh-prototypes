@@ -229,15 +229,17 @@ function openMaps(address){
 }
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
+// Share link credits the sharer (current user / partner). The 6-char code is the unique drop ID.
+function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/d/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
 function shareDrop(dropIdx){
   const d=feedDrops[dropIdx];if(!d)return;
-  const url='https://nigh.com/d/'+d.slug;
+  const url=dropShareUrl(d);
   if(navigator.share){navigator.share({title:d.title,text:d.host.name+' — '+d.title,url:url}).catch(function(){});}
   else{copyDropLink(dropIdx);}
 }
 function copyDropLink(dropIdx){
   const d=feedDrops[dropIdx];if(!d)return;
-  const url='https://nigh.com/d/'+d.slug;
+  const url=dropShareUrl(d);
   if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('Link copied');}).catch(function(){showToast('Link copied');});}
   else{showToast('Link copied');}
 }
@@ -5581,7 +5583,7 @@ function renderModal(){
 
       <!-- Copy link -->
       <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:10px;padding:10px 14px">
-        <span style="font-size:12px;color:#374151;flex:1">nigh.com/${d.slug}</span>
+        <span style="font-size:12px;color:#374151;flex:1">nigh.com/${currentUser.uname.replace(/^@/,'')}/${(d.slug||'').split('/').pop()}</span>
         <button onclick="modal(null)" style="padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;border:none;background:#1B2A4A;color:#fff;cursor:pointer;font-family:inherit">Copy</button>
       </div>
     </div></div>`;return;
