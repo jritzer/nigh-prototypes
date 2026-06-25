@@ -3912,7 +3912,7 @@ function dropDetail(d){
         <!-- Quick actions -->
         <div style="background:#fff;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;">
           ${[
-            {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/'+c.key+'/drop', action:"ss({dropModal:'share'})"},
+            {icon:'M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13', label:'Share Drop',    sub:'nigh.com/drop/'+(c.handle||c.key).replace(/^@/,'')+'/'+d.id, action:"ss({dropModal:'share'})"},
             {icon:'M2 2h8v8H2zM14 2h8v8h-8zM2 14h8v8H2zM14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z', label:'Show QR Code', sub:'Print or share check-in QR', action:"ss({dropModal:'qr'})"},
             {icon:'M3 11l19-9v18L3 13M11.6 16.8a3 3 0 1 1-5.8-1.6', label:'Send Message',  sub:'Message all spot holders',   action:"ss({dropModal:'broadcast'})"},
             {icon:'M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z', label:'Guest Passes',  sub:gpwUsed(d.id)+' of '+GP_CAP_W+' issued · comp tickets', action:"ss({dropModal:'guestpasses'})"},
@@ -4100,7 +4100,7 @@ function dropModalPanel(){
       <div style="font-size:1rem;font-weight:800;color:#0f172a;margin-bottom:4px;">Share Drop</div>
       <div style="font-size:0.75rem;color:#64748b;margin-bottom:16px;">Share a link directly to this drop's reservation page</div>
       <div style="display:flex;align-items:center;gap:8px;background:#f1f5f9;border-radius:10px;padding:10px 14px;margin-bottom:16px;">
-        <span style="font-size:0.82rem;color:#374151;flex:1;font-weight:500;">nigh.com/${c.key}/drop</span>
+        <span style="font-size:0.82rem;color:#374151;flex:1;font-weight:500;">nigh.com/drop/${(c.handle||c.key).replace(/^@/,'')}/${dropData?dropData.id:''}</span>
         <button style="padding:6px 14px;border-radius:8px;font-size:0.72rem;font-weight:700;border:none;background:${c.color};color:#fff;cursor:pointer;">Copy</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:center;">

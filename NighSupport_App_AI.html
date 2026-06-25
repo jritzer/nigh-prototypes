@@ -5854,7 +5854,7 @@ function renderModal(id){
   else if(id.startsWith('drop-link-')){
     const did=id.replace('drop-link-','');
     const d=drops.find(x=>x.id===did);
-    const dropUrl='https://nigh.app/d/'+did;
+    const dropUrl='https://nigh.com/drop/'+(((d&&orgs.find(o=>o.name===d.org))||{}).handle||'host')+'/'+did;
     const qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=12&color=1B2A4A&bgcolor=ffffff&data='+encodeURIComponent(dropUrl);
     title=`${svgI('link',15)} &nbsp;Drop Link &amp; QR`;
     body=`

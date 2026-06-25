@@ -6547,7 +6547,7 @@ function renderModal(){
       ...(dEnded||!canFull('messageGuests')?[]:[{ic:'megaphone',l:'Send Message',d:'Notify all spot holders',act:"modal('broadcast')"}]),
       ...(['Scheduled','Live','Paused'].includes(d.status)?[{ic:'ticket',l:'Guest Passes',d:'Privately distributed tickets',act:"modal('guestpasses')"}]:[]),
       ...(dEnded?[]:[{ic:'qr',l:'Show QR Code',d:'Display or print drop QR',act:"modal(null)"}]),
-      ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'nigh.com/'+d.slug,act:"modal('share-'+(S.drop||0))"}]),
+      ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'nigh.com/drop/'+(acct().handle||'')+'/'+((d.slug||'').split('/').pop()),act:"modal('share-'+(S.drop||0))"}]),
       {ic:'history',l:'Drop History',d:'View all changes & edits',act:"modal('history')"},
     ];
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
@@ -6634,7 +6634,7 @@ function renderModal(){
         <span>This is a semi-private drop — only people with this link can view and reserve tickets. It won't appear in search or public feeds.</span>
       </div>`:''}
       <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:10px;padding:10px 14px;margin-bottom:14px">
-        <span style="font-size:13px;color:#374151;flex:1;font-weight:500">nigh.com/${d.slug}</span>
+        <span style="font-size:13px;color:#374151;flex:1;font-weight:500">nigh.com/drop/${acct().handle}/${(d.slug||'').split('/').pop()}</span>
         <button onclick="this.textContent='Copied!';this.style.background='#16A34A';setTimeout(()=>{this.textContent='Copy';this.style.background='#0E4EF5'},1500)" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer">Copy</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:center">
