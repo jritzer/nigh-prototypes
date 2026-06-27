@@ -1177,6 +1177,10 @@ const incomingPartners=[
   {id:'IP006',acctName:'Nike Boulder',name:'Lululemon Flatirons',handle:'@lulu_flatirons',type:'Brand',status:'Expired',since:'04/20/26',drop:'Sunrise Yoga Pop-Up'},
 ];
 
+// Invitations to JOIN someone else's host account (team membership), shown in the account dropdown
+let accountInvites=[
+  {id:'AI1',name:'Rayback Collective',short:'Rayback',hostType:'place',handle:'rayback',role:'Manager',invitedBy:'Dana Lee',invitedByHandle:'@danalee',since:'06/20/26',cat:'Food & Drink',subCat:'Food Hall',city:'Boulder',state:'CO',plan:'Growth',maxPartners:5}
+];
 const customerList=[
   {id:'C001',acctName:'Centro Boulder',name:'Emma Johnson',handle:'@emmaj',email:'emma.j@gmail.com',phone:'(720) 555-0181',av:'EJ',source:'CSV Import',since:'Mar 2026',drops:['D001','D005'],follower:true},
   {id:'C002',acctName:'Centro Boulder',name:'Marcus Webb',handle:null,email:'marcusw@icloud.com',phone:'(720) 555-0234',av:'MW',source:'CSV Import',since:'Mar 2026',drops:[],follower:false},
@@ -1326,6 +1330,54 @@ function renderTB(){
     mkTab('menu','menu2');
 }
 
+// ═══ CREATE / JOIN HOST ACCOUNT ═══
+function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).userDisplayName||'Josh Ritzer';}
+function createHostAccount(){
+  const name=(S.naName||'').trim();
+  const type=S.naType;
+  const handle=(S.naHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+  if(!name||!type||!handle)return;
+  const typeMap={business:'place',brand:'brand',group:'group'};
+  const catFallback={business:'Business',brand:'Brand',group:'Group'};
+  const a={name:name,short:(name.split(' ')[0]||name),brandName:type==='brand'?name:'',hostType:typeMap[type]||'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:(S.naCat||'').trim()||catFallback[type],subCat:'',addr:'',city:(S.naCity||'').trim(),state:(S.naState||'').trim(),zip:'',handle:handle,phone:'',email:'',website:'',description:(S.naDesc||'').trim(),tags:[],operationMode:type==='brand'?'Flexible':'Fixed',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+  accts.push(a);acctIdx=accts.length-1;
+  S.naName='';S.naType='';S.naHandle='';S.naCat='';S.naCity='';S.naState='';S.naDesc='';
+  S.showAcct=false;S.menuSub=null;S.scr='home';render();
+}
+function acceptAccountInvite(id){
+  const inv=accountInvites.find(x=>x.id===id);if(!inv)return;
+  const a={name:inv.name,short:inv.short||(inv.name.split(' ')[0]||inv.name),brandName:inv.hostType==='brand'?inv.name:'',hostType:inv.hostType||'place',entity:true,businessVerified:true,unverified:false,stripeConnected:true,role:inv.role||'Team Member',userDisplayName:ownerDisplayName(),cat:inv.cat||'Business',subCat:inv.subCat||'',addr:'',city:inv.city||'',state:inv.state||'',zip:'',handle:inv.handle||'',phone:'',email:'',website:'',description:'',tags:[],operationMode:'Fixed',plan:inv.plan||'Growth',privateAcct:false,maxPartners:inv.maxPartners||3,parentOrg:inv.name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+  accts.push(a);acctIdx=accts.length-1;
+  accountInvites=accountInvites.filter(x=>x.id!==id);
+  S.showAcct=false;S.menuSub=null;S.scr='home';render();
+}
+function declineAccountInvite(id){accountInvites=accountInvites.filter(x=>x.id!==id);render();}
+function renderNewAccount(){
+  const name=(S.naName||'');const type=S.naType||'';const handle=(S.naHandle||'').replace(/^@/,'');
+  const can=name.trim()&&type&&handle.trim();
+  const typeBtn=(id,label,sub)=>`<button onclick="S.naType='${id}';render()" style="flex:1;text-align:center;padding:11px 6px;border-radius:10px;border:1.5px solid ${type===id?'#0E4EF5':'#E5E7EB'};background:${type===id?'#EEF2FF':'#fff'};cursor:pointer;font-family:inherit"><div style="font-size:12px;font-weight:700;color:${type===id?'#0E4EF5':'#374151'}">${label}</div><div style="font-size:9px;color:#9CA3AF;margin-top:2px">${sub}</div></button>`;
+  const lab=(t,req)=>`<label style="font-size:11px;font-weight:600;color:#374151;display:block;margin-bottom:6px">${t}${req?' <span style="color:#EF4444">*</span>':''}</label>`;
+  const istyle='width:100%;border:1.5px solid #E5E7EB;border-radius:10px;padding:11px 12px;font-size:13px;color:#111827;outline:none;font-family:inherit;box-sizing:border-box';
+  return `${hdr('Create Host Account','Set up a new account',"S.scr='home';render()",'',true)}
+  <div style="padding:16px 16px 28px;overflow-y:auto">
+    <div style="margin-bottom:14px">${lab('Account type',true)}<div style="display:flex;gap:8px">${typeBtn('business','Business','A place or venue')}${typeBtn('brand','Brand','A product or label')}${typeBtn('group','Group','A community or org')}</div></div>
+    <div style="margin-bottom:14px">${lab('Account name',true)}<input placeholder="e.g. Rayback Collective" value="${name}" oninput="S.naName=this.value" onblur="render()" style="${istyle}"/></div>
+    <div style="margin-bottom:14px">${lab('Handle',true)}<div style="display:flex;align-items:center;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;background:#fff"><span style="color:#9CA3AF;font-size:13px">@</span><input placeholder="raybackcollective" value="${handle}" oninput="S.naHandle=this.value" onblur="render()" style="flex:1;border:none;background:none;padding:11px 6px;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div></div>
+    <div style="margin-bottom:14px">${lab('Category',false)}<input placeholder="e.g. Food &amp; Drink, Retail, Fitness" value="${S.naCat||''}" oninput="S.naCat=this.value" onblur="render()" style="${istyle}"/></div>
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <div style="flex:2">${lab('City',false)}<input placeholder="Boulder" value="${S.naCity||''}" oninput="S.naCity=this.value" onblur="render()" style="${istyle}"/></div>
+      <div style="flex:1">${lab('State',false)}<input placeholder="CO" value="${S.naState||''}" oninput="S.naState=this.value" onblur="render()" style="${istyle}"/></div>
+    </div>
+    <div style="margin-bottom:16px">${lab('Description',false)}<textarea placeholder="A short description of this account" oninput="S.naDesc=this.value" onblur="render()" style="${istyle};min-height:68px;resize:vertical">${S.naDesc||''}</textarea></div>
+    <div style="display:flex;gap:8px;align-items:flex-start;background:#EEF2FF;border:1px solid #DBEAFE;border-radius:10px;padding:11px 12px;margin-bottom:16px">
+      <div style="color:#0E4EF5;flex-shrink:0;margin-top:1px">${ic('info',15)}</div>
+      <div style="font-size:11.5px;color:#1E40AF;line-height:1.5">You&#x2019;ll be set as the Account Owner. You can verify the business and connect payouts after it&#x2019;s created.</div>
+    </div>
+    <button onclick="${can?'createHostAccount()':'void 0'}" style="width:100%;background:${can?'#0E4EF5':'#D1D5DB'};color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:600;cursor:${can?'pointer':'default'};font-family:inherit">Create account</button>
+    <div style="text-align:center;margin-top:14px"><button onclick="S.naName='';S.naType='';S.naHandle='';S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.niyaOnboarding=true;S.scr='niya';S.niyaMode='onboarding';render()" style="background:none;border:none;color:#6B7280;font-size:12px;font-family:inherit;cursor:pointer">Prefer to set it up with Niya? <span style="color:#7C3AED;font-weight:600">Chat instead</span></button></div>
+  </div>`;
+}
+
 // ═══ HOME ═══
 function renderHome(){
   const today=S.calDay;const ds=dk(today);const isT=sameD(today,TODAY);
@@ -1339,10 +1391,10 @@ function renderHome(){
   <!-- Account -->
   <div style="background:#F3F4F6;padding:14px 16px 12px;color:#111827;border-bottom:1px solid #E5E7EB;position:relative;z-index:20">
     <div onclick="toggleAcctPicker(event)" style="display:flex;align-items:center;gap:8px;cursor:pointer">
-      <div style="width:32px;height:32px;border-radius:${isPersonal()?'50%':'8px'};background:${isPersonal()?'linear-gradient(135deg,#0E4EF5,#8B5CF6)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${isPersonal()?'#fff':'#374151'}">${acct().short.charAt(0)}</div>
+      <div style="position:relative;flex-shrink:0"><div style="width:32px;height:32px;border-radius:${isPersonal()?'50%':'8px'};background:${isPersonal()?'linear-gradient(135deg,#0E4EF5,#8B5CF6)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${isPersonal()?'#fff':'#374151'}">${acct().short.charAt(0)}</div>${accountInvites.length?`<div style="position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#EF4444;border:2px solid #F3F4F6;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;box-sizing:border-box">${accountInvites.length}</div>`:''}</div>
       <div style="text-align:left"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;color:#111827">${acct().name} ${(isPersonal()?userVerified:userVerified&&acct().businessVerified)?`<svg width="14" height="14" viewBox="0 0 24 24" fill="#0E4EF5" stroke="none"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`:''} ${ic(S.showAcct?'up':'down',14)}</div><div style="font-size:10px;color:#6B7280">${isPersonal()?'Personal Account':acct().userDisplayName+' · '+acct().role}</div></div>
     </div>
-    ${S.showAcct?`<div onclick="S.showAcct=false;render()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:29"></div><div style="position:absolute;left:16px;right:16px;margin-top:10px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:30">${accts.map((a,i)=>`<div onclick="pickAcct(event,${i})" style="width:100%;padding:10px 14px;background:${i===acctIdx?'#F9FAFB':'transparent'};color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid #E5E7EB':'none'};cursor:pointer"><div style="width:28px;height:28px;border-radius:${a.hostType==='personal'?'50%':'6px'};background:${a.hostType==='personal'?'linear-gradient(135deg,#0E4EF5,#8B5CF6)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${a.hostType==='personal'?'#fff':'#374151'}">${a.short.charAt(0)}</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#111827;display:flex;align-items:center;gap:3px">${a.name}${(a.hostType==='personal'?!a.unverified:!a.unverified&&a.businessVerified)?` <svg width="12" height="12" viewBox="0 0 24 24" fill="#0E4EF5" stroke="none"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`:''}</div><div style="font-size:10px;color:#6B7280">${a.hostType==='personal'?'Personal Account':a.userDisplayName+' · '+a.role}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</div>`).join('')}<div onclick="event.stopPropagation();S.showAcct=false;S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.niyaOnboarding=true;S.scr='niya';S.niyaMode='onboarding';render()" style="width:100%;padding:12px 14px;background:transparent;color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-top:1px solid #E5E7EB;cursor:pointer"><div style="width:28px;height:28px;border-radius:6px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED">${ic('plus',16)}</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#7C3AED">Create new host account</div><div style="font-size:10px;color:#6B7280">Add a business, brand, or group account</div></div></div></div>`:''}
+    ${S.showAcct?`<div onclick="S.showAcct=false;render()" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:29"></div><div style="position:absolute;left:16px;right:16px;margin-top:10px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E5E7EB;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:30">${accountInvites.length?`<div style="background:#FFFBEB;border-bottom:1px solid #FDE68A"><div style="padding:8px 14px 4px;font-size:10px;font-weight:700;color:#B45309;text-transform:uppercase;letter-spacing:0.05em">Invitations</div>${accountInvites.map(inv=>`<div style="padding:6px 14px 12px;display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:6px;background:#FDE68A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#92400E;flex-shrink:0">${(inv.short||inv.name).charAt(0)}</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#111827;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${inv.name}<span style="font-size:9px;font-weight:700;background:#FDE68A;color:#92400E;padding:1px 6px;border-radius:7px">Invited</span></div><div style="font-size:10px;color:#92400E;margin-top:1px">${inv.invitedBy} invited you &#183; ${inv.role}</div></div><button onclick="event.stopPropagation();acceptAccountInvite('${inv.id}')" style="flex-shrink:0;padding:6px 12px;border-radius:8px;border:none;background:#16A34A;color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Accept</button><button onclick="event.stopPropagation();declineAccountInvite('${inv.id}')" style="flex-shrink:0;padding:5px;border-radius:8px;border:none;background:none;color:#9CA3AF;cursor:pointer;display:flex" title="Decline">${ic('x',15)}</button></div>`).join('')}</div>`:''}${accts.map((a,i)=>`<div onclick="pickAcct(event,${i})" style="width:100%;padding:10px 14px;background:${i===acctIdx?'#F9FAFB':'transparent'};color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-bottom:${i<accts.length-1?'1px solid #E5E7EB':'none'};cursor:pointer"><div style="width:28px;height:28px;border-radius:${a.hostType==='personal'?'50%':'6px'};background:${a.hostType==='personal'?'linear-gradient(135deg,#0E4EF5,#8B5CF6)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${a.hostType==='personal'?'#fff':'#374151'}">${a.short.charAt(0)}</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#111827;display:flex;align-items:center;gap:3px">${a.name}${(a.hostType==='personal'?!a.unverified:!a.unverified&&a.businessVerified)?` <svg width="12" height="12" viewBox="0 0 24 24" fill="#0E4EF5" stroke="none"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`:''}</div><div style="font-size:10px;color:#6B7280">${a.hostType==='personal'?'Personal Account':a.userDisplayName+' · '+a.role}</div></div>${i===acctIdx?`<div style="margin-left:auto;color:#22C55E">${ic('check',16)}</div>`:''}</div>`).join('')}<div onclick="event.stopPropagation();S.showAcct=false;S.naName='';S.naType='';S.naHandle='';S.naCat='';S.naCity='';S.naState='';S.naDesc='';S.scr='newacct';render()" style="width:100%;padding:12px 14px;background:transparent;color:#111827;display:flex;align-items:center;gap:10px;text-align:left;border-top:1px solid #E5E7EB;cursor:pointer"><div style="width:28px;height:28px;border-radius:6px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED">${ic('plus',16)}</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#7C3AED">Create new host account</div><div style="font-size:10px;color:#6B7280">Add a business, brand, or group account</div></div></div></div>`:''}
   </div>
 
 
@@ -8231,7 +8283,7 @@ function render(){
   const c=document.getElementById('scr');
   const prevScroll=c?c.scrollTop:0;
   const prevScr=S._lastScr;const prevStep=S._lastStep;
-  const m={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCI,guests:renderG,inbox:renderInbox,menu:renderMenu,niya:renderNiya,login:renderLogin};
+  const m={home:renderHome,create:renderCreate,liveview:renderLive,checkin:renderCI,guests:renderG,inbox:renderInbox,menu:renderMenu,niya:renderNiya,login:renderLogin,newacct:renderNewAccount};
   const isGuestMsgs=S.scr==='menu'&&S.menuSub==='customers'&&S.modal&&S.modal.startsWith('customer-')&&(S.guestTab||'overview')==='comms';
   if(S.scr==='niya'||S.scr==='liveview'||isGuestMsgs){c.style.overflow='hidden';c.style.display='flex';c.style.flexDirection='column';}
   else{c.style.overflow='';c.style.display='';c.style.flexDirection='';}
