@@ -466,10 +466,10 @@
             <div class="question-text" id="q2text"></div>
             <div class="options-list">
                 <div class="option-card" id="opt-discover" onclick="selectType('discover', this)">
-                    <div class="option-icon">🧑</div>
+                    <div class="option-icon">🎟️</div>
                     <div class="option-content">
-                        <div class="option-label">Discover Nigh Drops</div>
-                        <div class="option-sub">Find moments nearby worth showing up for</div>
+                        <div class="option-label">Attend Nigh Drops</div>
+                        <div class="option-sub">Get access to moments nearby worth showing up for</div>
                     </div>
                 </div>
                 <div class="option-card" id="opt-host" onclick="selectType('host', this)">
@@ -483,7 +483,7 @@
                     <div class="option-icon">🔥</div>
                     <div class="option-content">
                         <div class="option-label">Both</div>
-                        <div class="option-sub">Discover and host Nigh Drops</div>
+                        <div class="option-sub">Attend and host Nigh Drops</div>
                     </div>
                 </div>
             </div>
@@ -744,7 +744,7 @@
 
         // Populate confirmation
         document.getElementById('confirmPhone').textContent = state.phone;
-        const typeLabels = { discover: '🧑 Discover', host: '✨ Host', both: '🔥 Discover & Host' };
+        const typeLabels = { discover: '🎟️ Attend', host: '✨ Host', both: '🔥 Attend & Host' };
         document.getElementById('confirmType').textContent = typeLabels[state.type] || state.type;
         document.getElementById('confirmCity').textContent  = '📍 ' + state.city;
 
