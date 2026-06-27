@@ -1334,14 +1334,13 @@ function renderTB(){
 function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).userDisplayName||'Josh Ritzer';}
 function createHostAccount(){
   const name=(S.naName||'').trim();
-  const type=S.naType;
   const handle=(S.naHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
-  if(!name||!type||!handle)return;
-  const typeMap={business:'place',brand:'brand',group:'group'};
-  const catFallback={business:'Business',brand:'Brand',group:'Group'};
-  const a={name:name,short:(name.split(' ')[0]||name),brandName:type==='brand'?name:'',hostType:typeMap[type]||'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:(S.naCat||'').trim()||catFallback[type],subCat:'',addr:'',city:(S.naCity||'').trim(),state:(S.naState||'').trim(),zip:'',handle:handle,phone:'',email:'',website:'',description:(S.naDesc||'').trim(),tags:[],operationMode:type==='brand'?'Flexible':'Fixed',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+  const about=(S.naDesc||'').trim();
+  if(!name||!handle||!about)return;
+  // hostType, category and other details are assigned internally after creation, not self-selected at signup
+  const a={name:name,short:(name.split(' ')[0]||name),brandName:'',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:'',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:about,tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
   accts.push(a);acctIdx=accts.length-1;
-  S.naName='';S.naType='';S.naHandle='';S.naCat='';S.naCity='';S.naState='';S.naDesc='';
+  S.naName='';S.naHandle='';S.naDesc='';
   S.showAcct=false;S.menuSub=null;S.scr='home';render();
 }
 function acceptAccountInvite(id){
@@ -1353,28 +1352,22 @@ function acceptAccountInvite(id){
 }
 function declineAccountInvite(id){accountInvites=accountInvites.filter(x=>x.id!==id);render();}
 function renderNewAccount(){
-  const name=(S.naName||'');const type=S.naType||'';const handle=(S.naHandle||'').replace(/^@/,'');
-  const can=name.trim()&&type&&handle.trim();
-  const typeBtn=(id,label,sub)=>`<button onclick="S.naType='${id}';render()" style="flex:1;text-align:center;padding:11px 6px;border-radius:10px;border:1.5px solid ${type===id?'#0E4EF5':'#E5E7EB'};background:${type===id?'#EEF2FF':'#fff'};cursor:pointer;font-family:inherit"><div style="font-size:12px;font-weight:700;color:${type===id?'#0E4EF5':'#374151'}">${label}</div><div style="font-size:9px;color:#9CA3AF;margin-top:2px">${sub}</div></button>`;
-  const lab=(t,req)=>`<label style="font-size:11px;font-weight:600;color:#374151;display:block;margin-bottom:6px">${t}${req?' <span style="color:#EF4444">*</span>':''}</label>`;
-  const istyle='width:100%;border:1.5px solid #E5E7EB;border-radius:10px;padding:11px 12px;font-size:13px;color:#111827;outline:none;font-family:inherit;box-sizing:border-box';
-  return `${hdr('Create Host Account','Set up a new account',"S.scr='home';render()",'',true)}
+  const name=(S.naName||'');const handle=(S.naHandle||'').replace(/^@/,'');const about=(S.naDesc||'');
+  const can=name.trim()&&handle.trim()&&about.trim();
+  const lab=(t)=>`<label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">${t} <span style="color:#EF4444">*</span></label>`;
+  const ist='width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;font-family:inherit;box-sizing:border-box';
+  return `${hdr('Create Host Account','Just the basics to get started',"S.scr='home';render()",'',true)}
   <div style="padding:16px 16px 28px;overflow-y:auto">
-    <div style="margin-bottom:14px">${lab('Account type',true)}<div style="display:flex;gap:8px">${typeBtn('business','Business','A place or venue')}${typeBtn('brand','Brand','A product or label')}${typeBtn('group','Group','A community or org')}</div></div>
-    <div style="margin-bottom:14px">${lab('Account name',true)}<input placeholder="e.g. Rayback Collective" value="${name}" oninput="S.naName=this.value" onblur="render()" style="${istyle}"/></div>
-    <div style="margin-bottom:14px">${lab('Handle',true)}<div style="display:flex;align-items:center;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;background:#fff"><span style="color:#9CA3AF;font-size:13px">@</span><input placeholder="raybackcollective" value="${handle}" oninput="S.naHandle=this.value" onblur="render()" style="flex:1;border:none;background:none;padding:11px 6px;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div></div>
-    <div style="margin-bottom:14px">${lab('Category',false)}<input placeholder="e.g. Food &amp; Drink, Retail, Fitness" value="${S.naCat||''}" oninput="S.naCat=this.value" onblur="render()" style="${istyle}"/></div>
-    <div style="display:flex;gap:10px;margin-bottom:14px">
-      <div style="flex:2">${lab('City',false)}<input placeholder="Boulder" value="${S.naCity||''}" oninput="S.naCity=this.value" onblur="render()" style="${istyle}"/></div>
-      <div style="flex:1">${lab('State',false)}<input placeholder="CO" value="${S.naState||''}" oninput="S.naState=this.value" onblur="render()" style="${istyle}"/></div>
-    </div>
-    <div style="margin-bottom:16px">${lab('Description',false)}<textarea placeholder="A short description of this account" oninput="S.naDesc=this.value" onblur="render()" style="${istyle};min-height:68px;resize:vertical">${S.naDesc||''}</textarea></div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Host Profile</div>
+    <div style="margin-bottom:14px">${lab('Name')}<input placeholder="e.g. Rayback Collective" value="${name}" oninput="S.naName=this.value" onblur="render()" style="${ist}"/></div>
+    <div style="margin-bottom:14px">${lab('Handle')}<div style="display:flex;align-items:center;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:0 10px"><span style="color:#9CA3AF;font-size:13px;font-weight:600">@</span><input placeholder="raybackcollective" value="${handle}" oninput="S.naHandle=this.value" onblur="render()" style="flex:1;border:none;background:none;padding:10px 6px;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div><div style="font-size:10px;color:#9CA3AF;margin-top:4px">Your unique handle on Nigh</div></div>
+    <div style="margin-bottom:16px">${lab('About')}<textarea maxlength="160" placeholder="A short description of this account for your public profile" oninput="S.naDesc=this.value;var c=document.getElementById('naDescCount');if(c)c.textContent=this.value.length+'/160'" onblur="render()" style="${ist};min-height:72px;resize:none;line-height:1.5">${about}</textarea><div style="text-align:right;margin-top:3px"><span id="naDescCount" style="font-size:10px;color:#9CA3AF">${about.length}/160</span></div></div>
     <div style="display:flex;gap:8px;align-items:flex-start;background:#EEF2FF;border:1px solid #DBEAFE;border-radius:10px;padding:11px 12px;margin-bottom:16px">
       <div style="color:#0E4EF5;flex-shrink:0;margin-top:1px">${ic('info',15)}</div>
-      <div style="font-size:11.5px;color:#1E40AF;line-height:1.5">You&#x2019;ll be set as the Account Owner. You can verify the business and connect payouts after it&#x2019;s created.</div>
+      <div style="font-size:11.5px;color:#1E40AF;line-height:1.5">That&#x2019;s all you need. You can add more details &#8212; category, location, photos, and verification &#8212; after your account is created.</div>
     </div>
     <button onclick="${can?'createHostAccount()':'void 0'}" style="width:100%;background:${can?'#0E4EF5':'#D1D5DB'};color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:600;cursor:${can?'pointer':'default'};font-family:inherit">Create account</button>
-    <div style="text-align:center;margin-top:14px"><button onclick="S.naName='';S.naType='';S.naHandle='';S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.niyaOnboarding=true;S.scr='niya';S.niyaMode='onboarding';render()" style="background:none;border:none;color:#6B7280;font-size:12px;font-family:inherit;cursor:pointer">Prefer to set it up with Niya? <span style="color:#7C3AED;font-weight:600">Chat instead</span></button></div>
+    <div style="text-align:center;margin-top:14px"><button onclick="S.naName='';S.naHandle='';S.naDesc='';S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.niyaOnboarding=true;S.scr='niya';S.niyaMode='onboarding';render()" style="background:none;border:none;color:#6B7280;font-size:12px;font-family:inherit;cursor:pointer">Prefer to set it up with Niya? <span style="color:#7C3AED;font-weight:600">Chat instead</span></button></div>
   </div>`;
 }
 
