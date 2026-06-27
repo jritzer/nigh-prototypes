@@ -41,6 +41,30 @@ function gpwCheckIn(id){const p=gpWeb.find(x=>x.id===id);if(p)p.status='CheckedI
 function gpwUndo(id){const p=gpWeb.find(x=>x.id===id);if(p)p.status='Redeemed';render();}
 function gpwSend(){const id=S.locationDetail;const rem=gpwRemaining(id);const r=(S.gwRecip||'').trim();if(!r)return;const q=Math.min(parseInt(S.gwQty||1),Math.min(4,rem));if(q<1)return;const disp=(S.gwType==='handle')?('@'+r.replace(/^@/,'')):r;_gwSeq++;gpWeb.push({id:'GW'+String(_gwSeq).padStart(2,'0'),dropId:id,rtype:S.gwType||'handle',recipient:disp,qty:q,status:'Pending'});S.gwRecip='';S.gwQty=1;ss({dropModal:'guestpasses'});}
 function gpwResolve(){const p=gpWeb.find(x=>x.id===S.gwActId);if(p)p.status=(S.gwActType==='cancel')?'Cancelled':'Retracted';S.gwActId=null;S.gwActType=null;ss({dropModal:'guestpasses'});}
+// ── Invitations to JOIN another host account (team membership), surfaced in the org switcher ──
+let accountInvitesWeb=[
+  {key:'maravoss',invitedBy:'Mara Voss',role:'Manager',since:'Jun 2026'}
+];
+function acctInvites(){return accountInvitesWeb.filter(i=>CONFIGS[i.key]&&!(OWNER_ORGS[CURRENT_USER]||[]).includes(i.key));}
+function acceptOrgInvite(key){if(!(OWNER_ORGS[CURRENT_USER]||[]).includes(key))OWNER_ORGS[CURRENT_USER].push(key);accountInvitesWeb=accountInvitesWeb.filter(i=>i.key!==key);S.acctInviteModal=false;switchConfig(key);}
+function declineOrgInvite(key){accountInvitesWeb=accountInvitesWeb.filter(i=>i.key!==key);if(!acctInvites().length)S.acctInviteModal=false;render();}
+function acctInviteModalPanel(){
+  const invs=acctInvites();if(!invs.length)return '';
+  const rows=invs.map(i=>{const o=CONFIGS[i.key];return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #F1F5F9;">
+    <div style="width:34px;height:34px;border-radius:8px;background:#FDE68A;display:flex;align-items:center;justify-content:center;font-weight:800;color:#92400E;flex-shrink:0;">${(o.short||o.name).charAt(0)}</div>
+    <div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:700;color:#0f172a;">${o.short}</div><div style="font-size:0.7rem;color:#64748b;">${i.invitedBy} invited you &middot; ${i.role}</div></div>
+    <button onclick="acceptOrgInvite('${i.key}')" style="padding:7px 16px;border-radius:8px;border:none;background:#16A34A;color:#fff;font-size:0.74rem;font-weight:700;cursor:pointer;">Accept</button>
+    <button onclick="declineOrgInvite('${i.key}')" title="Decline" style="padding:6px 10px;border-radius:8px;border:none;background:#F1F5F9;color:#64748b;font-size:0.95rem;cursor:pointer;line-height:1;">&times;</button>
+  </div>`;}).join('');
+  return `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:600;display:flex;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:440px;box-shadow:0 24px 64px rgba(0,0,0,0.2);padding:24px;">
+      <div style="width:42px;height:42px;border-radius:11px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.2rem;">&#9993;</div>
+      <div style="font-size:1.05rem;font-weight:800;color:#0f172a;text-align:center;margin-bottom:4px;">You have ${invs.length} host account invitation${invs.length>1?'s':''}</div>
+      <div style="font-size:0.78rem;color:#64748b;text-align:center;margin-bottom:8px;line-height:1.5;">You&#8217;ve been invited to help host. Accept to join, or do it later from the account switcher.</div>
+      ${rows}
+      <button onclick="ss({acctInviteModal:false})" style="width:100%;margin-top:16px;padding:11px;border-radius:9px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:0.8rem;font-weight:700;cursor:pointer;">Not now</button>
+    </div></div>`;
+}
 function go(pg){ss({page:pg,locationDetail:null,collectionDetail:null,brandDetail:null,partnerDetailId:null,venueDetail:null,venueModal:null,venueModalId:null,zoneModal:null,zoneModalVenueId:null,zoneModalZoneId:null,addBrandLocModal:false,addBrandModal:false,showPush:false,pushEditDropId:null,pushPhoneRequest:'none',showNewColl:false,pushDualPrice:false,locationEdit:false,addLocModal:false,crmModal:false,partnerModal:false,partnerStep:1,partnerForm:{},inviteModal:false,inviteStep:1,inviteForm:{},editMember:null,editAssignments:null,editDisplayName:undefined,editConfirm:null,teamFilter:'all',settingsTab:'main',financeTab:'orders',accountEdit:false,actFilter:'all',niyaOpen:false,dropStatusFilter:null,inboxFilter:'All',orgSwitcherOpen:false,addBizModal:false,addBizStep:1,addBizPath:null,dropModal:null,dropTab:null,dropGFilter:null,dropCIMode:null,selectedOrder:null,ticketStatusMenu:null,ticketRefundConfirm:null,orderDetailTab:'payment',orderStatusOverrides:{},cancelOrderTickets:null,cancelOrderId:null,guestDetailTab:null,orderGuestFilter:null});}
 function refundTicket(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Refunded';ss({ticketStatusOverrides:o,dropModal:null,cancelTicketId:null,cancelTicketName:null});}
 function uncheckIn(tid){const o=Object.assign({},S.ticketStatusOverrides);o[tid]='Reserved';ss({ticketStatusOverrides:o});}
@@ -1867,6 +1891,7 @@ function layout(){
   ${S.inviteModal?inviteModal():''}
   ${S.editMember?editMemberModal():''}
   ${S.addBizModal?addBizModal():''}
+  ${S.acctInviteModal?acctInviteModalPanel():''}
   ${S.dropModal?dropModalPanel():''}
   ${S.headsUpModal?headsUpModalFn():''}
   ${S.venueModal?venueModalFn():''}
@@ -1953,10 +1978,20 @@ function sidebar(){
           <div style="color:#fff;font-weight:800;font-size:0.82rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;">${c.short} ${verificationBadge(12)}</div>
           <div style="color:rgba(255,255,255,0.5);font-size:0.58rem;margin-top:2px;">${modeBadge} · ${mode==='brand'?((c.city||'')+(c.state?', '+c.state:'')||'Brand Org'):mode==='single'&&c.locations.length>0?c.locations[0].city+', '+c.locations[0].state:c.locations.length+' '+c.locsLabel.toLowerCase()}</div>
         </div>
+        ${acctInvites().length?`<span style="display:inline-flex;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#EF4444;color:#fff;font-size:0.58rem;font-weight:800;align-items:center;justify-content:center;flex-shrink:0;">${acctInvites().length}</span>`:''}
         <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;flex-shrink:0;transition:transform 0.15s;display:inline-block;transform:${S.orgSwitcherOpen?'rotate(180deg)':'rotate(0deg)'}">&#9660;</span>
       </button>
       ${S.orgSwitcherOpen?`
       <div style="margin-top:6px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);">
+        ${acctInvites().length?`<div style="background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.1);">
+          <div style="padding:8px 10px 4px;font-size:0.56rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:rgba(255,255,255,0.45);">Host Account Invitation${acctInvites().length>1?'s':''}</div>
+          ${acctInvites().map(i=>{const io=CONFIGS[i.key];return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px 9px;">
+            <div style="width:26px;height:26px;border-radius:6px;background:rgba(253,230,138,0.9);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#92400E;flex-shrink:0;">${(io.short||io.name).charAt(0)}</div>
+            <div style="flex:1;min-width:0;"><div style="font-size:0.72rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${io.short}</div><div style="font-size:0.55rem;color:rgba(255,255,255,0.5);">${i.invitedBy} &middot; ${i.role}</div></div>
+            <button onclick="event.stopPropagation();acceptOrgInvite('${i.key}')" style="padding:4px 10px;border-radius:6px;border:none;background:#16A34A;color:#fff;font-size:0.6rem;font-weight:700;cursor:pointer;flex-shrink:0;">Accept</button>
+            <button onclick="event.stopPropagation();declineOrgInvite('${i.key}')" title="Decline" style="padding:3px 7px;border-radius:6px;border:none;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:0.78rem;cursor:pointer;flex-shrink:0;line-height:1;">&times;</button>
+          </div>`;}).join('')}
+        </div>`:''}
         ${owned.map(o=>{
           const om=o.orgType==='brand'?'Brand Pro':o.locations.length===1?'Pro':o.hier.length<=1?'Multi-Location Pro':'Enterprise Pro';
           const active=S.config===o.key;
@@ -9096,6 +9131,8 @@ function addBizModal(){
 }
 
 function render(){ document.getElementById('app').innerHTML = layout(); }
+// Surface any pending host-account invitations once on first load
+if(typeof acctInvites==='function'&&acctInvites().length)S.acctInviteModal=true;
 render();
 </script>
 </body>
