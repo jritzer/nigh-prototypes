@@ -1337,11 +1337,16 @@ function createHostAccount(){
   const handle=(S.naHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
   const about=(S.naDesc||'').trim();
   if(!name||!handle||!about)return;
+  // Handle availability check (secondary UX: taken handle -> error, stay on form)
+  const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];
+  const taken=accts.some(a=>(a.handle||'').toLowerCase()===handle)||reserved.includes(handle);
+  if(taken){S.naHandleErr=true;render();return;}
+  S.naHandleErr=false;
   // hostType, category and other details are assigned internally after creation, not self-selected at signup
   const a={name:name,short:(name.split(' ')[0]||name),brandName:'',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:'',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:about,tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
   accts.push(a);acctIdx=accts.length-1;
   S.naName='';S.naHandle='';S.naDesc='';
-  S.showAcct=false;S.menuSub=null;S.scr='home';render();
+  S.showAcct=false;S.menuSub=null;S.scr='home';S.modal='acct-created';render();
 }
 function acceptAccountInvite(id){
   const inv=accountInvites.find(x=>x.id===id);if(!inv)return;
@@ -1360,7 +1365,7 @@ function renderNewAccount(){
   <div style="padding:16px 16px 28px;overflow-y:auto">
     <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Host Profile</div>
     <div style="margin-bottom:14px">${lab('Name')}<input placeholder="e.g. Rayback Collective" value="${name}" oninput="S.naName=this.value" onblur="render()" style="${ist}"/></div>
-    <div style="margin-bottom:14px">${lab('Handle')}<div style="display:flex;align-items:center;background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:0 10px"><span style="color:#9CA3AF;font-size:13px;font-weight:600">@</span><input placeholder="raybackcollective" value="${handle}" oninput="S.naHandle=this.value" onblur="render()" style="flex:1;border:none;background:none;padding:10px 6px;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div><div style="font-size:10px;color:#9CA3AF;margin-top:4px">Your unique handle on Nigh</div></div>
+    <div style="margin-bottom:14px">${lab('Handle')}<div style="display:flex;align-items:center;background:#fff;border:1px solid ${S.naHandleErr?'#EF4444':'#E5E7EB'};border-radius:10px;padding:0 10px"><span style="color:#9CA3AF;font-size:13px;font-weight:600">@</span><input placeholder="raybackcollective" value="${handle}" oninput="S.naHandle=this.value;S.naHandleErr=false" onblur="render()" style="flex:1;border:none;background:none;padding:10px 6px;font-size:13px;color:#111827;outline:none;font-family:inherit"/></div>${S.naHandleErr?`<div style="font-size:10px;color:#EF4444;margin-top:4px;font-weight:600">@${handle} isn&#x2019;t available. Please try another.</div>`:`<div style="font-size:10px;color:#9CA3AF;margin-top:4px">Your unique handle on Nigh</div>`}</div>
     <div style="margin-bottom:16px">${lab('About')}<textarea maxlength="160" placeholder="A short description of this account for your public profile" oninput="S.naDesc=this.value;var c=document.getElementById('naDescCount');if(c)c.textContent=this.value.length+'/160'" onblur="render()" style="${ist};min-height:72px;resize:none;line-height:1.5">${about}</textarea><div style="text-align:right;margin-top:3px"><span id="naDescCount" style="font-size:10px;color:#9CA3AF">${about.length}/160</span></div></div>
     <div style="display:flex;gap:8px;align-items:flex-start;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:11px 12px;margin-bottom:10px">
       <div style="color:#6B7280;flex-shrink:0;margin-top:1px">${ic('users',15)}</div>
@@ -6835,6 +6840,15 @@ function renderModal(){
         <button onclick="modal(null)" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;cursor:pointer">Keep Editing</button>
         <button onclick="(function(){var _i=S.editDrop;S.cStep=1;S.dropDate=null;S.dropTitle=null;S.dropPartners=undefined;S.dropLocation=null;S.cloneFrom=null;S.editDrop=null;if(_i!=null){go('liveview',{drop:_i});}else{go('home');}})()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:#EF4444;color:#fff;cursor:pointer">${S.editDrop!=null&&drops[S.editDrop].status==='Scheduled'?'Discard Changes':'Discard'}</button>
       </div>
+    </div></div>`;
+  }
+  else if(S.modal==='acct-created'){
+    mr.innerHTML=`<div class="modal-bg" onclick="event.stopPropagation()"><div class="modal fi" onclick="event.stopPropagation()" style="text-align:center">
+      <div style="width:48px;height:48px;border-radius:14px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#16A34A">${ic('check',24)}</div>
+      <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Host account created!</div>
+      <div style="font-size:12.5px;color:#6B7280;margin-bottom:20px;line-height:1.55">You&#x2019;re now in <strong style="color:#111827">${acct().name}</strong>. Complete your profile next &#8212; then you can schedule your first drop.</div>
+      <button onclick="S.modal=null;S.scr='menu';S.menuSub='profile';render()" style="width:100%;padding:13px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px">Complete Profile</button>
+      <button onclick="S.modal=null;render()" style="width:100%;padding:11px;border-radius:10px;border:none;background:none;color:#6B7280;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">I&#x2019;ll do this later</button>
     </div></div>`;
   }
   else if(S.modal==='history'){
