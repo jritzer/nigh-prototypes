@@ -1332,15 +1332,34 @@ function renderTB(){
 
 // ═══ CREATE / JOIN HOST ACCOUNT ═══
 function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).userDisplayName||'Josh Ritzer';}
+function handleTaken(h){h=(h||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];return !!h&&(accts.some(a=>(a.handle||'').toLowerCase()===h)||reserved.includes(h));}
+// Completes new-user signup: creates their personal host account (and a business account if they chose one), then lands home and surfaces any pending invites
+function finishHostOnboarding(){
+  const fname=(S.loginFirstName||'').trim();const lname=(S.loginLastName||'').trim();
+  const full=(fname+' '+lname).trim()||'New Host';
+  const choice=S.loginExChoice||'personal';
+  if(S.loginUserType==='existing'){
+    const pi=accts.findIndex(a=>a.hostType==='personal');if(pi>=0)acctIdx=pi;
+  } else {
+    let ph=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+    if(choice!=='personal'||!ph)ph=((fname+lname.charAt(0)).toLowerCase().replace(/[^a-z0-9]/g,''))||'newhost';
+    const p={name:full,short:fname||full,brandName:'',hostType:'personal',entity:false,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:'Personal',subCat:'',addr:'',city:'',state:'',zip:'',handle:ph,phone:S.loginPhone||'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:full,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+    accts.push(p);acctIdx=accts.length-1;
+  }
+  if(choice==='newhandle'){
+    const bh=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+    if(bh){const b={name:bh,short:bh,brandName:bh,hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:S.loginBizCategory||'',subCat:S.loginBizSubCat||'',addr:'',city:'',state:'',zip:'',handle:bh,phone:'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:bh,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};accts.push(b);acctIdx=accts.length-1;}
+  }
+  S.niyaOnboarding=false;S.niyaMode=null;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.loginHandleErr=false;
+  S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render();
+}
 function createHostAccount(){
   const name=(S.naName||'').trim();
   const handle=(S.naHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
   const about=(S.naDesc||'').trim();
   if(!name||!handle||!about)return;
   // Handle availability check (secondary UX: taken handle -> error, stay on form)
-  const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];
-  const taken=accts.some(a=>(a.handle||'').toLowerCase()===handle)||reserved.includes(handle);
-  if(taken){S.naHandleErr=true;render();return;}
+  if(handleTaken(handle)){S.naHandleErr=true;render();return;}
   S.naHandleErr=false;
   // hostType, category and other details are assigned internally after creation, not self-selected at signup
   const a={name:name,short:(name.split(' ')[0]||name),brandName:'',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:'',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:about,tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
@@ -1353,9 +1372,9 @@ function acceptAccountInvite(id){
   const a={name:inv.name,short:inv.short||(inv.name.split(' ')[0]||inv.name),brandName:inv.hostType==='brand'?inv.name:'',hostType:inv.hostType||'place',entity:true,businessVerified:true,unverified:false,stripeConnected:true,role:inv.role||'Team Member',userDisplayName:ownerDisplayName(),cat:inv.cat||'Business',subCat:inv.subCat||'',addr:'',city:inv.city||'',state:inv.state||'',zip:'',handle:inv.handle||'',phone:'',email:'',website:'',description:'',tags:[],operationMode:'Fixed',plan:inv.plan||'Growth',privateAcct:false,maxPartners:inv.maxPartners||3,parentOrg:inv.name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
   accts.push(a);acctIdx=accts.length-1;
   accountInvites=accountInvites.filter(x=>x.id!==id);
-  S.showAcct=false;S.menuSub=null;S.scr='home';render();
+  S.showAcct=false;S.menuSub=null;S.modal=null;S.scr='home';render();
 }
-function declineAccountInvite(id){accountInvites=accountInvites.filter(x=>x.id!==id);render();}
+function declineAccountInvite(id){accountInvites=accountInvites.filter(x=>x.id!==id);if(S.modal==='welcome-invites'&&!accountInvites.length)S.modal=null;render();}
 function renderNewAccount(){
   const name=(S.naName||'');const handle=(S.naHandle||'').replace(/^@/,'');const about=(S.naDesc||'');
   const can=name.trim()&&handle.trim()&&about.trim();
@@ -6851,6 +6870,20 @@ function renderModal(){
       <button onclick="S.modal=null;render()" style="width:100%;padding:11px;border-radius:10px;border:none;background:none;color:#6B7280;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">I&#x2019;ll do this later</button>
     </div></div>`;
   }
+  else if(S.modal==='welcome-invites'){
+    mr.innerHTML=`<div class="modal-bg" onclick="event.stopPropagation()"><div class="modal fi" onclick="event.stopPropagation()">
+      <div style="width:44px;height:44px;border-radius:12px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:#B45309">${ic('mail',20)}</div>
+      <div style="font-size:16px;font-weight:700;color:#111827;text-align:center;margin-bottom:4px">You have ${accountInvites.length} host account invitation${accountInvites.length>1?'s':''}</div>
+      <div style="font-size:12px;color:#6B7280;text-align:center;margin-bottom:16px;line-height:1.5">You&#x2019;ve been invited to help host. Accept to join, or do it later from your account menu.</div>
+      ${accountInvites.map(inv=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid #F3F4F6">
+        <div style="width:30px;height:30px;border-radius:7px;background:#FDE68A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#92400E;flex-shrink:0">${(inv.short||inv.name).charAt(0)}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827">${inv.name}</div><div style="font-size:11px;color:#6B7280">${inv.invitedBy} invited you &#183; ${inv.role}</div></div>
+        <button onclick="acceptAccountInvite('${inv.id}')" style="flex-shrink:0;padding:7px 14px;border-radius:8px;border:none;background:#16A34A;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Accept</button>
+        <button onclick="declineAccountInvite('${inv.id}')" style="flex-shrink:0;padding:6px;border-radius:8px;border:none;background:none;color:#9CA3AF;cursor:pointer;display:flex" title="Decline">${ic('x',16)}</button>
+      </div>`).join('')}
+      <button onclick="S.modal=null;render()" style="width:100%;margin-top:16px;padding:11px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Not now</button>
+    </div></div>`;
+  }
   else if(S.modal==='history'){
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:14px">Drop History</div>
@@ -7994,8 +8027,8 @@ function renderLogin(){
         <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);text-align:center;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Prototype: Choose user scenario</div>
         <div style="display:flex;flex-direction:column;gap:6px">
           <button onclick="S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.scr='niya';S.niyaMode='onboarding';render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🆕</span><span><strong style="color:rgba(255,255,255,0.7)">New to Nigh</strong><br>Full Niya onboarding — name, handle, account</span></button>
-          <button onclick="S.loginUserType='existing';S.loginIsNew=false;S.loginObStep=0;S.loginFirstName='Josh';S.loginLastName='Ritzer';S.loginHandle='';S.loginExHandle='@joshr';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.scr='niya';S.niyaMode='onboarding';render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">👤</span><span><strong style="color:rgba(255,255,255,0.7)">Existing Nigh User</strong><br>Niya recognizes you — personal handle vs new</span></button>
-          <button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.loginIsNew=false;S.loginUserType='returning';S.niyaOnboarding=false;S.scr='home';render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🏠</span><span><strong style="color:rgba(255,255,255,0.7)">Returning Host</strong><br>Already set up — skip straight to home</span></button>
+          <button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.loginIsNew=false;S.loginUserType='existing';S.niyaOnboarding=false;var pi=accts.findIndex(a=>a.hostType==='personal');if(pi>=0)acctIdx=pi;S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">👤</span><span><strong style="color:rgba(255,255,255,0.7)">Existing Nigh User</strong><br>Lands on your personal host account</span></button>
+          <button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.loginIsNew=false;S.loginUserType='returning';S.niyaOnboarding=false;S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🏠</span><span><strong style="color:rgba(255,255,255,0.7)">Returning Host</strong><br>Already set up — skip straight to home</span></button>
         </div>
       </div>
     </div>`;
@@ -8089,6 +8122,7 @@ function renderNiyaOnboarding(){
       msgs.push(uMsg(lname));
       msgs.push(nMsg("Nice to meet you, "+fname+"! 🙌"));
       msgs.push(nMsg("How about <strong>"+sugHandle+"</strong> as your handle? You can keep it or type something different."));
+      if(S.loginHandleErr){msgs.push(nMsg("Hmm — <strong>"+handle+"</strong> is already taken. Try a different handle."));}
     }
 
     if(obStep>=3){
@@ -8172,7 +8206,7 @@ function renderNiyaOnboarding(){
 
   // Helper: CTA button
   const ctaDone='<div style="padding:10px 16px 16px;border-top:1px solid #F3F4F6;background:#fff">'+
-    '<div style="text-align:center"><button onclick="'+resetAndHome+'" style="background:#0E4EF5;color:#fff;border:none;border-radius:14px;padding:13px 32px;font-family:inherit;font-size:15px;font-weight:700;box-shadow:0 4px 16px rgba(14,78,245,0.35);display:inline-flex;align-items:center;gap:8px;cursor:pointer">Create your first Drop '+ic('right',16)+'</button></div></div>';
+    '<div style="text-align:center"><button onclick="finishHostOnboarding()" style="background:#0E4EF5;color:#fff;border:none;border-radius:14px;padding:13px 32px;font-family:inherit;font-size:15px;font-weight:700;box-shadow:0 4px 16px rgba(14,78,245,0.35);display:inline-flex;align-items:center;gap:8px;cursor:pointer">Create your first Drop '+ic('right',16)+'</button></div></div>';
 
   // Helper: category card grid
   function catGrid(nextStep){
@@ -8239,7 +8273,7 @@ function renderNiyaOnboarding(){
         "const v=__SIMVAL__;if(v){S.loginLastName=v;S.loginListening=false;S.loginObStep=2;render();}");
     } else if(obStep===2){
       inputArea=loginObInput('loginHandleInput',sugHandle,handle,
-        "const v=__SIMVAL__;if(v){S.loginHandle=v.startsWith('@')?v:'@'+v;S.loginListening=false;S.loginObStep=3;render();}");
+        "const v=__SIMVAL__;if(v){var hh=v.replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();S.loginHandle='@'+hh;S.loginListening=false;if(handleTaken(hh)){S.loginHandleErr=true;render();}else{S.loginHandleErr=false;S.loginObStep=3;render();}}");
     } else if(obStep===3){
       inputArea=accountChoiceCards('Host as '+handle);
     } else if(obStep===4 && exChoice==='personal'){
