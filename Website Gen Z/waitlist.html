@@ -609,6 +609,11 @@
 
                 body.appendChild(row);
                 body.appendChild(btn);
+
+                const phoneHint = document.createElement('p');
+                phoneHint.className = 'field-hint';
+                phoneHint.textContent = 'No spam. Just an invite when your spot is ready.';
+                body.appendChild(phoneHint);
             });
         } else {
             // No phone — ask for it
@@ -647,6 +652,12 @@
 
                 body.appendChild(input);
                 body.appendChild(btn);
+
+                const phoneHint = document.createElement('p');
+                phoneHint.className = 'field-hint';
+                phoneHint.textContent = 'No spam. Just an invite when your spot is ready.';
+                body.appendChild(phoneHint);
+
                 setTimeout(() => input.focus(), 50);
             });
         }
