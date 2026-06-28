@@ -1166,6 +1166,8 @@ function niyaBubble(sz){
   return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="${NIYA_ICON}" style="width:100%;height:100%;object-fit:cover;display:block;"/></div>`;
 }
 
+// Handles are unique across the entire Nigh platform (Nigh + Nigh Host)
+function handleTakenC(h){h=(h||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();var reserved=['nigh','admin','support','centro','nike','avery','mercantile','rayback','test'];return !!h&&reserved.includes(h);}
 function renderNiyaOnboarding(){
   const obStep=S.obStep||0;
   const fname=S.obFirstName||'';
@@ -1199,6 +1201,7 @@ function renderNiyaOnboarding(){
     msgs.push(uMsg(lname));
     msgs.push(nMsg("Nice to meet you, "+fname+"! 🙌"));
     msgs.push(nMsg("How about <strong>"+sugHandle+"</strong> as your handle? You can keep it or type something different."));
+    if(S.obHandleErr){msgs.push(nMsg("Hmm — <strong>"+handle+"</strong> is already taken. Handles are unique across Nigh and Nigh Host, so pick another."));}
   }
 
   if(obStep>=3){
@@ -1217,29 +1220,11 @@ function renderNiyaOnboarding(){
       msgs.push(nMsg("Ready to see what's dropping today?"));
     } else {
       msgs.push(uMsg("I'm also a host"));
-      msgs.push(nMsg("Awesome! Let's set up a host handle for your business or brand."));
-      msgs.push(nMsg("What handle would you like? Type something that fits your brand."));
+      msgs.push(nMsg("Love it! Hosting lives in the <strong>Nigh Host</strong> app."));
+      msgs.push(nMsg("Download Nigh Host and sign in with this same mobile number — your handle <strong>"+handle+"</strong> and verification come with you, and your personal host account is created automatically."));
+      msgs.push(nMsg("Once you're in, you can host as <strong>"+handle+"</strong> or set up a separate business, brand, or group account."));
+      msgs.push(nMsg("For now, let's get you exploring Drops here on Nigh. 👇"));
     }
-  }
-
-  if(obStep>=5 && exChoice==='newhandle'){
-    var brandHandle=S.obHandle||'@yourbrand';
-    msgs.push(uMsg(brandHandle));
-    msgs.push(nMsg("Love it — <strong>"+brandHandle+"</strong>! ✨"));
-    msgs.push(nMsg("What type of business or brand is this? Pick a category that fits best."));
-  }
-
-  if(obStep>=6 && exChoice==='newhandle'){
-    msgs.push(uMsg(bizCat));
-    msgs.push(nMsg("Nice — now narrow it down a bit. What best describes what you do?"));
-  }
-
-  if(obStep>=7 && exChoice==='newhandle'){
-    msgs.push(uMsg(bizSub));
-    msgs.push(nMsg("Perfect — "+bizSub.toLowerCase()+" sounds great! 🔥"));
-    msgs.push(nMsg("You're all set, "+fname+". Drops are exclusive IRL experiences — special tastings, pop-ups, and more."));
-    msgs.push(nMsg("Follow your favorite hosts and I'll alert you the moment they post something new. 🔔"));
-    msgs.push(nMsg("Ready to see what's dropping today?"));
   }
 
   // Render bubbles
@@ -1287,7 +1272,7 @@ function renderNiyaOnboarding(){
         '<div><div style="font-size:13px;font-weight:600;color:#111827">I\'m here to explore</div><div style="font-size:11px;color:#6B7280;margin-top:1px">Discover Drops and experiences near you</div></div></button>'+
       '<button onclick="S.obExChoice=\'newhandle\';S.obStep='+(obStep+1)+';render()" style="width:100%;background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;font-family:inherit">'+
         '<div style="width:36px;height:36px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏪</div>'+
-        '<div><div style="font-size:13px;font-weight:600;color:#111827">I\'m also a host</div><div style="font-size:11px;color:#6B7280;margin-top:1px">Set up a host account for your business or brand</div></div></button>'+
+        '<div><div style="font-size:13px;font-weight:600;color:#111827">I\'m also a host</div><div style="font-size:11px;color:#6B7280;margin-top:1px">Host on Nigh Host — sign in with the same number</div></div></button>'+
     '</div>';
   }
 
@@ -1322,9 +1307,9 @@ function renderNiyaOnboarding(){
   var ctaDone='<div style="padding:10px 16px 16px;border-top:1px solid #F3F4F6;background:#fff">'+
     '<div style="text-align:center"><button onclick="'+resetAndHome+'" style="background:#0E4EF5;color:#fff;border:none;border-radius:14px;padding:13px 32px;font-family:inherit;font-size:15px;font-weight:700;box-shadow:0 4px 16px rgba(14,78,245,0.35);display:inline-flex;align-items:center;gap:8px;cursor:pointer">See what\'s dropping today '+ic('right',16)+'</button></div></div>';
 
-  // Steps: 0=first name | 1=last name | 2=handle | 3=choose account |
-  // personal→4=done | newhandle→4=brand handle,5=category,6=sub-cat,7=done
-  var maxStep=(exChoice==='personal'||exChoice==='')?4:7;
+  // Steps: 0=first name | 1=last name | 2=handle | 3=choose account | 4=done
+  // (Hosting is set up in the Nigh Host app, not here — see the host handoff above.)
+  var maxStep=4;
 
   if(obStep===0){
     inputArea=obInput('obNameInput','Your first name…','',
@@ -1334,16 +1319,9 @@ function renderNiyaOnboarding(){
       "const v=__SIMVAL__;if(v){S.obLastName=v;S.obListening=false;S.obStep=2;render();}");
   } else if(obStep===2){
     inputArea=obInput('obHandleInput',sugHandle,handle,
-      "const v=__SIMVAL__;if(v){S.obHandle=v.startsWith('@')?v:'@'+v;S.obListening=false;S.obStep=3;render();}");
+      "const v=__SIMVAL__;if(v){var hh=v.replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();S.obHandle='@'+hh;S.obListening=false;if(handleTakenC(hh)){S.obHandleErr=true;render();}else{S.obHandleErr=false;S.obStep=3;render();}}");
   } else if(obStep===3){
     inputArea=accountChoiceCards();
-  } else if(obStep===4 && exChoice==='newhandle'){
-    inputArea=obInput('obBrandHandleInput','@yourbrand','',
-      "const v=__SIMVAL__;if(v){S.obHandle=v.startsWith('@')?v:'@'+v;S.obListening=false;S.obStep=5;render();}");
-  } else if(obStep===5 && exChoice==='newhandle'){
-    inputArea=catGrid(6);
-  } else if(obStep===6 && exChoice==='newhandle'){
-    inputArea=subCatGrid(bizCat,7);
   } else if(obStep>=maxStep){
     inputArea=ctaDone;
   }
@@ -4616,6 +4594,17 @@ function renderUserAccount(){
       <button onclick="modal('editField-locVisiting')" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Edit</button>
     </div>
 
+    <!-- Privacy: follow approval -->
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9CA3AF;margin-bottom:8px">Privacy</div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#111827">Require approval to follow</div>
+        <div style="font-size:11px;color:#6B7280;margin-top:2px;line-height:1.45">When on, people must request to follow you and you approve each one. Applies across Nigh and Nigh Host.</div>
+      </div>
+      <button onclick="currentUser.approveFollow=!currentUser.approveFollow;render()" style="flex-shrink:0;width:44px;height:26px;border-radius:13px;border:none;background:${currentUser.approveFollow?'#0E4EF5':'#D1D5DB'};position:relative;cursor:pointer;transition:background 0.15s">
+        <span style="position:absolute;top:3px;left:${currentUser.approveFollow?'21px':'3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:left 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></span>
+      </button>
+    </div>
 
   </div>`;
 }
