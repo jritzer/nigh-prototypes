@@ -3400,7 +3400,7 @@ const _friendDrops={
      host:{name:'Whole Foods Market',short:'WFM',handle:'@wholefoodsboulder',cat:'Food & Grocery',followers:'2.1k'},
      partner:{name:'Kendall Jenner',short:'KJ',handle:'@kendallj',cat:'Celebrity Chef',followers:'18.4k'},
      desc:'5-course tasting menu with seasonal organic ingredients, paired with natural wines. Chef Maria will guide you through each course.'},
-    {title:'Shine Restaurant: Farm-to-Table Dinner',place:'Shine Restaurant',addr:'2027 13th St, Boulder, CO',date:'Fri, Apr 19',time:'7:00 PM',price:65,
+    {title:'Shine Restaurant: Farm-to-Table Dinner',place:'Shine Restaurant',addr:'2027 13th St, Boulder, CO',date:'Fri, Apr 19',time:'7:00 PM',price:65,privacy:'only_me',
      host:{name:'Shine Restaurant',short:'SR',handle:'@shineboulder',cat:'Fine Dining',followers:'3.4k'},
      partner:{name:'Sladoga Winery',short:'SW',handle:'@sladogaboulder',cat:'Winery',followers:'890'},
      desc:'4-course farm-to-table dinner featuring locally sourced ingredients from Boulder County farms. Wine pairings included.'},
@@ -3587,7 +3587,9 @@ function renderFriendDetail(){
   const myUname='@joshr';
   const sharedGroups=allGroups.filter(g=>{const friendIn=g.members.some(m=>m.uname===f.uname);if(!friendIn)return false;const meIn=g.members.some(m=>m.uname===myUname);if(meIn)return true;return g.visibility==='public'||g.visibility==='friends';});
   const myGroups=socialGroups.filter(g=>g.members.some(m=>m.uname===myUname)&&!g.members.some(m=>m.uname===f.uname));
-  const pastDrops=_friendDrops[f.id]||[];
+  // Per-drop privacy: hide a friend's drop if they set it to "Only Me"; group-scoped drops only show if I'm in that group
+  const canSeeFriendDrop=p=>{if(!p||p==='friends')return true;if(p==='only_me')return false;const g=allGroups.find(x=>x.id===p);return g?g.members.some(m=>m.uname===myUname):false;};
+  const pastDrops=(_friendDrops[f.id]||[]).filter(d=>canSeeFriendDrop(d.privacy));
   const friendFoll=_friendFollowing[f.id]||[];
   const showAddGroup=S.addToGroupFriend===f.id;
 
