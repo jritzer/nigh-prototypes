@@ -6495,6 +6495,19 @@ function renderUserAccount(){
       </div>
     </div>
 
+    <!-- Display Name (per host account) -->
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Display Name</div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;padding:13px 0;gap:12px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:2px">How you appear on ${acct().name}</div>
+          <div style="font-size:13px;color:#111827;font-weight:500">${acct().userDisplayName||ownerDisplayName()}</div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:2px;line-height:1.4">Shown to this account&#x2019;s team and on activity. Set a short name per account so you don&#x2019;t have to use your full name everywhere.</div>
+        </div>
+        <button onclick="S.dispNameNew=acct().userDisplayName||'';S.modal='changeDisplayName';render()" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Change</button>
+      </div>
+    </div>
+
     <!-- Contact -->
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
       ${verifiedRow('Mobile Phone',personIdentity.phone,"S.contactChangeStep=0;S.contactNewVal='';modal('changePhone')")}
@@ -6909,6 +6922,17 @@ function renderModal(){
         <button onclick="declineAccountInvite('${inv.id}')" style="flex-shrink:0;padding:6px;border-radius:8px;border:none;background:none;color:#9CA3AF;cursor:pointer;display:flex" title="Decline">${ic('x',16)}</button>
       </div>`).join('')}
       <button onclick="S.modal=null;render()" style="width:100%;margin-top:16px;padding:11px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Not now</button>
+    </div></div>`;
+  }
+  else if(S.modal==='changeDisplayName'){
+    const cur=acct().userDisplayName||ownerDisplayName();
+    const val=S.dispNameNew!=null?S.dispNameNew:cur;
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding:24px 20px 28px"><div class="mh"></div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">Display Name</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:16px;line-height:1.5">How you appear on <strong>${acct().name}</strong> &#8212; to this account&#x2019;s team and on activity. Your legal name on file doesn&#x2019;t change, and this is set per account.</div>
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Display name</label>
+      <input id="dispNameInput" type="text" value="${val}" placeholder="e.g. Josh R." oninput="S.dispNameNew=this.value" style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:18px"/>
+      <button onclick="var v=(document.getElementById('dispNameInput').value||'').trim();if(v){acct().userDisplayName=v;}S.dispNameNew=null;S.modal=null;render()" style="width:100%;padding:13px;border-radius:10px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
     </div></div>`;
   }
   else if(S.modal==='changePhone'||S.modal==='changeEmail'){
