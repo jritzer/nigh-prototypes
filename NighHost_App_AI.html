@@ -6700,9 +6700,9 @@ function renderModal(){
           </div>
         </div>
 
-        ${canFull('teamDisplayName')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display name on ${locName}</div>
+        ${canFull('teamDisplayName')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display name for ${locName}</div>
         <input id="editDispInput" type="text" value="${S.editDispName!=null?S.editDispName:((assignment&&assignment.displayName)||'')}" placeholder="${t.name}" oninput="S.editDispName=this.value" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:6px"/>
-        <div style="font-size:10px;color:#9CA3AF;margin-bottom:${canFull('team')?'22px':'24px'};line-height:1.4">How ${t.name.split(' ')[0]} appears on this account&#x2019;s team and activity. Leave blank to use their full name.</div>`:''}
+        <div style="font-size:10px;color:#9CA3AF;margin-bottom:${canFull('team')?'22px':'24px'};line-height:1.4">How user&#x2019;s name appears for this host account activity.</div>`:''}
 
         ${canFull('team')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Role</div>
         <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px">
