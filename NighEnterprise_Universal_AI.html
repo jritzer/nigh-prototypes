@@ -1424,6 +1424,14 @@ const isFullyVerified=()=>isVerified()&&(!isEntity()||isBusinessVerified());
 function _vSvg(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#0E4EF5"/><path d="M8 12.5l2.5 2.5 5.5-5.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
 function _vbSvg(sz){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v5c0 5.25 3.4 10.15 8 11.25C16.6 21.15 20 16.25 20 11V6l-8-4z" fill="#0E4EF5"/><path d="M8.5 12.5l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;}
 function verificationBadge(sz){if(!isVerified()&&!isBusinessVerified())return '';return isEntity()&&isBusinessVerified()?_vbSvg(sz||14):isVerified()?_vSvg(sz||14):'';}
+// Re-verification policy — identity is locked once verified; re-verify (name change, expired ID) allowed every REVERIFY_DAYS.
+const REVERIFY_DAYS=90;
+let userVerifiedDate='2026-01-15';
+const VTODAY=new Date(2026,5,29);
+function fmtVDate(d){const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const dt=new Date(d);return m[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();}
+function daysSinceVerified(){return Math.floor((VTODAY-new Date(userVerifiedDate))/86400000);}
+function reverifyAvailDate(){const dt=new Date(userVerifiedDate);dt.setDate(dt.getDate()+REVERIFY_DAYS);return fmtVDate(dt);}
+function canReverify(){return daysSinceVerified()>=REVERIFY_DAYS;}
 
 function orgAvatar(c,sz,r){
   sz=sz||44; r=r||Math.round(sz*.22);
@@ -7447,11 +7455,11 @@ function rSettings(){
               </div>
               <div>
                 <div style="font-size:0.8rem;font-weight:700;color:#0f172a;">Identity verification</div>
-                <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${isVerified()?'Identity confirmed — your identity badge is active':'Verify your identity with an ID scan and selfie photos'}</div>
+                <div style="font-size:0.7rem;color:#94a3b8;margin-top:2px;">${isVerified()?('Verified '+fmtVDate(userVerifiedDate)+' · re-verify available '+(canReverify()?'now':reverifyAvailDate())):'Verify your identity with an ID scan and selfie photos'}</div>
               </div>
             </div>
             ${isVerified()
-              ?`<span style="font-size:0.68rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;">${_vSvg(11)} Identity verified</span>`
+              ?`<div style="display:flex;align-items:center;gap:8px;">${canReverify()?`<button style="padding:5px 12px;background:#fff;color:#16a34a;border:1px solid #bbf7d0;border-radius:8px;font-size:0.7rem;font-weight:700;cursor:pointer;">Re-verify</button>`:''}<span style="font-size:0.68rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px;">${_vSvg(11)} Identity verified</span></div>`
               :`<button style="padding:6px 14px;background:#0E4EF5;color:#fff;border:none;border-radius:8px;font-size:0.73rem;font-weight:700;cursor:pointer;">Verify Now</button>`}
           </div>
         </div>

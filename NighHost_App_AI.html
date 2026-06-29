@@ -330,6 +330,15 @@ function audIc(aud){if(aud==='public')return{icon:'globe',label:'Public — Anyo
 // Verification model: person verification (ID+selfie) cascades to all non-entity accounts (personal, non-entity brands).
 // Entity accounts (businesses, orgs, clubs) also require business verification (docs+EIN+domain) on top of person verification.
 let userVerified=true; // human verification (selfie-based) — confirms real person, shared across all accounts this user manages
+// ── Re-verification policy ── Identity verification is locked once complete (anti-fraud); a host may RE-verify
+// (e.g. legal name change, expired ID) only after this many days. Single knob — change REVERIFY_DAYS to adjust.
+const REVERIFY_DAYS=90;
+let userVerifiedDate='2026-01-15'; // when this person completed identity verification
+const VTODAY=new Date(2026,5,29); // demo "today" (Jun 29, 2026)
+function fmtVDate(d){const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const dt=new Date(d);return m[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear();}
+function daysSinceVerified(){return Math.floor((VTODAY-new Date(userVerifiedDate))/86400000);}
+function reverifyAvailDate(){const dt=new Date(userVerifiedDate);dt.setDate(dt.getDate()+REVERIFY_DAYS);return fmtVDate(dt);}
+function canReverify(){return daysSinceVerified()>=REVERIFY_DAYS;}
 const accts=[
   {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'1234 Walnut St',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',email:'',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
   {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:''},
@@ -2823,6 +2832,7 @@ function renderMenu(){
   if(S.menuSub==='followrequests')return renderFollowRequests();
   if(S.menuSub==='accounthub')return renderAccountHub();
   if(S.menuSub==='verifypage')return renderVerificationPage();
+  if(S.menuSub==='identityManage')return renderIdentityManage();
   if(S.menuSub==='verify')return renderVerify();
   if(S.menuSub==='bizverify')return renderBusinessVerify();
   if(S.menuSub==='venues')return renderVenues();
@@ -4535,7 +4545,7 @@ function renderVerificationPage(){
   // ── Row 1: You (identity) ── Personal to whoever is viewing (each team member has their own).
   const youDone=idV||stripeOk;
   const youRow=youDone
-    ?{state:'done',icon:'user',title:'Personal identity',sub:'Your personal identity across the Nigh platform'}
+    ?{state:'done',icon:'user',title:'Personal identity',sub:'Your personal identity across the Nigh platform',go:"S.menuSub='identityManage';render()"}
     :{state:'action',icon:'user',title:'Verify personal identity',sub:'Verify your personal identity',meta:'Free — 2 minutes',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
 
   // ── Row 2: Your account (authenticity) ──
@@ -4547,9 +4557,9 @@ function renderVerificationPage(){
       ?{state:'done',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify'}
       :{state:'locked',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify',note:'Unlocks after you verify your identity'};
   }else if(bizV){
-    acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account'};
+    acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account',go:canVerifyAccount?"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()":null};
   }else if(stripeOk){
-    acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
+    acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed',go:canVerifyAccount?"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()":null};
   }else if(!canVerifyAccount){
     acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',note:ownerNote};
   }else if(!idV){
@@ -4561,7 +4571,7 @@ function renderVerificationPage(){
   // ── Row 3: Payments (Stripe — only to charge money; locked until identity is verified) ──
   let payRow;
   if(stripeOk){
-    payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'};
+    payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.',go:canVerifyAccount?"S.menuSub='payout';S.revTab='payouts';render()":null};
   }else if(!canVerifyAccount){
     payRow={state:'locked',icon:'billing',title:'Payments',sub:'Set up payment processing to charge for drops through Stripe.',note:ownerNote};
   }else if(!idV){
@@ -4580,15 +4590,17 @@ function renderVerificationPage(){
   };
   const vrow=function(r){
     const c=ST[r.state];
+    const clickable=r.go&&!r.act; // completed rows that route to a management view
     const pill=r.state==='locked'
       ?'<div style="color:#D1D5DB">'+ic('lock',15)+'</div>'
       :'<span style="font-size:10px;font-weight:600;color:'+c.pc+';background:'+c.pbg+';padding:3px 8px;border-radius:6px;white-space:nowrap">'+(r.pill||c.pill)+'</span>';
+    const chev=clickable?'<div style="color:#9CA3AF;margin-left:2px">'+ic('chevRight',16)+'</div>':'';
     const btn=r.act?'<div style="padding:0 16px 14px"><button onclick="'+r.act.go+'" style="width:100%;padding:11px;border-radius:10px;border:'+(r.state==='action'?'none':'1px solid #E5E7EB')+';background:'+(r.state==='action'?'#0E4EF5':'#fff')+';color:'+(r.state==='action'?'#fff':'#0E4EF5')+';font-size:13px;font-weight:600;cursor:pointer">'+r.act.label+' →</button></div>':'';
     return '<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">'+
-      '<div style="padding:14px 16px;display:flex;align-items:center;gap:12px'+(btn?';border-bottom:1px solid #F3F4F6':'')+'">'+
+      '<div'+(clickable?' onclick="'+r.go+'"':'')+' style="padding:14px 16px;display:flex;align-items:center;gap:12px'+(btn?';border-bottom:1px solid #F3F4F6':'')+(clickable?';cursor:pointer':'')+'">'+
         '<div style="width:44px;height:44px;border-radius:12px;background:'+c.sq+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="color:'+c.sqf+'">'+ic(r.icon,22)+'</div></div>'+
         '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(r.state==='idle'||r.state==='locked'?'#6B7280':'#111827')+'">'+r.title+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:2px">'+r.sub+'</div>'+(r.meta?'<div style="margin-top:5px;font-size:10.5px;font-weight:600;color:#16A34A;white-space:nowrap">'+r.meta+'</div>':'')+(r.note?'<div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:10.5px;font-weight:600;color:#9CA3AF">'+ic('lock',11)+'<span>'+r.note+'</span></div>':'')+'</div>'+
-        pill+
+        pill+chev+
       '</div>'+btn+
     '</div>';
   };
@@ -4608,6 +4620,38 @@ function renderVerificationPage(){
           <span style="font-size:11px;color:#9CA3AF;line-height:1.4">${footMsg}</span>
         </div>
       </div>
+    </div>
+  </div>`;
+}
+
+// Personal identity management — view status + re-verify (gated by REVERIFY_DAYS).
+function renderIdentityManage(){
+  const back="S.menuSub='verifypage';render()";
+  const canRe=canReverify();
+  const days=daysSinceVerified();
+  return `<div style="display:flex;flex-direction:column;height:100%">
+    ${hdr('Personal identity','Verified',back)}
+    <div style="flex:1;overflow-y:auto;padding:16px">
+      <div style="text-align:center;margin:8px 0 20px">
+        <div style="width:80px;height:80px;border-radius:50%;background:#DCFCE7;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><div style="color:#16A34A">${ic('check',38)}</div></div>
+        <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:4px">Identity verified</div>
+        <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Verified ${fmtVDate(userVerifiedDate)} · used across the Nigh platform</div>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+        <div style="padding:13px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#6B7280">Status</span><span style="font-size:12px;font-weight:600;color:#16A34A">Verified</span></div>
+        <div style="padding:13px 16px;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#6B7280">Verified on</span><span style="font-size:12px;font-weight:600;color:#111827">${fmtVDate(userVerifiedDate)}</span></div>
+        <div style="padding:13px 16px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#6B7280">Re-verify available</span><span style="font-size:12px;font-weight:600;color:${canRe?'#16A34A':'#111827'}">${canRe?'Now':reverifyAvailDate()}</span></div>
+      </div>
+
+      <div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F9FAFB;border:1px solid #E5E7EB">
+        <div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#9CA3AF;margin-top:1px">${ic('shield',14)}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">For your security, a verified identity can't be edited directly. If your legal name changed or your ID expired, re-verify with a new ID and selfie. Re-verification is available every ${REVERIFY_DAYS} days.</div></div>
+      </div>
+
+      ${canRe
+        ? `<button onclick="S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Re-verify identity</button>`
+        : `<button disabled style="width:100%;padding:14px;border-radius:12px;border:1px solid #E5E7EB;background:#F3F4F6;color:#9CA3AF;font-size:14px;font-weight:600;cursor:default">Re-verify available ${reverifyAvailDate()}</button>
+           <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:8px">Need to update sooner? <span onclick="S.menuSub='support';render()" style="color:#0E4EF5;cursor:pointer">Contact support</span></div>`}
     </div>
   </div>`;
 }
