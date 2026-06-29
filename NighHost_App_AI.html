@@ -4533,21 +4533,26 @@ function renderVerificationPage(){
   }else if(pers){
     acctRow=idV
       ?{state:'done',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify; your identity above covers it'}
-      :{state:'locked',icon:'store',title:'Host account',sub:'Personal account — covered by your identity once it\'s verified above'};
+      :{state:'locked',icon:'store',title:'Host account',sub:'Personal account — your identity above is its verification, no separate step',note:'Unlocks after you verify your identity'};
   }else if(bizV){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account'};
   }else if(stripeOk){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
   }else if(!idV){
-    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Verify your identity above first, then confirm '+a.name};
+    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm '+a.name+' is an authentic host account to earn the Verified badge and unlock public drops',note:'Unlocks after you verify your identity'};
   }else{
-    acctRow={state:'action',icon:'store',title:'Host account',sub:'Confirm '+a.name+' as a real host account for the Verified badge + public reach',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
+    acctRow={state:'action',icon:'store',title:'Host account',sub:'Confirm '+a.name+' is an authentic host account to earn the Verified badge and unlock public drops',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
   }
 
-  // ── Row 3: Payments (Stripe — only to charge money) ──
-  const payRow=stripeOk
-    ?{state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'}
-    :{state:'idle',icon:'billing',title:'Payments',sub:'Activate to charge for drops. For businesses, connecting Stripe also confirms the rows above.',act:{label:'Activate payments',go:"S.menuSub='payout';S.revTab='payouts';render()"}};
+  // ── Row 3: Payments (Stripe — only to charge money; locked until identity is verified) ──
+  let payRow;
+  if(stripeOk){
+    payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'};
+  }else if(!idV){
+    payRow={state:'locked',icon:'billing',title:'Payments',sub:'Activate to charge for drops. For businesses, connecting Stripe also confirms the rows above.',note:'Unlocks after you verify your identity'};
+  }else{
+    payRow={state:'idle',icon:'billing',title:'Payments',sub:'Activate to charge for drops. For businesses, connecting Stripe also confirms the rows above.',act:{label:'Activate payments',go:"S.menuSub='payout';S.revTab='payouts';render()"}};
+  }
 
   // state → colors / pill
   const ST={
@@ -4566,7 +4571,7 @@ function renderVerificationPage(){
     return '<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">'+
       '<div style="padding:14px 16px;display:flex;align-items:center;gap:12px'+(btn?';border-bottom:1px solid #F3F4F6':'')+'">'+
         '<div style="width:44px;height:44px;border-radius:12px;background:'+c.sq+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="color:'+c.sqf+'">'+ic(r.icon,22)+'</div></div>'+
-        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(r.state==='idle'||r.state==='locked'?'#6B7280':'#111827')+'">'+r.title+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:2px">'+r.sub+'</div></div>'+
+        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(r.state==='idle'||r.state==='locked'?'#6B7280':'#111827')+'">'+r.title+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:2px">'+r.sub+'</div>'+(r.note?'<div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:10.5px;font-weight:600;color:#9CA3AF">'+ic('lock',11)+'<span>'+r.note+'</span></div>':'')+'</div>'+
         pill+
       '</div>'+btn+
     '</div>';
