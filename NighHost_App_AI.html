@@ -3291,7 +3291,7 @@ function renderFollowers(){
 
   // ── FOLLOW LINK TAB ──
   const handle=a.handle||a.name.toLowerCase().replace(/\\s/g,'');
-  const url='nigh.com/'+handle;
+  const url='nigh.com/follow/'+handle;
   const qrSize=160;
   const qrSvg=`<svg width="${qrSize}" height="${qrSize}" viewBox="0 0 ${qrSize} ${qrSize}" xmlns="http://www.w3.org/2000/svg">
     <rect width="${qrSize}" height="${qrSize}" fill="#fff" rx="8"/>
@@ -3390,7 +3390,7 @@ function renderFollowers(){
 function renderFollowLink(){
   const a=acct();
   const handle=a.handle||a.name.toLowerCase().replace(/\s/g,'');
-  const url='nigh.com/'+handle;
+  const url='nigh.com/follow/'+handle;
   // Generate a simple QR code visual (placeholder grid pattern)
   const qrSize=180;
   const qrSvg=`<svg width="${qrSize}" height="${qrSize}" viewBox="0 0 ${qrSize} ${qrSize}" xmlns="http://www.w3.org/2000/svg">

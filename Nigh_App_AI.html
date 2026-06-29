@@ -229,10 +229,10 @@ function openMaps(address){
 }
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
-// Every share link credits the sharer — handle is the referrer. Format: nigh.com/<handle>[/<dropCode>]. 6-char code = unique drop ID.
+// Every share link credits the sharer — handle is the referrer. Canonical: nigh.com/follow/<handle> · nigh.com/drop/<handle>/<dropID> · nigh.com/invite/<handle> · nigh.com/group/<handle>/<slug>. 6-char code = unique drop ID.
 function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/drop/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
 function inviteUrl(){return 'nigh.com/invite/'+currentUser.uname.replace(/^@/,'');}
-function groupShareUrl(g){return 'nigh.com/group/'+currentUser.uname.replace(/^@/,'')+'/'+(((g&&g.inviteLink)||'').replace('nigh.com/g/',''));}
+function groupShareUrl(g){return 'nigh.com/group/'+currentUser.uname.replace(/^@/,'')+'/'+(((g&&g.inviteLink)||'').replace('nigh.com/group/',''));}
 function inviteFriends(){
   const url='https://'+inviteUrl();
   if(navigator.share){navigator.share({title:'Join me on Nigh',text:currentUser.name+' invited you to Nigh.',url:url}).catch(function(){});}
@@ -839,7 +839,7 @@ const proProfiles={
 const socialGroups=[
   {id:'SG001',name:'Boulder Sneakerheads',type:'social',av:'BS',color:'#6226E9',
    visibility:'friends',
-   inviteLink:'nigh.com/g/boulder-sneakerheads-k8m2',unread:3,
+   inviteLink:'nigh.com/group/boulder-sneakerheads-k8m2',unread:3,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Mar 12, 2026',
    members:[
@@ -857,7 +857,7 @@ const socialGroups=[
    ]},
   {id:'SG002',name:'Whole Foods Crew',type:'social',av:'WC',color:'#16A34A',
    visibility:'private',
-   inviteLink:'nigh.com/g/whole-foods-crew-p3n7',unread:0,
+   inviteLink:'nigh.com/group/whole-foods-crew-p3n7',unread:0,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Feb 28, 2026',
    members:[
@@ -874,7 +874,7 @@ const socialGroups=[
    ]},
   {id:'SG003',name:'Boulder Foodies',type:'social',av:'BF',color:'#16A34A',
    visibility:'public',
-   inviteLink:'nigh.com/g/boulder-foodies-r5j1',unread:5,
+   inviteLink:'nigh.com/group/boulder-foodies-r5j1',unread:5,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Jan 15, 2026',
    members:[
@@ -893,7 +893,7 @@ const socialGroups=[
    ]},
   {id:'SG005',name:'Weekend Squad',type:'social',av:'WS',color:'#0E4EF5',
    visibility:'private',
-   inviteLink:'nigh.com/g/weekend-squad-w4t6',unread:3,
+   inviteLink:'nigh.com/group/weekend-squad-w4t6',unread:3,
    allowMemberInvite:true,allowInviteLink:true,
    createdBy:'Josh Ritzer',createdDate:'Mar 1, 2026',
    members:[
@@ -913,7 +913,7 @@ const socialGroups=[
    ]},
   {id:'SG006',name:'CU Trail Runners',type:'social',av:'TR',color:'#0891B2',
    visibility:'public',
-   inviteLink:'nigh.com/g/cu-trail-runners-t8k2',unread:0,
+   inviteLink:'nigh.com/group/cu-trail-runners-t8k2',unread:0,
    allowMemberInvite:true,allowInviteLink:true,requireApproval:false,
    createdBy:'Maya Torres',createdDate:'Jan 20, 2026',
    members:[
@@ -933,7 +933,7 @@ const socialGroups=[
    ]},
   {id:'SG007',name:'Boulder Vinyl Collectors',type:'social',av:'VC',color:'#9333EA',
    visibility:'friends',
-   inviteLink:'nigh.com/g/vinyl-collectors-v3m9',unread:0,
+   inviteLink:'nigh.com/group/vinyl-collectors-v3m9',unread:0,
    allowMemberInvite:true,allowInviteLink:true,requireApproval:true,
    createdBy:'James Kim',createdDate:'Dec 5, 2025',
    members:[
@@ -950,7 +950,7 @@ const socialGroups=[
    ]},
   {id:'SG008',name:'Pearl St Yoga',type:'social',av:'PY',color:'#EC4899',
    visibility:'public',
-   inviteLink:'nigh.com/g/pearl-st-yoga-y6p1',unread:0,
+   inviteLink:'nigh.com/group/pearl-st-yoga-y6p1',unread:0,
    allowMemberInvite:true,allowInviteLink:true,requireApproval:false,
    createdBy:'Priya Nair',createdDate:'Feb 1, 2026',
    members:[
@@ -966,7 +966,7 @@ const socialGroups=[
    ]},
   {id:'SG004',name:'Pearl St Crew',type:'social',av:'PS',color:'#D97706',
    visibility:'private',
-   inviteLink:'nigh.com/g/pearl-st-crew-d9v3',unread:0,
+   inviteLink:'nigh.com/group/pearl-st-crew-d9v3',unread:0,
    allowMemberInvite:false,allowInviteLink:false,
    createdBy:'Tyler Brooks',createdDate:'Feb 10, 2026',
    members:[
@@ -988,7 +988,7 @@ const socialGroups=[
 const eventGroups=[
   {id:'EG-TK003',name:"Whole Foods Chef's Table",type:'event',av:'WF',color:'#0E4EF5',
    visibility:'private',ticketId:'TK003',orderId:'ORD-7291',
-   inviteLink:'nigh.com/g/ev/chefs-table-7291',unread:1,
+   inviteLink:'nigh.com/group/event/chefs-table-7291',unread:1,
    members:[
      {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
      {name:'Maya Torres',uname:'@mayat',av:'MT',role:'member',spot:2,status:'accepted'},
@@ -1003,7 +1003,7 @@ const eventGroups=[
    ]},
   {id:'EG-TK005',name:'Fate Brewing Tap Night',type:'event',av:'FB',color:'#DC2626',
    visibility:'private',ticketId:'TK005',orderId:'ORD-5192',
-   inviteLink:'nigh.com/g/ev/fate-tap-5192',unread:2,
+   inviteLink:'nigh.com/group/event/fate-tap-5192',unread:2,
    members:[
      {name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin',spot:1,status:'active'},
      {name:'Priya Nair',uname:'@priyan',av:'PN',role:'member',spot:2,status:'accepted'},
@@ -5093,7 +5093,7 @@ function renderCreateGroup(){
   const knobStyle=(on)=>`position:absolute;top:2px;${on?'right:2px':'left:2px'};width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)`;
 
   return`<div style="height:100%;overflow-y:auto;background:#fff">
-    ${hdr('New Group',null,"S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;S.friendsTab='groups';S.menuSub='friends';S.scr='menu';render()",`<button onclick="if(S.newGroupName){const ng={id:'SG'+Date.now(),name:S.newGroupName,type:'social',av:S.newGroupName.slice(0,2).toUpperCase(),color:'#6226E9',inviteLink:'nigh.com/g/'+S.newGroupName.toLowerCase().replace(/\\s+/g,'-')+'-'+Math.random().toString(36).slice(2,6),unread:0,allowMemberInvite:S.newGroupAllowMemberInvite!==false,allowInviteLink:S.newGroupAllowInviteLink!==false,requireApproval:S.newGroupRequireApproval!==false,visibility:S.newGroupVisibility||'private',members:[{name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},...(S.newGroupMembers||[]).map(h=>({name:h,uname:h,av:h.replace('@','').slice(0,2).toUpperCase(),role:'member'}))],lastMsg:{text:'Group created',sender:'You',time:'just now'},drops:[],chat:[{av:'JR',text:'Welcome to the group!',time:'just now',mine:true,name:'You'}]};socialGroups.push(ng);S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;go('groupDetail',{groupId:ng.id})}" style="background:${name?'#0E4EF5':'#E5E7EB'};border:none;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:${name?'#fff':'#9CA3AF'}">Create</button>`)}
+    ${hdr('New Group',null,"S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;S.friendsTab='groups';S.menuSub='friends';S.scr='menu';render()",`<button onclick="if(S.newGroupName){const ng={id:'SG'+Date.now(),name:S.newGroupName,type:'social',av:S.newGroupName.slice(0,2).toUpperCase(),color:'#6226E9',inviteLink:'nigh.com/group/'+S.newGroupName.toLowerCase().replace(/\\s+/g,'-')+'-'+Math.random().toString(36).slice(2,6),unread:0,allowMemberInvite:S.newGroupAllowMemberInvite!==false,allowInviteLink:S.newGroupAllowInviteLink!==false,requireApproval:S.newGroupRequireApproval!==false,visibility:S.newGroupVisibility||'private',members:[{name:'Josh Ritzer',uname:'@joshr',av:'JR',role:'admin'},...(S.newGroupMembers||[]).map(h=>({name:h,uname:h,av:h.replace('@','').slice(0,2).toUpperCase(),role:'member'}))],lastMsg:{text:'Group created',sender:'You',time:'just now'},drops:[],chat:[{av:'JR',text:'Welcome to the group!',time:'just now',mine:true,name:'You'}]};socialGroups.push(ng);S.newGroupName='';S.newGroupMembers=[];S.newGroupAllowMemberInvite=undefined;S.newGroupAllowInviteLink=undefined;S.newGroupRequireApproval=undefined;S.newGroupVisibility=undefined;go('groupDetail',{groupId:ng.id})}" style="background:${name?'#0E4EF5':'#E5E7EB'};border:none;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;color:${name?'#fff':'#9CA3AF'}">Create</button>`)}
     <div style="padding:16px">
       <div style="background:#F3F4F6;border-radius:14px;padding:14px 16px;margin-bottom:16px">
         <input
