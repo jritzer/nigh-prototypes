@@ -4523,8 +4523,8 @@ function renderVerificationPage(){
   // ── Row 1: You (identity) ── Stripe's KYC also confirms identity, so stripeOk satisfies this row.
   const youDone=idV||stripeOk;
   const youRow=youDone
-    ?{state:'done',icon:'user',title:'Your identity',sub:idV?'Personal identity of the account owner — reused on every account you run':'Personal identity confirmed through Stripe — reused on every account you run'}
-    :{state:'action',icon:'user',title:'Your identity',sub:'Verify your personal identity as the account owner (Free, takes about 2 minutes)',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
+    ?{state:'done',icon:'user',title:'Personal identity',sub:idV?'Personal identity of the account owner — reused on every account you run':'Personal identity confirmed through Stripe — reused on every account you run'}
+    :{state:'action',icon:'user',title:'Verify personal identity',sub:'Verify your personal identity as the account owner',meta:'Free — takes about 2 minutes',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
 
   // ── Row 2: Your account (authenticity) ──
   let acctRow;
@@ -4539,9 +4539,9 @@ function renderVerificationPage(){
   }else if(stripeOk){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
   }else if(!idV){
-    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm '+a.name+' is an authentic host account to earn the Verified badge and unlock public drops',note:'Unlocks after you verify your identity'};
+    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',note:'Unlocks after you verify your identity'};
   }else{
-    acctRow={state:'action',icon:'store',title:'Host account',sub:'Confirm '+a.name+' is an authentic host account to earn the Verified badge and unlock public drops',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
+    acctRow={state:'action',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
   }
 
   // ── Row 3: Payments (Stripe — only to charge money; locked until identity is verified) ──
@@ -4549,9 +4549,9 @@ function renderVerificationPage(){
   if(stripeOk){
     payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'};
   }else if(!idV){
-    payRow={state:'locked',icon:'billing',title:'Payments',sub:'Activate to charge for drops. For businesses, connecting Stripe also confirms the rows above.',note:'Unlocks after you verify your identity'};
+    payRow={state:'locked',icon:'billing',title:'Activate payments',sub:'Set up payment processing to charge for drops through Stripe.',note:'Unlocks after you verify your identity'};
   }else{
-    payRow={state:'idle',icon:'billing',title:'Payments',sub:'Activate to charge for drops. For businesses, connecting Stripe also confirms the rows above.',act:{label:'Activate payments',go:"S.menuSub='payout';S.revTab='payouts';render()"}};
+    payRow={state:'idle',icon:'billing',title:'Activate payments',sub:'Set up payment processing to charge for drops through Stripe.',act:{label:'Activate payments',go:"S.menuSub='payout';S.revTab='payouts';render()"}};
   }
 
   // state → colors / pill
@@ -4571,7 +4571,7 @@ function renderVerificationPage(){
     return '<div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">'+
       '<div style="padding:14px 16px;display:flex;align-items:center;gap:12px'+(btn?';border-bottom:1px solid #F3F4F6':'')+'">'+
         '<div style="width:44px;height:44px;border-radius:12px;background:'+c.sq+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="color:'+c.sqf+'">'+ic(r.icon,22)+'</div></div>'+
-        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(r.state==='idle'||r.state==='locked'?'#6B7280':'#111827')+'">'+r.title+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:2px">'+r.sub+'</div>'+(r.note?'<div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:10.5px;font-weight:600;color:#9CA3AF">'+ic('lock',11)+'<span>'+r.note+'</span></div>':'')+'</div>'+
+        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(r.state==='idle'||r.state==='locked'?'#6B7280':'#111827')+'">'+r.title+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:2px">'+r.sub+'</div>'+(r.meta?'<div style="margin-top:5px;font-size:10.5px;font-weight:600;color:#16A34A">'+r.meta+'</div>':'')+(r.note?'<div style="display:flex;align-items:center;gap:4px;margin-top:6px;font-size:10.5px;font-weight:600;color:#9CA3AF">'+ic('lock',11)+'<span>'+r.note+'</span></div>':'')+'</div>'+
         pill+
       '</div>'+btn+
     '</div>';
