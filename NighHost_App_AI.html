@@ -347,30 +347,70 @@ const isPersonal=()=>acct().hostType==='personal';
 const canPublicHeadsUp=()=>!isPersonal()&&isBusinessVerified(); // only verified businesses can post public Heads Up; everyone else is followers-only
 // Role helpers — account-level permissions
 function uRole(){const locName=acct().name;const u=team.find(t=>t.name==='Josh Ritzer');if(!u)return 'Check-In Only';const a=u.assignments&&u.assignments.find(a=>a.location===locName);return a?a.role:u.role;}
-function canFull(perm){
-  const r=uRole();const lvl=r==='Account Owner'?4:r==='Account Admin'?3:r==='Manager'?2:r==='Team Member'?1:0;
-  const perms={
-    drops:1,headsup:1,checkin:0,guests:1,guestGroups:2,messageGuests:1,blockGuests:2,
-    orders:1,refunds:2,revenue:2,payouts:4,
-    team:3,teamDisplayName:2,partners:2,
-    profile:3,locations:3,subscription:4,analytics:2,activityLog:3,
-    contactImport:3,guestListLock:2,guestAuditTrail:2,inviteFromContacts:1,
-    billing:4,deleteAccount:4,manageAdmins:4
-  };
-  return lvl>=(perms[perm]||4);
+// ═══ ROLES & PERMISSIONS (capability map — single source of truth) ═══
+// Permission catalog, grouped for display. Each permission carries the level
+// thresholds used to derive built-in role grants. Adding a permission here flows
+// automatically to enforcement (canFull/canView) AND the Roles reference table.
+const PERM_CATALOG=[
+  {cat:'Drops & Heads Up',perms:[
+    {key:'drops',label:'Manage drops',full:1,view:0},
+    {key:'headsup',label:'Manage Heads Up',full:1,view:0},
+  ]},
+  {cat:'Guests & Contacts',perms:[
+    {key:'checkin',label:'Check in guests',full:0,view:0},
+    {key:'guests',label:'Manage guests',full:1,view:0},
+    {key:'messageGuests',label:'Message guests',full:1,view:0},
+    {key:'inviteFromContacts',label:'Invite from contacts',full:1,view:0},
+    {key:'guestGroups',label:'Manage guest groups',full:2,view:2},
+    {key:'blockGuests',label:'Block guests',full:2,view:2},
+    {key:'guestListLock',label:'Lock/unlock guest list',full:2,view:2},
+    {key:'guestAuditTrail',label:'View guest audit trail',full:2,view:2},
+    {key:'contactImport',label:'Import to shared list',full:3,view:3},
+  ]},
+  {cat:'Orders & Revenue',perms:[
+    {key:'orders',label:'Manage orders',full:1,view:1},
+    {key:'refunds',label:'Process refunds',full:2,view:2},
+    {key:'revenue',label:'Manage revenue',full:2,view:1},
+    {key:'payouts',label:'Manage payouts',full:4,view:3},
+  ]},
+  {cat:'Team & Partners',perms:[
+    {key:'team',label:'Manage team',full:3,view:1},
+    {key:'teamDisplayName',label:'Edit member display names',full:2,view:2},
+    {key:'partners',label:'Manage partners',full:2,view:1},
+  ]},
+  {cat:'Account',perms:[
+    {key:'profile',label:'Manage profile',full:3,view:1},
+    {key:'locations',label:'Manage locations',full:3,view:1},
+    {key:'analytics',label:'View analytics',full:2,view:1},
+    {key:'activityLog',label:'View activity log',full:3,view:2},
+    {key:'subscription',label:'Manage subscription',full:4,view:3},
+    {key:'billing',label:'Billing & payouts',full:4,view:4},
+    {key:'deleteAccount',label:'Delete account',full:4,view:4},
+    {key:'manageAdmins',label:'Manage admins',full:4,view:4},
+  ]},
+];
+const BUILTIN_ROLE_LEVELS={'Account Owner':4,'Account Admin':3,'Manager':2,'Team Member':1,'Check-In Only':0};
+// Built-in roles expressed as explicit per-permission grants (full | view | none),
+// derived once from the catalog thresholds so behavior is identical to the prior model.
+const ROLES={};
+Object.keys(BUILTIN_ROLE_LEVELS).forEach(function(role){
+  const lvl=BUILTIN_ROLE_LEVELS[role];const grants={};
+  PERM_CATALOG.forEach(function(sec){sec.perms.forEach(function(p){grants[p.key]=lvl>=p.full?'full':lvl>=p.view?'view':'none';});});
+  ROLES[role]={builtin:true,grants:grants};
+});
+// Custom roles plug in here later as explicit grant maps, e.g.:
+//   customRoles['Finance']={builtin:false,grants:{revenue:'full',refunds:'full',payouts:'view'}};
+// They resolve through roleGrant() and appear automatically in the role picker and Roles table.
+const customRoles={};
+function roleDef(role){return ROLES[role]||customRoles[role]||null;}
+function roleGrant(role,perm){
+  const r=roleDef(role);
+  if(r&&r.grants&&r.grants[perm]!=null)return r.grants[perm];
+  return role==='Account Owner'?'full':'none'; // unknown role/permission defaults to owner-only
 }
-function canView(perm){
-  const r=uRole();const lvl=r==='Account Owner'?4:r==='Account Admin'?3:r==='Manager'?2:r==='Team Member'?1:0;
-  const perms={
-    drops:0,headsup:0,checkin:0,guests:0,guestGroups:2,messageGuests:0,blockGuests:2,
-    orders:1,refunds:2,revenue:1,payouts:3,
-    team:1,partners:1,
-    profile:1,locations:1,subscription:3,analytics:1,activityLog:2,
-    contactImport:3,guestListLock:2,guestAuditTrail:2,inviteFromContacts:0,
-    billing:4,deleteAccount:4,manageAdmins:4
-  };
-  return lvl>=(perms[perm]||4);
-}
+function assignableRoles(){return Object.keys(ROLES).filter(function(r){return r!=='Account Owner';}).concat(Object.keys(customRoles));}
+function canFull(perm){return roleGrant(uRole(),perm)==='full';}
+function canView(perm){const g=roleGrant(uRole(),perm);return g==='full'||g==='view';}
 function roleGate(title){return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center"><div style="width:56px;height:56px;border-radius:16px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#EF4444">${ic('lock',24)}</div><div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px">${title||'Access Restricted'}</div><div style="font-size:12px;color:#6B7280;line-height:1.5">You do not have access to this page based on your current permission level.</div><div style="margin-top:12px;font-size:11px;color:#9CA3AF">Your role: <strong>${uRole()}</strong></div></div>`;}
 
 // Venues / Locations — saved per account (auto-created from non-draft drops)
@@ -2995,49 +3035,16 @@ function renderTeam(){
       const ur=team.find(t=>t.name==='Josh Ritzer');
       const myRole=ur?ur.role:'Team Member';
       if(!['Account Owner','Account Admin','Manager'].includes(myRole))return '';
-      const roles=['Admin','Manager','Member','Check-In'];
-      const rc=['#1d4ed8','#0369a1','#475569','#64748b'];
-      // F=Full, V=View, N=None
+      // Columns: [display label, role key, color]. Rendered straight from the capability map.
+      const cols=[['Admin','Account Admin','#1d4ed8'],['Manager','Manager','#0369a1'],['Member','Team Member','#475569'],['Check-In','Check-In Only','#64748b']];
       const F='<span style="color:#16A34A;font-weight:700;font-size:10px">Full</span>';
       const V='<span style="color:#0E4EF5;font-weight:600;font-size:10px">View</span>';
       const N='<span style="color:#D1D5DB">—</span>';
-      const cell=v=>v==='F'?F:v==='V'?V:N;
-      const sections=[
-        {title:'Drops & Heads Up',rows:[
-          ['Manage drops','F','F','F','V'],
-          ['Manage Heads Up','F','F','F','V'],
-        ]},
-        {title:'Guests & Contacts',rows:[
-          ['Check in guests','F','F','F','F'],
-          ['Manage guests','F','F','F','V'],
-          ['Message guests','F','F','F','V'],
-          ['Invite from contacts','F','F','F','N'],
-          ['Import to shared list','F','N','N','N'],
-          ['Lock/unlock guest list','F','F','N','N'],
-          ['View guest audit trail','F','F','N','N'],
-        ]},
-        {title:'Orders & Revenue',rows:[
-          ['Manage orders','F','F','F','N'],
-          ['Manage revenue','F','F','V','N'],
-          ['Manage payouts','N','N','N','N'],
-        ]},
-        {title:'Team & Partners',rows:[
-          ['Manage team','F','V','V','N'],
-          ['Manage partners','F','F','V','N'],
-        ]},
-        {title:'Account',rows:[
-          ['Manage profile','F','V','V','N'],
-          ['Manage locations','F','V','V','N'],
-          ['Manage subscription','V','V','N','N'],
-          ['Manage analytics','F','F','V','N'],
-          ['View activity log','F','V','N','N'],
-          ['Billing & payouts','N','N','N','N'],
-        ]},
-      ];
+      const cell=g=>g==='full'?F:g==='view'?V:N;
       return `<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden;margin-top:14px">
         <div style="padding:12px 14px;border-bottom:1px solid #E5E7EB">
           <div style="font-size:12px;font-weight:700;color:#111827">Roles & Permissions</div>
-          <div style="font-size:10px;color:#9CA3AF;margin-top:2px">Owner has all Admin permissions plus billing, payouts, and admin management</div>
+          <div style="font-size:10px;color:#9CA3AF;margin-top:2px">Owner has every permission, including billing, payouts, and admin management. Owner-only permissions are not shown below.</div>
         </div>
         <!-- Legend -->
         <div style="display:flex;gap:12px;padding:8px 14px;border-bottom:1px solid #E5E7EB;background:#FAFAFA">
@@ -3048,15 +3055,17 @@ function renderTeam(){
         <!-- Role header -->
         <div style="display:flex;align-items:center;padding:8px 12px;background:#F9FAFB;border-bottom:1px solid #E5E7EB;position:sticky;top:0">
           <div style="flex:1;min-width:0"></div>
-          ${roles.map((r,i)=>'<div style="width:48px;text-align:center;font-size:9px;font-weight:700;color:'+rc[i]+';line-height:1.2">'+r+'</div>').join('')}
+          ${cols.map(c=>'<div style="width:48px;text-align:center;font-size:9px;font-weight:700;color:'+c[2]+';line-height:1.2">'+c[0]+'</div>').join('')}
         </div>
-        ${sections.map(s=>`
-          <div style="padding:6px 12px;background:#F9FAFB;border-bottom:1px solid #F3F4F6;font-size:9px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em">${s.title}</div>
-          ${s.rows.map(row=>`<div style="display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid #F8FAFC">
-            <div style="flex:1;min-width:0;font-size:10px;color:#374151">${row[0]}</div>
-            ${[1,2,3,4].map(ci=>'<div style="width:48px;text-align:center">'+cell(row[ci])+'</div>').join('')}
-          </div>`).join('')}
-        `).join('')}
+        ${PERM_CATALOG.map(sec=>{
+          const visible=sec.perms.filter(p=>cols.some(c=>roleGrant(c[1],p.key)!=='none'));
+          if(!visible.length)return '';
+          return `<div style="padding:6px 12px;background:#F9FAFB;border-bottom:1px solid #F3F4F6;font-size:9px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em">${sec.cat}</div>
+          ${visible.map(p=>`<div style="display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid #F8FAFC">
+            <div style="flex:1;min-width:0;font-size:10px;color:#374151">${p.label}</div>
+            ${cols.map(c=>'<div style="width:48px;text-align:center">'+cell(roleGrant(c[1],p.key))+'</div>').join('')}
+          </div>`).join('')}`;
+        }).join('')}
       </div>`;
     })()}
   </div>`;
@@ -6684,7 +6693,7 @@ function renderModal(){
     if(t){
       const assignment=t.assignments&&t.assignments.find(a=>a.location===locName);
       const locRole=assignment?assignment.role:t.role;
-      const roles=['Account Admin','Manager','Team Member','Check-In Only'];
+      const roles=assignableRoles();
       const editRole=S.editTeamRole||locRole;
       const roleColor=(r)=>r==='Account Owner'?'#7c3aed':r==='Account Admin'?'#1d4ed8':r==='Manager'?'#0369a1':r==='Team Member'?'#475569':'#64748b';
       const roleBgFn=(r)=>r==='Account Owner'?'#f5f3ff':r==='Account Admin'?'#eff6ff':r==='Manager'?'#f0f9ff':r==='Team Member'?'#f8fafc':'#f1f5f9';
