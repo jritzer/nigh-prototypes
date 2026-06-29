@@ -5011,16 +5011,11 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Unlock with Verification -->
-    ${!pVerified?'<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Unlock with Verification</div><div class="card" style="margin-bottom:16px">'+[
-        'Public drops (discover feed)',
-        'Paid drops with payouts',
-        'Verified badge',
-        'Niya public recommendations',
-        'Nigh Zone (shrinking radius)',
-        'SMS notifications (250/mo)',
-        'Standard analytics (funnel, repeat)',
-      ].map((f,i,a)=>'<div style="display:flex;align-items:center;gap:10px;padding:11px 14px'+(i<a.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#D1D5DB">'+ic('lock',14)+'</div><span style="font-size:12px;color:#9CA3AF">'+f+'</span></div>').join('')+'</div>':''}
+    <!-- Verification & payments note (actions live in the Verification Center) -->
+    <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:10px 12px;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start">
+      <div style="color:#0284C7;margin-top:1px">${ic('info',13)}</div>
+      <div style="font-size:11px;color:#0369A1;line-height:1.5">Public drops require verification, and charging for drops requires payment setup. Set these up in <span onclick="S.menuSub='verifypage';render()" style="font-weight:700;cursor:pointer;text-decoration:underline">Verification</span>.</div>
+    </div>
 
     <!-- Upgrade to Growth -->
     <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:14px 16px;margin-bottom:16px">
@@ -5124,6 +5119,12 @@ function renderSubscription(){
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Verification & payments note (actions live in the Verification Center) -->
+    <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:10px 12px;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start">
+      <div style="color:#0284C7;margin-top:1px">${ic('info',13)}</div>
+      <div style="font-size:11px;color:#0369A1;line-height:1.5">Public drops require host account verification, and charging for drops requires payment setup. Set these up in <span onclick="S.menuSub='verifypage';render()" style="font-weight:700;cursor:pointer;text-decoration:underline">Verification</span>.</div>
     </div>
 
     <!-- N Credits -->
