@@ -1857,7 +1857,7 @@ function renderCreate(){
         <div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div>
         <div style="flex:1">
           <div style="font-size:14px;font-weight:600;color:#111827">Post a Heads Up</div>
-          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${canPublicHeadsUp()?'Post a daily announcement — expires at midnight':isPersonal()?'Followers only — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Verify your business</a> to go public'}</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${canPublicHeadsUp()?'Post a daily announcement — expires at midnight':isPersonal()?'Followers only — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Verify your host account</a> to go public'}</div>
         </div>
         <span style="color:#D1D5DB">${ic('right',16)}</span>
       </button>
@@ -2816,7 +2816,6 @@ function renderMenu(){
   if(S.menuSub==='verifypage')return renderVerificationPage();
   if(S.menuSub==='verify')return renderVerify();
   if(S.menuSub==='bizverify')return renderBusinessVerify();
-  if(S.menuSub==='bizsetup')return renderBizSetup();
   if(S.menuSub==='venues')return renderVenues();
   if(S.menuSub==='venueDetail')return renderVenueDetail();
   if(S.menuSub==='headsup')return renderHeadsUpScreen();
@@ -3449,7 +3448,7 @@ function renderAccountHub(){
   const vfd=isVerified();
   const showBizVerify=!isPersonal()&&!a.enterprise;
   const hubItems=[
-    ...(showBizVerify?[{ic:'shield',l:'Business Verification',d:a.businessVerified?'Verified':'Verify your business',act:"S.menuSub='verifypage';render()",vf:a.businessVerified}]:[]),
+    ...(showBizVerify?[{ic:'shield',l:'Host Account Verification',d:a.businessVerified?'Verified':'Verify your host account',act:"S.menuSub='verifypage';render()",vf:a.businessVerified}]:[]),
     {ic:'billing',l:'Subscription',  d:a.enterprise?'Managed by '+a.parentOrg:(a.plan||'Starter')+' plan', act:"S.menuSub='subscription';render()"},
     {ic:'map',    l:'Locations',     d:'Manage drop locations',                   act:"S.menuSub='venues';render()"},
     {ic:'qr',     l:'Stickers',      d:'Manage stickers',                        act:"S.menuSub='qrcodes';render()"},
@@ -4211,134 +4210,6 @@ function renderPartners(){
     `}
   </div>`;
 }
-function renderBizSetup(){
-  const step=S.bizSetupStep||'welcome';
-  const a=acct();
-  const bName=a.brandName||a.name;
-  const backToHub="S.menuSub='verifypage';S.bizSetupStep='welcome';render()";
-
-  if(step==='welcome'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Business Verification','Verify '+bName,backToHub)}
-      <div style="flex:1;overflow-y:auto;padding:16px">
-        <div style="text-align:center;margin:16px 0 24px">
-          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#DBEAFE);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#2563EB">${ic('store',36)}</div></div>
-          <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Business</div>
-          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Confirm <strong>${bName}</strong> is a real business and you're authorized to represent it.</div>
-        </div>
-        <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
-          <div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Quick Setup — About 2 Minutes</div></div>
-          ${['Confirm your business details','Add a website or social link','Authorize your account'].map((item,i,arr)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px${i<arr.length-1?';border-bottom:1px solid #F3F4F6':''}"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">${i+1}</div><div style="font-size:12px;color:#374151;line-height:1.4">${item}</div></div>`).join('')}
-        </div>
-        <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
-          <div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What This Unlocks</div></div>
-          ${['Verified Business badge','Public drops & discovery','Paid drops & payouts','Enhanced trust for guests'].map((item,i,arr)=>`<div style="display:flex;gap:10px;align-items:center;padding:10px 16px${i<arr.length-1?';border-bottom:1px solid #F3F4F6':''}">${ic('check',14,'#16A34A')}<span style="font-size:12px;color:#374151">${item}</span></div>`).join('')}
-        </div>
-        <button onclick="S.bizSetupStep='details';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Get Started</button>
-      </div>
-    </div>`;
-  }
-
-  if(step==='details'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Business Details','Step 1 of 2',"S.bizSetupStep='welcome';render()")}
-      <div style="flex:1;overflow-y:auto;padding:16px">
-        <div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>
-        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Confirm Your Business</div>
-        <div style="font-size:12px;color:#6B7280;margin-bottom:20px">Make sure your details are accurate.</div>
-
-        <div style="margin-bottom:16px">
-          <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Business Name</label>
-          <div style="padding:12px 14px;border:1px solid #E5E7EB;border-radius:10px;font-size:13px;color:#111827;background:#F9FAFB">${bName}</div>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Category</label>
-          <div style="padding:12px 14px;border:1px solid #E5E7EB;border-radius:10px;font-size:13px;color:#111827;background:#F9FAFB">${a.cat||'Not set'}${a.subCat?' · '+a.subCat:''}</div>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Business Address</label>
-          <div style="padding:12px 14px;border:1px solid #E5E7EB;border-radius:10px;font-size:13px;color:#111827;background:#F9FAFB">${a.addr}${a.city?', '+a.city+', '+a.state+' '+a.zip:''}</div>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Website or Social Link <span style="color:#EF4444">*</span></label>
-          <input type="text" placeholder="https://yourbusiness.com or @handle" value="${S.bizSetupUrl||a.website||''}" oninput="S.bizSetupUrl=this.value" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #E5E7EB;border-radius:10px;font-size:13px;color:#111827;outline:none;font-family:inherit" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/>
-          <div style="font-size:10px;color:#9CA3AF;margin-top:4px">We'll use this to confirm your business is real.</div>
-        </div>
-
-        <button onclick="S.bizSetupStep='authorize';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Continue</button>
-      </div>
-    </div>`;
-  }
-
-  if(step==='authorize'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Authorization','Step 2 of 2',"S.bizSetupStep='details';render()")}
-      <div style="flex:1;overflow-y:auto;padding:16px">
-        <div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>
-        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Authorize Your Account</div>
-        <div style="font-size:12px;color:#6B7280;margin-bottom:20px">Confirm you're authorized to represent this business on Nigh.</div>
-
-        <div class="card" style="padding:16px;margin-bottom:16px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-            <div style="width:44px;height:44px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#4F46E5;flex-shrink:0">${bName.charAt(0)}</div>
-            <div>
-              <div style="font-size:14px;font-weight:700;color:#111827">${bName}</div>
-              <div style="font-size:11px;color:#6B7280">${a.cat||'Business'}${a.subCat?' · '+a.subCat:''}</div>
-            </div>
-          </div>
-          <div style="border-top:1px solid #F3F4F6;padding-top:12px">
-            <div onclick="S.bizSetupAuth=!S.bizSetupAuth;render()" style="display:flex;gap:10px;align-items:flex-start;cursor:pointer">
-              <div style="width:20px;height:20px;border-radius:4px;border:1.5px solid ${S.bizSetupAuth?'#0E4EF5':'#D1D5DB'};background:${S.bizSetupAuth?'#0E4EF5':'#fff'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${S.bizSetupAuth?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}</div>
-              <div style="font-size:12px;color:#374151;line-height:1.5">I confirm that I am an authorized representative of <strong>${bName}</strong> and have the right to manage this account on the Nigh platform.</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:12px 14px;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start">
-          <div style="color:#0284C7;min-width:16px;margin-top:1px">${ic('shield',14)}</div>
-          <div style="font-size:11px;color:#0369A1;line-height:1.4">Your information is kept private and only used to verify your business. Nigh may reach out for additional documentation if needed.</div>
-        </div>
-
-        <button onclick="${S.bizSetupAuth?`S.bizSetupStep='processing';render();setTimeout(function(){a.businessVerified=true;S.bizSetupStep='result';render()},2500)`:''}" style="width:100%;padding:14px;border-radius:12px;border:none;background:${S.bizSetupAuth?'#0E4EF5':'#D1D5DB'};color:#fff;font-size:14px;font-weight:600;cursor:${S.bizSetupAuth?'pointer':'default'}">Submit for Verification</button>
-      </div>
-    </div>`;
-  }
-
-  if(step==='processing'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Verifying','Please wait',null,null,true)}
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">
-        <style>@keyframes bizSetSpin{to{transform:rotate(360deg)}}</style>
-        <div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#2563EB;animation:bizSetSpin 1s linear infinite;margin-bottom:24px"></div>
-        <div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Verifying ${bName}</div>
-        <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">Reviewing your business details.</div>
-      </div>
-    </div>`;
-  }
-
-  if(step==='result'){
-    return `<div style="display:flex;flex-direction:column;height:100%">
-      ${hdr('Verified','',null,null,true)}
-      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">
-        <div style="margin-top:32px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;margin-bottom:20px">${ic('check',44,'#16A34A')}</div>
-        <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">${bName} is Verified</div>
-        <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your business has been confirmed. You've unlocked the verified business badge and enhanced trust features.</div>
-        <div style="display:flex;gap:8px;margin-bottom:24px">
-          <div style="display:flex;align-items:center;gap:4px;background:#F0FDF4;border:1px solid #BBF7D0;padding:6px 12px;border-radius:8px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#0E4EF5" stroke="none"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-            <span style="font-size:12px;font-weight:600;color:#16A34A">Verified Business</span>
-          </div>
-        </div>
-        <button onclick="S.bizSetupStep='welcome';S.bizSetupAuth=false;S.bizSetupUrl='';S.menuSub='accounthub';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to Account</button>
-      </div>
-    </div>`;
-  }
-
-  return `${hdr('Business Verification','',backToHub)}<div style="padding:16px;text-align:center;color:#6B7280">Loading...</div>`;
-}
 function renderBusinessVerify(){
   const step=S.bizVerifyStep||'welcome';
   const a=acct();
@@ -4349,12 +4220,12 @@ function renderBusinessVerify(){
   // ── Welcome ──
   if(step==='welcome'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Business Verification','Verify '+bName,backToSub)+
+      hdr('Host Account Verification','Verify '+bName,backToSub)+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
         '<div style="text-align:center;margin:16px 0 24px">'+
           '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#DBEAFE);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#2563EB">'+ic('globe',36)+'</div></div>'+
-          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Business</div>'+
-          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Confirm <strong>'+bName+'</strong> as a legitimate business entity to unlock trust badges and higher limits.</div>'+
+          '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Host Account</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Confirm <strong>'+bName+'</strong> as a legitimate organization to unlock trust badges and higher limits.</div>'+
         '</div>'+
 
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
@@ -4365,8 +4236,8 @@ function renderBusinessVerify(){
         '</div>'+
 
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
-          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What Business Verification Unlocks</div></div>'+
-          ['Verified Business badge on your profile','Higher payout limits','Priority placement in Discover','Enhanced trust signals for guests','Custom branding options'].map(function(item,i,arr){
+          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What Verification Unlocks</div></div>'+
+          ['Verified badge on your profile','Higher payout limits','Priority placement in Discover','Enhanced trust signals for guests','Custom branding options'].map(function(item,i,arr){
             return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
           }).join('')+
         '</div>'+
@@ -4375,7 +4246,7 @@ function renderBusinessVerify(){
           '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Business documents are encrypted and reviewed securely. Nigh only retains verification status, not your documents.</div></div>'+
         '</div>'+
 
-        '<button onclick="S.bizVerifyStep=\'biz-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Begin Business Verification</button>'+
+        '<button onclick="S.bizVerifyStep=\'biz-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Begin Verification</button>'+
       '</div>'+
     '</div>';
   }
@@ -4389,10 +4260,10 @@ function renderBusinessVerify(){
       {key:'dba',label:'DBA / Trade Name',desc:'Doing Business As registration',icon:'file'}
     ];
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Business Type','Step 1 of 3',"S.bizVerifyStep='welcome';render()")+
+      hdr('Account Type','Step 1 of 3',"S.bizVerifyStep='welcome';render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
         '<div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
-        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">What type of business is '+bName+'?</div><div style="font-size:12px;color:#6B7280">This helps us verify the right documents.</div></div>'+
+        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">How is '+bName+' organized?</div><div style="font-size:12px;color:#6B7280">This helps us verify the right documents.</div></div>'+
         bizTypes.map(function(t){
           return '<button onclick="S.bizVerifyType=\''+t.key+'\';S.bizVerifyStep=\'biz-doc\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
         }).join('')+
@@ -4471,7 +4342,7 @@ function renderBusinessVerify(){
   // ── Processing ──
   if(step==='biz-processing'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Verifying Business','Please wait',null,null,true)+
+      hdr('Verifying','Please wait',null,null,true)+
       '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">'+
         '<style>@keyframes bizSpin{to{transform:rotate(360deg)}}</style>'+
         '<div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#2563EB;animation:bizSpin 1s linear infinite;margin-bottom:24px"></div>'+
@@ -4492,14 +4363,14 @@ function renderBusinessVerify(){
 
     if(res==='success'){
       return '<div style="display:flex;flex-direction:column;height:100%">'+
-        hdr('Business Verified','',null,null,true)+
+        hdr('Host Account Verified','',null,null,true)+
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#16A34A">'+ic('check',44)+'</div></div>'+
           '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">'+bName+' is Verified!</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your business has been confirmed as a legitimate entity. You\'ve unlocked enhanced trust features.</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your host account has been confirmed as a legitimate organization. You\'ve unlocked enhanced trust features.</div>'+
           '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
             '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Available</div></div>'+
-            ['Verified Business badge on profile','Higher payout limits','Priority in Discover search','Enhanced guest trust signals','Custom branding options'].map(function(f,i,arr){
+            ['Verified badge on profile','Higher payout limits','Priority in Discover search','Enhanced guest trust signals','Custom branding options'].map(function(f,i,arr){
               return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+f+'</span></div>';
             }).join('')+
           '</div>'+
@@ -4517,7 +4388,7 @@ function renderBusinessVerify(){
           '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Verification Failed</div>'+
           '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn\'t verify '+bName+'. The documents provided may be incomplete or unreadable.</div>'+
           '<div class="card" style="padding:14px;margin-bottom:16px;width:100%"><div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Common reasons:</div>'+
-            ['Document is expired or illegible','EIN doesn\'t match business name','Domain ownership could not be confirmed','Business registration not found in state records'].map(function(r){
+            ['Document is expired or illegible','EIN doesn\'t match the organization name','Domain ownership could not be confirmed','Registration not found in state records'].map(function(r){
               return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>';
             }).join('')+
           '</div>'+
@@ -4534,7 +4405,7 @@ function renderBusinessVerify(){
         '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FFFBEB;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#D97706">'+ic('history',44)+'</div></div>'+
         '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Under Review</div>'+
         '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">'+bName+'\'s verification needs manual review. We\'ll notify you within 1–3 business days.</div>'+
-        '<div class="card" style="padding:14px;background:#FFFBEB;border:1px solid #FDE68A;width:100%;margin-bottom:16px"><div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#D97706;min-width:16px;margin-top:1px">'+ic('info',14)+'</div><div style="font-size:11px;color:#92400E;line-height:1.4">You can continue hosting while your business verification is reviewed. The Verified Business badge will appear once approved.</div></div></div>'+
+        '<div class="card" style="padding:14px;background:#FFFBEB;border:1px solid #FDE68A;width:100%;margin-bottom:16px"><div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#D97706;min-width:16px;margin-top:1px">'+ic('info',14)+'</div><div style="font-size:11px;color:#92400E;line-height:1.4">You can continue hosting while your host account verification is reviewed. The Verified badge will appear once approved.</div></div></div>'+
         '<button onclick="'+resetBizVerify+'S.menuSub=\'verifypage\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to Verification</button>'+
         '<button onclick="'+resetBizVerify+'S.menuSub=null;S.scr=\'home\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Home</button>'+
       '</div>'+
@@ -4561,8 +4432,8 @@ function renderVerificationPage(){
           <div style="color:#16A34A">${ic('store',22)}</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:#111827">Business Verified</div>
-          <div style="font-size:11px;color:#16A34A;font-weight:500;margin-top:2px">${a.name} has been confirmed as a real business</div>
+          <div style="font-size:14px;font-weight:700;color:#111827">Host Account Verified</div>
+          <div style="font-size:11px;color:#16A34A;font-weight:500;margin-top:2px">${a.name} has been confirmed as a legitimate organization</div>
         </div>
         <span style="font-size:10px;font-weight:600;color:#16A34A;background:#DCFCE7;padding:3px 8px;border-radius:6px">Verified</span>
       </div>
@@ -4574,14 +4445,14 @@ function renderVerificationPage(){
           <div style="color:#4F46E5">${ic('store',22)}</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:#111827">Business Verification</div>
-          <div style="font-size:11px;color:#6B7280;margin-top:2px">Confirm your business identity</div>
+          <div style="font-size:14px;font-weight:700;color:#111827">Host Account Verification</div>
+          <div style="font-size:11px;color:#6B7280;margin-top:2px">Confirm your organization</div>
         </div>
         <span style="font-size:10px;font-weight:600;color:#F59E0B;background:#FFFBEB;padding:3px 8px;border-radius:6px">Not Verified</span>
       </div>
       <div style="padding:14px 16px">
-        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:12px">Verify your business to earn a Verified Business badge. This builds additional trust with guests and other hosts.</div>
-        <button onclick="S.bizSetupStep='welcome';S.menuSub='bizsetup';render()" style="width:100%;padding:12px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">${ic('store',16)} Verify Your Business</button>
+        <div style="font-size:12px;color:#374151;line-height:1.5;margin-bottom:12px">Verify your host account to earn a Verified badge. This builds additional trust with guests and other hosts.</div>
+        <button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="width:100%;padding:12px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">${ic('store',16)} Verify Host Account</button>
       </div>
     </div>
   `:`
@@ -4591,7 +4462,7 @@ function renderVerificationPage(){
           <div style="color:#9CA3AF">${ic('store',22)}</div>
         </div>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:#9CA3AF">Business Verification</div>
+          <div style="font-size:14px;font-weight:700;color:#9CA3AF">Host Account Verification</div>
           <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Complete identity verification first</div>
         </div>
         <div style="color:#D1D5DB">${ic('lock',14)}</div>
@@ -4603,7 +4474,7 @@ function renderVerificationPage(){
   const idStatus=idVerified?`
     <div style="background:#ECFDF5;border:1px solid #6EE7B7;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <div style="font-size:12px;color:#166534;font-weight:500">Identity verified — you can now verify your business</div>
+      <div style="font-size:12px;color:#166534;font-weight:500">Identity verified — you can now verify your host account</div>
     </div>
   `:`
     <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
@@ -4613,14 +4484,14 @@ function renderVerificationPage(){
   `;
 
   return `<div style="display:flex;flex-direction:column;height:100%">
-    ${hdr('Business Verification','Verify your business',backToHub)}
+    ${hdr('Host Account Verification','Verify your host account',backToHub)}
     <div style="flex:1;overflow-y:auto;padding:16px">
       ${idStatus}
       ${bizCard}
       <div style="background:#F9FAFB;border-radius:10px;padding:10px 14px;margin-top:4px">
         <div style="display:flex;gap:8px;align-items:center">
           <div style="color:#9CA3AF">${ic('info',13)}</div>
-          <span style="font-size:11px;color:#9CA3AF;line-height:1.4">Business verification requires identity verification first. Identity verification can be done in User Account under Settings.</span>
+          <span style="font-size:11px;color:#9CA3AF;line-height:1.4">Host account verification requires identity verification first. Identity verification can be done in User Account under Settings.</span>
         </div>
       </div>
     </div>
@@ -4893,7 +4764,7 @@ function renderVerify(){
           <div style="font-size:22px;font-weight:700;color:#111827;margin-bottom:4px">You're Verified!</div>
           <div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:290px;margin-bottom:4px">You've been confirmed as a real person. This verification applies to every account you manage on Nigh.</div>
 
-          ${isEntity()?'<div style="font-size:12px;color:#0369A1;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:8px 12px;margin:8px 0 12px;max-width:280px;text-align:center">Next step: Verify your business to earn the Verified Business badge</div>':''}
+          ${isEntity()?'<div style="font-size:12px;color:#0369A1;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:8px;padding:8px 12px;margin:8px 0 12px;max-width:280px;text-align:center">Next step: Verify your host account to earn the Verified badge</div>':''}
 
           <!-- Unlocked features -->
           <div class="card" style="padding:0;overflow:hidden;width:100%;margin:12px 0 12px">
@@ -5188,7 +5059,7 @@ function renderSubscription(){
         <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:700;color:#111827">Entity Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+(a.parentOrg||a.brandName||a.name):'Verify entity for Verified Business badge & higher limits'}</div>
+          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+(a.parentOrg||a.brandName||a.name):'Verify your host account for the Verified badge & higher limits'}</div>
         </div>
         ${isBizVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:${isVerifiedAcct?'#0E4EF5':'#E5E7EB'};color:${isVerifiedAcct?'#fff':'#9CA3AF'};font-size:11px;font-weight:600;cursor:pointer;${isVerifiedAcct?'':'pointer-events:none'}" ${isVerifiedAcct?'':'title="Verify your identity first"'}>Verify Business</button>`}
       </div>
@@ -7704,7 +7575,7 @@ function renderNiyaHeadsUp(){
       </div>`:`<div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px">
         <div style="width:28px;height:28px;border-radius:50%;background:#DCFCE7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#16A34A">${ic('users',14)}</div>
         <div><div style="font-size:12px;font-weight:700;color:#16A34A">Followers Only</div>
-        <div style="font-size:10px;color:#6B7280;margin-top:2px">${isPersonal()?'Personal hosts can send Heads Up to followers. Public Heads Up is available to verified businesses.':'Verify your business to unlock public Heads Up that Niya can share with nearby users.'}</div></div>
+        <div style="font-size:10px;color:#6B7280;margin-top:2px">${isPersonal()?'Personal hosts can send Heads Up to followers. Public Heads Up is available to verified host accounts.':'Verify your host account to unlock public Heads Up that Niya can share with nearby users.'}</div></div>
       </div>`}
     </div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
