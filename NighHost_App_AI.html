@@ -4535,7 +4535,7 @@ function renderVerificationPage(){
   // ── Row 1: You (identity) ── Personal to whoever is viewing (each team member has their own).
   const youDone=idV||stripeOk;
   const youRow=youDone
-    ?{state:'done',icon:'user',title:'Personal identity',sub:idV?'Your personal identity — reused on every account you run':'Personal identity confirmed through Stripe — reused on every account you run'}
+    ?{state:'done',icon:'user',title:'Personal identity',sub:'Your personal identity across the Nigh platform'}
     :{state:'action',icon:'user',title:'Verify personal identity',sub:'Verify your personal identity',meta:'Free — 2 minutes',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
 
   // ── Row 2: Your account (authenticity) ──
