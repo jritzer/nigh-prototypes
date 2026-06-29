@@ -2829,7 +2829,7 @@ function renderMenu(){
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
     {ic:'userPlus', l:'Team',         d:'Manage team access',                    act:"S.menuSub='team';render()", show:canView('team')&&!isPersonal()},
     {ic:'link',l:'Partners',d:'Manage & invite partners',   act:"S.menuSub='partners';render()", show:canView('partners')},
-    {ic:'store',    l:'Account',      d:'Profile, subscription & locations',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
+    {ic:'store',    l:'Host Account',      d:'Profile, plan & locations',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
     {ic:'activity',l:'Activity Log',d:'History across account',    act:"S.menuSub='activitylog';render()", show:canView('activityLog')&&!isPersonal()},
   ].filter(m=>m.show);
   return `${hdr('Menu',a.name)}
@@ -3442,7 +3442,7 @@ function renderFollowLink(){
 }
 
 function renderAccountHub(){
-  if(!canView('profile'))return `${hdr('User Account',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Account')}</div>`;
+  if(!canView('profile'))return `${hdr('Host Account',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Account')}</div>`;
   const a=acct();
   const isBrand=a.hostType==='brand';
   const billingDesc=a.enterprise?`Managed by ${a.parentOrg}`:'Plan & billing';
@@ -3454,7 +3454,7 @@ function renderAccountHub(){
     {ic:'map',    l:'Locations',     d:'Manage drop locations',                   act:"S.menuSub='venues';render()"},
     {ic:'qr',     l:'Stickers',      d:'Manage stickers',                        act:"S.menuSub='qrcodes';render()"},
   ];
-  return `${hdr('User Account','Profile, subscription & locations',"S.menuSub=null;render()")}
+  return `${hdr('Host Account','Profile, plan & locations',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div onclick="S.menuSub='profile';render()" style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer">
       <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0">${a.short.charAt(0)}</div>
