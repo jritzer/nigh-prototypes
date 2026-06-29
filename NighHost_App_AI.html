@@ -393,6 +393,7 @@ const PERM_CATALOG=[
     {key:'activityLog',label:'View activity log',full:3,view:2},
     {key:'subscription',label:'Manage subscription',full:4,view:3},
     {key:'billing',label:'Billing & payouts',full:4,view:4},
+    {key:'accountVerification',label:'Verify host account & payments',full:4,view:4}, // v1: Account Owner only. To also allow Account Admins, change full:4 -> full:3.
     {key:'deleteAccount',label:'Delete account',full:4,view:4},
     {key:'manageAdmins',label:'Manage admins',full:4,view:4},
   ]},
@@ -4523,9 +4524,11 @@ function renderVerificationPage(){
   const stripeOk=a.stripeConnected===true;
   const bizV=a.businessVerified===true;
   const backToHub="S.menuSub='accounthub';render()";
-  // v1: only the Account Owner can verify the host account or activate payments.
-  // Other team members see those rows as read-only status with a "must be completed by the owner" note.
-  const isOwner=uRole()==='Account Owner';
+  // Gate for the account-level verification steps (host account + payments).
+  // Single source of truth = the 'accountVerification' capability (PERM_CATALOG). v1 grants it to the
+  // Account Owner only; to also allow Account Admins later, change that permission's full:4 -> full:3.
+  // Non-owners still SEE these rows as read-only status with a "must be completed by the owner" note.
+  const canVerifyAccount=canFull('accountVerification');
   const ownerName=(function(){const loc=a.name;const o=team.find(t=>t.assignments&&t.assignments.some(x=>x.location===loc&&x.role==='Account Owner'));return o?o.name:(a.userDisplayName||'the Account Owner');})();
   const ownerNote='Must be completed by the Account Owner, '+ownerName;
 
@@ -4547,7 +4550,7 @@ function renderVerificationPage(){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account'};
   }else if(stripeOk){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
-  }else if(!isOwner){
+  }else if(!canVerifyAccount){
     acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',note:ownerNote};
   }else if(!idV){
     acctRow={state:'locked',icon:'store',title:'Verify host account',sub:'Confirm your host account is authentic to unlock public drops.',note:'Unlocks after you verify your identity'};
@@ -4559,7 +4562,7 @@ function renderVerificationPage(){
   let payRow;
   if(stripeOk){
     payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'};
-  }else if(!isOwner){
+  }else if(!canVerifyAccount){
     payRow={state:'locked',icon:'billing',title:'Payments',sub:'Set up payment processing to charge for drops through Stripe.',note:ownerNote};
   }else if(!idV){
     payRow={state:'locked',icon:'billing',title:'Activate payments',sub:'Set up payment processing to charge for drops through Stripe.',note:'Unlocks after you verify your identity'};
