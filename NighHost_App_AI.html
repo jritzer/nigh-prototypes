@@ -3017,7 +3017,7 @@ function renderTeam(){
         <div style="width:40px;height:40px;border-radius:50%;background:${roleBg(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0">${t.av}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-            ${(assignment&&assignment.displayName)||t.name}
+            ${isMe?(acct().userDisplayName||t.name):((assignment&&assignment.displayName)||t.name)}
             ${isMe?`<span style="font-size:9px;font-weight:600;padding:2px 6px;border-radius:8px;background:#EEF2FF;color:#0E4EF5">You</span>`:''}
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
@@ -3025,7 +3025,7 @@ function renderTeam(){
             ${t.uname?`<span style="font-size:10px;color:#9CA3AF">${t.uname}</span>`:''}
           </div>
         </div>
-        ${(!t.accountOwner&&!isMe&&canFull('teamDisplayName'))?`<button onclick="S.editTeamMember='${t.uname}';S.editTeamRole=null;S.editDispName=null;render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:''}
+        ${isMe?`<button onclick="S.dispNameNew=acct().userDisplayName||'';S.modal='changeDisplayName';render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit name</button>`:(!t.accountOwner&&canFull('teamDisplayName'))?`<button onclick="S.editTeamMember='${t.uname}';S.editTeamRole=null;S.editDispName=null;render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:''}
       </div>`;
     }).join('')}
 
@@ -6520,19 +6520,6 @@ function renderUserAccount(){
           <div style="font-size:10px;color:#9CA3AF;margin-top:2px">Can be changed once every 90 days</div>
         </div>
         <button onclick="ensurePersonalHostAccount();S.handleModal=true;S.handleNew='';S.handleAvail=null;S.handleConfirm=false;render()" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Change</button>
-      </div>
-    </div>
-
-    <!-- Display Name (per host account) -->
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Display Name</div>
-    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;padding:13px 0;gap:12px">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:2px">How you appear on ${acct().name}</div>
-          <div style="font-size:13px;color:#111827;font-weight:500">${acct().userDisplayName||ownerDisplayName()}</div>
-          <div style="font-size:10px;color:#9CA3AF;margin-top:2px;line-height:1.4">Shown to this account&#x2019;s team and on activity. Set a short name per account so you don&#x2019;t have to use your full name everywhere.</div>
-        </div>
-        <button onclick="S.dispNameNew=acct().userDisplayName||'';S.modal='changeDisplayName';render()" style="flex-shrink:0;background:none;border:1px solid #E5E7EB;border-radius:8px;padding:5px 11px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Change</button>
       </div>
     </div>
 
