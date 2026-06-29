@@ -331,16 +331,16 @@ function audIc(aud){if(aud==='public')return{icon:'globe',label:'Public — Anyo
 // Entity accounts (businesses, orgs, clubs) also require business verification (docs+EIN+domain) on top of person verification.
 let userVerified=true; // human verification (selfie-based) — confirms real person, shared across all accounts this user manages
 const accts=[
-  {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'1234 Walnut St',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',email:'',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
+  {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'1234 Walnut St',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',email:'',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
   {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:''},
   {name:'Nike Boulder',short:'Nike',brandName:'Nike',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',email:'boulder@nike.com',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'nikeboulder',socTiktok:'nike',socX:'nikeboulder'},
   {name:'Avery Brewing Co',short:'Avery',brandName:'Avery Brewing Co',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',email:'hello@averybrewing.com',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',tags:['Craft Beer','Barrel-Aged','Brewery Tours','Taproom'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Avery Brewing, Inc.',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'averybrewingco',socTiktok:'',socX:'averybrewing'},
   {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',email:'events@empowerfield.com',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'broncos',socTiktok:'broncos',socX:'broncos'},
-  {name:'Sarah Chen',short:'Sarah',brandName:'',hostType:'personal',businessVerified:false,unverified:true,role:'Account Owner',userDisplayName:'Sarah Chen',cat:'Personal',subCat:'',addr:'742 Arapahoe Ave',city:'Boulder',state:'CO',zip:'80302',handle:'sarahc',phone:'(303) 555-0218',email:'',website:'',description:'Yoga teacher and plant-based cook. Hosting community gatherings and wellness experiences.',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Sarah Chen',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',stripeConnected:false},
+  {name:'Sarah Chen',short:'Sarah',brandName:'',hostType:'personal',businessVerified:false,unverified:true,role:'Account Owner',userDisplayName:'Sarah Chen',cat:'Personal',subCat:'',addr:'742 Arapahoe Ave',city:'Boulder',state:'CO',zip:'80302',handle:'sarahc',phone:'(303) 555-0218',email:'',website:'',description:'Yoga teacher and plant-based cook. Hosting community gatherings and wellness experiences.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Sarah Chen',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',stripeConnected:false},
   // ── Unverified demo accounts (so the Host Account Verification flow is reachable) ──
-  {name:'Roadhouse Coffee',short:'Roadhouse',brandName:'Roadhouse Coffee',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Cafe & Bakery',subCat:'Coffee Shop',addr:'2030 13th St',city:'Boulder',state:'CO',zip:'80302',handle:'roadhousecoffee',phone:'(303) 555-0240',email:'hello@roadhouse.coffee',website:'https://roadhouse.coffee',description:'Neighborhood coffee bar pulling shots and hosting open-mic nights.',tags:['Coffee','Open Mic','Pastries'],operationMode:'Fixed',plan:'Starter',maxPartners:5,parentOrg:'Roadhouse Coffee',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''},
-  {name:'Jordan Vibes',short:'Jordan',brandName:'Jordan Vibes',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Creator',subCat:'Lifestyle',addr:'',city:'Boulder',state:'CO',zip:'',handle:'jordanvibes',phone:'',email:'',website:'',description:'Lifestyle creator hosting pop-up meetups and creative nights.',tags:['Pop-ups','Meetups','Creative'],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Jordan Vibes',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'jordanvibes',socTiktok:'jordanvibes',socX:''},
-  {name:'Sigma Chi — CU Boulder',short:'Sigma Chi',brandName:'Sigma Chi — CU Boulder',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Community',subCat:'Student Org',addr:'',city:'Boulder',state:'CO',zip:'',handle:'sigmachicu',phone:'',email:'',website:'',description:'CU Boulder chapter hosting socials, philanthropy events, and game nights.',tags:['Socials','Philanthropy','Game Nights'],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Sigma Chi',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'sigmachicu_boulder',socTiktok:'',socX:''},
+  {name:'Roadhouse Coffee',short:'Roadhouse',brandName:'Roadhouse Coffee',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Cafe & Bakery',subCat:'Coffee Shop',addr:'2030 13th St',city:'Boulder',state:'CO',zip:'80302',handle:'roadhousecoffee',phone:'(303) 555-0240',email:'hello@roadhouse.coffee',website:'https://roadhouse.coffee',description:'Neighborhood coffee bar pulling shots and hosting open-mic nights.',tags:['Coffee','Open Mic','Pastries'],operationMode:'Fixed',plan:'Launch',maxPartners:5,parentOrg:'Roadhouse Coffee',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''},
+  {name:'Jordan Vibes',short:'Jordan',brandName:'Jordan Vibes',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Creator',subCat:'Lifestyle',addr:'',city:'Boulder',state:'CO',zip:'',handle:'jordanvibes',phone:'',email:'',website:'',description:'Lifestyle creator hosting pop-up meetups and creative nights.',tags:['Pop-ups','Meetups','Creative'],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Jordan Vibes',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'jordanvibes',socTiktok:'jordanvibes',socX:''},
+  {name:'Sigma Chi — CU Boulder',short:'Sigma Chi',brandName:'Sigma Chi — CU Boulder',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Community',subCat:'Student Org',addr:'',city:'Boulder',state:'CO',zip:'',handle:'sigmachicu',phone:'',email:'',website:'',description:'CU Boulder chapter hosting socials, philanthropy events, and game nights.',tags:['Socials','Philanthropy','Game Nights'],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Sigma Chi',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'sigmachicu_boulder',socTiktok:'',socX:''},
   // Team-member view demo: Josh is a Manager here; the Account Owner is Morgan Reyes (see team[]). Verification rows 2 & 3 are owner-only.
   {name:'Pearl Street Tavern',short:'Pearl St Tavern',brandName:'Pearl Street Tavern',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Manager',userDisplayName:'Josh R.',cat:'Bar & Nightlife',subCat:'Tavern',addr:'1102 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'pearlsttavern',phone:'(303) 555-0266',email:'',website:'',description:'Historic downtown tavern with local brews and live music.',tags:['Live Music','Local Brews','Patio'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Pearl Street Tavern',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''}
 ];
@@ -1392,7 +1392,7 @@ function ensurePersonalHostAccount(){
   if(pi<0){
     const pUser=ownerDisplayName();
     const handle=((pUser.split(' ')[0]||'host')+(pUser.split(' ')[1]||'').charAt(0)).toLowerCase().replace(/[^a-z0-9]/g,'')||'newhost';
-    accts.push({name:pUser,short:pUser.split(' ')[0]||pUser,brandName:'',hostType:'personal',entity:false,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:pUser,cat:'Personal',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,approveFollow:false,maxPartners:3,parentOrg:pUser,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''});
+    accts.push({name:pUser,short:pUser.split(' ')[0]||pUser,brandName:'',hostType:'personal',entity:false,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:pUser,cat:'Personal',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,approveFollow:false,maxPartners:3,parentOrg:pUser,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''});
     pi=accts.length-1;
   }
   acctIdx=pi;return pi;
@@ -1407,12 +1407,12 @@ function finishHostOnboarding(){
   } else {
     let ph=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
     if(choice!=='personal'||!ph)ph=((fname+lname.charAt(0)).toLowerCase().replace(/[^a-z0-9]/g,''))||'newhost';
-    const p={name:full,short:fname||full,brandName:'',hostType:'personal',entity:false,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:'Personal',subCat:'',addr:'',city:'',state:'',zip:'',handle:ph,phone:S.loginPhone||'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:full,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+    const p={name:full,short:fname||full,brandName:'',hostType:'personal',entity:false,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:'Personal',subCat:'',addr:'',city:'',state:'',zip:'',handle:ph,phone:S.loginPhone||'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:full,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
     accts.push(p);acctIdx=accts.length-1;
   }
   if(choice==='newhandle'){
     const bh=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
-    if(bh){const b={name:bh,short:bh,brandName:bh,hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:S.loginBizCategory||'',subCat:S.loginBizSubCat||'',addr:'',city:'',state:'',zip:'',handle:bh,phone:'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:bh,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};accts.push(b);acctIdx=accts.length-1;}
+    if(bh){const b={name:bh,short:bh,brandName:bh,hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:full,cat:S.loginBizCategory||'',subCat:S.loginBizSubCat||'',addr:'',city:'',state:'',zip:'',handle:bh,phone:'',email:'',website:'',description:'',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:false,maxPartners:3,parentOrg:bh,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};accts.push(b);acctIdx=accts.length-1;}
   }
   S.niyaOnboarding=false;S.niyaMode=null;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.loginExHandle='';S.loginBizCategory='';S.loginBizSubCat='';S.loginHandleErr=false;
   S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render();
@@ -1426,7 +1426,7 @@ function createHostAccount(){
   if(handleTaken(handle)){S.naHandleErr=true;render();return;}
   S.naHandleErr=false;
   // hostType, category and other details are assigned internally after creation, not self-selected at signup
-  const a={name:name,short:(name.split(' ')[0]||name),brandName:'',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:'',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:about,tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
+  const a={name:name,short:(name.split(' ')[0]||name),brandName:'',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:ownerDisplayName(),cat:'',subCat:'',addr:'',city:'',state:'',zip:'',handle:handle,phone:'',email:'',website:'',description:about,tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:false,maxPartners:3,parentOrg:name,enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''};
   accts.push(a);acctIdx=accts.length-1;
   S.naName='';S.naHandle='';S.naDesc='';
   S.showAcct=false;S.menuSub=null;S.scr='home';S.modal='acct-created';render();
@@ -2234,7 +2234,7 @@ function renderCreate(){
       </div>
     </div>
     ${(()=>{
-      const phonePlan=acct().plan||(acct().enterprise?'Pro':'Starter');
+      const phonePlan=acct().plan||(acct().enterprise?'Pro':'Launch');
       const phoneEligible=phonePlan==='Pro'||phonePlan==='Enterprise';
       if(!phoneEligible)return '';
       const pv=S.dropPhoneRequest||'none';
@@ -2262,7 +2262,7 @@ function renderCreate(){
     </div>`:`<div style="margin-bottom:22px">
       <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Price Per Ticket <span style="color:#EF4444">*</span></label>
       ${(()=>{
-        const plan=acct().plan||(acct().enterprise?'Pro':'Starter');
+        const plan=acct().plan||(acct().enterprise?'Pro':'Launch');
         const isPro=plan==='Pro'||plan==='Enterprise';
         const isPlus=plan==='Plus'||plan==='Verified';
         const isFree=!isPro&&!isPlus;
@@ -2371,8 +2371,8 @@ function renderCreate(){
     ${(()=>{
       const bp=parseFloat((S.priceTiers&&S.priceTiers[0]?.price)||'0')||0;
       if(bp<5)return '';
-      const plan=acct().plan||(acct().enterprise?'Pro':'Starter');
-      const fees={Starter:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};
+      const plan=acct().plan||(acct().enterprise?'Pro':'Launch');
+      const fees={Launch:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};
       const f=fees[plan]||fees.Verified;
       const platformFee=bp*(f.pct/100)+f.flat;
       const youReceive=bp-platformFee;
@@ -2460,8 +2460,8 @@ function renderCreate(){
       ${(()=>{
         const bp=parseFloat(S.priceTiers&&S.priceTiers[0]?.price)||src.price||0;
         if(bp<5)return '';
-        const plan=acct().plan||(acct().enterprise?'Pro':'Starter');
-        const fees={Starter:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};
+        const plan=acct().plan||(acct().enterprise?'Pro':'Launch');
+        const fees={Launch:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};
         const f=fees[plan]||fees.Verified;
         const pf=bp*(f.pct/100)+f.flat;
         const net=bp-pf;
@@ -3458,7 +3458,7 @@ function renderAccountHub(){
   const verifyAllSet=vfd&&(isPersonal()||a.businessVerified||a.stripeConnected);
   const hubItems=[
     {ic:'shield',l:'Verification',d:a.enterprise?('Managed by '+a.parentOrg):(verifyAllSet?'Verified':'You, your account & payments'),act:"S.menuSub='verifypage';render()",vf:verifyAllSet},
-    {ic:'billing',l:'Subscription',  d:a.enterprise?'Managed by '+a.parentOrg:(a.plan||'Starter')+' plan', act:"S.menuSub='subscription';render()"},
+    {ic:'billing',l:'Subscription',  d:a.enterprise?'Managed by '+a.parentOrg:(a.plan||'Launch')+' plan', act:"S.menuSub='subscription';render()"},
     {ic:'map',    l:'Locations',     d:'Manage drop locations',                   act:"S.menuSub='venues';render()"},
     {ic:'qr',     l:'Stickers',      d:'Manage stickers',                        act:"S.menuSub='qrcodes';render()"},
   ];
@@ -3608,7 +3608,7 @@ function renderPayout(){
       </div>`;
       // Compute revenue from orders
       const grossRev=mo.reduce((s,o)=>s+o.tickets.reduce((ts,tk)=>ts+tk.price,0),0);
-      const plan=acct().plan||'Starter';
+      const plan=acct().plan||'Launch';
       const feeRate=plan==='Enterprise'?0.02:plan==='Pro'?0.035:0.05;
       const perTicketFee=plan==='Enterprise'?0.50:plan==='Pro'?0.75:1.00;
       const totalTickets=mo.reduce((s,o)=>s+o.tickets.filter(tk=>tk.price>0).length,0);
@@ -3618,7 +3618,7 @@ function renderPayout(){
       // Revenue by drop (from actual priced drops with reservations)
       const dropRevs=pricedDrops.filter(d=>d.res>0).map(d=>({title:d.title,rev:d.price*d.res})).sort((a,b)=>b.rev-a.rev).slice(0,5);
       const dropRevTotal=dropRevs.reduce((s,d)=>s+d.rev,0)||1;
-      const fl={Starter:'5% + $1/ticket',Growth:'5% + $1/ticket',Pro:'3.5% + $0.75/ticket',Enterprise:'custom rate'};
+      const fl={Launch:'5% + $1/ticket',Growth:'5% + $1/ticket',Pro:'3.5% + $0.75/ticket',Enterprise:'custom rate'};
       return `
     <!-- Revenue KPIs -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
@@ -3629,7 +3629,7 @@ function renderPayout(){
     </div>
     <div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px">
       <div style="flex-shrink:0;color:#0369A1">${ic('info',14)}</div>
-      <div style="font-size:11px;color:#0c4a6e;line-height:1.4">Net earnings = gross revenue minus platform fees (${fl[plan]||fl.Starter}). Free drops have no fees.</div>
+      <div style="font-size:11px;color:#0c4a6e;line-height:1.4">Net earnings = gross revenue minus platform fees (${fl[plan]||fl.Launch}). Free drops have no fees.</div>
     </div>
 
     <!-- Revenue by Drop -->
@@ -3643,7 +3643,7 @@ function renderPayout(){
     `:`
     <!-- Payouts Tab -->
 
-    ${earnReady?(()=>{const mo=myOrders();const paidTk=mo.reduce((s,o)=>s+o.tickets.reduce((ts,t)=>ts+(t.status!=='Refunded'?t.price:0),0),0);const plan=acct().plan||(acct().enterprise?'Pro':'Starter');const fees={Starter:{pct:5,flat:1},Growth:{pct:5,flat:1},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.5}};const f=fees[plan]||fees.Starter;const paidTkCount=mo.reduce((s,o)=>s+o.tickets.filter(t=>t.status!=='Refunded'&&t.price>0).length,0);const totalFees=paidTk*(f.pct/100)+f.flat*paidTkCount;const netRev=Math.max(0,paidTk-totalFees);const avail=Math.round(netRev*0.65);const pending=Math.round(netRev*0.2);const lastPayout=Math.round(netRev*0.45);return paidTk===0?`
+    ${earnReady?(()=>{const mo=myOrders();const paidTk=mo.reduce((s,o)=>s+o.tickets.reduce((ts,t)=>ts+(t.status!=='Refunded'?t.price:0),0),0);const plan=acct().plan||(acct().enterprise?'Pro':'Launch');const fees={Launch:{pct:5,flat:1},Growth:{pct:5,flat:1},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.5}};const f=fees[plan]||fees.Launch;const paidTkCount=mo.reduce((s,o)=>s+o.tickets.filter(t=>t.status!=='Refunded'&&t.price>0).length,0);const totalFees=paidTk*(f.pct/100)+f.flat*paidTkCount;const netRev=Math.max(0,paidTk-totalFees);const avail=Math.round(netRev*0.65);const pending=Math.round(netRev*0.2);const lastPayout=Math.round(netRev*0.45);return paidTk===0?`
     <div style="text-align:center;padding:32px 0">
       <div style="color:#D1D5DB;margin-bottom:12px">${ic('dollar',36)}</div>
       <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:4px">No payouts yet</div>
@@ -3784,7 +3784,7 @@ function renderOrderDetail(){
       <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:#6B7280">Subtotal</span><span style="font-size:12px;color:#111827">${subtotal===0?'Free':'$'+subtotal.toFixed(2)}</span></div>
       ${totalTax>0?`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:#6B7280">Tax</span><span style="font-size:12px;color:#111827">$${totalTax.toFixed(2)}</span></div>`:''}
       <div style="border-top:1px solid #E5E7EB;padding-top:6px;margin-top:2px;display:flex;justify-content:space-between"><span style="font-size:13px;font-weight:700;color:#111827">Total</span><span style="font-size:13px;font-weight:700;color:#111827">${total===0?'Free':'$'+total.toFixed(2)}</span></div>
-      ${subtotal>0?(()=>{const plan=acct().plan||(acct().enterprise?'Pro':'Starter');const fees={Starter:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};const f=fees[plan]||fees.Verified;const pFee=subtotal*(f.pct/100)+f.flat*o.tickets.filter(t=>t.price>0).length;const net=subtotal-pFee;return `
+      ${subtotal>0?(()=>{const plan=acct().plan||(acct().enterprise?'Pro':'Launch');const fees={Launch:{pct:5,flat:1.00},Verified:{pct:5,flat:1.00},Plus:{pct:5,flat:1.00},Pro:{pct:3.5,flat:0.75},Enterprise:{pct:2,flat:0.50}};const f=fees[plan]||fees.Verified;const pFee=subtotal*(f.pct/100)+f.flat*o.tickets.filter(t=>t.price>0).length;const net=subtotal-pFee;return `
       <div style="border-top:1px dashed #E5E7EB;padding-top:6px;margin-top:6px">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#6B7280">Platform fee (${f.pct}% + $${f.flat.toFixed(2)}/ticket)</span><span style="font-size:11px;color:#EF4444">−$${pFee.toFixed(2)}</span></div>
         <div style="display:flex;justify-content:space-between"><span style="font-size:12px;font-weight:700;color:#0369A1">Your earnings</span><span style="font-size:12px;font-weight:700;color:#0369A1">$${net.toFixed(2)}</span></div>
@@ -4943,13 +4943,13 @@ function renderVerify(){
 }
 function renderSubscription(){
   const a=acct();
-  const planPrices={Free:'$0',Starter:'$0',Verified:'$0',Pro:'$50',Enterprise:'Custom'};
-  const planLabels={Free:'Starter',Starter:'Starter',Verified:'Starter',Pro:'Pro',Enterprise:'Enterprise'};
-  const planFees={Free:{pct:0,flat:0,label:'N/A'},Starter:{pct:5,flat:1.00,label:'5% + $1.00 per ticket'},Verified:{pct:5,flat:1.00,label:'5% + $1.00 per ticket'},Pro:{pct:3.5,flat:0.75,label:'3.5% + $0.75 per ticket'},Enterprise:{pct:0,flat:0,label:'Negotiable'}};
+  const planPrices={Free:'$0',Launch:'$0',Verified:'$0',Pro:'$50',Enterprise:'Custom'};
+  const planLabels={Free:'Launch',Launch:'Launch',Verified:'Launch',Pro:'Pro',Enterprise:'Enterprise'};
+  const planFees={Free:{pct:0,flat:0,label:'N/A'},Launch:{pct:5,flat:1.00,label:'5% + $1.00 per ticket'},Verified:{pct:5,flat:1.00,label:'5% + $1.00 per ticket'},Pro:{pct:3.5,flat:0.75,label:'3.5% + $0.75 per ticket'},Enterprise:{pct:0,flat:0,label:'Negotiable'}};
   const isVerifiedAcct=userVerified; // person-level identity check
   const isBizVerified=a.businessVerified===true; // business-level entity check
-  const currentPlan=a.plan||'Starter';
-  const smbPlan={name:planLabels[currentPlan]||currentPlan,price:planPrices[currentPlan]||'$0',cycle:currentPlan==='Starter'||currentPlan==='Starter'||currentPlan==='Verified'?'':'/ month',renewDate:'Apr 28, 2026',status:'Active'};
+  const currentPlan=a.plan||'Launch';
+  const smbPlan={name:planLabels[currentPlan]||currentPlan,price:planPrices[currentPlan]||'$0',cycle:currentPlan==='Launch'||currentPlan==='Launch'||currentPlan==='Verified'?'':'/ month',renewDate:'Apr 28, 2026',status:'Active'};
   const nCredits={balance:25.00,applied:25.00,history:[
     {date:'Apr 1, 2026',type:'issued',amount:50.00,note:'Nigh launch promo — 2 months credit',expiry:'Jul 1, 2026',issuedBy:'Sarah Chen',autoApply:true},
     {date:'Apr 28, 2026',type:'applied',amount:-25.00,note:'Applied to Apr subscription'},
@@ -4969,7 +4969,7 @@ function renderSubscription(){
       <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase">Current Plan</div>
-        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.12);padding:2px 9px;border-radius:20px;border:1px solid rgba(255,255,255,0.18)">Starter</span>
+        <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.12);padding:2px 9px;border-radius:20px;border:1px solid rgba(255,255,255,0.18)">Launch</span>
       </div>
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
         <div style="font-size:24px;font-weight:800;color:#fff">$0</div>
@@ -5090,7 +5090,7 @@ function renderSubscription(){
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="background:rgba(34,197,94,0.2);color:#4ADE80;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid rgba(74,222,128,0.3)">${smbPlan.status}</span>
-        <span style="font-size:11px;color:rgba(255,255,255,0.55)">${currentPlan==='Starter'||currentPlan==='Verified'?'':'Renews '+smbPlan.renewDate}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.55)">${currentPlan==='Launch'||currentPlan==='Verified'?'':'Renews '+smbPlan.renewDate}</span>
       </div>
     </div>
 
@@ -5113,7 +5113,7 @@ function renderSubscription(){
         </div>
         <div style="background:#F9FAFB;border-radius:8px;padding:10px 12px;margin-top:6px">
           <div style="font-size:11px;color:#6B7280;line-height:1.5">
-            ${currentPlan==='Starter'||currentPlan==='Verified'?'<strong style="color:#374151">Example:</strong> $25 ticket → You receive $22.75 after 5% + $1.00 fee':''}
+            ${currentPlan==='Launch'||currentPlan==='Verified'?'<strong style="color:#374151">Example:</strong> $25 ticket → You receive $22.75 after 5% + $1.00 fee':''}
             ${currentPlan==='Pro'?'<strong style="color:#374151">Example:</strong> $25 ticket → You receive $23.38 after 3.5% + $0.75 fee':''}
             ${currentPlan==='Enterprise'?'Custom transaction economics per your agreement.':''}
           </div>
@@ -5211,7 +5211,7 @@ function renderUpgradeGrowth(){
           <div style="font-size:28px;font-weight:800;color:#fff">$25</div>
           <div style="font-size:14px;font-weight:500;color:rgba(255,255,255,0.65)">/ month</div>
         </div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.55)">Everything in Starter, plus:</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55)">Everything in Launch, plus:</div>
       </div>
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">What's Included</div>
       <div class="card" style="margin-bottom:16px">
