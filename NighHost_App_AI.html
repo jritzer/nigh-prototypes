@@ -340,7 +340,9 @@ const accts=[
   // ── Unverified demo accounts (so the Host Account Verification flow is reachable) ──
   {name:'Roadhouse Coffee',short:'Roadhouse',brandName:'Roadhouse Coffee',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Cafe & Bakery',subCat:'Coffee Shop',addr:'2030 13th St',city:'Boulder',state:'CO',zip:'80302',handle:'roadhousecoffee',phone:'(303) 555-0240',email:'hello@roadhouse.coffee',website:'https://roadhouse.coffee',description:'Neighborhood coffee bar pulling shots and hosting open-mic nights.',tags:['Coffee','Open Mic','Pastries'],operationMode:'Fixed',plan:'Starter',maxPartners:5,parentOrg:'Roadhouse Coffee',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''},
   {name:'Jordan Vibes',short:'Jordan',brandName:'Jordan Vibes',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Creator',subCat:'Lifestyle',addr:'',city:'Boulder',state:'CO',zip:'',handle:'jordanvibes',phone:'',email:'',website:'',description:'Lifestyle creator hosting pop-up meetups and creative nights.',tags:['Pop-ups','Meetups','Creative'],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Jordan Vibes',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'jordanvibes',socTiktok:'jordanvibes',socX:''},
-  {name:'Sigma Chi — CU Boulder',short:'Sigma Chi',brandName:'Sigma Chi — CU Boulder',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Community',subCat:'Student Org',addr:'',city:'Boulder',state:'CO',zip:'',handle:'sigmachicu',phone:'',email:'',website:'',description:'CU Boulder chapter hosting socials, philanthropy events, and game nights.',tags:['Socials','Philanthropy','Game Nights'],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Sigma Chi',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'sigmachicu_boulder',socTiktok:'',socX:''}
+  {name:'Sigma Chi — CU Boulder',short:'Sigma Chi',brandName:'Sigma Chi — CU Boulder',hostType:'brand',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Community',subCat:'Student Org',addr:'',city:'Boulder',state:'CO',zip:'',handle:'sigmachicu',phone:'',email:'',website:'',description:'CU Boulder chapter hosting socials, philanthropy events, and game nights.',tags:['Socials','Philanthropy','Game Nights'],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Sigma Chi',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'sigmachicu_boulder',socTiktok:'',socX:''},
+  // Team-member view demo: Josh is a Manager here; the Account Owner is Morgan Reyes (see team[]). Verification rows 2 & 3 are owner-only.
+  {name:'Pearl Street Tavern',short:'Pearl St Tavern',brandName:'Pearl Street Tavern',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Manager',userDisplayName:'Josh R.',cat:'Bar & Nightlife',subCat:'Tavern',addr:'1102 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'pearlsttavern',phone:'(303) 555-0266',email:'',website:'',description:'Historic downtown tavern with local brews and live music.',tags:['Live Music','Local Brews','Patio'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Pearl Street Tavern',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
 // Niya (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Niya surface (icon, tab, bar). Lets Niya roll out to a subset of accounts before going generally available.
@@ -460,7 +462,7 @@ function orgNavLabel(){
 // Personal host accounts: Account Owner is permanently the handle owner (non-transferable).
 const team=[
   {name:'Josh Ritzer',  uname:'@joshr',  role:'Account Owner', accountOwner:true, active:true, av:'JR',
-   assignments:[{location:'Josh Ritzer',role:'Account Owner'},{location:'Centro Boulder',role:'Account Owner'},{location:'Avery Brewing Co',role:'Account Owner'},{location:'Nike Boulder',role:'Manager'}]},
+   assignments:[{location:'Josh Ritzer',role:'Account Owner'},{location:'Centro Boulder',role:'Account Owner'},{location:'Avery Brewing Co',role:'Account Owner'},{location:'Nike Boulder',role:'Manager'},{location:'Pearl Street Tavern',role:'Manager'}]},
   {name:'Alex Turner',  uname:'@alext',  role:'Manager',     active:true, av:'AT',
    assignments:[{location:'Centro Boulder',role:'Manager'}]},
   {name:'David Nguyen', uname:'@davidn', role:'Account Admin', active:true, av:'DN',
@@ -477,6 +479,8 @@ const team=[
    assignments:[{location:'Nike Boulder',role:'Check-In Only'}]},
   {name:'Sarah Chen',  uname:'@sarahc', role:'Account Owner', accountOwner:true, active:true, av:'SC',
    assignments:[{location:'Sarah Chen',role:'Account Owner'}]},
+  {name:'Morgan Reyes', uname:'@morganr', role:'Account Owner', accountOwner:true, active:true, av:'MR',
+   assignments:[{location:'Pearl Street Tavern',role:'Account Owner'}]},
 ];
 const googlePlacesSamples=[
   {name:'Pearl Street Mall',        addr:'1942 Pearl St',         city:'Boulder', state:'CO', zip:'80302'},
@@ -4519,12 +4523,17 @@ function renderVerificationPage(){
   const stripeOk=a.stripeConnected===true;
   const bizV=a.businessVerified===true;
   const backToHub="S.menuSub='accounthub';render()";
+  // v1: only the Account Owner can verify the host account or activate payments.
+  // Other team members see those rows as read-only status with a "must be completed by the owner" note.
+  const isOwner=uRole()==='Account Owner';
+  const ownerName=(function(){const loc=a.name;const o=team.find(t=>t.assignments&&t.assignments.some(x=>x.location===loc&&x.role==='Account Owner'));return o?o.name:(a.userDisplayName||'the Account Owner');})();
+  const ownerNote='Must be completed by the Account Owner, '+ownerName;
 
-  // ── Row 1: You (identity) ── Stripe's KYC also confirms identity, so stripeOk satisfies this row.
+  // ── Row 1: You (identity) ── Personal to whoever is viewing (each team member has their own).
   const youDone=idV||stripeOk;
   const youRow=youDone
-    ?{state:'done',icon:'user',title:'Personal identity',sub:idV?'Personal identity of the account owner — reused on every account you run':'Personal identity confirmed through Stripe — reused on every account you run'}
-    :{state:'action',icon:'user',title:'Verify personal identity',sub:'Verify your personal identity as the account owner',meta:'Free — 2 minutes',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
+    ?{state:'done',icon:'user',title:'Personal identity',sub:idV?'Your personal identity — reused on every account you run':'Personal identity confirmed through Stripe — reused on every account you run'}
+    :{state:'action',icon:'user',title:'Verify personal identity',sub:'Verify your personal identity',meta:'Free — 2 minutes',act:{label:'Verify identity',go:"S.verifyStep='welcome';S.verifyFrom=null;S.menuSub='verify';render()"}};
 
   // ── Row 2: Your account (authenticity) ──
   let acctRow;
@@ -4538,6 +4547,8 @@ function renderVerificationPage(){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account'};
   }else if(stripeOk){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
+  }else if(!isOwner){
+    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',note:ownerNote};
   }else if(!idV){
     acctRow={state:'locked',icon:'store',title:'Verify host account',sub:'Confirm your host account is authentic to unlock public drops.',note:'Unlocks after you verify your identity'};
   }else{
@@ -4548,6 +4559,8 @@ function renderVerificationPage(){
   let payRow;
   if(stripeOk){
     payRow={state:'done',pill:'Active',icon:'billing',title:'Payments',sub:'Active — you can charge for drops. Bank linked through Stripe.'};
+  }else if(!isOwner){
+    payRow={state:'locked',icon:'billing',title:'Payments',sub:'Set up payment processing to charge for drops through Stripe.',note:ownerNote};
   }else if(!idV){
     payRow={state:'locked',icon:'billing',title:'Activate payments',sub:'Set up payment processing to charge for drops through Stripe.',note:'Unlocks after you verify your identity'};
   }else{
