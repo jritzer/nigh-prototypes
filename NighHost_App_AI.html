@@ -5470,20 +5470,6 @@ function renderProfile(){
       </div>
     </div></div>
 
-    <!-- Privacy: follow approval -->
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Privacy</div>
-    <div class="card" style="margin-bottom:16px"><div class="cb">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:#111827">Require approval to follow</div>
-          <div style="font-size:11px;color:#6B7280;margin-top:2px;line-height:1.45">When on, people must request to follow this account and you approve each one.</div>
-        </div>
-        <button onclick="acct().approveFollow=!acct().approveFollow;render()" style="flex-shrink:0;width:44px;height:26px;border-radius:13px;border:none;background:${a.approveFollow?'#0E4EF5':'#D1D5DB'};position:relative;cursor:pointer">
-          <span style="position:absolute;top:3px;left:${a.approveFollow?'21px':'3px'};width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2)"></span>
-        </button>
-      </div>
-    </div></div>
-
     <!-- Optional details -->
     ${(()=>{
       const showAddr=fldShown('addr',hasAddr);
