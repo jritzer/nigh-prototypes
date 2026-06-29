@@ -4621,23 +4621,8 @@ function renderVerify(){
           <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
             <div style="color:#4F46E5">${ic('shield',36)}</div>
           </div>
-          <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Identity</div>
-          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:290px;margin:0 auto">Nigh is built on trust. When hosts and guests know each other are real, everyone has a better experience.</div>
-        </div>
-
-        <!-- What verification unlocks -->
-        <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
-          <div style="padding:14px 16px;border-bottom:1px solid #F3F4F6">
-            <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px">What Verification Unlocks</div>
-            <div style="font-size:11px;color:#9CA3AF">These features require a verified identity</div>
-          </div>
-          ${[
-            {icon:'globe',label:'Public Drops',desc:'List drops on Discover so anyone on Nigh can find them'},
-            {icon:'dollar',label:'Paid Drops',desc:'Set ticket prices and collect payments from guests'},
-            {icon:'send',label:'Payouts',desc:'Receive earnings directly to your bank account'},
-            {icon:'shield',label:'Verified Badge',desc:'Show guests and other hosts that you\'re a real person'},
-            {icon:'bell',label:'Heads Up',desc:'Send drop announcements to your followers'}
-          ].map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:32px;height:32px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center"><div style="color:#4F46E5">'+ic(item.icon,16)+'</div></div><div><div style="font-size:12px;font-weight:600;color:#111827">'+item.label+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:1px">'+item.desc+'</div></div></div>').join('')}
+          <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Let's keep things real — get your badge.</div>
+          <div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:290px;margin:0 auto">Bots and fraudsters aren't welcome.</div>
         </div>
 
         <!-- What you'll need -->
@@ -4654,7 +4639,7 @@ function renderVerify(){
             <div style="color:#16A34A;min-width:16px;margin-top:1px">${ic('shield',16)}</div>
             <div>
               <div style="font-size:12px;font-weight:600;color:#15803D;margin-bottom:3px">Your privacy is protected</div>
-              <div style="font-size:11px;color:#166534;line-height:1.4">Your ID and selfies are used only to confirm you're a real person. They are encrypted during transfer and are not stored after verification is complete.</div>
+              <div style="font-size:11px;color:#166534;line-height:1.4">Your ID and selfies are only used to confirm your identity. We don't share them or use them for any commercial purpose.</div>
             </div>
           </div>
         </div>
