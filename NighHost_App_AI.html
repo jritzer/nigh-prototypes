@@ -4214,8 +4214,20 @@ function renderBusinessVerify(){
   const step=S.bizVerifyStep||'welcome';
   const a=acct();
   const backToSub="S.menuSub='verifypage';render()";
-  const resetBizVerify="S.bizVerifyStep='welcome';S.bizVerifyType=null;S.bizVerifyDoc=false;S.bizVerifyEin=false;S.bizVerifyDomain=false;S.bizVerifyResult=null;";
+  const resetBizVerify="S.bizVerifyStep='welcome';S.bizVerifyType=null;S.bizVerifyPath=null;S.bizVerifyDoc=false;S.bizVerifyEin=false;S.bizVerifyDomain=false;S.bizVerifyPresence=false;S.bizVerifyAffil='';S.bizVerifyAuth=false;S.bizVerifyResult=null;";
   const bName=a.brandName||a.name;
+  // Host types branch verification down two evidence paths:
+  //  - docs:     business / nonprofit — prove a registered entity exists (license/registration + EIN) and you control its web presence
+  //  - presence: creator / group      — prove you control an established public presence and are authorized to represent it (no business paperwork)
+  const VTYPES={
+    business:{label:'Business / Venue', path:'docs',     confirm:'a legitimate business'},
+    org:     {label:'Nonprofit / Organization', path:'docs', confirm:'a legitimate organization'},
+    creator: {label:'Creator / Influencer', path:'presence', confirm:'an authentic creator account'},
+    group:   {label:'Group / Community', path:'presence', confirm:'an authentic group'}
+  };
+  const vt=S.bizVerifyType?VTYPES[S.bizVerifyType]:null;
+  const vpath=vt?vt.path:'docs';
+  const pbar=function(n){var s='';for(var i=0;i<3;i++){s+='<div style="flex:1;height:4px;border-radius:2px;background:'+(i<n?'#0E4EF5':'#E5E7EB')+'"></div>';}return '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">'+s+'</div>';};
 
   // ── Welcome ──
   if(step==='welcome'){
@@ -4223,14 +4235,14 @@ function renderBusinessVerify(){
       hdr('Host Account Verification','Verify '+bName,backToSub)+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
         '<div style="text-align:center;margin:16px 0 24px">'+
-          '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#DBEAFE);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#2563EB">'+ic('globe',36)+'</div></div>'+
+          '<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#DBEAFE);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><div style="color:#2563EB">'+ic('shield',36)+'</div></div>'+
           '<div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:6px">Verify Your Host Account</div>'+
-          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Confirm <strong>'+bName+'</strong> as a legitimate organization to unlock trust badges and higher limits.</div>'+
+          '<div style="font-size:13px;color:#6B7280;line-height:1.5;max-width:280px;margin:0 auto">Confirm that <strong>'+bName+'</strong> is authentic and that you\'re authorized to run it — so guests know it\'s really you.</div>'+
         '</div>'+
 
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
-          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You\'ll Need</div></div>'+
-          ['Business license or registration document','EIN / Tax ID number','Business website or social media','About 5 minutes'].map(function(item,i,arr){
+          '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">How It Works</div></div>'+
+          ['Tell us what kind of host you are','We\'ll ask for the right proof for your type','Takes just a few minutes'].map(function(item,i,arr){
             return '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:24px;height:24px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#4F46E5">'+(i+1)+'</div><div style="font-size:12px;color:#374151;line-height:1.4">'+item+'</div></div>';
           }).join('')+
         '</div>'+
@@ -4243,7 +4255,7 @@ function renderBusinessVerify(){
         '</div>'+
 
         '<div class="card" style="padding:12px 14px;margin-bottom:16px;background:#F0F9FF;border:1px solid #BAE6FD">'+
-          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Business documents are encrypted and reviewed securely. Nigh only retains verification status, not your documents.</div></div>'+
+          '<div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#0284C7;min-width:16px;margin-top:1px">'+ic('shield',14)+'</div><div style="font-size:11px;color:#0369A1;line-height:1.4">Anything you submit is encrypted and reviewed securely. Nigh only retains your verification status, not your documents.</div></div>'+
         '</div>'+
 
         '<button onclick="S.bizVerifyStep=\'biz-type\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Begin Verification</button>'+
@@ -4251,33 +4263,37 @@ function renderBusinessVerify(){
     '</div>';
   }
 
-  // ── Business Type ──
+  // ── Step 1: Host Type (branches the flow) ──
   if(step==='biz-type'){
     var bizTypes=[
-      {key:'llc',label:'LLC / Corporation',desc:'Registered business entity',icon:'billing'},
-      {key:'sole',label:'Sole Proprietorship',desc:'Individual-owned business',icon:'user'},
-      {key:'nonprofit',label:'Nonprofit / Organization',desc:'501(c)(3) or registered org',icon:'twoPeople'},
-      {key:'dba',label:'DBA / Trade Name',desc:'Doing Business As registration',icon:'file'}
+      {key:'business',label:'Business / Venue',desc:'Restaurant, store, brewery, venue',icon:'store'},
+      {key:'org',label:'Nonprofit / Organization',desc:'501(c)(3), club, association',icon:'twoPeople'},
+      {key:'creator',label:'Creator / Influencer',desc:'Public figure or individual brand',icon:'sparkles'},
+      {key:'group',label:'Group / Community',desc:'Band, frat, team, social group',icon:'users'}
     ];
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Account Type','Step 1 of 3',"S.bizVerifyStep='welcome';render()")+
+      hdr('Host Type','Step 1 of 3',"S.bizVerifyStep='welcome';render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
-        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">How is '+bName+' organized?</div><div style="font-size:12px;color:#6B7280">This helps us verify the right documents.</div></div>'+
+        pbar(1)+
+        '<div style="text-align:center;margin-bottom:20px"><div style="font-size:15px;font-weight:600;color:#111827;margin-bottom:4px">What kind of host is '+bName+'?</div><div style="font-size:12px;color:#6B7280">We\'ll ask for the right proof based on your answer.</div></div>'+
         bizTypes.map(function(t){
-          return '<button onclick="S.bizVerifyType=\''+t.key+'\';S.bizVerifyStep=\'biz-doc\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
+          var nextStep=(VTYPES[t.key].path==='docs')?'biz-doc':'biz-presence';
+          return '<button onclick="S.bizVerifyType=\''+t.key+'\';S.bizVerifyPath=\''+VTYPES[t.key].path+'\';S.bizVerifyStep=\''+nextStep+'\';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;margin-bottom:10px;text-align:left"><div style="width:44px;height:44px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(t.icon,22)+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">'+t.label+'</div><div style="font-size:11px;color:#6B7280;margin-top:2px">'+t.desc+'</div></div><div style="color:#9CA3AF">'+ic('chevRight',16)+'</div></button>';
         }).join('')+
+        '<div style="background:#F9FAFB;border-radius:10px;padding:10px 14px;margin-top:4px"><div style="display:flex;gap:8px;align-items:flex-start"><div style="color:#9CA3AF;min-width:13px;margin-top:1px">'+ic('info',13)+'</div><span style="font-size:11px;color:#9CA3AF;line-height:1.4">Businesses and nonprofits verify with registration documents. Creators and groups verify by confirming the public accounts they control — no business paperwork needed.</span></div></div>'+
       '</div>'+
     '</div>';
   }
 
-  // ── Document Upload ──
+  // ════ DOCS PATH (business / nonprofit) ════
+  // ── Step 2: Documents ──
   if(step==='biz-doc'){
-    var docLabel=S.bizVerifyType==='nonprofit'?'Nonprofit Registration / 501(c)(3) Letter':'Business License or Registration';
+    var isOrg=S.bizVerifyType==='org';
+    var docLabel=isOrg?'Registration or 501(c)(3) Letter':'Business License or Registration';
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Business Documents','Step 2 of 3',"S.bizVerifyStep='biz-type';S.bizVerifyDoc=false;render()")+
+      hdr(isOrg?'Organization Documents':'Business Documents','Step 2 of 3',"S.bizVerifyStep='biz-type';S.bizVerifyDoc=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#E5E7EB"></div></div>'+
+        pbar(2)+
 
         '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">'+docLabel+'</div>'+
         '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center">Upload a photo or PDF of your document</div>'+
@@ -4289,16 +4305,16 @@ function renderBusinessVerify(){
         '</div>'+
 
         '<div style="width:100%;max-width:300px;margin-bottom:16px">'+
-          '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">EIN / Tax ID Number</div>'+
+          '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">EIN / Tax ID Number'+(isOrg?' <span style="font-weight:400;color:#9CA3AF">(optional)</span>':'')+'</div>'+
           '<div style="display:flex;align-items:center;gap:8px">'+
-            '<input type="text" placeholder="XX-XXXXXXX" value="'+(S.bizVerifyEin||'')+'" oninput="S.bizVerifyEin=this.value;'+(S.bizVerifyDoc?'':'S.bizVerifyDoc=true;')+'" style="flex:1;padding:12px 14px;border:1px solid #D1D5DB;border-radius:10px;font-size:14px;color:#111827;outline:none" maxlength="10">'+
+            '<input type="text" placeholder="XX-XXXXXXX" value="'+(S.bizVerifyEin||'')+'" oninput="S.bizVerifyEin=this.value" style="flex:1;padding:12px 14px;border:1px solid #D1D5DB;border-radius:10px;font-size:14px;color:#111827;outline:none" maxlength="10">'+
           '</div>'+
-          '<div style="font-size:10px;color:#9CA3AF;margin-top:4px">Required for tax reporting on payouts</div>'+
+          '<div style="font-size:10px;color:#9CA3AF;margin-top:4px">'+(isOrg?'Add it if your organization has one — not required for small clubs.':'Required for tax reporting on payouts')+'</div>'+
         '</div>'+
 
         (S.bizVerifyDoc?
-          '<button onclick="S.bizVerifyStep=\'biz-domain\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Domain Verification '+ic('chevRight',16)+'</button>'+
-          '<button onclick="S.bizVerifyDoc=false;S.bizVerifyEin=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Re-upload Document</button>'
+          '<button onclick="S.bizVerifyStep=\'biz-domain\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Online Presence '+ic('chevRight',16)+'</button>'+
+          '<button onclick="S.bizVerifyDoc=false;S.bizVerifyEin=\'\';render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Re-upload Document</button>'
           :
           '<button onclick="S.bizVerifyDoc=true;render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">'+ic('file',18)+' Upload Document</button>'
         )+
@@ -4306,20 +4322,20 @@ function renderBusinessVerify(){
     '</div>';
   }
 
-  // ── Domain / Website Verification ──
+  // ── Step 3 (docs): Online Presence ──
   if(step==='biz-domain'){
     var website=a.website||'';
     var hasDomain=S.bizVerifyDomain;
     return '<div style="display:flex;flex-direction:column;height:100%">'+
-      hdr('Domain Verification','Step 3 of 3',"S.bizVerifyStep='biz-doc';S.bizVerifyDomain=false;render()")+
+      hdr('Online Presence','Step 3 of 3',"S.bizVerifyStep='biz-doc';S.bizVerifyDomain=false;render()")+
       '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
-        '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px"><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div><div style="flex:1;height:4px;border-radius:2px;background:#0E4EF5"></div></div>'+
+        pbar(3)+
 
         '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px">Verify Your Online Presence</div>'+
-        '<div style="font-size:12px;color:#6B7280;margin-bottom:20px;text-align:center">Confirm ownership of your business website or social media.</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:20px;text-align:center">Confirm ownership of your website or social media.</div>'+
 
         '<div style="width:100%;max-width:300px;margin-bottom:16px">'+
-          '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Business Website</div>'+
+          '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Website</div>'+
           '<div style="padding:12px 14px;border:1px solid #D1D5DB;border-radius:10px;font-size:13px;color:#374151;background:#F9FAFB">'+(website||'Not provided')+'</div>'+
         '</div>'+
 
@@ -4339,17 +4355,88 @@ function renderBusinessVerify(){
     '</div>';
   }
 
+  // ════ PRESENCE PATH (creator / group) ════
+  // ── Step 2: Connect public presence ──
+  if(step==='biz-presence'){
+    var isGroup=S.bizVerifyType==='group';
+    var connected=S.bizVerifyPresence;
+    var socRows=[
+      {label:'Instagram',val:a.socIG?'@'+a.socIG:'Tap to connect',icon:'sparkles'},
+      {label:'TikTok',val:a.socTiktok?'@'+a.socTiktok:'Tap to connect',icon:'megaphone'},
+      {label:'X',val:a.socX?'@'+a.socX:'Tap to connect',icon:'globe'},
+      {label:'Website',val:a.website||'Tap to connect',icon:'link'}
+    ];
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Connect Your Presence','Step 2 of 3',"S.bizVerifyStep='biz-type';S.bizVerifyPresence=false;render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        pbar(2)+
+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px;text-align:center">'+(isGroup?'Show '+bName+'\'s presence':'Confirm your public accounts')+'</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:16px;text-align:center;max-width:280px">Connect at least one official account. We\'ll confirm you control it to prevent impersonation.</div>'+
+
+        '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;width:100%;max-width:300px">'+
+          socRows.map(function(r,i,arr){
+            return '<button onclick="S.bizVerifyPresence=true;render()" style="width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border:none;background:'+(connected?'#F0FDF4':'#fff')+';cursor:pointer;text-align:left'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="width:36px;height:36px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5">'+ic(r.icon,18)+'</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:#111827">'+r.label+'</div><div style="font-size:10px;color:#6B7280">'+r.val+'</div></div>'+(connected?'<div style="color:#16A34A">'+ic('check',16)+'</div>':'<div style="color:#9CA3AF">'+ic('chevRight',16)+'</div>')+'</button>';
+          }).join('')+
+        '</div>'+
+
+        (connected?
+          '<button onclick="S.bizVerifyStep=\'biz-attest\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">Next: Authorization '+ic('chevRight',16)+'</button>'
+          :
+          '<div style="padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;max-width:300px"><div style="font-size:11px;color:#92400E;line-height:1.4">Connect at least one official account to continue. '+(isGroup?'Use the account your members and fans already know.':'Use the account your audience already follows.')+'</div></div>'
+        )+
+      '</div>'+
+    '</div>';
+  }
+
+  // ── Step 3 (presence): Authorization ──
+  if(step==='biz-attest'){
+    var isGroup2=S.bizVerifyType==='group';
+    var authed=S.bizVerifyAuth;
+    var attestLabel=isGroup2?'I\'m authorized to represent '+bName+' on Nigh.':'I confirm I am '+bName+', or its official representative.';
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Authorization','Step 3 of 3',"S.bizVerifyStep='biz-presence';render()")+
+      '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
+        pbar(3)+
+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:4px;text-align:center">'+(isGroup2?'Confirm your authorization':'Confirm it\'s really you')+'</div>'+
+        '<div style="font-size:12px;color:#6B7280;margin-bottom:20px;text-align:center;max-width:280px">'+(isGroup2?'Tell us how you\'re connected to this group, then confirm you can act for it.':'This protects you and your audience from impersonators.')+'</div>'+
+
+        (isGroup2?
+          '<div style="width:100%;max-width:300px;margin-bottom:16px">'+
+            '<div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Affiliation <span style="font-weight:400;color:#9CA3AF">(optional)</span></div>'+
+            '<input type="text" placeholder="School, league, or national org" value="'+(S.bizVerifyAffil||'')+'" oninput="S.bizVerifyAffil=this.value" style="width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #D1D5DB;border-radius:10px;font-size:14px;color:#111827;outline:none">'+
+            '<div style="font-size:10px;color:#9CA3AF;margin-top:4px">e.g. a fraternity\'s national chapter or a league the team plays in. Helps us confirm faster.</div>'+
+          '</div>'
+          :'')+
+
+        '<div onclick="S.bizVerifyAuth=!S.bizVerifyAuth;render()" style="width:100%;max-width:300px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:14px;border:1px solid '+(authed?'#0E4EF5':'#E5E7EB')+';border-radius:12px;background:'+(authed?'#F0F9FF':'#fff')+';margin-bottom:16px">'+
+          '<div style="width:20px;height:20px;border-radius:5px;border:1.5px solid '+(authed?'#0E4EF5':'#D1D5DB')+';background:'+(authed?'#0E4EF5':'#fff')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(authed?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>'+
+          '<div style="font-size:12px;color:#374151;line-height:1.4">'+attestLabel+' Submitting false information may result in removal.</div>'+
+        '</div>'+
+
+        (authed?
+          '<button onclick="S.bizVerifyStep=\'biz-processing\';render();setTimeout(function(){S.bizVerifyResult=\'success\';S.bizVerifyStep=\'biz-result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#16A34A;color:#fff;font-size:14px;font-weight:700;cursor:pointer">Submit for Verification</button>'
+          :
+          '<div style="padding:12px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;max-width:300px"><div style="font-size:11px;color:#92400E;line-height:1.4">Check the box above to confirm you\'re authorized, then submit.</div></div>'
+        )+
+      '</div>'+
+    '</div>';
+  }
+
   // ── Processing ──
   if(step==='biz-processing'){
+    var procSteps=(vpath==='presence')?['Account ownership','Identity match','Authorization']:['Document validation','EIN / Tax ID check','Online presence'];
+    var procSub=(vpath==='presence')?'Confirming your accounts and authorization.':'Reviewing your documents and online presence.';
     return '<div style="display:flex;flex-direction:column;height:100%">'+
       hdr('Verifying','Please wait',null,null,true)+
       '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px">'+
         '<style>@keyframes bizSpin{to{transform:rotate(360deg)}}</style>'+
         '<div style="width:72px;height:72px;border-radius:50%;border:4px solid #E5E7EB;border-top-color:#2563EB;animation:bizSpin 1s linear infinite;margin-bottom:24px"></div>'+
         '<div style="font-size:17px;font-weight:700;color:#111827;margin-bottom:6px">Verifying '+bName+'</div>'+
-        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">Reviewing your business documents and online presence.</div>'+
+        '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:260px">'+procSub+'</div>'+
         '<div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px">'+
-          ['Document validation','EIN / Tax ID check','Domain ownership'].map(function(s,i){
+          procSteps.map(function(s,i){
             return '<div style="display:flex;gap:10px;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:'+(i<2?'#16A34A':'#E5E7EB')+';display:flex;align-items:center;justify-content:center">'+(i<2?'<div style="color:#fff">'+ic('check',12)+'</div>':'<div style="width:8px;height:8px;border-radius:50%;border:2px solid #9CA3AF;border-top-color:transparent;animation:bizSpin 1s linear infinite"></div>')+'</div><span style="font-size:12px;color:'+(i<2?'#374151':'#9CA3AF')+'">'+s+'</span></div>';
           }).join('')+
         '</div>'+
@@ -4360,6 +4447,7 @@ function renderBusinessVerify(){
   // ── Result ──
   if(step==='biz-result'){
     var res=S.bizVerifyResult||'success';
+    var confirmPhrase=vt?vt.confirm:'verified';
 
     if(res==='success'){
       return '<div style="display:flex;flex-direction:column;height:100%">'+
@@ -4367,7 +4455,7 @@ function renderBusinessVerify(){
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#DCFCE7,#BBF7D0);display:flex;align-items:center;justify-content:center;margin-bottom:20px"><div style="color:#16A34A">'+ic('check',44)+'</div></div>'+
           '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">'+bName+' is Verified!</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your host account has been confirmed as a legitimate organization. You\'ve unlocked enhanced trust features.</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your host account has been confirmed as '+confirmPhrase+'. You\'ve unlocked enhanced trust features.</div>'+
           '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
             '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Available</div></div>'+
             ['Verified badge on profile','Higher payout limits','Priority in Discover search','Enhanced guest trust signals','Custom branding options'].map(function(f,i,arr){
@@ -4381,14 +4469,15 @@ function renderBusinessVerify(){
     }
 
     if(res==='failure'){
+      var failReasons=(vpath==='presence')?['Account ownership could not be confirmed','The connected profile doesn\'t match','Insufficient public presence','Authorization could not be verified']:['Document is expired or illegible','EIN doesn\'t match the name on file','Online presence could not be confirmed','Registration not found in public records'];
       return '<div style="display:flex;flex-direction:column;height:100%">'+
         hdr('Verification Failed','',backToSub,null,true)+
         '<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center">'+
           '<div style="margin-top:24px;width:88px;height:88px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:20px"><svg width="44" height="44" viewBox="0 0 24 24" stroke="#DC2626" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>'+
           '<div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:6px">Verification Failed</div>'+
-          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn\'t verify '+bName+'. The documents provided may be incomplete or unreadable.</div>'+
+          '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">We couldn\'t verify '+bName+'. The information provided may be incomplete or unreadable.</div>'+
           '<div class="card" style="padding:14px;margin-bottom:16px;width:100%"><div style="font-size:12px;font-weight:600;color:#111827;margin-bottom:8px">Common reasons:</div>'+
-            ['Document is expired or illegible','EIN doesn\'t match the organization name','Domain ownership could not be confirmed','Registration not found in state records'].map(function(r){
+            failReasons.map(function(r){
               return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px"><div style="width:4px;height:4px;border-radius:50%;background:#DC2626;min-width:4px"></div><span style="font-size:11px;color:#6B7280">'+r+'</span></div>';
             }).join('')+
           '</div>'+
