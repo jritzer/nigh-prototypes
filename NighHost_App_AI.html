@@ -4544,8 +4544,8 @@ function renderVerificationPage(){
     acctRow={state:'managed',icon:'store',title:'Host account',sub:a.name+' is managed by '+(a.parentOrg||'your organization')+' — verified at the organization level'};
   }else if(pers){
     acctRow=idV
-      ?{state:'done',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify; your identity above covers it'}
-      :{state:'locked',icon:'store',title:'Host account',sub:'Personal account — your identity above is its verification, no separate step',note:'Unlocks after you verify your identity'};
+      ?{state:'done',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify'}
+      :{state:'locked',icon:'store',title:'Host account',sub:'Personal account — no separate entity to verify',note:'Unlocks after you verify your identity'};
   }else if(bizV){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' is confirmed as an authentic host account'};
   }else if(stripeOk){
