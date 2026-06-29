@@ -4859,7 +4859,7 @@ function renderVerify(){
               {icon:'globe',label:'Public Drops',desc:'Your drops can now appear on Discover for anyone to find'},
               {icon:'dollar',label:'Paid Drops',desc:'Set ticket prices and collect payments from guests'},
               {icon:'send',label:'Payouts',desc:'Connect your bank account to receive earnings'},
-              {icon:'shield',label:'Verified Badge',desc:'A verified badge now appears on your host profile'},
+              {icon:'shield',label:'Identity badge',desc:'Your identity badge shows you\'re a verified, real person'},
               {icon:'bell',label:'Heads Up',desc:'Send drop announcements directly to your followers'}
             ].map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:32px;height:32px;border-radius:8px;background:#DCFCE7;display:flex;align-items:center;justify-content:center"><div style="color:#16A34A">'+ic(item.icon,16)+'</div></div><div><div style="font-size:12px;font-weight:600;color:#111827">'+item.label+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:1px">'+item.desc+'</div></div></div>').join('')}
           </div>

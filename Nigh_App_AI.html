@@ -209,7 +209,7 @@ youtube:'<rect x="2" y="4" width="20" height="16" rx="4"/><polygon points="10 8 
 facebook:'<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
 };
 function ic(n,s=20,c='currentColor',vb='0 0 24 24'){return`<svg width="${s}" height="${s}" viewBox="${vb}" stroke="${c}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
-// Verification badges: blue circle checkmark = person/non-entity verified; blue shield checkmark = Verified Business (entity)
+// Verification badges: circle checkmark = Identity badge (a verified real person); shield checkmark = Verified badge (an authentic host account/entity)
 function _vSvg(s){return'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#0E4EF5"/><path d="M8 12.5l2.5 2.5 5.5-5.5" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
 function _vbSvg(s){return'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v5c0 5.25 3.4 10.15 8 11.25C16.6 21.15 20 16.25 20 11V6l-8-4z" fill="#0E4EF5"/><path d="M8.5 12.5l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
 function _isVerified(nameOrUname){if(!nameOrUname)return false;const f=friendsList.find(x=>x.name===nameOrUname||x.uname===nameOrUname||x.av===nameOrUname);return !!(f&&f.verified);}
@@ -4274,7 +4274,7 @@ function renderUserVerify(){
         '</div>'+
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What You Get</div></div>'+
-          ['Verified badge on profile','Badge visible to hosts','Higher trust across Nigh'].map(function(item,i,arr){
+          ['Identity badge on your profile','Badge visible to hosts','Higher trust across Nigh'].map(function(item,i,arr){
             return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
           }).join('')+
         '</div>'+
@@ -4449,7 +4449,7 @@ function renderUserVerify(){
           '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:290px;margin-bottom:4px">You\'ve been confirmed as a real person. This verification applies to every account you manage on Nigh.</div>'+
           '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
             '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Active</div></div>'+
-            ['Verified badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Verified checkmark across all Nigh apps'].map(function(f,i,arr){
+            ['Identity badge on your profile','Badge visible to hosts when you RSVP','Higher trust score for drop reservations','Identity checkmark across all Nigh apps'].map(function(f,i,arr){
               return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+f+'</span></div>';
             }).join('')+
           '</div>'+
