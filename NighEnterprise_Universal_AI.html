@@ -45,6 +45,12 @@ function gpwResolve(){const p=gpWeb.find(x=>x.id===S.gwActId);if(p)p.status=(S.g
 let accountInvitesWeb=[
   {key:'maravoss',invitedBy:'Mara Voss',role:'Manager',since:'Jun 2026'}
 ];
+// Custom host roles plug in here (same shape as a built-in ROLES entry, with a web `perms` map).
+// They flow automatically into the access matrix, roleMap, and the invite/edit role picker. Example:
+//   customRoles.push({id:'finance',name:'Finance',short:'Finance',color:'#0f766e',bg:'#f0fdfa',
+//     desc:'Revenue, refunds, and payout reports. No drop or guest management.',scope:'All locations',scopeFixed:true,
+//     perms:{payouts_view:true,billing:'view',drops_create:false,guests_view:false},locked:[]});
+let customRoles=[];
 function acctInvites(){return accountInvitesWeb.filter(i=>CONFIGS[i.key]&&!(OWNER_ORGS[CURRENT_USER]||[]).includes(i.key));}
 function acceptOrgInvite(key){if(!(OWNER_ORGS[CURRENT_USER]||[]).includes(key))OWNER_ORGS[CURRENT_USER].push(key);accountInvitesWeb=accountInvitesWeb.filter(i=>i.key!==key);S.acctInviteModal=false;switchConfig(key);}
 function declineOrgInvite(key){accountInvitesWeb=accountInvitesWeb.filter(i=>i.key!==key);if(!acctInvites().length)S.acctInviteModal=false;render();}
@@ -5533,6 +5539,7 @@ function rUsers(){
      },
      locked:['drops_create','drops_approve','drops_delete','collections','checkin','guests_view','guests_contact','guests_edit','guests_export','analytics_view','analytics_export','activity','locations','qr','partners','team_view','team_invite','team_roles','team_remove','payouts_view','payouts_xfer','billing'],
     },
+    ...customRoles,
     ...(hasPartners?[{
      id:'partner',
      name:'Ext. Partner', short:'Partner', color:'#b45309', bg:'#fffbeb',
@@ -8126,10 +8133,11 @@ function inviteModal(){
   const inviteLocs=isBrand?(c.savedVenues||[]):c.locations;
   const step=S.inviteStep||1;
   const ALL_ROLES=[
-    {id:'admin',   name:'Admin',          color:'#1d4ed8',bg:'#eff6ff', desc:'Full access to all features including billing. The account owner is a protected Admin whose access cannot be changed.'},
+    {id:'admin',   name:'Account Admin',  color:'#1d4ed8',bg:'#eff6ff', desc:'Full access to all features including billing. The account owner is a protected Account Admin whose access cannot be changed.'},
     {id:'manager', name:'Manager',        color:'#0369a1',bg:'#f0f9ff', desc:'Manages drops and guests within assigned location(s). Can invite and assign Team Members.'},
     {id:'member',  name:'Team Member',    color:'#475569',bg:'#f8fafc', desc:'Day-to-day operations — check-in, create drops for approval. Admins can expand access.'},
     {id:'checkin', name:'Check-in Only',  color:'#64748b',bg:'#f1f5f9', desc:'Scanner access only. Can view the active guest list and check in attendees. Nothing else.'},
+    ...customRoles.map(r=>({id:r.id,name:r.name||r.short||r.id,color:r.color||'#475569',bg:r.bg||'#f8fafc',desc:r.desc||''})),
   ];
   const ROLES=mode==='single'?ALL_ROLES.filter(r=>['manager','member','checkin'].includes(r.id)):ALL_ROLES;
   const phone=S.inviteForm.phone||'';

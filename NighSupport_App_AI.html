@@ -529,6 +529,10 @@ const nighTeam=[
   {id:'NT004',name:'Jordan Lee',role:'Support Specialist',department:'Operations',email:'jordan@nigh.com',phone:'+1 720 555 0104',status:'Active',access:'Team Member',joined:'Jan 10, 2026',lastLogin:'Today · 10:02 AM',avatar:'JL'},
   {id:'NT005',name:'Ryan Torres',role:'Growth & Partnerships',department:'Growth',email:'ryan@nigh.com',phone:'+1 720 555 0105',status:'Active',access:'Team Member',joined:'Feb 1, 2026',lastLogin:'Today · 7:55 AM',avatar:'RT'}
 ];
+// Canonical host account roles (match Nigh Host mobile + web). Custom host roles plug in via customHostRoles.
+const HOST_ROLES=['Account Owner','Account Admin','Manager','Team Member','Check-In Only'];
+let customHostRoles=[];
+function assignableHostRoles(){return HOST_ROLES.concat(customHostRoles);}
 const orgTeams={
   'O001':[
     {id:'TM001',name:'Marco Reyes',email:'marco@centro.com',phone:'(720) 555-0101',access:'Account Owner',status:'Active',since:'Jan 15, 2026',left:null},
@@ -3068,7 +3072,7 @@ function rOrgDetail(id){
   const hasCollections=featureFlags.find(f=>f.name==='Collections'&&(f.orgs.includes(o.id)||f.global));
   const TABS=o.status==='Prospect'?[['profile','Profile'],['crm','CRM'],['activity','Activity']]:  [['account','Overview'],['profile','Profile'],['billing','Subscription'],['drops','Drops'],...(hasCollections?[['collections','Collections']]:[]),['customers','Guests'],['followers','Followers'],['orgOrders','Orders'],['payouts','Payouts'],['analytics','Analytics'],['team','Team'],['partners','Partners'],['venues','Locations'],['credits','Credits'],['crm','CRM'],['comms','Messages'],['activity','Activity'],['config','Settings']];
   const secHdr=(t)=>`<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">${t}</div>`;
-  const accessColor=(a)=>a==='Account Owner'?{bg:'#FEF3C7',fg:'#92400E'}:a==='Admin'?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Check-In Only'?{bg:'#F1F5F9',fg:'#64748b'}:{bg:'#F3F4F6',fg:'#4B5563'};
+  const accessColor=(a)=>a==='Account Owner'?{bg:'#FEF3C7',fg:'#92400E'}:(a==='Admin'||a==='Account Admin')?{bg:'#EDE9FE',fg:'#5B21B6'}:a==='Manager'?{bg:'#DBEAFE',fg:'#1E40AF'}:a==='Check-In Only'?{bg:'#F1F5F9',fg:'#64748b'}:{bg:'#F3F4F6',fg:'#4B5563'};
   return `
 <div style="margin-bottom:16px">
   <button class="btn btn-ghost btn-sm" onclick="go(o.status==='Prospect'?'pipeline':'orgs')">${svgI('arrowLeft',12)} ${o.status==='Prospect'?'Back to Pipeline':'Back to Host Accounts'}</button>
@@ -3633,7 +3637,7 @@ ${(()=>{
     <td>${m.status==='Removed'
       ?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${accessColor(m.access).bg};color:${accessColor(m.access).fg}">${m.access}</span>`
       :`<select class="select" style="font-size:11px;padding:2px 6px;height:26px;min-width:180px">
-          ${['Account Owner','Admin','Manager','Team Member','Check-In Only'].map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
+          ${assignableHostRoles().map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
         </select>`}
     </td>
     <td>${bg(m.status==='Active'?'bg-green':m.status==='Suspended'?'bg-red':'bg-gray','',m.status)}</td>
