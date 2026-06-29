@@ -229,7 +229,7 @@ function openMaps(address){
 }
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
-// Every share link credits the sharer — handle is the referrer. Canonical: nigh.com/follow/<handle> · nigh.com/drop/<handle>/<dropID> · nigh.com/invite/<handle> · nigh.com/group/<handle>/<slug>. 6-char code = unique drop ID.
+// Invite-only beta: a link is valid only with a recognized route word + a resolvable source (person/host/partner/drop); every share link credits the sharer (handle = referrer). Bare/unrecognized links (nigh.com/<handle>, nigh.com/<dropID>) are NOT valid and route to request-access. Canonical: nigh.com/follow/<handle> · nigh.com/drop/<handle>/<dropID> · nigh.com/invite/<handle> · nigh.com/group/<handle>/<slug>. 6-char code = unique drop ID.
 function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/drop/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
 function inviteUrl(){return 'nigh.com/invite/'+currentUser.uname.replace(/^@/,'');}
 function groupShareUrl(g){return 'nigh.com/group/'+currentUser.uname.replace(/^@/,'')+'/'+(((g&&g.inviteLink)||'').replace('nigh.com/group/',''));}
