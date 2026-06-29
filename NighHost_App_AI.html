@@ -4539,9 +4539,9 @@ function renderVerificationPage(){
   }else if(stripeOk){
     acctRow={state:'done',icon:'store',title:'Host account',sub:a.name+' confirmed through Stripe — no separate upload needed'};
   }else if(!idV){
-    acctRow={state:'locked',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',note:'Unlocks after you verify your identity'};
+    acctRow={state:'locked',icon:'store',title:'Verify host account',sub:'Confirm your host account is authentic to unlock public drops.',note:'Unlocks after you verify your identity'};
   }else{
-    acctRow={state:'action',icon:'store',title:'Host account',sub:'Confirm your host account is authentic to unlock public drops.',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
+    acctRow={state:'action',icon:'store',title:'Verify host account',sub:'Confirm your host account is authentic to unlock public drops.',act:{label:'Verify host account',go:"S.bizVerifyStep='welcome';S.menuSub='bizverify';render()"}};
   }
 
   // ── Row 3: Payments (Stripe — only to charge money; locked until identity is verified) ──
