@@ -4572,19 +4572,8 @@ function renderVerificationPage(){
     '</div>';
   };
 
-  const acctDone=(acctRow.state==='done'||acctRow.state==='managed');
-
-  // Bottom note reflects what's actually verified / set up
-  let footMsg;
-  if(acctDone&&stripeOk){
-    footMsg="You're all set — verified and ready for payouts. Run any drop, free or paid.";
-  }else if(acctDone){
-    footMsg="You're verified. Activate payments whenever you want to charge for a drop.";
-  }else if(youDone){
-    footMsg="Your identity's confirmed. Verify your host account to post public drops, and activate payments to charge — both are optional until you need them.";
-  }else{
-    footMsg="You can run free, private drops right now with none of this. Each step is requested only when you go public or charge money.";
-  }
+  // Bottom note: the gating rules (current status is shown per-row above)
+  const footMsg="You can do free and non-public drops without being verified. Verification is required for public drops, and payment setup is required to charge for drops.";
 
   return `<div style="display:flex;flex-direction:column;height:100%">
     ${hdr('Verification','Unlock access as you go',backToHub)}
