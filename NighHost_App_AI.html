@@ -4980,21 +4980,6 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Verification (hidden once verified) -->
-    ${!pVerified?`<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Verification</div>
-    <div class="card" style="margin-bottom:16px;overflow:hidden">
-      <div style="padding:14px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <div style="width:32px;height:32px;border-radius:50%;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F59E0B">${ic('personLock',16)}</div>
-          <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:#111827">Not Yet Verified</div>
-            <div style="font-size:11px;color:#6B7280">Verify to unlock public & paid drops</div>
-          </div>
-        </div>
-        <button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="width:100%;padding:10px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:12px;font-weight:600;cursor:pointer">Get Verified</button>
-        <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:6px">Free · Takes about a minute</div>
-      </div>
-    </div>`:``}
 
     <!-- What's Included -->
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">What's Included</div>
@@ -5065,28 +5050,6 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Verification Status (human verification hidden once verified) -->
-    ${!isVerifiedAcct||isEntity()?`<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Verification Status</div>`:``}
-    ${!isVerifiedAcct?`<div class="card" style="margin-bottom:8px;overflow:hidden">
-      <div style="padding:14px;display:flex;align-items:center;gap:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F59E0B">${ic('personLock',16)}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
-          <div style="font-size:11px;color:#6B7280">Verify to manage this account</div>
-        </div>
-        <button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>
-      </div>
-    </div>`:``}
-    ${isEntity()?`<div class="card" style="margin-bottom:16px;overflow:hidden">
-      <div style="padding:14px;display:flex;align-items:center;gap:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Entity Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+a.parentOrg:'Managed by organization admin'}</div>
-        </div>
-        ${isBizVerified?'<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>':'<span style="font-size:10px;font-weight:500;color:#9CA3AF;background:#F3F4F6;padding:2px 8px;border-radius:10px">Pending</span>'}
-      </div>
-    </div>`:''}
 
     <!-- Transaction Fees -->
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Transaction Fees</div>
@@ -5137,33 +5100,6 @@ function renderSubscription(){
       </div>
     </div>
 
-    <!-- Verification Status (human verification hidden once verified) -->
-    ${!isVerifiedAcct||(isEntity()&&!isBizVerified)?`<div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Verification Status</div>`:``}
-
-    ${!isVerifiedAcct?`<!-- User Identity -->
-    <div class="card" style="margin-bottom:8px;overflow:hidden">
-      <div style="padding:14px;display:flex;align-items:center;gap:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:#FEF3C7;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F59E0B">${ic('personLock',16)}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Human Verification</div>
-          <div style="font-size:11px;color:#6B7280">Verify to unlock paid drops</div>
-        </div>
-        <button onclick="S.verifyStep='welcome';S.menuSub='verify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:#0E4EF5;color:#fff;font-size:11px;font-weight:600;cursor:pointer">Verify</button>
-      </div>
-    </div>`:``}
-
-    <!-- Entity Verification (entity accounts only) -->
-    ${isEntity()?`<div class="card" style="margin-bottom:16px;overflow:hidden">
-      <div style="padding:14px;display:flex;align-items:center;gap:10px">
-        <div style="width:32px;height:32px;border-radius:50%;background:${isBizVerified?'#DCFCE7':'#F3F4F6'};display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${isBizVerified?'#16A34A':'#9CA3AF'}">${isBizVerified?ic('check',16):ic('globe',16)}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:#111827">Entity Verification</div>
-          <div style="font-size:11px;color:#6B7280">${isBizVerified?'Entity confirmed by '+(a.parentOrg||a.brandName||a.name):'Verify your host account for the Verified badge & higher limits'}</div>
-        </div>
-        ${isBizVerified?`<span style="font-size:10px;font-weight:600;color:#16A34A;background:#F0FDF4;padding:2px 8px;border-radius:10px;border:1px solid #BBF7D0">Verified</span>`:`<button onclick="S.bizVerifyStep='welcome';S.menuSub='bizverify';render()" style="padding:6px 14px;border-radius:8px;border:none;background:${isVerifiedAcct?'#0E4EF5':'#E5E7EB'};color:${isVerifiedAcct?'#fff':'#9CA3AF'};font-size:11px;font-weight:600;cursor:pointer;${isVerifiedAcct?'':'pointer-events:none'}" ${isVerifiedAcct?'':'title="Verify your identity first"'}>Verify Business</button>`}
-      </div>
-      ${!isBizVerified&&!isVerifiedAcct?'<div style="padding:0 14px 10px"><div style="font-size:10px;color:#D97706;display:flex;align-items:center;gap:4px">'+ic('info',10)+' Get verified first to unlock business verification</div></div>':''}
-    </div>`:''}
 
     <!-- Transaction Fees -->
     <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Transaction Fees</div>
@@ -5185,7 +5121,6 @@ function renderSubscription(){
           <div style="font-size:11px;color:#6B7280;line-height:1.5">
             ${currentPlan==='Starter'||currentPlan==='Verified'?'<strong style="color:#374151">Example:</strong> $25 ticket → You receive $22.75 after 5% + $1.00 fee':''}
             ${currentPlan==='Pro'?'<strong style="color:#374151">Example:</strong> $25 ticket → You receive $23.38 after 3.5% + $0.75 fee':''}
-            ${currentPlan==='Starter'?'Get verified to accept paid drops.':''}
             ${currentPlan==='Enterprise'?'Custom transaction economics per your agreement.':''}
           </div>
         </div>
