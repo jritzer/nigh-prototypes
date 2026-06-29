@@ -339,6 +339,8 @@ const accts=[
   {name:'Sarah Chen',short:'Sarah',brandName:'',hostType:'personal',businessVerified:false,unverified:true,role:'Account Owner',userDisplayName:'Sarah Chen',cat:'Personal',subCat:'',addr:'742 Arapahoe Ave',city:'Boulder',state:'CO',zip:'80302',handle:'sarahc',phone:'(303) 555-0218',email:'',website:'',description:'Yoga teacher and plant-based cook. Hosting community gatherings and wellness experiences.',tags:[],operationMode:'Flexible',plan:'Starter',privateAcct:true,maxPartners:3,parentOrg:'Sarah Chen',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',stripeConnected:false}
 ];
 let acctIdx=0;const acct=()=>accts[acctIdx];
+// Niya (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Niya surface (icon, tab, bar). Lets Niya roll out to a subset of accounts before going generally available.
+function niyaOn(){return acct().niyaEnabled!==false;}
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
 const isEntity=()=>acct().entity===true; // is this a business/org that needs separate entity verification?
@@ -1365,7 +1367,7 @@ function renderTB(){
   document.getElementById('tb').innerHTML=
     mkTab('home','home',30)+
     mkTab('create','plus')+
-    niyaTab+
+    (niyaOn()?niyaTab:'')+
     mkTab('inbox','msgBubble',29,'-1 0 26 24')+
     mkTab('menu','menu2');
 }
@@ -6349,6 +6351,13 @@ function renderSettings(){
     <button onclick="S.menuSub='notifications';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('bell',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">${t('settings.notifications')}</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
     <button onclick="S.menuSub='feedback';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('msgCircle',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Send Feedback</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
     <button onclick="S.menuSub='settingsLegal';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="color:#6B7280">${ic('file',16)}</div><div style="flex:1;font-size:13px;font-weight:500;color:#374151">Legal</div><span style="color:#D1D5DB">${ic('right',14)}</span></button>
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px">
+      <div style="color:#6B7280">${ic('sparkles',16)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:#374151">Niya assistant</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Show the Niya AI assistant on this account</div></div>
+      <div onclick="acct().niyaEnabled=!niyaOn();render()" style="width:44px;height:26px;border-radius:13px;background:${niyaOn()?'#0E4EF5':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0">
+        <div style="position:absolute;top:3px;${niyaOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
+      </div>
+    </div>
     <div style="text-align:center;margin-top:14px"><button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.otpError=false;S.otpResent=false;S.scr='login';S.menuSub=null;render()" style="padding:12px 28px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444;cursor:pointer">${t('account.logout')}</button></div>
     <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Host v1.0</div>
   </div>`;
@@ -7754,6 +7763,7 @@ function renderNiyaHeadsUp(){
 function renderNiya(){
   const mode=S.niyaMode;
   if(mode==='onboarding'&&S.niyaOnboarding) return renderNiyaOnboarding();
+  if(!niyaOn()){S.scr='home';return renderHome();} // Niya disabled for this account
   if(mode==='headsup'&&canFull('headsup')) return renderNiyaHeadsUp();
   if(mode==='create') return renderNiyaCreate();
   if(mode==='manage') return renderNiyaManage();
@@ -8026,7 +8036,7 @@ function renderFAB(){
 function renderNiyaBar(){
   const bar=document.getElementById('niya-bar');
   if(!bar)return;
-  const hide=!S.showNiyaBar||S.scr==='niya'||S.scr==='create'||S.scr==='login';
+  const hide=!S.showNiyaBar||!niyaOn()||S.scr==='niya'||S.scr==='create'||S.scr==='login';
   if(hide){bar.className='hidden';bar.innerHTML='';return;}
   bar.className='';
   const go=()=>{S.niyaFabContext=S.scr;S.scr='niya';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.showNiyaBar=false;render();};

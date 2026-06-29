@@ -4119,6 +4119,15 @@ ${(()=>{
     </div>
     <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Guest Passes are complimentary tickets a host issues outside public booking. They don&#x2019;t count against a drop&#x2019;s capacity. Support can override the per-drop cap from a drop&#x2019;s detail view.</div>
 
+    ${secHdr('Features')}
+    <div class="field"><label class="label">Niya AI Assistant</label>
+      <select class="select" onchange="(function(){var x=orgs.find(g=>g.id==='${o.id}');if(x)x.niyaEnabled=(this.value==='on');}).call(this)">
+        <option value="on" ${o.niyaEnabled!==false?'selected':''}>Enabled</option>
+        <option value="off" ${o.niyaEnabled===false?'selected':''}>Disabled</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Controls whether the Niya in-app AI assistant (icon, tab, and prompts) appears for this host account. Disable to hold Niya back from this host while it rolls out to a limited group before general availability.</div>
+
     ${secHdr('Behavior')}
     <div class="field"><label class="label">No-Show Policy</label>
       <select class="select">${['Standard — capture after 15 min','Strict — capture immediately','Lenient — no capture, warning only'].map((p,i)=>`<option value="${['standard','strict','lenient'][i]}" ${o.noShowPolicy===['standard','strict','lenient'][i]?'selected':''}>${p}</option>`).join('')}</select>
