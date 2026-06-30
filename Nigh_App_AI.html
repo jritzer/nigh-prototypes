@@ -410,9 +410,15 @@ const myTickets=[
   {id:'TK001',dropId:'D001',title:'Nike Air Max Day Access',
    host:'Nike Boulder',hostHandle:'@nikeboulder',
    date:'Apr 20, 2026',time:'2:00 PM',addr:'1800 29th St, Boulder, CO',
-   price:0,qty:1,extras:[{name:'Jordan Lee',uname:'@jordanl'}],
+   price:0,qty:4,extras:[{name:'Jordan Lee',uname:'@jordanl'}],
    status:'Active',orderId:'ORD-4821',orderDate:'Apr 14, 2026 · 9:32 AM',
-   terms:'No refunds. Must arrive within 15 min of start. One entry per QR.'},
+   terms:'No refunds. Must arrive within 15 min of start. One entry per QR.',
+   subTickets:[
+     {idx:1,status:'active'},
+     {idx:2,status:'active'},
+     {idx:3,status:'active'},
+     {idx:4,status:'active'},
+   ]},
   {id:'TK002',dropId:'D005',title:'Friday Night Jazz & Tapas',
    host:'Centro Mexican Kitchen',hostHandle:'@centroboulder',
    date:'Feb 28, 2026',time:'7:00 PM',addr:'950 Pearl St, Boulder, CO',
@@ -2458,72 +2464,231 @@ function renderTicketEmptyState(){
   </div>`;
 }
 
-function renderTicketCollection(){
-  const active=myTickets.filter(t=>t.status==='Active');
-  const past=myTickets.filter(t=>t.status==='Completed'||t.status==='Ended');
+function updateTicketScrollbar(){
+  var sc=document.getElementById('scr');
+  var bar=document.getElementById('ticketScroll');
+  var thumb=document.getElementById('ticketScrollThumb');
+  if(!sc||!bar||!thumb)return;
+  var sh=sc.scrollHeight, ch=sc.clientHeight;
+  if(sh<=ch+4){bar.style.display='none';return;}
+  bar.style.display='block';
+  var trackH=bar.clientHeight||1;
+  var th=Math.max(26, trackH*ch/sh);
+  var maxTop=Math.max(0,trackH-th);
+  var top=maxTop*(sc.scrollTop/(sh-ch));
+  thumb.style.height=th+'px';
+  thumb.style.top=top+'px';
+}
+function fullTicketCard(tk){
+  if(!S.checkedIn)S.checkedIn={};
+  if(!S.collSubIdx)S.collSubIdx={};
+  if(!S.collFlip)S.collFlip={};
+  const flipped=S.collFlip[tk.id]||false;
+  const isPast=(tk.status==='Completed'||tk.status==='Ended');
+  const subs=(tk.subTickets&&tk.subTickets.length)?tk.subTickets:Array.from({length:(tk.qty||1)},(_,i)=>({idx:i+1,status:'active'}));
+  const subCount=subs.length;
+  let subIdx=S.collSubIdx[tk.id]||0; if(subIdx>=subCount)subIdx=0;
+  const baseSub=subs[subIdx]||{};
+  const ov=(S.subTicketOverrides||{})[tk.id+'_'+subIdx]||{};
+  const subStatus=ov.status||baseSub.status||'active';
+  const subTransferTo=ov.transferTo||baseSub.transferTo||null;
+  const subInvitee=ov.invitee||baseSub.invitee||null;
+  const subInvitedAt=ov.invitedAt||baseSub.invitedAt||'';
+  const isOwner=subIdx===0;
+  const checkedIn=!isPast&&isOwner&&(S.checkedIn[tk.id]||false);
 
-  const activeCard=(tk)=>{
-    const siDrop=feedDrops.find(f=>f.id===tk.dropId)||{};
-    const si=tk.startsIn||siDrop.startsIn||'';
-    const priceLabel=tk.price===0?'Free':'$'+(tk.price*(tk.qty||1)).toFixed(0);
-    const priceColor='#4ADE80';
-    return`
-    <div onclick="go('ticketView',{ticketId:'${tk.id}',confirmNew:false})" style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:20px;padding:2px;margin-bottom:12px;box-shadow:0 0 30px rgba(98,38,233,0.3),0 0 60px rgba(14,78,245,0.1)">
-      <div style="background:#0B0B1A;border-radius:18px;padding:16px 16px 14px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(65,239,249,0.07),transparent)"></div>
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:14px;font-weight:700;color:#fff;flex:1;margin-right:10px;line-height:1.3">${tk.title}</div>
-          <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(65,239,249,0.15);color:#41EFF9;flex-shrink:0;white-space:nowrap">Active</span>
+  const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
+  const fullDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const rawDate=tk.date.replace(/,\s*\d{4}/,'').trim();
+  const dateParts=rawDate.split(' ');
+  const fullMonth=monthFull[dateParts[0]]||dateParts[0];
+  const dateObj=new Date(rawDate+' 2026');
+  const dayFullName=isNaN(dateObj.getDay())?'':fullDays[dateObj.getDay()];
+  const _tnow=new Date();
+  const _tmo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _todayStr=_tmo[_tnow.getMonth()]+' '+_tnow.getDate();
+  const _ttom=new Date(_tnow);_ttom.setDate(_ttom.getDate()+1);
+  const _tomStr=_tmo[_ttom.getMonth()]+' '+_ttom.getDate();
+  const tkDateRaw=dateParts[0]+' '+dateParts[1];
+  const dayPrefix=tkDateRaw===_todayStr?'Today':tkDateRaw===_tomStr?'Tomorrow':dayFullName;
+  const dayDateStr=dayPrefix+', '+fullMonth+' '+dateParts[1];
+  const isWindow=tk.timing==='Arrival Window';
+  const timeDisplay=isWindow&&tk.endTime?tk.time+' – '+tk.endTime:tk.time;
+  const hostInitials=tk.host.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const siDrop=feedDrops.find(f=>f.id===tk.dropId)||{};
+  const si=isPast?'':(tk.startsIn||siDrop.startsIn||'');
+  const tkPartners=tk.partners&&tk.partners.length?tk.partners:(siDrop.partners||[]);
+  const siHasParts=si.includes('h');
+  const siHrs=siHasParts?si.split('h')[0].trim():'';
+  const siMins=siHasParts?si.split('h')[1].replace('m','').trim():si.replace('m','').trim();
+  const timerHtml=siHrs
+    ?`<span style="color:#EC1977;font-weight:700">${siHrs}</span><span style="color:rgba(255,255,255,0.65);font-size:10px">h</span> <span style="color:#EC1977;font-weight:700">${siMins}</span><span style="color:rgba(255,255,255,0.65);font-size:10px">m</span> <span style="color:#EC1977;font-weight:700">00</span><span style="color:rgba(255,255,255,0.65);font-size:10px">s</span>`
+    :`<span style="color:#EC1977;font-weight:700">${siMins}</span><span style="color:rgba(255,255,255,0.65);font-size:10px">m</span> <span style="color:#EC1977;font-weight:700">00</span><span style="color:rgba(255,255,255,0.65);font-size:10px">s</span>`;
+  const ctaMsg=si?`<span style="font-size:17px;font-weight:600;color:rgba(255,255,255,0.60)">Starts in ${timerHtml}</span><br><span style="font-size:10px;font-weight:400;margin-top:2px;display:block;color:rgba(255,255,255,0.60)">Scan QR upon arrival</span>`:`<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.60)">Scan QR upon arrival</span>`;
+  const _priv=S.ticketPrivacy[tk.id]||'friends';
+  const _privIcon=_priv==='only_me'?ic('lock',17):ic('users',17);
+  const _privGroup=socialGroups.find(g=>g.id===_priv);
+  const _privTitle=_priv==='only_me'?'Only Me':_privGroup?_privGroup.name:'Friends';
+  const privacyIcon=`<button onclick="event.stopPropagation();modal('ticketPrivacy_${tk.id}')" title="${_privTitle}" style="background:none;border:none;padding:2px;color:rgba(255,255,255,0.35);display:flex;align-items:center;cursor:pointer;flex-shrink:0">${_privIcon}</button>`;
+  const flip=`if(S._swipeTs&&Date.now()-S._swipeTs<500)return;if(!S.collFlip)S.collFlip={};S.collFlip['${tk.id}']=!S.collFlip['${tk.id}'];render()`;
+
+  const STATE_H='min-height:140px;display:flex;flex-direction:column;justify-content:center;margin-bottom:16px';
+  const qrTile=`
+    <div style="${STATE_H}">
+      <div style="display:flex;gap:10px;align-items:stretch">
+        <div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex:1">
+          <div style="color:#0B0B1A">${ic('qr',95)}</div>
+          <div style="font-size:9px;color:#9CA3AF;font-weight:600;letter-spacing:0.04em">${tkNum(tk.orderId,subIdx+1)}</div>
         </div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.60);margin-bottom:5px">${tk.host} · ${tk.date} · ${tk.time}</div>
-        <div style="font-size:11px;color:#41EFF9;margin-bottom:12px;${si?'':'visibility:hidden'}">${si?'Starts in '+si:'–'}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:13px;font-weight:700;color:${priceColor}">${priceLabel}${tk.qty>1?' · '+tk.qty+' spots':''}</span>
-          <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.55);font-size:11px;font-weight:600">${ic('qr',13)} ${tk.qty>1?'View Tickets':'View Ticket'}</div>
-        </div>
+        <button onclick="event.stopPropagation();modal('scanHostQR')" style="background:none;border:none;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex:0 0 84px;cursor:pointer">
+          <div style="color:rgba(255,255,255,0.85)">${ic('qrscan',40)}</div>
+          <span style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.85);text-align:center;line-height:1.3">Scan Host's<br>QR Code</span>
+        </button>
       </div>
     </div>`;
-  };
-
-  const pastCard=(tk)=>{
-    const pricePast=tk.price===0?'Free':'$'+(tk.price*(tk.qty||1)).toFixed(0);
-    return`
-    <div onclick="go('ticketView',{ticketId:'${tk.id}',confirmNew:false})" style="cursor:pointer;background:linear-gradient(135deg,rgba(98,38,233,0.36),rgba(14,78,245,0.36),rgba(65,239,249,0.36));border-radius:20px;padding:2px;margin-bottom:10px">
-      <div style="background:#0e0e1c;border-radius:18px;padding:16px 16px 14px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(65,239,249,0.05),transparent)"></div>
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
-          <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.88);flex:1;margin-right:10px;line-height:1.3">${tk.title}</div>
-          <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(74,222,128,0.12);color:#4ADE80;flex-shrink:0;white-space:nowrap">${ic('check',9)} Attended</span>
-        </div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:5px">${tk.host} · ${tk.date} · ${tk.time}</div>
-        <div style="font-size:11px;margin-bottom:12px;visibility:hidden">–</div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.50)">${pricePast}${tk.qty>1?' · '+tk.qty+' spots':''}</span>
-          <div style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.38);font-size:11px;font-weight:600"><span style="display:inline-flex;transform:rotate(-35deg)">${ic('ticket',12)}</span> View Ticket</div>
-        </div>
+  const attendedTile=`
+    <div style="${STATE_H}">
+      <div style="background:linear-gradient(135deg,rgba(98,38,233,0.2),rgba(14,78,245,0.2));border:1px solid rgba(14,78,245,0.3);border-radius:14px;padding:18px;display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('check',16)}</div>
+        <div><div style="font-size:14px;font-weight:700;color:#fff">${isPast?'Attended':'Checked In'}</div><div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">${dayDateStr} · ${timeDisplay}</div></div>
       </div>
-    </div>`};
+    </div>`;
+  const pendingTile=`
+    <div style="${STATE_H}">
+      <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('clock',13)}</div>
+          <div style="font-size:12px;font-weight:700;color:#F5A623">Transfer Pending</div>
+        </div>
+        ${subInvitee?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subInvitee.name||subInvitee.phone}</div><div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">Invited ${subInvitedAt} · Awaiting signup to accept</div>`:''}
+      </div>
+    </div>`;
+  const transferredTile=`
+    <div style="${STATE_H}">
+      <div style="background:rgba(65,239,249,0.06);border:1px solid rgba(65,239,249,0.20);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(65,239,249,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('check',13)}</div>
+          <div style="font-size:12px;font-weight:700;color:#41EFF9">Transfer Accepted</div>
+        </div>
+        ${subTransferTo?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subTransferTo.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">${subTransferTo.uname||''}</div>`:''}
+      </div>
+    </div>`;
+  let stateBlock;
+  if(isPast||checkedIn) stateBlock=attendedTile;
+  else if(subStatus==='pending') stateBlock=pendingTile;
+  else if(subStatus==='transferred') stateBlock=transferredTile;
+  else stateBlock=qrTile;
+  const stateIsQR=!isPast&&!checkedIn&&(subStatus==='active'||subStatus==='available');
+
+  const spotTag=subCount>1?` · Spot ${subIdx+1} of ${subCount}`:'';
+  let holderLine;
+  if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
+  else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>${spotTag}`;
+  else if(subStatus==='pending') holderLine=`<span style="color:rgba(255,255,255,0.5)">Transfer pending${spotTag}</span>`;
+  else if(subStatus==='available') holderLine=`<span style="color:rgba(255,255,255,0.5)">Unassigned${spotTag}</span>`;
+  else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
+
+  const cardTop=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isPast?'18px':'28px'};gap:10px">
+      ${privacyIcon}
+      ${stateIsQR?`<div style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.60);line-height:0.95;flex:1;padding:2px 0;text-align:center">${ctaMsg}</div>`:`<div style="flex:1"></div>`}
+      <div style="color:rgba(255,255,255,0.40);flex-shrink:0">${ic('flip',18)}</div>
+    </div>
+    <div style="font-size:24px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:8px">${tk.title}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:3px">Hosted by <button onclick="event.stopPropagation();openProfile('${tk.hostHandle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${tk.host}</button></div>
+    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px">Partnering with ${tkPartners.map(p=>`<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:14px"></div>`)}
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:3px">${dayDateStr}</div>
+    <div style="font-size:24px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em;margin-bottom:10px">${timeDisplay}</div>
+    <div style="margin-bottom:16px">${(tk.price||0)>0?`<span style="font-size:22px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:14px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:20px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
+
+  const venue=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">${hostInitials}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1">
+        <div><div style="font-size:13px;font-weight:700;color:#fff">${tk.host}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px">${tk.addr}</div></div>
+        <button onclick="event.stopPropagation();openMaps('${tk.addr}')" style="background:none;border:none;padding:6px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.55);cursor:pointer;flex-shrink:0;margin-left:auto">${ic('map',18)}</button>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px">${holderLine}</div>`;
+
+  // ── Back side (flips in place) ──
+  const _dropMatch=feedDrops.find(dd=>dd.id===tk.dropId);
+  const _tkDesc=tk.desc||(_dropMatch?_dropMatch.desc:'')||'';
+  const termsList=[...((tk.price||0)>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),'Must arrive within the arrival window — late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
+  const backFace=`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px">
+      <div style="font-size:20px;font-weight:800;color:#fff;flex:1;line-height:1.2">${tk.title}</div>
+      <div style="color:rgba(255,255,255,0.40);flex-shrink:0;margin-top:2px">${ic('flip',18)}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:7px 12px;margin-bottom:16px;font-size:12px">
+      <span style="color:rgba(255,255,255,0.45)">Host</span><span style="color:rgba(255,255,255,0.88);font-weight:600">${tk.host}</span>
+      <span style="color:rgba(255,255,255,0.45)">Date</span><span style="color:rgba(255,255,255,0.88)">${dayDateStr} · ${timeDisplay}</span>
+      <span style="color:rgba(255,255,255,0.45)">Location</span><span style="color:rgba(255,255,255,0.88)">${tk.addr}</span>
+      <span style="color:rgba(255,255,255,0.45)">Ordered</span><span style="color:rgba(255,255,255,0.88)">${tk.orderDate||'—'}</span>
+      <span style="color:rgba(255,255,255,0.45)">Order</span><span style="color:rgba(255,255,255,0.88)">${tk.orderId}</span>
+      <span style="color:rgba(255,255,255,0.45)">Ticket</span><span style="color:rgba(255,255,255,0.88)">${tkNum(tk.orderId,subIdx+1)}${subCount>1?' · Spot '+(subIdx+1)+' of '+subCount:''}</span>
+    </div>
+    ${_tkDesc?`<div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55;margin-bottom:16px">${_tkDesc}</div>`:''}
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin-bottom:14px"></div>
+    <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Terms</div>
+    ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
+    <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
+
+  const frontFace=`${cardTop}${stateBlock}${venue}
+    <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.34);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px">${ic('flip',10)} Tap to flip</div>`;
+
+  const pager=subCount>1?`
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0 20px">
+      <button onclick="S.collSubIdx['${tk.id}']=${Math.max(0,subIdx-1)};render()" ${subIdx===0?'disabled':''} style="width:30px;height:30px;border-radius:50%;background:${subIdx===0?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.12)'};border:none;display:flex;align-items:center;justify-content:center;color:${subIdx===0?'rgba(255,255,255,0.2)':'#fff'};cursor:${subIdx===0?'default':'pointer'}">${ic('left',14)}</button>
+      <div style="display:flex;align-items:center;gap:7px">
+        ${subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};render()" style="width:${i===subIdx?20:7}px;height:7px;border-radius:4px;background:${i===subIdx?'#0E4EF5':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join('')}
+      </div>
+      <button onclick="S.collSubIdx['${tk.id}']=${Math.min(subCount-1,subIdx+1)};render()" ${subIdx===subCount-1?'disabled':''} style="width:30px;height:30px;border-radius:50%;background:${subIdx===subCount-1?'rgba(255,255,255,0.06)':'rgba(14,78,245,0.25)'};border:none;display:flex;align-items:center;justify-content:center;color:${subIdx===subCount-1?'rgba(255,255,255,0.2)':'#41EFF9'};cursor:${subIdx===subCount-1?'default':'pointer'}">${ic('right',14)}</button>
+    </div>`:`<div style="height:18px"></div>`;
 
   return`
-  <!-- Dark sticky header -->
-  <div style="position:sticky;top:0;z-index:99;background:#0a0a0a;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08)">
-    <div style="font-size:20px;font-weight:800;color:#fff">Tickets</div>
-    ${active.length?`<span style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.50)">${active.length} Active</span>`:''}
-  </div>
-  <div style="background:#0a0a0a;min-height:100%;padding:16px 16px 32px">
-    ${active.length?`
-      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.44);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em">Current</div>
-      ${active.map(activeCard).join('')}`:''}
-    ${past.length?`
-      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.44);margin:${active.length?'16px':'0'} 0 10px;text-transform:uppercase;letter-spacing:0.08em">Past</div>
-      ${past.map(pastCard).join('')}`:''}
-    ${!active.length&&!past.length?renderTicketEmptyState():''}
+    <div onclick="${flip}"
+      ontouchstart="S._cx=event.touches[0].clientX"
+      ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};render();}}"
+      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)">
+      <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
+        <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(14,78,245,0.14),transparent 70%);pointer-events:none"></div>
+        <div style="position:relative">${flipped?backFace:frontFace}</div>
+      </div>
+    </div>
+    ${pager}`;
+}
+function renderTicketCollection(){
+  if(!S.ticketTab)S.ticketTab='current';
+  const tab=S.ticketTab;
+  const siMins=(tk)=>{const sd=feedDrops.find(f=>f.id===tk.dropId)||{};const si=(tk.startsIn||sd.startsIn||'').trim();if(!si)return 1e9;let d=0,h=0,m=0;const a=si.match(/(\d+)\s*d/),b=si.match(/(\d+)\s*h/),c=si.match(/(\d+)\s*m/);if(a)d=+a[1];if(b)h=+b[1];if(c)m=+c[1];return d*1440+h*60+m;};
+  const active=myTickets.filter(t=>t.status==='Active').slice().sort((a,b)=>siMins(a)-siMins(b));
+  const past=myTickets.filter(t=>t.status==='Completed'||t.status==='Ended');
+  const list=tab==='current'?active:past;
 
-    ${active.length||past.length?`
-      <div style="margin-top:32px;border-top:1px solid rgba(255,255,255,0.08);padding-top:20px">
-        <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.30);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;text-align:center">Empty State Preview</div>
-        ${renderTicketEmptyState()}
-      </div>`:''}
+  const tabBtn=(id,label)=>`<button onclick="S.ticketTab='${id}';render()" style="flex:1;background:none;border:none;padding:14px 0 12px;font-size:15px;font-weight:${tab===id?'800':'600'};color:${tab===id?'#fff':'rgba(255,255,255,0.45)'};cursor:pointer;font-family:inherit;position:relative">${label}<div style="position:absolute;bottom:0;left:0;right:0;height:2.5px;background:${tab===id?'#fff':'transparent'};border-radius:2px"></div></button>`;
+
+  let body;
+  if(!list.length){
+    body=tab==='current'?renderTicketEmptyState():`<div style="text-align:center;padding:60px 24px"><div style="margin-bottom:18px;color:rgba(255,255,255,0.25);transform:rotate(-35deg);display:inline-block">${ic('ticket',70)}</div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">No past Drops yet</div><div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:260px;margin:0 auto">Drops you've attended will show up here once they wrap.</div></div>`;
+  } else {
+    body=list.map(function(tk){return fullTicketCard(tk);}).join('');
+  }
+
+  return`
+  <div style="position:sticky;top:0;z-index:99;background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,0.08)">
+    <div style="padding:14px 16px 0">
+      <div style="font-size:22px;font-weight:800;color:#fff">Tickets</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 8px;margin-top:8px">
+      ${tabBtn('current','Current')}
+      ${tabBtn('past','Past')}
+    </div>
+  </div>
+  <div style="background:#0a0a0a;min-height:100%;padding:16px 16px 40px">
+    ${body}
   </div>`;
 }
 
@@ -7409,6 +7574,22 @@ function render(){
     if(!gToastEl){gToastEl=document.createElement('div');gToastEl.id='gToast';document.getElementById('app').appendChild(gToastEl);}
     gToastEl.innerHTML='<div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.3);max-width:320px;text-align:center;display:flex;align-items:center;gap:8px"><svg width="14" height="14" viewBox="0 0 24 24" stroke="#22C55E" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg>'+S.toast+'</div>';
   }else if(gToastEl){gToastEl.innerHTML='';}
+  // Tickets: left scroll indicator (Current tab w/ multiple drops)
+  var tsBar=document.getElementById('ticketScroll');
+  var _curN=myTickets.filter(function(t){return t.status==='Active';}).length;
+  var showTS=(S.scr==='ticketCollection' && (S.ticketTab||'current')==='current' && _curN>1);
+  if(showTS){
+    if(!tsBar){
+      tsBar=document.createElement('div');tsBar.id='ticketScroll';
+      tsBar.style.cssText='position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:80px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
+      tsBar.innerHTML='<div id="ticketScrollThumb" style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.6);top:0;height:30%"></div>';
+      document.getElementById('app').appendChild(tsBar);
+    }
+    tsBar.style.display='block';
+    var _scEl=document.getElementById('scr');
+    if(_scEl && !_scEl._tsBound){ _scEl._tsBound=true; _scEl.addEventListener('scroll',updateTicketScrollbar); }
+    setTimeout(updateTicketScrollbar,0);
+  } else if(tsBar){ tsBar.style.display='none'; }
   if(onFeed){
     scrEl.scrollTop=S.drop*762;
   } else if(S.scr==='dm'){
