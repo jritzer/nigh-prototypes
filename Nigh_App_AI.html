@@ -2584,8 +2584,8 @@ function fullTicketCard(tk){
   let holderLine;
   if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
   else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>`;
-  else if(subStatus==='pending') holderLine=`<span style="color:rgba(255,255,255,0.5)">Transfer pending</span>`;
-  else if(subIdx>0) holderLine=`<span style="color:rgba(255,255,255,0.5)">Available to transfer</span>`;
+  else if(subStatus==='pending') holderLine='';
+  else if(subIdx>0) holderLine='';
   else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
 
   const cardTop=`
