@@ -2533,7 +2533,7 @@ function fullTicketCard(tk){
   const flip=`if(S._swipeTs&&Date.now()-S._swipeTs<500)return;if(!S.collFlip)S.collFlip={};S.collFlip['${tk.id}']=!S.collFlip['${tk.id}'];render()`;
 
   // Fixed-height state block so every spot is identical regardless of status
-  const STATE_H='height:132px;display:flex;flex-direction:column;justify-content:center;margin-bottom:18px';
+  const STATE_H='height:132px;display:flex;flex-direction:column;justify-content:center;margin-bottom:24px';
   const qrTile=`
     <div style="${STATE_H}">
       <div style="display:flex;gap:10px;align-items:stretch">
@@ -2599,7 +2599,7 @@ function fullTicketCard(tk){
     ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with ${tkPartners.map(p=>`<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:16px"></div>`)}
     <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:2px">${dayDateStr}</div>
     <div style="font-size:22px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em;margin-bottom:13px">${timeDisplay}</div>
-    <div style="margin-bottom:18px">${(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
+    <div style="margin-bottom:24px">${(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
 
   const venueRow=`
     <div style="display:flex;align-items:center;gap:10px">
