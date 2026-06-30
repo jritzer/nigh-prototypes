@@ -630,7 +630,7 @@ const incomingRequests=[
 ];
 // People who joined Nigh through YOUR invite link — surfaced so you can add them as friends (closes the invite→friend loop)
 let inviteJoins=[
-  {id:'IJ01',name:'Maya Torres',uname:'@mayat',av:'MT',joinedAt:'Jun 24'},
+  {id:'IJ01',name:'Cameron Walsh',uname:'@cameronw',av:'CW',joinedAt:'Jun 24'},
   {id:'IJ02',name:'Devon Brooks',uname:'@devonb',av:'DB',joinedAt:'Jun 22'},
 ];
 function addInviteJoin(id){const j=inviteJoins.find(x=>x.id===id);inviteJoins=inviteJoins.filter(x=>x.id!==id);if(j)showToast('Friend request sent to '+j.name.split(' ')[0]);render();}
