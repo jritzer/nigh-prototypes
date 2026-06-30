@@ -231,6 +231,7 @@ function openMaps(address){
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
 // Invite-only beta: a link is valid only with a recognized route word + a resolvable source (person/host/partner/drop); every share link credits the sharer (handle = referrer). Bare/unrecognized links (nigh.com/<handle>, nigh.com/<dropID>) are NOT valid and route to request-access. Canonical: nigh.com/follow/<handle> · nigh.com/drop/<handle>/<dropID> · nigh.com/invite/<handle> · nigh.com/group/<handle>/<slug>. 6-char code = unique drop ID.
 function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://nigh.com/drop/'+currentUser.uname.replace(/^@/,'')+'/'+code;}
+const inviteStats={clicks:47,joined:12}; // anonymous beta-invite stats: times the link was clicked, and people who joined Nigh after clicking (no names/details)
 function inviteUrl(){return 'nigh.com/invite/'+currentUser.uname.replace(/^@/,'');}
 function groupShareUrl(g){return 'nigh.com/group/'+currentUser.uname.replace(/^@/,'')+'/'+(((g&&g.inviteLink)||'').replace('nigh.com/group/',''));}
 function inviteFriends(){
@@ -239,6 +240,7 @@ function inviteFriends(){
   else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('Invite link copied');}).catch(function(){showToast('Invite link copied');});}
   else{showToast('Invite link copied');}
 }
+function copyInvite(){const url='https://'+inviteUrl();if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){showToast('Invite link copied');}).catch(function(){showToast('Invite link copied');});}else{showToast('Invite link copied');}}
 function shareDrop(dropIdx){
   const d=feedDrops[dropIdx];if(!d)return;
   const url=dropShareUrl(d);
@@ -2984,9 +2986,40 @@ function renderMenu(){
     </button>`:''}
     ${row('users','Friends',`${friendsList.length} friends · ${socialGroups.length+eventGroups.length} groups`,"S.menuSub='friends';render()")}
     ${row('heart','Following',`${followingList.length+followingBrands.length+(followingPeople||[]).length+(followingMobile||[]).length} hosts`,"S.menuSub='following';render()")}
-    ${row('share','Invite Friends',`Share your link · ${inviteUrl()}`,"inviteFriends()")}
     ${row('apay','Payment','Apple Pay · Visa ···· 4821',"S.menuSub='payment';render()")}
     ${row('settings','Settings','User account & preferences',"S.menuSub='settings';render()")}
+
+    <!-- Invite Friends — invite-only social-currency card -->
+    <div style="margin-top:18px">
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Invite Friends</div>
+      <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:18px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+        <div style="position:absolute;bottom:-25px;left:30px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.05)"></div>
+        <div style="position:relative">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+            <div style="color:#fff">${ic('share',18)}</div>
+            <div style="font-size:16px;font-weight:800;color:#fff">Invite friends to Nigh</div>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.82);line-height:1.5;margin-bottom:14px;max-width:290px">Nigh is invite-only. Your link gives friends early access — share it to grow your circle.</div>
+          <div style="display:flex;gap:10px;margin-bottom:14px">
+            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:12px 14px">
+              <div style="font-size:24px;font-weight:800;color:#fff;line-height:1">${inviteStats.clicks}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:4px">Link clicks</div>
+            </div>
+            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:12px 14px">
+              <div style="font-size:24px;font-weight:800;color:#fff;line-height:1">${inviteStats.joined}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:4px">Joined Nigh</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:11px 12px;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inviteUrl()}</div>
+            <button onclick="copyInvite()" style="background:#fff;color:#0E4EF5;border:none;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
+          </div>
+          <button onclick="inviteFriends()" style="width:100%;background:rgba(255,255,255,0.95);color:#0E4EF5;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">${ic('share',16)} Share your invite</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:8px">Counts only — no names or details are shown.</div>
+    </div>
   </div>`;
 }
 
