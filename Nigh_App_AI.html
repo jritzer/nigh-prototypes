@@ -2989,36 +2989,29 @@ function renderMenu(){
     ${row('apay','Payment','Apple Pay · Visa ···· 4821',"S.menuSub='payment';render()")}
     ${row('settings','Settings','User account & preferences',"S.menuSub='settings';render()")}
 
-    <!-- Invite Friends — invite-only social-currency card -->
-    <div style="margin-top:18px">
-      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px">Invite Friends</div>
-      <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:18px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-30px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
-        <div style="position:absolute;bottom:-25px;left:30px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.05)"></div>
+    <!-- Invite Friends — compact invite-only social-currency card -->
+    <div style="margin-top:16px">
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px">Invite Friends</div>
+      <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:14px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-25px;right:-15px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
         <div style="position:relative">
-          <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
-            <div style="color:#fff">${ic('share',18)}</div>
-            <div style="font-size:16px;font-weight:800;color:#fff">Invite friends to Nigh</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div style="color:#fff">${ic('share',16)}</div>
+            <div style="font-size:15px;font-weight:800;color:#fff">Invite friends to Nigh</div>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.82);line-height:1.5;margin-bottom:14px;max-width:290px">Nigh is invite-only. Your link gives friends early access — share it to grow your circle.</div>
-          <div style="display:flex;gap:10px;margin-bottom:14px">
-            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:12px 14px">
-              <div style="font-size:24px;font-weight:800;color:#fff;line-height:1">${inviteStats.clicks}</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:4px">Link clicks</div>
-            </div>
-            <div style="flex:1;background:rgba(255,255,255,0.13);border-radius:12px;padding:12px 14px">
-              <div style="font-size:24px;font-weight:800;color:#fff;line-height:1">${inviteStats.joined}</div>
-              <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:4px">Joined Nigh</div>
-            </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.8);line-height:1.45;margin-bottom:11px">Invite-only — your link gives friends early access.</div>
+          <div style="display:flex;gap:18px;margin-bottom:12px">
+            <div><span style="font-size:18px;font-weight:800;color:#fff">${inviteStats.clicks}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">link clicks</span></div>
+            <div><span style="font-size:18px;font-weight:800;color:#fff">${inviteStats.joined}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">joined Nigh</span></div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:11px 12px;font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inviteUrl()}</div>
-            <button onclick="copyInvite()" style="background:#fff;color:#0E4EF5;border:none;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inviteUrl()}</div>
+            <button onclick="copyInvite()" style="background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
+            <button onclick="inviteFriends()" style="background:#fff;color:#0E4EF5;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Share</button>
           </div>
-          <button onclick="inviteFriends()" style="width:100%;background:rgba(255,255,255,0.95);color:#0E4EF5;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">${ic('share',16)} Share your invite</button>
         </div>
       </div>
-      <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:8px">Counts only — no names or details are shown.</div>
+      <div style="font-size:10px;color:#9CA3AF;text-align:center;margin-top:6px">Anonymous counts only — no names or details.</div>
     </div>
   </div>`;
 }
