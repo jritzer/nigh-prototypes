@@ -627,6 +627,13 @@ const incomingRequests=[
   {id:'REQ01',name:'Marcus Chen',uname:'@marcusc',av:'MC',mutual:2,receivedAt:'Jun 8',verified:false},
   {id:'REQ02',name:'Lena Park',uname:'@lenap',av:'LP',mutual:0,receivedAt:'Jun 6',verified:true},
 ];
+// People who joined Nigh through YOUR invite link — surfaced so you can add them as friends (closes the invite→friend loop)
+let inviteJoins=[
+  {id:'IJ01',name:'Maya Torres',uname:'@mayat',av:'MT',joinedAt:'Jun 24'},
+  {id:'IJ02',name:'Devon Brooks',uname:'@devonb',av:'DB',joinedAt:'Jun 22'},
+];
+function addInviteJoin(id){const j=inviteJoins.find(x=>x.id===id);inviteJoins=inviteJoins.filter(x=>x.id!==id);if(j)showToast('Friend request sent to '+j.name.split(' ')[0]);render();}
+function dismissInviteJoin(id){inviteJoins=inviteJoins.filter(x=>x.id!==id);render();}
 
 // Returns friends who have a ticket to a drop AND whose privacy allows visibility.
 // ticketPrivacy values: 'friends' (visible to all), 'only_me' (hidden), or a group id (visible to that group only).
@@ -4023,6 +4030,23 @@ function renderFriends(){
         <button onclick="modal('syncContacts')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#1B2A4A;color:#fff;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:inherit">${ic('users',14)} Sync Contacts</button>
         <button onclick="modal('addByPhone')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:inherit">${ic('userPlus',14)} Add by Phone</button>
       </div>
+
+      ${inviteJoins.length>0?`
+      <!-- Joined from your invite — close the invite→friend loop -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:#16A34A;letter-spacing:0.06em;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid #F3F4F6">Joined from your invite (${inviteJoins.length})</div>
+        ${inviteJoins.map(j=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6">
+          <div style="position:relative;flex-shrink:0">${av(j.av,42)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:600;color:#111827">${j.name}</div>
+            <div style="font-size:11px;color:#16A34A;margin-top:2px;display:flex;align-items:center;gap:4px">${ic('share',11)} Joined from your invite · ${j.joinedAt}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0;align-items:center">
+            <button onclick="addInviteJoin('${j.id}')" style="padding:6px 16px;border-radius:20px;background:#0E4EF5;color:#fff;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Add</button>
+            <button onclick="dismissInviteJoin('${j.id}')" aria-label="Dismiss" style="width:26px;height:26px;border-radius:50%;background:#F3F4F6;color:#9CA3AF;border:none;font-size:15px;line-height:1;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center">×</button>
+          </div>
+        </div>`).join('')}
+      </div>`:''}
 
       ${incomingRequests.length>0?`
       <!-- Incoming Friend Requests -->

@@ -2806,6 +2806,11 @@ function renderG(){
   <div style="padding:12px 16px">${modeToggle}${guestList}</div>`;
 }
 // ═══ MENU ═══
+// Host follow-link sharing (menu card): grow your audience by sharing nigh.com/follow/<handle>
+const followLinkStats={clicks:64,followers:18}; // demo: link clicks + new followers gained from your follow link
+function followLinkUrl(){return 'nigh.com/follow/'+(acct().handle||'');}
+function copyFollowLink(btn){var u='https://'+followLinkUrl();try{navigator.clipboard&&navigator.clipboard.writeText(u);}catch(e){}if(btn){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy';},1500);}}
+function shareFollowLink(){var u='https://'+followLinkUrl();if(navigator.share){navigator.share({title:'Follow on Nigh',text:'Follow '+acct().name+' on Nigh',url:u}).catch(function(){});}else{try{navigator.clipboard&&navigator.clipboard.writeText(u);}catch(e){}}}
 function renderMenu(){
   if(S.menuSub==='team')return renderTeam();
   if(S.menuSub==='inviteTeam')return renderInviteTeam();
@@ -2854,6 +2859,30 @@ function renderMenu(){
   <div style="padding:14px 16px">
     ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}${m.badge?`<span style="margin-left:6px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle">${m.badge}</span>`:''}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
     <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">User account &amp; preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
+
+    <!-- Build your community — host follow-link share card -->
+    <div style="margin-top:16px">
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px">Early Access</div>
+      <div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:14px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-25px;right:-15px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
+        <div style="position:relative">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div style="color:#fff">${ic('share',16)}</div>
+            <div style="font-size:15px;font-weight:800;color:#fff">Build your community</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.8);line-height:1.45;margin-bottom:11px">Share your Nigh link anywhere so people can follow you and show up for your next Drop.</div>
+          <div style="display:flex;gap:18px;margin-bottom:12px">
+            <div><span style="font-size:18px;font-weight:800;color:#fff">${followLinkStats.clicks}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">link clicks</span></div>
+            <div><span style="font-size:18px;font-weight:800;color:#fff">${followLinkStats.followers}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">new followers</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">nigh.com/follow/${a.handle}</div>
+            <button onclick="copyFollowLink(this)" style="background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
+            <button onclick="shareFollowLink()" style="background:#fff;color:#0E4EF5;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Share</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>`;
 }
 
