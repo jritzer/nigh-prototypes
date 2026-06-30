@@ -2787,12 +2787,25 @@ function renderTransferTicket(){
       <button onclick="S.transferPhase='confirm';S.transferSelectedFriend={name:'${f.name}',uname:'${f.uname||''}',av:'${f.av}',phone:'${f.phone||''}'};render()" style="padding:8px 16px;background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:10px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0">Invite</button>
     </div>`;
 
-  const recentsFiltered=recentTransfers.filter(f=>matchQ(f.name,f.phone,f.uname));
-  const nighFriends=friendsList.filter(f=>f.hasTicket!==tk.dropId&&matchQ(f.name,'',f.uname));
-  const phoneCts=phoneContacts.filter(f=>matchQ(f.name,f.phone,''));
-  const alreadyGoing=friendsList.filter(f=>f.hasTicket===tk.dropId&&matchQ(f.name,'',f.uname));
+  // Each guest may hold only one ticket per drop — exclude anyone already assigned a spot in THIS order
+  const normU=u=>(u||'').toLowerCase(), normP=p=>(p||'').replace(/\D/g,'');
+  const assignedPeople=[];
+  (tk.subTickets||[]).forEach((st,i)=>{
+    const o=(S.subTicketOverrides||{})[tk.id+'_'+i]||{};
+    const status=o.status||st.status; const to=o.transferTo||st.transferTo; const inv=o.invitee||st.invitee;
+    if(status==='transferred'&&to) assignedPeople.push({name:to.name,uname:to.uname||'',phone:to.phone||'',av:to.av||((to.name||'?').charAt(0)),note:'Already has a spot'});
+    else if(status==='pending'&&inv) assignedPeople.push({name:inv.name||inv.phone,uname:inv.uname||'',phone:inv.phone||'',av:inv.av||((inv.name||inv.phone||'?').charAt(0)),note:'Transfer pending'});
+  });
+  const isTaken=(f)=>assignedPeople.some(a=>(a.uname&&normU(a.uname)===normU(f.uname))||(a.phone&&normP(a.phone)&&normP(a.phone)===normP(f.phone))||(a.name&&f.name&&a.name.toLowerCase()===(f.name||'').toLowerCase()));
+  const recentsFiltered=recentTransfers.filter(f=>!isTaken(f)&&matchQ(f.name,f.phone,f.uname));
+  const nighFriends=friendsList.filter(f=>f.hasTicket!==tk.dropId&&!isTaken(f)&&matchQ(f.name,'',f.uname));
+  const phoneCts=phoneContacts.filter(f=>!isTaken(f)&&matchQ(f.name,f.phone,''));
+  const _seen={};
+  const alreadyList=[...assignedPeople,...friendsList.filter(f=>f.hasTicket===tk.dropId).map(f=>({name:f.name,uname:f.uname,phone:'',av:f.av,note:'Already has a spot'}))]
+    .filter(p=>{const k=normU(p.uname)||(p.name||'').toLowerCase();if(_seen[k])return false;_seen[k]=1;return true;})
+    .filter(p=>matchQ(p.name,p.phone,p.uname));
 
-  const noResults=!recentsFiltered.length&&!nighFriends.length&&!phoneCts.length;
+  const noResults=!recentsFiltered.length&&!nighFriends.length&&!phoneCts.length&&!alreadyList.length;
 
   return`
   <div style="position:sticky;top:0;z-index:99;background:#0a0a0a;padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08)">
@@ -2839,13 +2852,14 @@ function renderTransferTicket(){
     <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.44);text-transform:uppercase;letter-spacing:0.08em;margin:${nighFriends.length?'16px':'0'} 0 10px">Phone Contacts</div>
     ${phoneCts.map(f=>friendRow(f,true)).join('')}`:''}
 
-    <!-- Already going -->
-    ${alreadyGoing.length&&!q?`
-    <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;margin:16px 0 10px">Already Attending</div>
-    ${alreadyGoing.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:14px;margin-bottom:8px">
+    <!-- Already has a spot for this drop -->
+    ${alreadyList.length?`
+    <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.08em;margin:16px 0 10px">Already in this drop</div>
+    ${alreadyList.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:14px;margin-bottom:8px">
       <div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:rgba(255,255,255,0.30);flex-shrink:0">${f.av}</div>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.35)">${f.name}</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.25)">${f.uname} \u00b7 Already has a spot</div></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.4)">${f.name}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.28)">${(f.uname||f.phone||'')}${(f.uname||f.phone)?' · ':''}${f.note||'Already has a spot'}</div></div>
+      <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:8px;flex-shrink:0;white-space:nowrap">${f.note==='Transfer pending'?'Pending':'Has spot'}</span>
     </div>`).join('')}`:''}
 
   </div>`;
