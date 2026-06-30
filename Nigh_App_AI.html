@@ -416,8 +416,8 @@ const myTickets=[
    subTickets:[
      {idx:1,status:'active'},
      {idx:2,status:'active'},
-     {idx:3,status:'active'},
-     {idx:4,status:'active'},
+     {idx:3,status:'transferred',transferTo:{name:'Maya Torres',uname:'@mayat',av:'MT'},invitedAt:'Apr 14 · 10:02 AM',acceptedAt:'Apr 14 · 10:18 AM'},
+     {idx:4,status:'pending',invitee:{name:'Chris Daniels',phone:'(303) 555-0148'},invitedAt:'Apr 14 · 10:05 AM'},
    ]},
   {id:'TK002',dropId:'D005',title:'Friday Night Jazz & Tapas',
    host:'Centro Mexican Kitchen',hostHandle:'@centroboulder',
@@ -2560,7 +2560,7 @@ function fullTicketCard(tk){
           <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('clock',13)}</div>
           <div style="font-size:12px;font-weight:700;color:#F5A623">Transfer Pending</div>
         </div>
-        ${subInvitee?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subInvitee.name||subInvitee.phone}</div><div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">Invited ${subInvitedAt} · Awaiting signup to accept</div>`:''}
+        ${subInvitee?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subInvitee.name||subInvitee.phone}</div>${subInvitee.phone&&subInvitee.name?`<div style="font-size:11px;color:rgba(255,255,255,0.5)">${subInvitee.phone}</div>`:''}<div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">Invited ${subInvitedAt} · Awaiting acceptance on Nigh</div>`:''}
       </div>
     </div>`;
   const transferredTile=`
@@ -2570,7 +2570,7 @@ function fullTicketCard(tk){
           <div style="width:28px;height:28px;border-radius:50%;background:rgba(65,239,249,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('check',13)}</div>
           <div style="font-size:12px;font-weight:700;color:#41EFF9">Transfer Accepted</div>
         </div>
-        ${subTransferTo?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subTransferTo.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">${subTransferTo.uname||''}</div>`:''}
+        ${subTransferTo?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subTransferTo.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">${subTransferTo.uname||''}</div><div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">They hold the QR for this spot now.</div>`:''}
       </div>
     </div>`;
   let stateBlock;
@@ -2586,6 +2586,7 @@ function fullTicketCard(tk){
   else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>${spotTag}`;
   else if(subStatus==='pending') holderLine=`<span style="color:rgba(255,255,255,0.5)">Transfer pending${spotTag}</span>`;
   else if(subStatus==='available') holderLine=`<span style="color:rgba(255,255,255,0.5)">Unassigned${spotTag}</span>`;
+  else if(subIdx>0) holderLine=`Held by <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
   else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
 
   const cardTop=`
@@ -2612,10 +2613,26 @@ function fullTicketCard(tk){
     </div>
     <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px">${holderLine}</div>`;
 
+  // ── Per-spot transfer summary (multi-ticket orders) ──
+  const summaryRows=subs.map((st,i)=>{
+    const sov=(S.subTicketOverrides||{})[tk.id+'_'+i]||{};
+    const stStatus=sov.status||st.status||'active';
+    const stTo=sov.transferTo||st.transferTo||null;
+    const stInv=sov.invitee||st.invitee||null;
+    let lab,col;
+    if(isPast){lab='Attended';col='rgba(255,255,255,0.7)';}
+    else if(i===0){lab='You';col='rgba(255,255,255,0.88)';}
+    else if(stStatus==='transferred'){lab=(stTo?stTo.name:'Transferred')+' · Accepted';col='#41EFF9';}
+    else if(stStatus==='pending'){lab=(stInv?(stInv.name||stInv.phone):'Invited')+' · Pending';col='#F5A623';}
+    else {lab='You · Holding';col='rgba(255,255,255,0.88)';}
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07)"><div style="flex-shrink:0"><div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6)">Spot ${i+1}</div><div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:1px;letter-spacing:0.03em">${tkNum(tk.orderId,i+1)}</div></div><div style="font-size:11px;font-weight:600;color:${col};text-align:right">${lab}</div></div>`;
+  }).join('');
+  const summaryHtml=`<div style="border-top:1px solid rgba(255,255,255,0.1);margin:2px 0 12px"></div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px">Tickets in this order</div>${summaryRows}`;
+
   // ── Back side (flips in place) ──
   const _dropMatch=feedDrops.find(dd=>dd.id===tk.dropId);
   const _tkDesc=tk.desc||(_dropMatch?_dropMatch.desc:'')||'';
-  const termsList=[...((tk.price||0)>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),'Must arrive within the arrival window — late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
+  const termsList=[...((tk.price||0)>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),'Each guest may hold only one ticket per drop. Additional tickets can be transferred to other Nigh accounts or phone numbers.','Must arrive within the arrival window — late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
   const backFace=`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px">
       <div style="font-size:20px;font-weight:800;color:#fff;flex:1;line-height:1.2">${tk.title}</div>
@@ -2630,13 +2647,29 @@ function fullTicketCard(tk){
       <span style="color:rgba(255,255,255,0.45)">Ticket</span><span style="color:rgba(255,255,255,0.88)">${tkNum(tk.orderId,subIdx+1)}${subCount>1?' · Spot '+(subIdx+1)+' of '+subCount:''}</span>
     </div>
     ${_tkDesc?`<div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55;margin-bottom:16px">${_tkDesc}</div>`:''}
-    <div style="border-top:1px solid rgba(255,255,255,0.1);margin-bottom:14px"></div>
+    ${subCount>1?summaryHtml:''}
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
     <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Terms</div>
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
   const frontFace=`${cardTop}${stateBlock}${venue}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.34);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px">${ic('flip',10)} Tap to flip</div>`;
+
+  // ── Spot action: transfer / cancel (only for additional tickets, on front) ──
+  let actionBtn='';
+  if(!flipped&&!isPast&&!checkedIn&&subIdx>0){
+    if(subStatus==='available'||subStatus==='active'){
+      actionBtn=`<div style="text-align:center;margin-top:12px">
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;max-width:290px;margin:0 auto 9px">You're holding this ticket — check them in at the door, or transfer it to another Nigh account or phone number.</div>
+        <button onclick="go('transferTicket',{ticketId:'${tk.id}',transferSubIdx:${subIdx},transferPhase:'select',transferSelectedFriend:null})" style="background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:14px;padding:11px 26px;font-size:13px;font-weight:700;color:#fff;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit">${ic('userPlus',15)} Transfer Ticket</button>
+      </div>`;
+    } else if(subStatus==='pending'){
+      actionBtn=`<div style="text-align:center;margin-top:12px">
+        <button onclick="cancelTransfer('${tk.id}',${subIdx})" style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:11px 26px;font-size:13px;font-weight:700;color:#F5A623;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',15)} Cancel Transfer</button>
+      </div>`;
+    }
+  }
 
   const pager=subCount>1?`
     <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0 20px">
@@ -2658,6 +2691,7 @@ function fullTicketCard(tk){
         <div style="position:relative"><div style="${flipped?'visibility:hidden':''}">${frontFace}</div>${flipped?`<div style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch">${backFace}</div>`:''}</div>
       </div>
     </div>
+    ${actionBtn}
     ${pager}`;
 }
 function renderTicketCollection(){
