@@ -2642,7 +2642,7 @@ function fullTicketCard(tk){
     <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0 20px">
       <button onclick="S.collSubIdx['${tk.id}']=${Math.max(0,subIdx-1)};render()" ${subIdx===0?'disabled':''} style="width:30px;height:30px;border-radius:50%;background:${subIdx===0?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.12)'};border:none;display:flex;align-items:center;justify-content:center;color:${subIdx===0?'rgba(255,255,255,0.2)':'#fff'};cursor:${subIdx===0?'default':'pointer'}">${ic('left',14)}</button>
       <div style="display:flex;align-items:center;gap:7px">
-        ${subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};render()" style="width:${i===subIdx?20:7}px;height:7px;border-radius:4px;background:${i===subIdx?'#0E4EF5':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join('')}
+        ${subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join('')}
       </div>
       <button onclick="S.collSubIdx['${tk.id}']=${Math.min(subCount-1,subIdx+1)};render()" ${subIdx===subCount-1?'disabled':''} style="width:30px;height:30px;border-radius:50%;background:${subIdx===subCount-1?'rgba(255,255,255,0.06)':'rgba(14,78,245,0.25)'};border:none;display:flex;align-items:center;justify-content:center;color:${subIdx===subCount-1?'rgba(255,255,255,0.2)':'#41EFF9'};cursor:${subIdx===subCount-1?'default':'pointer'}">${ic('right',14)}</button>
     </div>`:`<div style="height:18px"></div>`;
