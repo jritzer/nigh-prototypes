@@ -635,6 +635,9 @@ let inviteJoins=[
 ];
 function addInviteJoin(id){const j=inviteJoins.find(x=>x.id===id);inviteJoins=inviteJoins.filter(x=>x.id!==id);if(j)showToast('Friend request sent to '+j.name.split(' ')[0]);render();}
 function dismissInviteJoin(id){inviteJoins=inviteJoins.filter(x=>x.id!==id);render();}
+// Friend requests sent from group member lists (so the row can show "Requested" after tapping Add Friend)
+let sentFriendReqs=[];
+function addFriendFromGroup(uname,name){if(uname&&sentFriendReqs.indexOf(uname)===-1)sentFriendReqs.push(uname);showToast('Friend request sent to '+(name||'').split(' ')[0]);render();}
 
 // Returns friends who have a ticket to a drop AND whose privacy allows visibility.
 // ticketPrivacy values: 'friends' (visible to all), 'only_me' (hidden), or a group id (visible to that group only).
@@ -4956,6 +4959,9 @@ function renderGroupDetail(){
       const isSelf=m.uname==='@joshr'||m.name==='Josh Ritzer';
       const isGroupCreator=m.name===(rawG.createdBy||'');
       const removeBtn=isAdmin&&!isSelf&&!isGroupCreator?`<button onclick="S.confirmRemoveMember={gId:'${gId}',uname:'${m.uname||''}',name:'${m.name}'};S.modal='removeGroupMember';render()" style="padding:5px 10px;border-radius:8px;border:1px solid #E5E7EB;background:none;font-size:11px;font-weight:600;color:#9CA3AF;cursor:pointer;flex-shrink:0">Remove</button>`:'';
+      const isFriendMember=!isSelf&&friendsList.some(f=>f.uname===m.uname||f.name===m.name);
+      const _reqSent=sentFriendReqs.indexOf(m.uname||'')!==-1;
+      const addFriendBtn=(!isSelf&&!isFriendMember&&m.name)?(_reqSent?`<span style="font-size:11px;font-weight:600;color:#9CA3AF;flex-shrink:0">Requested</span>`:`<button onclick="event.stopPropagation();addFriendFromGroup('${(m.uname||'').replace(/'/g,'')}','${(m.name||'').replace(/'/g,'')}')" style="padding:5px 12px;border-radius:8px;border:1px solid #0E4EF5;background:#EEF2FF;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;flex-shrink:0;font-family:inherit">Add Friend</button>`):'';
       return`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #F3F4F6">
         <div style="position:relative;flex-shrink:0"><div style="width:40px;height:40px;border-radius:50%;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#374151">${m.av}</div>${isSelf&&currentUser.verified?fAvOverlay({verified:true},14):mAvOverlay(m,14)}</div>
         <div style="flex:1;min-width:0">
@@ -4966,7 +4972,7 @@ function renderGroupDetail(){
           </div>
           <div style="font-size:12px;color:#9CA3AF">${m.uname||''}${isEvent&&m.spot?` · Spot ${m.spot} · TKT-${gId.replace('EG-TK','')}-${m.spot}`:''}</div>
         </div>
-        ${removeBtn}
+        ${addFriendBtn}${removeBtn}
       </div>`;
     }).join('');
 
