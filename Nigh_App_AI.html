@@ -2580,14 +2580,12 @@ function fullTicketCard(tk){
   else stateBlock=qrTile;
   const stateIsQR=!isPast&&!checkedIn&&(subStatus==='active'||subStatus==='available');
 
-  const spotTag=subCount>1?` · Spot ${subIdx+1} of ${subCount}`:'';
   let holderLine;
-  if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
-  else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>${spotTag}`;
-  else if(subStatus==='pending') holderLine=`<span style="color:rgba(255,255,255,0.5)">Transfer pending${spotTag}</span>`;
-  else if(subStatus==='available') holderLine=`<span style="color:rgba(255,255,255,0.5)">Unassigned${spotTag}</span>`;
-  else if(subIdx>0) holderLine=`Held by <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
-  else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>${spotTag}`;
+  if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
+  else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>`;
+  else if(subStatus==='pending') holderLine=`<span style="color:rgba(255,255,255,0.5)">Transfer pending</span>`;
+  else if(subStatus==='available') holderLine=`<span style="color:rgba(255,255,255,0.5)">Unassigned</span>`;
+  else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
 
   const cardTop=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isPast?'18px':'28px'};gap:10px">
@@ -2653,24 +2651,22 @@ function fullTicketCard(tk){
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
-  const frontFace=`${cardTop}${stateBlock}${venue}
-    <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.34);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:14px">${ic('flip',10)} Tap to flip</div>`;
-
-  // ── Spot action: transfer / cancel (only for additional tickets, on front) ──
+  // ── Spot action: transfer / cancel (additional tickets only) ──
   let actionBtn='';
-  if(!flipped&&!isPast&&!checkedIn&&subIdx>0){
+  if(!isPast&&!checkedIn&&subIdx>0){
     if(subStatus==='available'||subStatus==='active'){
-      actionBtn=`<div style="text-align:center;margin-top:12px">
-        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;max-width:290px;margin:0 auto 9px">You're holding this ticket — check them in at the door, or transfer it to another Nigh account or phone number.</div>
-        <button onclick="go('transferTicket',{ticketId:'${tk.id}',transferSubIdx:${subIdx},transferPhase:'select',transferSelectedFriend:null})" style="background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:14px;padding:11px 26px;font-size:13px;font-weight:700;color:#fff;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit">${ic('userPlus',15)} Transfer Ticket</button>
+      actionBtn=`<div style="margin-top:18px">
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;text-align:center;max-width:290px;margin:0 auto 9px">You're holding this ticket — check them in at the door, or transfer it to another Nigh account or phone number.</div>
+        <button onclick="event.stopPropagation();go('transferTicket',{ticketId:'${tk.id}',transferSubIdx:${subIdx},transferPhase:'select',transferSelectedFriend:null})" style="width:100%;background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('userPlus',16)} Transfer Ticket</button>
       </div>`;
     } else if(subStatus==='pending'){
-      actionBtn=`<div style="text-align:center;margin-top:12px">
-        <button onclick="cancelTransfer('${tk.id}',${subIdx})" style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:11px 26px;font-size:13px;font-weight:700;color:#F5A623;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',15)} Cancel Transfer</button>
+      actionBtn=`<div style="margin-top:18px">
+        <button onclick="event.stopPropagation();cancelTransfer('${tk.id}',${subIdx})" style="width:100%;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:#F5A623;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',16)} Cancel Transfer</button>
       </div>`;
     }
   }
 
+  const frontFace=`${cardTop}${stateBlock}${venue}${actionBtn}`;
   const pager=subCount>1?`
     <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0 20px">
       <button onclick="S.collSubIdx['${tk.id}']=${Math.max(0,subIdx-1)};render()" ${subIdx===0?'disabled':''} style="width:30px;height:30px;border-radius:50%;background:${subIdx===0?'rgba(255,255,255,0.06)':'rgba(255,255,255,0.12)'};border:none;display:flex;align-items:center;justify-content:center;color:${subIdx===0?'rgba(255,255,255,0.2)':'#fff'};cursor:${subIdx===0?'default':'pointer'}">${ic('left',14)}</button>
@@ -2691,7 +2687,6 @@ function fullTicketCard(tk){
         <div style="position:relative"><div style="${flipped?'visibility:hidden':''}">${frontFace}</div>${flipped?`<div style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch">${backFace}</div>`:''}</div>
       </div>
     </div>
-    ${actionBtn}
     ${pager}`;
 }
 function renderTicketCollection(){
