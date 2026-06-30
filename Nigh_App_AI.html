@@ -5046,14 +5046,14 @@ function renderGroupDetail(){
           const descs={private:'Only members know this group exists',friends:'Friends of group members can see this group and request to join',public:'Discoverable by anyone on Nigh'};
           const icons={private:'lock',friends:'users',public:'globe'};
           const locked=v==='public'&&!currentUser.verified;
-          const descText=locked?'Requires a verified account':descs[v];
+          const descText=locked?'Verify your identity to make a public group':descs[v];
           const radioEl=sel?'<div style="width:12px;height:12px;border-radius:50%;background:#0E4EF5"></div>':'';
           const indicator=locked?('<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#9CA3AF">'+ic('lock',14)+'</div>'):('<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+(sel?'#0E4EF5':'#D1D5DB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0">'+radioEl+'</div>');
           const onclick=locked?'':("var grpAll=[...socialGroups,...eventGroups,...(S.friendGroups||[])];var grp=grpAll.find(x=>x.id==='"+gId+"');if(grp)grp.visibility='"+v+"';render()");
           return'<button onclick="'+onclick+'" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;background:'+(sel?'rgba(14,78,245,0.04)':'none')+';border:none;border-bottom:1px solid #F3F4F6;cursor:'+(locked?'not-allowed':'pointer')+';text-align:left;font-family:inherit;opacity:'+(locked?'0.45':'1')+'"><div style="width:36px;height:36px;border-radius:10px;background:'+(sel?'#EEF2FF':'#F9FAFB')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;color:'+(sel?'#0E4EF5':'#9CA3AF')+'">'+ic(icons[v],16)+'</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">'+labels[v]+'</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px">'+descText+'</div></div>'+indicator+'</button>';
         }).join('')}
       </div>
-      <div style="font-size:11px;color:#9CA3AF;margin-top:8px;padding:0 4px;line-height:1.5">${(rawG.visibility||'private')==='private'?'Private groups will not appear on friend profiles.':'Friends of members can see this group, its members, and request to join.'}</div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:8px;padding:0 4px;line-height:1.5">${(rawG.visibility||'private')==='public'?'Anyone on Nigh can discover and request to join. Public groups require the group owner to be a verified account.':((rawG.visibility||'private')==='private'?'Private groups will not appear on friend profiles.':'Friends of members can see this group, its members, and request to join.')}</div>
 
       <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden;margin-top:28px">
         <button onclick="S.modal='groupAdminPicker';render()" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit">
