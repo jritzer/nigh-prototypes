@@ -2655,7 +2655,7 @@ function fullTicketCard(tk){
       <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
         <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(14,78,245,0.14),transparent 70%);pointer-events:none"></div>
-        <div style="position:relative">${flipped?backFace:frontFace}</div>
+        <div style="position:relative"><div style="${flipped?'visibility:hidden':''}">${frontFace}</div>${flipped?`<div style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch">${backFace}</div>`:''}</div>
       </div>
     </div>
     ${pager}`;
