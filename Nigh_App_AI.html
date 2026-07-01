@@ -2590,7 +2590,7 @@ function fullTicketCard(tk){
 
   const cardTop=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isPast?'14px':'18px'};gap:10px">
-      ${privacyIcon}
+      ${isOwner?privacyIcon:'<div style="width:20px;flex-shrink:0"></div>'}
       <div style="flex:1;min-height:32px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;line-height:1.2">${stateIsQR?ctaMsg:''}</div></div>
       <div style="color:rgba(255,255,255,0.40);flex-shrink:0">${ic('flip',18)}</div>
     </div>
