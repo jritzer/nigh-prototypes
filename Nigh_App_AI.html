@@ -2669,12 +2669,12 @@ function fullTicketCard(tk){
   const frontFace=`${cardTop}${stateBlock}${venueRow}${bottomRegion}`;
 
   // Dots only (no arrows) — swipe to move between tickets
-  const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
+  const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
 
   return`
     <div onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
-      ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};render();}}"
+      ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
       style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)">
       <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
@@ -7573,6 +7573,7 @@ function chatSend(){
 // ── RENDER ─────────────────────────────────────────────
 function render(){
   const scrEl=document.getElementById('scr');
+  if(S.scr!=='ticketCollection'&&S.collFlip){S.collFlip={};}
   const onFeed=S.scr==='feed';
   scrEl.className=onFeed?'feed-mode':'';
   if(S.scr==='niya'){scrEl.style.overflow='hidden';scrEl.style.display='flex';scrEl.style.flexDirection='column';}
