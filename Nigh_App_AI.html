@@ -7574,6 +7574,8 @@ function chatSend(){
 function render(){
   const scrEl=document.getElementById('scr');
   if(S.scr!=='ticketCollection'&&S.collFlip){S.collFlip={};}
+  var _tcStay=(S.scr==='ticketCollection'&&S._lastScr==='ticketCollection');
+  var _tcScroll=_tcStay?scrEl.scrollTop:0;
   const onFeed=S.scr==='feed';
   scrEl.className=onFeed?'feed-mode':'';
   if(S.scr==='niya'){scrEl.style.overflow='hidden';scrEl.style.display='flex';scrEl.style.flexDirection='column';}
@@ -7637,11 +7639,14 @@ function render(){
     setTimeout(()=>{const el=document.getElementById('dm-list');if(el)el.scrollTop=el.scrollHeight;},30);
   } else if(S.scr==='chat'){
     setTimeout(()=>{const sc=document.getElementById('chat-scroll');if(sc)sc.scrollTop=sc.scrollHeight;},30);
+  } else if(_tcStay){
+    scrEl.scrollTop=_tcScroll;
   } else if(S.modal){
     // Preserve scroll when opening a modal overlay
   } else {
     scrEl.scrollTop=0;
   }
+  S._lastScr=S.scr;
   renderTB();
   renderModal();
 }
