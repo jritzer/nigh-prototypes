@@ -2615,15 +2615,15 @@ function fullTicketCard(tk){
   let actionInner='';
   if(!isPast&&!checkedIn&&subIdx>0){
     if(subStatus==='available'||subStatus==='active'){
-      actionInner=`<button onclick="event.stopPropagation();go('transferTicket',{ticketId:'${tk.id}',transferSubIdx:${subIdx},transferPhase:'select',transferSelectedFriend:null})" style="width:100%;background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('userPlus',16)} Transfer Ticket</button>`;
+      actionInner=`<button onclick="event.stopPropagation();go('transferTicket',{ticketId:'${tk.id}',transferSubIdx:${subIdx},transferPhase:'select',transferSelectedFriend:null})" style="background:linear-gradient(135deg,#0E4EF5,#6226E9);border:none;border-radius:14px;padding:12px 30px;font-size:14px;font-weight:700;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('userPlus',16)} Transfer Ticket</button>`;
     } else if(subStatus==='pending'){
-      actionInner=`<button onclick="event.stopPropagation();cancelTransfer('${tk.id}',${subIdx})" style="width:100%;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:13px;font-size:14px;font-weight:700;color:#F5A623;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',16)} Cancel Transfer</button>`;
+      actionInner=`<button onclick="event.stopPropagation();cancelTransfer('${tk.id}',${subIdx})" style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:12px 30px;font-size:14px;font-weight:700;color:#F5A623;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',16)} Cancel Transfer</button>`;
     }
   }
   // Fixed-height bottom region: holder line centered, action pinned to bottom (keeps every spot the same size)
   const bottomRegion=`<div style="height:74px;display:flex;flex-direction:column;margin-top:6px">
     <div style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.55)">${holderLine}</div></div>
-    ${actionInner?`<div style="height:50px;display:flex;align-items:flex-end">${actionInner}</div>`:''}
+    ${actionInner?`<div style="height:50px;display:flex;align-items:flex-end;justify-content:center">${actionInner}</div>`:''}
   </div>`;
 
   // ── Per-spot transfer summary (back side) ──
