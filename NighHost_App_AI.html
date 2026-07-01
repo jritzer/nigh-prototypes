@@ -356,6 +356,8 @@ const accts=[
 let acctIdx=0;const acct=()=>accts[acctIdx];
 // Niya (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Niya surface (icon, tab, bar). Lets Niya roll out to a subset of accounts before going generally available.
 function niyaOn(){return acct().niyaEnabled!==false;}
+// Heads Up (daily announcements to followers) feature flag — per host account. Defaults ON; set acct().headsUpEnabled=false to hide every Heads Up surface (compose, home button, drop-detail button, management screen, Niya). Supports phased rollout / subscription gating.
+function headsUpOn(){return acct().headsUpEnabled!==false;}
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
 const isEntity=()=>acct().entity===true; // is this a business/org that needs separate entity verification?
@@ -1678,10 +1680,10 @@ function renderHome(){
     const showCreate=!isPast&&!dayHasActiveDrop&&!dayHasDraft&&canFull('drops');
     const dayKey=dk(today);
     const dayHeadsUp=S.headsUp&&S.headsUp.date===dayKey?Object.assign({},S.headsUp,{visibility:canPublicHeadsUp()&&S.headsUp.visibility==='public'?'public':'followers'}):null;
-    const huCard=dayHeadsUp?`<div style="margin-top:6px;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;overflow:hidden"><div style="background:rgba(109,40,217,0.1);padding:8px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #DDD6FE"><span style="color:#7C3AED;display:flex;flex-shrink:0">${ic('headsupIc',12)}</span><span style="font-size:11px;font-weight:800;color:#7C3AED;letter-spacing:0.05em;margin-left:-3px;min-width:62px">HEADS UP</span><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;margin-left:12px"></span><span style="font-size:11px;font-weight:700;color:#7C3AED">LIVE</span><button onclick="modal('audience-headsup')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:${dayHeadsUp.visibility==='followers'?'#7C3AED':'#6B7280'};margin-left:8px;flex-shrink:0;cursor:pointer;padding:0" title="${dayHeadsUp.visibility==='public'?'Public — Anyone on Nigh':'Followers Only'}">${ic(dayHeadsUp.visibility==='public'?'globe':'twoPeople',15)}</button><span style="margin-left:auto;font-size:11px;color:#9CA3AF">Expires at midnight</span></div><div style="padding:10px 14px"><div style="font-size:13px;color:#4C1D95;line-height:1.5">"${dayHeadsUp.text}"</div><div style="margin-top:8px;display:flex;align-items:center;gap:8px"><button onclick="var h=headsUpHistory.find(x=>x.id==='${dayHeadsUp.id}');if(h)h.status='paused';S.headsUp=null;render()" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #FDE68A;background:#FFFBEB;color:#92400E;cursor:pointer;font-family:inherit">Pause</button><button onclick="S.huUpdateOrigId='${dayHeadsUp.id}';modal('compose-headsup')" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #DDD6FE;background:#F5F3FF;color:#7C3AED;cursor:pointer;font-family:inherit">Edit</button></div></div></div>`:'';
+    const huCard=(dayHeadsUp&&headsUpOn())?`<div style="margin-top:6px;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;overflow:hidden"><div style="background:rgba(109,40,217,0.1);padding:8px 12px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #DDD6FE"><span style="color:#7C3AED;display:flex;flex-shrink:0">${ic('headsupIc',12)}</span><span style="font-size:11px;font-weight:800;color:#7C3AED;letter-spacing:0.05em;margin-left:-3px;min-width:62px">HEADS UP</span><span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;margin-left:12px"></span><span style="font-size:11px;font-weight:700;color:#7C3AED">LIVE</span><button onclick="modal('audience-headsup')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:${dayHeadsUp.visibility==='followers'?'#7C3AED':'#6B7280'};margin-left:8px;flex-shrink:0;cursor:pointer;padding:0" title="${dayHeadsUp.visibility==='public'?'Public — Anyone on Nigh':'Followers Only'}">${ic(dayHeadsUp.visibility==='public'?'globe':'twoPeople',15)}</button><span style="margin-left:auto;font-size:11px;color:#9CA3AF">Expires at midnight</span></div><div style="padding:10px 14px"><div style="font-size:13px;color:#4C1D95;line-height:1.5">"${dayHeadsUp.text}"</div><div style="margin-top:8px;display:flex;align-items:center;gap:8px"><button onclick="var h=headsUpHistory.find(x=>x.id==='${dayHeadsUp.id}');if(h)h.status='paused';S.headsUp=null;render()" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #FDE68A;background:#FFFBEB;color:#92400E;cursor:pointer;font-family:inherit">Pause</button><button onclick="S.huUpdateOrigId='${dayHeadsUp.id}';modal('compose-headsup')" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid #DDD6FE;background:#F5F3FF;color:#7C3AED;cursor:pointer;font-family:inherit">Edit</button></div></div></div>`:'';
     const huBtn=`<button onclick="modal('compose-headsup')" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;box-sizing:border-box"><div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:#111827">Post a Heads Up</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">${canPublicHeadsUp()?'Post a daily announcement — expires at midnight':'Followers only — expires at midnight'}</div></div><span style="color:#D1D5DB">${ic('right',16)}</span></button>`;
-    const huBtnInCreate=(!dayHeadsUp&&canFull('headsup'))?huBtn:'';
-    const huSection=(!showCreate&&!isPast&&!dayHeadsUp&&canFull('headsup'))?`<div style="padding-top:14px">${huBtn}</div>`:'';
+    const huBtnInCreate=(!dayHeadsUp&&canFull('headsup')&&headsUpOn())?huBtn:'';
+    const huSection=(!showCreate&&!isPast&&!dayHeadsUp&&canFull('headsup')&&headsUpOn())?`<div style="padding-top:14px">${huBtn}</div>`:'';
     const createHtml=showCreate?`<div style="padding-top:24px;display:flex;flex-direction:column;gap:8px">
       <!-- 1. Create a drop with Niya — primary hero -->
       <button onclick="S.niyaFabContext='create';S.scr='niya';S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;render()" style="width:100%;background:linear-gradient(140deg,#0D0030 0%,#2D0B6B 55%,#5B21B6 100%);border:none;border-radius:20px;padding:22px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;text-align:left;box-sizing:border-box;box-shadow:0 4px 20px rgba(91,33,182,0.3)">
@@ -1870,7 +1872,7 @@ function renderCreate(){
         <span style="color:#D1D5DB">${ic('right',16)}</span>
       </button>
 
-      <!-- 3. Heads Up (all hosts — only verified businesses can go public) -->
+      ${headsUpOn()?`<!-- 3. Heads Up (all hosts — only verified businesses can go public) -->
       <button onclick="S.niyaMode='manage';S.niyaStep=0;S.niyaListening=false;S.niyaFabContext='create';S.scr='niya';render()" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;box-sizing:border-box">
         <div style="width:42px;height:42px;border-radius:11px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;color:#7C3AED;flex-shrink:0">${ic('headsupIc',20)}</div>
         <div style="flex:1">
@@ -1878,7 +1880,7 @@ function renderCreate(){
           <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${canPublicHeadsUp()?'Post a daily announcement — expires at midnight':isPersonal()?'Followers only — expires at midnight':'Followers only · <a onclick="S.verifyStep=\'welcome\';S.menuSub=\'verify\';render()" style="color:#0E4EF5;cursor:pointer">Verify your host account</a> to go public'}</div>
         </div>
         <span style="color:#D1D5DB">${ic('right',16)}</span>
-      </button>
+      </button>`:''}
 
       <!-- 4. Repeat a past drop -->
       ${pastDrops.length?`
@@ -2947,6 +2949,7 @@ function renderFollowRequests(){
   </div>`;
 }
 function renderHeadsUpScreen(){
+  if(!headsUpOn())return `${hdr('Heads Up',null,"S.menuSub=null;render()")}<div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;line-height:1.6">Heads Up is turned off for this account.</div>`;
   if(!canView('headsup'))return `${hdr('Heads Up',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Heads Up')}</div>`;
   const todayKey=dk(TODAY);
   const grouped={};
@@ -4949,7 +4952,7 @@ function renderVerify(){
               {icon:'send',label:'Payouts',desc:'Connect your bank account to receive earnings'},
               {icon:'shield',label:'Identity badge',desc:'Your identity badge shows you\'re a verified, real person'},
               {icon:'bell',label:'Heads Up',desc:'Send drop announcements directly to your followers'}
-            ].map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:32px;height:32px;border-radius:8px;background:#DCFCE7;display:flex;align-items:center;justify-content:center"><div style="color:#16A34A">'+ic(item.icon,16)+'</div></div><div><div style="font-size:12px;font-weight:600;color:#111827">'+item.label+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:1px">'+item.desc+'</div></div></div>').join('')}
+            ].filter(item=>headsUpOn()||item.label!=='Heads Up').map((item,i,arr)=>'<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="min-width:32px;height:32px;border-radius:8px;background:#DCFCE7;display:flex;align-items:center;justify-content:center"><div style="color:#16A34A">'+ic(item.icon,16)+'</div></div><div><div style="font-size:12px;font-weight:600;color:#111827">'+item.label+'</div><div style="font-size:11px;color:#6B7280;line-height:1.4;margin-top:1px">'+item.desc+'</div></div></div>').join('')}
           </div>
 
           <!-- Privacy note -->
@@ -6318,6 +6321,13 @@ function renderSettings(){
         <div style="position:absolute;top:3px;${niyaOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
       </div>
     </div>
+    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px">
+      <div style="color:#16A34A">${ic('headsupIc',16)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:#374151">Heads Up</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Post Heads Up announcements from this account</div></div>
+      <div onclick="acct().headsUpEnabled=!headsUpOn();render()" style="width:44px;height:26px;border-radius:13px;background:${headsUpOn()?'#0E4EF5':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0">
+        <div style="position:absolute;top:3px;${headsUpOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
+      </div>
+    </div>
     <div style="text-align:center;margin-top:14px"><button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.otpError=false;S.otpResent=false;S.scr='login';S.menuSub=null;render()" style="padding:12px 28px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444;cursor:pointer">${t('account.logout')}</button></div>
     <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Host v1.0</div>
   </div>`;
@@ -7100,7 +7110,7 @@ function renderModal(){
             <div style="font-size:12px;color:#6B7280">Send a message to a guest or partner</div>
           </div>
         </button>
-        <!-- Heads Up -->
+        ${headsUpOn()?`<!-- Heads Up -->
         <button onclick="modal('compose-headsup')" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;border:1.5px solid #D1FAE5;background:#F0FDF4;cursor:pointer;text-align:left;width:100%;font-family:inherit">
           <div style="width:44px;height:44px;border-radius:12px;background:#DCFCE7;display:flex;align-items:center;justify-content:center;flex-shrink:0">
             <svg width="20" height="20" viewBox="0 0 24 24" stroke="#16A34A" stroke-width="2" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -7109,7 +7119,7 @@ function renderModal(){
             <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:2px">Heads Up</div>
             <div style="font-size:12px;color:#6B7280">Post a daily announcement — expires at midnight</div>
           </div>
-        </button>
+        </button>`:''}
       </div>
     </div></div>`;
   }
@@ -7711,7 +7721,7 @@ function renderNiya(){
   const mode=S.niyaMode;
   if(mode==='onboarding'&&S.niyaOnboarding) return renderNiyaOnboarding();
   if(!niyaOn()){S.scr='home';return renderHome();} // Niya disabled for this account
-  if(mode==='headsup'&&canFull('headsup')) return renderNiyaHeadsUp();
+  if(mode==='headsup'&&canFull('headsup')&&headsUpOn()) return renderNiyaHeadsUp();
   if(mode==='create') return renderNiyaCreate();
   if(mode==='manage') return renderNiyaManage();
   if(mode==='review') return renderNiyaReview();
@@ -7858,7 +7868,7 @@ function renderNiyaManage(){
         if((ql.includes('revenue')||ql.includes('payout'))&&!canView('revenue'))return false;
         if(ql.includes('message')&&!canFull('messageGuests'))return false;
         if(ql.includes('team')&&!canView('team'))return false;
-        if(ql.includes('heads up')&&!canFull('headsup'))return false;
+        if(ql.includes('heads up')&&(!canFull('headsup')||!headsUpOn()))return false;
         return true;
       });
       return filtered.length?`<div style="margin-bottom:14px">

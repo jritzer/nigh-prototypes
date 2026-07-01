@@ -276,6 +276,8 @@ const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-01
 
 // Niya (in-app AI assistant) feature flag — per user account. Defaults ON; set currentUser.niyaEnabled=false to hide every Niya surface (icon, tab). Enables a phased Niya rollout to a subset of users.
 function niyaOn(){return currentUser.niyaEnabled!==false;}
+// Heads Up (real-time plans with friends) feature flag — per user account. Defaults ON; set currentUser.headsUpEnabled=false to hide every Heads Up surface (compose, drop buttons, inbox composer, incoming Heads Ups, Niya section). Supports phased rollout / subscription gating.
+function headsUpOn(){return currentUser.headsUpEnabled!==false;}
 const feedDrops=[
   {id:'D001',title:'Nike Air Max Day Access',
    host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},
@@ -1744,10 +1746,10 @@ function renderDropDetail(){
         </div>`).join('')}
       </div>`:`
       <div style="font-size:12px;color:rgba(255,255,255,0.4)">${hiddenCount>0?`${hiddenCount} friend${hiddenCount!==1?'s':''} going (private)`:'No friends have a ticket yet'}</div>
-      <button onclick="modal('headsup-drop-${S.drop}')" style="margin-top:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:8px 18px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">
+      ${headsUpOn()?`<button onclick="modal('headsup-drop-${S.drop}')" style="margin-top:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:8px 18px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">
         <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         Send Heads Up to Friends
-      </button>`}
+      </button>`:''}`}
     </div>
 
     <!-- About this Drop -->
@@ -2169,14 +2171,14 @@ function renderTicketView(){
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px">Coordinate your arrival or meet up before</div>
       <div style="display:flex;gap:8px">
         <button onclick="modal('coord-${drpIdx}')" style="flex:1;background:rgba(14,78,245,0.2);border:1px solid rgba(14,78,245,0.4);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:#93C5FD;cursor:pointer;font-family:inherit">Coordinate</button>
-        <button onclick="modal('headsup-drop-${drpIdx}')" style="flex:1;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit">Tell more friends</button>
+        ${headsUpOn()?`<button onclick="modal('headsup-drop-${drpIdx}')" style="flex:1;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:9px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit">Tell more friends</button>`:''}
       </div>`:`
       <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:3px">None of your friends are going yet</div>
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:12px">Let them know — it's more fun with people you know</div>
-      <button onclick="modal('headsup-drop-${drpIdx}')" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:10px 20px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">
+      ${headsUpOn()?`<button onclick="modal('headsup-drop-${drpIdx}')" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:10px 20px;font-size:12px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">
         <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         Send Heads Up to Friends
-      </button>`}
+      </button>`:''}`}
     </div>`:'';
 
   // ── Shared top section (same on all tickets) ──
@@ -2889,7 +2891,8 @@ function openInboxMessage(id){
 function renderInbox(){
   const filter=S.inboxFilter||'all';
   const filterMap={'friends':['friend','headsup','activity','dropgroup'],'places':['bizheadsup','drop','alert'],'nigh':['nigh']};
-  const filtered=filter==='all'?inboxMessages:inboxMessages.filter(m=>{
+  const _inbox=headsUpOn()?inboxMessages:inboxMessages.filter(m=>m.type!=='headsup'&&m.type!=='bizheadsup');
+  const filtered=filter==='all'?_inbox:_inbox.filter(m=>{
     const types=filterMap[filter]||[];
     return types.includes(m.type);
   });
@@ -2953,7 +2956,7 @@ function renderInbox(){
   <div style="font-size:32px;margin-bottom:12px">&#x1F44B;</div>
   <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:6px">All caught up</div>
   <div style="font-size:12px;color:rgba(255,255,255,0.30);line-height:1.5;margin-bottom:16px">See what friends are interested in doing and share your own interest</div>
-  <button onclick="modal('compose')" style="padding:9px 18px;border-radius:20px;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.3);color:#93C5FD;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Post a Heads Up</button>
+  <button onclick="modal('compose')" style="padding:9px 18px;border-radius:20px;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.3);color:#93C5FD;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">${headsUpOn()?'Post a Heads Up':'Send a message'}</button>
   <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08)">
     <div style="font-size:11px;color:rgba(255,255,255,0.30);line-height:1.5;margin-bottom:10px">Know someone who&#39;d love Nigh? Bring them in.</div>
     <button onclick="inviteFriends()" style="padding:9px 18px;border-radius:20px;background:none;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.75);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">${ic('share',13)} Invite a friend to Nigh</button>
@@ -3154,7 +3157,7 @@ function renderInbox(){
               <div style="font-size:11px;color:rgba(255,255,255,0.40)">Chat with friends and coordinate plans</div>
             </div>
           </button>
-          <button onclick="modal('compose-headsup')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.06);cursor:pointer;text-align:left;width:100%;font-family:inherit">
+          ${headsUpOn()?`<button onclick="modal('compose-headsup')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.06);cursor:pointer;text-align:left;width:100%;font-family:inherit">
             <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
               <svg width="18" height="18" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.95)" stroke-width="2" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             </div>
@@ -3162,7 +3165,7 @@ function renderInbox(){
               <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px">Heads Up</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.40)">Let friends know what you're up to or want to do — expires at midnight each day</div>
             </div>
-          </button>
+          </button>`:''}
         </div>
       </div>`:``}
     </div>
@@ -3324,6 +3327,13 @@ function renderSettings(){
       <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:#111827">Niya assistant</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Show the Niya AI assistant</div></div>
       <div onclick="currentUser.niyaEnabled=!niyaOn();render()" style="width:44px;height:26px;border-radius:13px;background:${niyaOn()?'#0E4EF5':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0">
         <div style="position:absolute;top:3px;${niyaOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
+      </div>
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+      <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:rgba(34,197,94,0.12);color:#16A34A"><svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+      <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500;color:#111827">Heads Up</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Post &amp; receive real-time plans with friends</div></div>
+      <div onclick="currentUser.headsUpEnabled=!headsUpOn();render()" style="width:44px;height:26px;border-radius:13px;background:${headsUpOn()?'#0E4EF5':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0">
+        <div style="position:absolute;top:3px;${headsUpOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
       </div>
     </div>
     <div style="text-align:center;margin-top:14px"><button onclick="S.scr='onboarding';S.obStep=0;S.menuSub=null;S.niyaOnboarding=false;S.obPhone='';S.obCode='';S.otpError=false;S.otpResent=false;S.obFirstName='';S.obLastName='';S.obHandle='';S.obExChoice='';S.obBizCategory='';S.obBizSubCat='';S.obDropIdea='';render()" style="padding:10px 24px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444">${t('account.logout')}</button></div>
@@ -4948,7 +4958,7 @@ function renderNiya(){
         </div></div>`:''}
       </div>
 
-      ${step===0&&headsUps.filter(h=>h.following).length?`<div style="margin-bottom:14px">
+      ${headsUpOn()&&step===0&&headsUps.filter(h=>h.following).length?`<div style="margin-bottom:14px">
         <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Heads Up</div>
         ${headsUps.filter(h=>h.following).map(h=>`<div class="slideUp" style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5 160%);border-radius:12px;padding:12px 14px;margin-bottom:8px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
@@ -6369,7 +6379,7 @@ function renderModal(){
             </div>
           </button>
           <!-- Heads Up option -->
-          <button onclick="modal('compose-headsup')" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.06);cursor:pointer;text-align:left;width:100%;font-family:inherit">
+          ${headsUpOn()?`<button onclick="modal('compose-headsup')" style="display:flex;align-items:center;gap:14px;padding:16px;border-radius:14px;border:1px solid rgba(34,197,94,0.2);background:rgba(34,197,94,0.06);cursor:pointer;text-align:left;width:100%;font-family:inherit">
             <div style="width:44px;height:44px;border-radius:12px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
               <svg width="20" height="20" viewBox="0 0 24 24" stroke="rgba(34,197,94,0.95)" stroke-width="2" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
             </div>
@@ -6377,7 +6387,7 @@ function renderModal(){
               <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">Heads Up</div>
               <div style="font-size:12px;color:rgba(255,255,255,0.45)">Let friends know what you're up to or want to do — expires at midnight each day</div>
             </div>
-          </button>
+          </button>`:''}
         </div>
       </div>
     </div>`;return;
@@ -6548,10 +6558,10 @@ function renderModal(){
         </div>
         <button onclick="modal(null);S.scr='inbox';S.inboxFilter='friends';render()" style="background:rgba(14,78,245,0.2);border:1px solid rgba(14,78,245,0.35);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:#93C5FD;cursor:pointer;font-family:inherit">Message</button>
       </div>`).join('')}
-      <button onclick="modal('headsup-drop-${cIdx}')" style="width:100%;margin-top:14px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:11px;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">
+      ${headsUpOn()?`<button onclick="modal('headsup-drop-${cIdx}')" style="width:100%;margin-top:14px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:11px;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">
         <svg width="13" height="13" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
         Invite more friends
-      </button>
+      </button>`:''}
     </div></div>`;return;
   }
 
