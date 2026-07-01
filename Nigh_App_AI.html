@@ -2561,7 +2561,7 @@ function fullTicketCard(tk){
           <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic('clock',13)}</div>
           <div style="font-size:12px;font-weight:700;color:#F5A623">Transfer Pending</div>
         </div>
-        ${subInvitee?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subInvitee.name||subInvitee.phone}</div>${subInvitee.phone&&subInvitee.name?`<div style="font-size:11px;color:rgba(255,255,255,0.5)">${subInvitee.phone}</div>`:''}<div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">Invited ${subInvitedAt} · Awaiting acceptance on Nigh</div>`:''}
+        ${subInvitee?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subInvitee.name||subInvitee.phone}</div>${subInvitee.phone&&subInvitee.name?`<div style="font-size:11px;color:rgba(255,255,255,0.5)">${subInvitee.phone}</div>`:''}<div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">Invited ${subInvitedAt}</div><div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:2px">Awaiting acceptance</div>`:''}
       </div>
     </div>`;
   const transferredTile=`
