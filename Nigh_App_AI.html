@@ -2467,10 +2467,12 @@ function renderTicketEmptyState(){
 }
 
 function updateTicketScrollbar(){
-  var sc=document.getElementById('scr');
   var bar=document.getElementById('ticketScroll');
+  if(!bar)return;
+  if(S.scr!=='ticketCollection'||(S.ticketTab||'current')!=='current'){bar.style.display='none';return;}
+  var sc=document.getElementById('scr');
   var thumb=document.getElementById('ticketScrollThumb');
-  if(!sc||!bar||!thumb)return;
+  if(!sc||!thumb)return;
   var sh=sc.scrollHeight, ch=sc.clientHeight;
   if(sh<=ch+4){bar.style.display='none';return;}
   bar.style.display='block';
