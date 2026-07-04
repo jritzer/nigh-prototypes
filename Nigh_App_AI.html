@@ -1413,6 +1413,10 @@ function renderFeed(){
       :[null,d.closesIn];
     const hrs=hPart?hPart.replace('h',''):'00';
     const mins=mPart?mPart.replace('m',''):'14';
+    // Left scroll indicator geometry: thumb sized 1/N and positioned by card index
+    const _fN=feedDrops.length, _trH=84;
+    const _thH=Math.max(12,Math.round(_trH/_fN));
+    const _thTop=_fN>1?Math.round((_trH-_thH)*(idx/(_fN-1))):0;
     return`<div class="feed-card">
       <!-- BG photo/video -->
       <div style="position:absolute;inset:0;background:linear-gradient(${bgGrad})">
@@ -1425,9 +1429,9 @@ function renderFeed(){
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,transparent 30%,transparent 40%,rgba(0,0,0,0.7) 70%,rgba(0,0,0,0.92) 100%)"></div>
       </div>
 
-      <!-- Left scroll indicator -->
-      <div style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:80px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:10">
-        <div style="width:100%;height:${idx===0?'30%':'60%'};border-radius:2px;background:rgba(255,255,255,0.7)"></div>
+      <!-- Left scroll indicator (card ${idx+1} of ${_fN}) -->
+      <div style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:${_trH}px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:10">
+        <div style="position:absolute;top:${_thTop}px;width:100%;height:${_thH}px;border-radius:2px;background:rgba(255,255,255,0.7)"></div>
       </div>
 
       <!-- Top: Timer or Sold Out pill -->
