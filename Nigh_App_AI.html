@@ -17,6 +17,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .scrollDark::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:3px}
 .scrollDark::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.45)}
 #scr.feed-mode{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
+#scr.tickets-mode{scroll-snap-type:y mandatory}
+#scr.tickets-mode .tk-snap{scroll-snap-align:start;scroll-snap-stop:always}
 .feed-card{scroll-snap-align:start;height:100%;position:relative;overflow:hidden}
 .tb{display:flex;justify-content:space-evenly;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
 .tt{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;padding:2px 10px;min-width:50px;color:#9CA3AF;transition:color 0.15s;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
@@ -2693,7 +2695,7 @@ function fullTicketCard(tk){
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
 
   return`
-    <div id="tkcard_${tk.id}" onclick="${flip}"
+    <div id="tkcard_${tk.id}" class="tk-snap" onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
       ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
       style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)">
@@ -7644,7 +7646,8 @@ function render(){
   var _tcStay=(S.scr==='ticketCollection'&&S._lastScr==='ticketCollection');
   var _tcScroll=_tcStay?scrEl.scrollTop:0;
   const onFeed=S.scr==='feed';
-  scrEl.className=onFeed?'feed-mode':'';
+  const onTickets=S.scr==='ticketCollection';
+  scrEl.className=onFeed?'feed-mode':(onTickets?'tickets-mode':'');
   if(S.scr==='niya'){scrEl.style.overflow='hidden';scrEl.style.display='flex';scrEl.style.flexDirection='column';}
   else{scrEl.style.overflow='';scrEl.style.display='';scrEl.style.flexDirection='';}
   let html='';
@@ -7670,6 +7673,8 @@ function render(){
     default: html=renderFeed();
   }
   scrEl.innerHTML=html;
+  // Ticket collection: snap padding so snapped cards land just below the sticky header
+  if(onTickets){var _hd=document.getElementById('tkColHeader');scrEl.style.scrollPaddingTop=((_hd?_hd.offsetHeight:92)+12)+'px';}else{scrEl.style.scrollPaddingTop='';}
   // Back-of-ticket scroll cue: hide fade when content fits (no overflow)
   setTimeout(function(){var bs=document.querySelectorAll('[id^="tkback_"]');for(var i=0;i<bs.length;i++){var el=bs[i];var f=document.getElementById('tkfade_'+el.id.substring(7));if(f)f.style.opacity=(el.scrollHeight-el.clientHeight>12)?'1':'0';}},0);
   // Join request toast
