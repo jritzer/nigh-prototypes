@@ -1487,18 +1487,18 @@ function renderFeed(){
         const canBuyMore=isMine&&d.spotsLeft>0&&d.maxPerUser>1;
         if(ticketedSoldOut){
           return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
-            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+            <button onclick="go('ticketCollection',{ticketTab:'current',focusTicket:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
           </div>`;
         }
         if(canBuyMore){
           return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;gap:8px">
-            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="flex:1;background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',14)} View Your Ticket</button>
+            <button onclick="go('ticketCollection',{ticketTab:'current',focusTicket:'${d.myTicket}'})" style="flex:1;background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',14)} View Your Ticket</button>
             <button onclick="go('dropDetail',{drop:${idx}})" style="flex:1;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.25);border-radius:24px;padding:10px 12px;font-size:13px;font-weight:600">${d.maxPerUser-1===1?'Get Spot for Friend':'Get Spots for Friends'}</button>
           </div>`;
         }
         if(isMine){
           return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
-            <button onclick="go('ticketView',{ticketId:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
+            <button onclick="go('ticketCollection',{ticketTab:'current',focusTicket:'${d.myTicket}'})" style="background:#0E4EF5;color:#fff;border:none;border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:4px -4px 0px rgba(0,0,0,0.3)">${ic('ticket',16)} View Your Ticket</button>
           </div>`;
         }
         if(soldOut){
@@ -2693,7 +2693,7 @@ function fullTicketCard(tk){
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
 
   return`
-    <div onclick="${flip}"
+    <div id="tkcard_${tk.id}" onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
       ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
       style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)">
@@ -7721,6 +7721,9 @@ function render(){
     setTimeout(()=>{const el=document.getElementById('dm-list');if(el)el.scrollTop=el.scrollHeight;},30);
   } else if(S.scr==='chat'){
     setTimeout(()=>{const sc=document.getElementById('chat-scroll');if(sc)sc.scrollTop=sc.scrollHeight;},30);
+  } else if(S.scr==='ticketCollection'&&S.focusTicket){
+    var _ft=S.focusTicket;S.focusTicket=null;
+    setTimeout(function(){var el=document.getElementById('tkcard_'+_ft);if(el){var cr=el.getBoundingClientRect(),sr=scrEl.getBoundingClientRect();scrEl.scrollTop+=(cr.top-sr.top)-72;}if(typeof updateTicketScrollbar==='function')updateTicketScrollbar();},0);
   } else if(_tcStay){
     scrEl.scrollTop=_tcScroll;
   } else if(S.modal){
