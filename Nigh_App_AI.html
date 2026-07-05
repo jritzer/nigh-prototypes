@@ -1413,10 +1413,6 @@ function renderFeed(){
       :[null,d.closesIn];
     const hrs=hPart?hPart.replace('h',''):'00';
     const mins=mPart?mPart.replace('m',''):'14';
-    // Left scroll indicator geometry: thumb sized 1/N and positioned by card index
-    const _fN=feedDrops.length, _trH=84;
-    const _thH=Math.max(12,Math.round(_trH/_fN));
-    const _thTop=_fN>1?Math.round((_trH-_thH)*(idx/(_fN-1))):0;
     return`<div class="feed-card">
       <!-- BG photo/video -->
       <div style="position:absolute;inset:0;background:linear-gradient(${bgGrad})">
@@ -1427,11 +1423,6 @@ function renderFeed(){
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,#41EFF9,#0E4EF5,#6226E9,#EC1977)"></div>
         <!-- Dark gradient overlay -->
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,transparent 30%,transparent 40%,rgba(0,0,0,0.7) 70%,rgba(0,0,0,0.92) 100%)"></div>
-      </div>
-
-      <!-- Left scroll indicator (card ${idx+1} of ${_fN}) -->
-      <div style="position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:${_trH}px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:10">
-        <div style="position:absolute;top:${_thTop}px;width:100%;height:${_thH}px;border-radius:2px;background:rgba(255,255,255,0.7)"></div>
       </div>
 
       <!-- Top: Timer or Sold Out pill -->
@@ -2470,6 +2461,23 @@ function renderTicketEmptyState(){
   </div>`;
 }
 
+function updateFeedScrollbar(){
+  var bar=document.getElementById('feedScroll');
+  if(!bar)return;
+  if(S.scr!=='feed'){bar.style.display='none';return;}
+  var sc=document.getElementById('scr');
+  var thumb=document.getElementById('feedScrollThumb');
+  if(!sc||!thumb)return;
+  var sh=sc.scrollHeight, ch=sc.clientHeight;
+  if(sh<=ch+4){bar.style.display='none';return;}
+  bar.style.display='block';
+  var trackH=bar.clientHeight||1;
+  var th=Math.max(20, trackH*ch/sh);
+  var maxTop=Math.max(0,trackH-th);
+  var top=maxTop*(sc.scrollTop/(sh-ch));
+  thumb.style.height=th+'px';
+  thumb.style.top=top+'px';
+}
 function updateTicketScrollbar(){
   var bar=document.getElementById('ticketScroll');
   if(!bar)return;
@@ -7649,6 +7657,21 @@ function render(){
     if(_scEl && !_scEl._tsBound){ _scEl._tsBound=true; _scEl.addEventListener('scroll',updateTicketScrollbar); }
     setTimeout(updateTicketScrollbar,0);
   } else if(tsBar){ tsBar.style.display='none'; }
+  // Feed: fixed left scroll indicator (stays on screen, thumb tracks scroll)
+  var fsBar=document.getElementById('feedScroll');
+  var showFS=(S.scr==='feed' && feedDrops.length>1);
+  if(showFS){
+    if(!fsBar){
+      fsBar=document.createElement('div');fsBar.id='feedScroll';
+      fsBar.style.cssText='position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:84px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
+      fsBar.innerHTML='<div id="feedScrollThumb" style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.7);top:0;height:30%"></div>';
+      document.getElementById('app').appendChild(fsBar);
+    }
+    fsBar.style.display='block';
+    var _fscEl=document.getElementById('scr');
+    if(_fscEl && !_fscEl._fsBound){ _fscEl._fsBound=true; _fscEl.addEventListener('scroll',updateFeedScrollbar); }
+    setTimeout(updateFeedScrollbar,0);
+  } else if(fsBar){ fsBar.style.display='none'; }
   if(onFeed){
     scrEl.scrollTop=S.drop*762;
   } else if(S.scr==='dm'){
