@@ -2927,7 +2927,7 @@ function renderInbox(){
     {key:'nigh',label:t('inbox.filter.nigh')},
   ];
   return`
-  <div style="background:#0B0B1A;min-height:762px;display:flex;flex-direction:column">
+  <div style="background:#0B0B1A;height:100%;display:flex;flex-direction:column">
     <div style="background:#0B0B1A;padding:16px 16px 0;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:99">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
         <div style="font-size:20px;font-weight:800;color:#fff">${t('inbox.title')}</div>
@@ -2942,6 +2942,7 @@ function renderInbox(){
         `).join('')}
       </div>
     </div>
+    <div style="overflow-y:auto;flex:1">
     ${(()=>{
       const tonightFriends=friendsList.filter(f=>f.hasTicket&&f.ticketPrivacy==='friends');
       if(tonightFriends.length===0) return '';
@@ -3182,6 +3183,7 @@ function renderInbox(){
           </button>`:''}
         </div>
       </div>`:``}
+    </div>
     </div>
   </div>`;
 }
@@ -4460,8 +4462,8 @@ function renderFollowing(){
 
   const avatarGradient=t=>t==='brand'?'#111827,#374151':t==='people'?'#7C3AED,#EC4899':t==='mobile'?'#059669,#10B981':'#1B2A4A,#0E4EF5';
 
-  return`${hdr('Following',`${allFollowing.length} hosts`,"S.menuSub=null;render()",followingDotMenu)}
-  <div style="padding:14px 16px">
+  return`<div style="height:100%;display:flex;flex-direction:column;background:#fff">${hdr('Following',`${allFollowing.length} hosts`,"S.menuSub=null;render()",followingDotMenu)}
+  <div style="overflow-y:auto;flex:1;padding:14px 16px">
     <div style="font-size:12px;color:#9CA3AF;margin-bottom:14px;line-height:1.5">Tap to view a host's profile and manage your preferences. Ask Niya to help you discover more hosts.</div>
 
     ${filterPills}
@@ -4495,7 +4497,7 @@ function renderFollowing(){
         </button>
       </div>
     </div>`}
-  </div>`;
+  </div></div>`;
 }
 
 // ── PRO PROFILE ────────────────────────────────────────
