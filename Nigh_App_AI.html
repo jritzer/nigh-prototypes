@@ -264,7 +264,7 @@ function fmtVDate(d){const m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','S
 function daysSinceVerified(){return Math.floor((VTODAY-new Date(userVerifiedDate))/86400000);}
 function reverifyAvailDate(){const dt=new Date(userVerifiedDate);dt.setDate(dt.getDate()+REVERIFY_DAYS);return fmtVDate(dt);}
 function canReverify(){return daysSinceVerified()>=REVERIFY_DAYS;}
-const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-0188',email:'jritzer@gmail.com',verified:false,
+const currentUser={name:'Josh Ritzer',uname:'@joshr',av:'JR',phone:'(303) 555-0188',email:'jritzer@gmail.com',verified:false,legalName:'',
   nCredits:{
     balance:12.50,
     history:[
@@ -4743,8 +4743,8 @@ function renderUserVerify(){
             }).join('')+
           '</div>'+
           '<div style="background:#F9FAFB;border-radius:10px;padding:10px 14px;margin-bottom:16px;width:100%"><div style="display:flex;gap:8px;align-items:center;justify-content:center"><div style="color:#9CA3AF">'+ic('shield',12)+'</div><span style="font-size:11px;color:#9CA3AF">Your ID and selfies have been deleted from our servers</span></div></div>'+
-          '<button onclick="currentUser.verified=true;'+resetV+'S.menuSub=\'userAccount\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to User Account</button>'+
-          '<button onclick="currentUser.verified=true;'+resetV+'S.menuSub=null;S.scr=\'feed\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Feed</button>'+
+          '<button onclick="currentUser.verified=true;currentUser.legalName=currentUser.legalName||\'Joshua Ritzer\';'+resetV+'S.menuSub=\'userAccount\';render()" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Back to User Account</button>'+
+          '<button onclick="currentUser.verified=true;currentUser.legalName=currentUser.legalName||\'Joshua Ritzer\';'+resetV+'S.menuSub=null;S.scr=\'feed\';render()" style="width:100%;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:500;cursor:pointer">Go to Feed</button>'+
         '</div></div>';
     }
     if(res==='failure'){
@@ -4851,10 +4851,11 @@ function renderUserAccount(){
       <div style="font-size:10px;color:#15803D;line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid #BBF7D0">Locked for security. ${canReverify()?'Re-verify if your legal name changed or your ID expired.':'Re-verify available '+reverifyAvailDate()+'.'} Re-verification is allowed every ${REVERIFY_DAYS} days.</div>
     </div>`}
 
-    <!-- Name — locked (verified legal identity) -->
+    <!-- Name — editable (how you appear on Nigh) -->
     <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
-      ${lockedRow('First Name',(currentUser.name.split(' ')[0]||''),'Contact support to update')}
-      ${lockedRow('Last Name',(currentUser.name.split(' ').slice(1).join(' ')||''),'Contact support to update')}
+      ${row('First Name',(currentUser.name.split(' ')[0]||''),"S.nameFirst=currentUser.name.split(' ')[0]||'';S.nameLast=currentUser.name.split(' ').slice(1).join(' ')||'';S.nameSaved=false;modal('editName')",'Edit')}
+      ${row('Last Name',(currentUser.name.split(' ').slice(1).join(' ')||''),"S.nameFirst=currentUser.name.split(' ')[0]||'';S.nameLast=currentUser.name.split(' ').slice(1).join(' ')||'';S.nameSaved=false;modal('editName')",'Edit')}
+      <div style="padding:10px 0 13px;border-bottom:1px solid #F3F4F6"><div style="font-size:10px;color:#9CA3AF;line-height:1.5">This is how you appear on Nigh — to friends, hosts, and on your tickets. Use a name people will recognize.</div></div>
       <div style="display:flex;align-items:center;padding:13px 0;border-bottom:1px solid #F3F4F6;gap:12px">
         <div style="flex:1;min-width:0">
           <div style="font-size:10px;font-weight:600;color:#9CA3AF;margin-bottom:2px">Handle</div>
@@ -4873,9 +4874,15 @@ function renderUserAccount(){
       ${verifiedRow('Email',currentUser.email,"S.contactChangeStep=0;S.contactNewVal='';modal('changeEmail')")}
     </div>
 
-    <!-- Date of Birth — locked -->
-    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:16px">
-      ${lockedRow('Date of Birth','June 14, 1992','Contact support to update')}
+    <!-- Private identity — legal name (post-verify) + DOB. Only you and Nigh can see this. -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:0 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:5px;padding:12px 0 4px">
+        <div style="font-size:11px;font-weight:700;color:#374151">Private identity</div>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      ${currentUser.verified&&currentUser.legalName?lockedRow('Legal Name',currentUser.legalName,null):''}
+      ${lockedRow('Date of Birth','June 14, 1992',null)}
+      <div style="padding:2px 0 12px"><div style="font-size:10px;color:#9CA3AF;line-height:1.5">${currentUser.verified?`From your verified ID. Only visible to you and Nigh — never shown to other members or hosts. Used for verification, age checks, and payments. ${canReverify()?'Re-verify to update.':'Re-verify available '+reverifyAvailDate()+'.'}`:`Your date of birth is private — only visible to you and Nigh, used for age checks. Your legal name is added privately when you verify your identity.`}</div></div>
     </div>
 
     <!-- Addresses -->
@@ -5562,6 +5569,36 @@ function renderModal(){
           <span style="font-size:20px">${icon}</span>
           <span style="font-size:14px;font-weight:500;color:${i===2?'#EF4444':'#111827'}">${label}</span>
         </button>`).join('')}
+    </div></div>`;return;
+  }
+  if(S.modal==='editName'){
+    const f=(S.nameFirst!==undefined?S.nameFirst:(currentUser.name.split(' ')[0]||''));
+    const l=(S.nameLast!==undefined?S.nameLast:(currentUser.name.split(' ').slice(1).join(' ')||''));
+    const canSave=f.trim().length>0&&l.trim().length>0;
+    if(S.nameSaved){
+      mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding:24px 20px 28px"><div class="mh"></div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:14px;font-weight:700;color:#166534;margin-bottom:4px">Name Updated</div>
+          <div style="font-size:12px;color:#15803D">You now appear as <strong>${currentUser.name}</strong> on Nigh.</div>
+          <button onclick="modal(null)" style="margin-top:12px;padding:8px 24px;border-radius:8px;border:none;background:#16A34A;font-size:12px;font-weight:600;color:#fff;cursor:pointer">Done</button>
+        </div>
+      </div></div>`;return;
+    }
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding:24px 20px 28px"><div class="mh"></div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">Edit Name</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:16px;line-height:1.5">This is how you appear on Nigh — to friends, hosts, and on your tickets. Use a name people will recognize.${currentUser.verified?' Your verified legal name stays private and is unaffected.':''}</div>
+      <div style="margin-bottom:12px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">First Name</label>
+        <input id="nameFirstInput" type="text" value="${f.replace(/"/g,'&quot;')}" maxlength="40" placeholder="First name" oninput="S.nameFirst=this.value;var b=document.getElementById('nameSaveBtn');if(b){var ok=this.value.trim()&&(S.nameLast!==undefined?S.nameLast:'').trim();b.disabled=!ok;b.style.background=ok?'#0E4EF5':'#E5E7EB';b.style.cursor=ok?'pointer':'default';}" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:14px;background:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">Last Name</label>
+        <input id="nameLastInput" type="text" value="${l.replace(/"/g,'&quot;')}" maxlength="40" placeholder="Last name" oninput="S.nameLast=this.value;var b=document.getElementById('nameSaveBtn');if(b){var ok=this.value.trim()&&(S.nameFirst!==undefined?S.nameFirst:'').trim();b.disabled=!ok;b.style.background=ok?'#0E4EF5':'#E5E7EB';b.style.cursor=ok?'pointer':'default';}" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:14px;background:#fff;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="modal(null)" style="flex:1;padding:11px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;font-size:13px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Cancel</button>
+        <button id="nameSaveBtn" ${!canSave?'disabled':''} onclick="var ff=(S.nameFirst||'').trim(),ll=(S.nameLast||'').trim();if(!ff||!ll)return;currentUser.name=ff+' '+ll;currentUser.av=(ff[0]||'')+(ll[0]||'');S.nameSaved=true;renderModal()" style="flex:1;padding:11px;border-radius:10px;border:none;background:${canSave?'#0E4EF5':'#E5E7EB'};font-size:13px;font-weight:600;color:#fff;cursor:${canSave?'pointer':'default'};font-family:inherit">Save</button>
+      </div>
     </div></div>`;return;
   }
   if(S.modal==='changeUsername'){
