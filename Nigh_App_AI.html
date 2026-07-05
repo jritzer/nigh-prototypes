@@ -11,6 +11,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 #app{width:375px;height:812px;border-radius:24px;border:1px solid #D1D5DB;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;background:#F9FAFB;position:relative}
 #scr{flex:1;overflow-y:auto;position:relative}
 #scr::-webkit-scrollbar{width:0}
+.scrollDark{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.3) transparent}
+.scrollDark::-webkit-scrollbar{width:6px}
+.scrollDark::-webkit-scrollbar-track{background:transparent}
+.scrollDark::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:3px}
+.scrollDark::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.45)}
 #scr.feed-mode{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
 .feed-card{scroll-snap-align:start;height:100%;position:relative;overflow:hidden}
 .tb{display:flex;justify-content:space-evenly;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
@@ -2942,7 +2947,7 @@ function renderInbox(){
         `).join('')}
       </div>
     </div>
-    <div style="overflow-y:auto;flex:1">
+    <div class="scrollDark" style="overflow-y:auto;flex:1">
     ${(()=>{
       const tonightFriends=friendsList.filter(f=>f.hasTicket&&f.ticketPrivacy==='friends');
       if(tonightFriends.length===0) return '';
