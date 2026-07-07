@@ -4129,6 +4129,10 @@ function renderPersonalAnalytics(){
   const totalRes=ended.reduce((s,d)=>s+d.res,0);
   const attendRate=totalRes>0?Math.round((totalGuests/totalRes)*100):0;
   const noShows=ended.reduce((s,d)=>s+(d.ns||0),0);
+  const followers=(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length;
+  // Early hosts: lead with momentum (created, upcoming, followers) instead of quality
+  // metrics (attendance %, no-shows) that are noisy/discouraging with little history.
+  const earlyHost=ended.length<3;
 
   // Attendance by drop chart
   const chartDrops=ended.slice().reverse().slice(0,6);
@@ -4142,11 +4146,18 @@ function renderPersonalAnalytics(){
   return `${hdr('My Drops','History & stats',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <!-- Stats -->
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${earlyHost?`
+      ${mc('Drops',md.length,'created','cal','#0E4EF5','#EEF2FF')}
+      ${mc('Upcoming',scheduled.length,scheduled.length===1?'scheduled':'scheduled','clock','#0EA5E9','#E0F2FE')}
+      ${mc('Followers',followers,'in your audience','radio','#7C3AED','#EDE9FE')}
+      ${mc('Guests',totalGuests,'hosted so far','users','#16a34a','#F0FDFA')}
+      `:`
       ${mc('Drops Hosted',ended.length,'completed','check','#0E4EF5','#EEF2FF')}
       ${mc('Total Guests',totalGuests,'checked in','users','#16a34a','#F0FDFA')}
       ${mc('Attendance',attendRate+'%',totalGuests+'/'+totalRes+' RSVPs','chart','#7C3AED','#EDE9FE')}
       ${mc('No-Shows',noShows,'across all drops','alert','#F59E0B','#FFFBEB')}
+      `}
     </div>
 
     <!-- Upcoming & Drafts -->
@@ -4155,7 +4166,7 @@ function renderPersonalAnalytics(){
       <div style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Coming Up</div>
       ${scheduled.map(d=>`
       <div onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer">
-        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#8B5CF6,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">${ic('calendar',18)}</div>
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#8B5CF6,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">${ic('cal',18)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.title}</div>
           <div style="font-size:11px;color:#6B7280;margin-top:1px">${fmtD(d.date)} · ${d.start} · ${d.res}/${d.cap} RSVPs</div>
