@@ -4252,9 +4252,18 @@ function renderPartners(){
   </div>
   <div style="padding:0 16px 14px">
     ${tab==='my'?`
-    <div style="background:#EEF2FF;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#0E4EF5;line-height:1.5">Only <strong>Active</strong> partners can be added to drops. Invite by Nigh handle.</div>
-    ${canFull('partners')?`<div style="text-align:center;margin-bottom:14px"><button onclick="S.invitePartnerHandle='';S.modal='partner-page-invite';render();" style="background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer">${ic('userPlus',16)} Invite Partner</button></div>`:''}
-    ${myPartners.length?myPartners.map(p=>partnerCard(p,mpl.includes(p)?'outgoing':'incoming')).join(''):`<div style="background:#F9FAFB;border-radius:10px;padding:24px;text-align:center;font-size:12px;color:#9CA3AF">No partners yet. Send an invite to get started.</div>`}
+    ${myPartners.length?`<div style="background:#EEF2FF;border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:11px;color:#0E4EF5;line-height:1.5">Only <strong>Active</strong> partners can be added to drops. Invite by Nigh handle.</div>`:''}
+    ${(canFull('partners')&&myPartners.length)?`<div style="text-align:center;margin-bottom:14px"><button onclick="S.invitePartnerHandle='';S.modal='partner-page-invite';render();" style="background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer">${ic('userPlus',16)} Invite Partner</button></div>`:''}
+    ${myPartners.length?myPartners.map(p=>partnerCard(p,mpl.includes(p)?'outgoing':'incoming')).join(''):`
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:20px 16px;text-align:center">
+      <div style="width:48px;height:48px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;margin:0 auto 12px">${ic('link',22)}</div>
+      <div style="font-size:16px;font-weight:800;color:#111827;margin-bottom:6px">Partner up.</div>
+      <div style="font-size:12px;color:#6B7280;line-height:1.6;max-width:290px;margin:0 auto 16px">The best Drops are rarely solo. Team up with another host, a brand, or a venue to reach new people and build something bigger than you could alone.</div>
+      <div style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+        ${[['twoPeople','Co-host','Two hosts, one Drop — share the work and combine your communities.'],['billing','Sponsor','Back another host\'s Drop and get your brand featured on it.'],['megaphone','Promote','Let a partner share your Drop and earn from tickets sold through their link.']].map(r=>`<div style="display:flex;gap:10px;align-items:flex-start"><div style="width:30px;height:30px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic(r[0],15)}</div><div><div style="font-size:12px;font-weight:700;color:#111827">${r[1]}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${r[2]}</div></div></div>`).join('')}
+      </div>
+      ${canFull('partners')?`<button onclick="S.invitePartnerHandle='';S.modal='partner-page-invite';render();" style="background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit">${ic('userPlus',16)} Invite a Partner</button><div style="font-size:10px;color:#9CA3AF;margin-top:10px">Invite by their Nigh handle. Only Active partners can be added to a Drop.</div>`:`<div style="font-size:11px;color:#9CA3AF">An owner or manager can invite partners by their Nigh handle.</div>`}
+    </div>`}
     `:`
     ${allInvites.length?allInvites.map(p=>partnerCard(p,mpl.includes(p)?'outgoing':'incoming')).join(''):`<div style="background:#F9FAFB;border-radius:10px;padding:24px;text-align:center;font-size:12px;color:#9CA3AF">No pending invites.</div>`}
     `}
