@@ -2821,7 +2821,7 @@ function renderMenu(){
   if(S.menuSub==='inviteTeam')return renderInviteTeam();
   if(S.menuSub==='payout')return renderPayout();
   if(S.menuSub==='orderDetail')return renderOrderDetail();
-  if(S.menuSub==='analytics')return isPersonal()?renderPersonalAnalytics():renderAnalytics();
+  if(S.menuSub==='analytics')return renderDropStats();
   if(S.menuSub==='profile')return renderProfile();
   if(S.menuSub==='subscription')return renderSubscription();
   if(S.menuSub==='upgradeGrowth')return renderUpgradeGrowth();
@@ -3878,6 +3878,72 @@ function renderOrderDetail(){
   ${confirmPopup}`;
 }
 
+// Per-drop analytics (V1): a drop picker + that drop's funnel (Views → Tickets → Checked-in).
+// Prototype mock: "views" is derived from reservations/capacity — real view/impression
+// tracking is a v1 data dependency (see BRD). Advanced per-drop analytics = subscription.
+function dropViews(d){var r=d.res||0,c=parseInt(d.cap)||0;if(!r&&!c)return 0;return Math.round(r*3.8+c*1.6+(d.status==='Ended'?4:24));}
+function renderDropStats(){
+  if(!canView('analytics'))return `${hdr('Analytics',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Analytics')}</div>`;
+  const md=myDrops().filter(d=>d.status!=='Draft');
+  if(!md.length){
+    return `${hdr('Analytics','Stats by drop',"S.menuSub=null;render()")}
+    <div style="padding:48px 24px;text-align:center">
+      <div style="color:#D1D5DB;margin-bottom:12px;display:flex;justify-content:center">${ic('chart',36)}</div>
+      <div style="font-size:15px;font-weight:700;color:#374151;margin-bottom:4px">No drop stats yet</div>
+      <div style="font-size:12px;color:#9CA3AF;line-height:1.5;max-width:250px;margin:0 auto 16px">Publish a Drop to see views, tickets, and check-ins here.</div>
+      ${canFull('drops')?`<button onclick="go('create')" style="padding:11px 24px;border-radius:10px;border:none;background:#0E4EF5;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">${ic('plus',15)} Create a Drop</button>`:''}
+    </div>`;
+  }
+  const rank={Live:0,Paused:1,Ended:2,Scheduled:3};
+  const sorted=md.slice().sort((a,b)=>((rank[a.status]??9)-(rank[b.status]??9))||(new Date(b.date||'2000-01-01')-new Date(a.date||'2000-01-01')));
+  const sel=md.find(d=>d.id===S.analyticsDropId)||sorted[0];
+  const cap=parseInt(sel.cap)||0,res=sel.res||0,ci=sel.ci||0,ns=sel.ns||0,views=dropViews(sel);
+  const paid=(parseFloat(sel.price)||0)>0;
+  const fillPct=cap>0?Math.round((res/cap)*100):0;
+  const showPct=res>0?Math.round((ci/res)*100):0;
+  const convPct=views>0?Math.round((res/views)*100):0;
+  const revenue=paid?Math.round(res*parseFloat(sel.price)):0;
+  const isUpcoming=sel.status==='Scheduled';
+  const vBase=Math.max(views,1);
+  const funnelRow=(label,val,color,rel,sub)=>`<div style="margin-bottom:11px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+      <span style="font-size:12px;font-weight:600;color:#374151">${label}</span>
+      <span style="font-size:12px;font-weight:700;color:#111827">${val}${sub?`<span style="font-size:10px;font-weight:500;color:#9CA3AF;margin-left:6px">${sub}</span>`:''}</span>
+    </div>
+    <div style="height:10px;border-radius:5px;background:#F3F4F6;overflow:hidden"><div style="height:100%;width:${val>0?Math.max(rel,3):0}%;background:${color};border-radius:5px"></div></div>
+  </div>`;
+  return `${hdr('Analytics','Stats by drop',"S.menuSub=null;render()")}
+  <div style="padding:14px 16px">
+    <label style="font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:block">Drop</label>
+    <div style="position:relative;margin-bottom:12px">
+      <select onchange="S.analyticsDropId=this.value;render()" style="width:100%;padding:11px 34px 11px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;font-weight:600;color:#111827;background:#fff;outline:none;font-family:inherit;appearance:none;cursor:pointer">
+        ${sorted.map(d=>`<option value="${d.id}" ${sel.id===d.id?'selected':''}>${d.title} · ${d.date?fmtD(d.date):'No date'}</option>`).join('')}
+      </select>
+      <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF">${ic('chevDown',14)}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      ${bg(sel.status)}
+      <span style="font-size:12px;color:#6B7280">${sel.date?fmtD(sel.date):'No date'}${sel.start?' · '+sel.start:''}</span>
+      <span style="font-size:12px;color:#D1D5DB">·</span>
+      <span style="font-size:12px;font-weight:600;color:${paid?'#111827':'#16A34A'}">${fmtP(sel.price)}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${mc('Views',views.toLocaleString(),'saw this drop','eye','#0EA5E9','#E0F2FE')}
+      ${mc('Tickets',res,cap>0?fillPct+'% of '+cap:'reserved','ticket','#0E4EF5','#EEF2FF')}
+      ${mc('Checked In',ci,isUpcoming?'starts at drop':showPct+'% show rate','check','#16A34A','#F0FDFA')}
+      ${paid
+        ? mc('Revenue','$'+revenue.toLocaleString(),'from tickets','dollar','#7C3AED','#EDE9FE')
+        : mc('No-Shows',ns,isUpcoming?'—':'didn\'t show','alert','#F59E0B','#FFFBEB')}
+    </div>
+    <div class="card" style="margin-bottom:16px"><div class="cb">
+      <div style="font-size:12px;font-weight:600;color:#1F2937;margin-bottom:12px">Conversion funnel</div>
+      ${funnelRow('Views',views.toLocaleString(),'#0EA5E9',100,'')}
+      ${funnelRow('Tickets',res,'#0E4EF5',Math.round((res/vBase)*100),views>0?convPct+'% of views':'')}
+      ${funnelRow('Checked in',ci,'#16A34A',Math.round((ci/vBase)*100),res>0?showPct+'% of tickets':'')}
+      ${isUpcoming?`<div style="font-size:10px;color:#9CA3AF;margin-top:2px">Check-ins begin when the drop goes live.</div>`:''}
+    </div></div>
+  </div>`;
+}
 function renderAnalytics(){
   if(!canView('analytics'))return `${hdr('Analytics',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Analytics')}</div>`;
   const md=myDrops();const mo=myOrders();
