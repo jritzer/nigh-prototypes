@@ -2733,6 +2733,7 @@ function renderTicketCollection(){
   </div>
   <div style="background:#0a0a0a;min-height:100%;padding:16px 16px 40px">
     ${body}
+    <div id="tkTailSpacer" style="height:0"></div>
   </div>`;
 }
 
@@ -7671,7 +7672,16 @@ function render(){
   }
   scrEl.innerHTML=html;
   // Ticket collection: snap padding so snapped cards land just below the sticky header
-  if(onTickets){var _hd=document.getElementById('tkColHeader');scrEl.style.scrollPaddingTop=((_hd?_hd.offsetHeight:92)+12)+'px';}else{scrEl.style.scrollPaddingTop='';}
+  if(onTickets){
+    var _hd=document.getElementById('tkColHeader');var _pad=(_hd?_hd.offsetHeight:92)+12;
+    scrEl.style.scrollPaddingTop=_pad+'px';
+    setTimeout(function(){
+      var sp=document.getElementById('tkTailSpacer');if(!sp)return;
+      var cards=scrEl.querySelectorAll('.tk-snap');
+      if(cards.length>1){var last=cards[cards.length-1];sp.style.height=Math.max(0,scrEl.clientHeight-_pad-last.offsetHeight)+'px';}
+      else{sp.style.height='0';}
+    },0);
+  }else{scrEl.style.scrollPaddingTop='';}
   // Back-of-ticket scroll cue: hide fade when content fits (no overflow)
   setTimeout(function(){var bs=document.querySelectorAll('[id^="tkback_"]');for(var i=0;i<bs.length;i++){var el=bs[i];var f=document.getElementById('tkfade_'+el.id.substring(7));if(f)f.style.opacity=(el.scrollHeight-el.clientHeight>12)?'1':'0';}},0);
   // Join request toast
