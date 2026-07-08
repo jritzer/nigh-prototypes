@@ -1730,7 +1730,7 @@ function renderDropDetail(){
 
     <!-- Friends section -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;margin-bottom:12px">
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">FRIENDS</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">${friendsOn.length?'FRIENDS GOING':'FRIENDS'}</div>
       ${d.myTicket&&(S.ticketPrivacy[d.myTicket]||'friends')==='only_me'?`
       <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border-radius:8px;padding:6px 10px;margin-bottom:8px">
         <svg width="11" height="11" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
@@ -1741,7 +1741,7 @@ function renderDropDetail(){
       <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-bottom:10px">
         ${friendsOn.map(f=>`
         <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative">${f.av}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative">${f.av}<div style="position:absolute;bottom:-3px;right:-3px;width:15px;height:15px;border-radius:50%;background:#22C55E;border:2px solid #1c1c1c;display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#0B0B1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
           <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.7);white-space:nowrap">${f.name.split(' ')[0]}</div>
         </div>`).join('')}
       </div>`:''}
