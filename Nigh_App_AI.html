@@ -1698,7 +1698,7 @@ function renderDropDetail(){
   <div style="background:#0a0a0a;padding:22px 16px 150px">
 
     <!-- Attribution row: Hosted by + Partnering with -->
-    <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:4px">Hosted by <em style="color:rgba(255,255,255,0.7)">${d.host.name}</em></div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:4px">Hosted by <button onclick="openProfile('${d.host.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${d.host.name}</button></div>
     ${d.partners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:8px">Partnering with ${d.partners.map(p=>`<button onclick="openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:'<div style="margin-bottom:8px"></div>'}
 
     <!-- Title + price -->
@@ -1719,15 +1719,14 @@ function renderDropDetail(){
 
     <!-- Venue row (tappable → profile/map) -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px">
-      <button onclick="openProfile('${d.host.handle}')" style="width:100%;background:none;border:none;padding:0;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer">
-        <div style="position:relative;flex-shrink:0"><div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff">${d.host.short.charAt(0)}</div>${hAvOverlay(proProfiles[d.host.handle]||d.host,14)}</div>
+      <button onclick="openMaps('${d.host.addr}')" style="width:100%;background:none;border:none;padding:0;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer">
         <div style="flex:1;min-width:0">
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">${d.host.name}</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.60);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.host.addr}</div>
         </div>
         <div style="color:rgba(255,255,255,0.55);flex-shrink:0">${ic('map',20)}</div>
       </button>
-      <button onclick="openMaps('${d.host.addr}')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;margin-top:8px;margin-left:56px;font-family:inherit;display:inline-flex;align-items:center;gap:4px">${ic('right',10,'#0E4EF5')} Get Directions</button>
+      <button onclick="openMaps('${d.host.addr}')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;margin-top:8px;font-family:inherit;display:inline-flex;align-items:center;gap:4px">${ic('right',10,'#0E4EF5')} Get Directions</button>
     </div>
 
     <!-- Friends section -->
@@ -7682,6 +7681,23 @@ function render(){
       else{sp.style.height='0';}
     },0);
   }else{scrEl.style.scrollPaddingTop='';}
+  // Drop Detail: "Scroll for details" cue — shows when content overflows, hides near the bottom
+  var _dsc=document.getElementById('dropScrollCue');
+  if(S.scr==='dropDetail'){
+    if(!_dsc){
+      _dsc=document.createElement('div');_dsc.id='dropScrollCue';
+      _dsc.innerHTML='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.85)">Scroll for details</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>';
+      document.getElementById('app').appendChild(_dsc);
+    }
+    (function(){
+      var tb=document.querySelector('.tb');var tbh=tb?tb.offsetHeight:0;
+      var bar=scrEl.children[scrEl.children.length-1];var barh=bar?bar.offsetHeight:0;
+      _dsc.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:'+(tbh+barh+10)+'px;z-index:40;pointer-events:none;background:rgba(20,20,28,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 14px;transition:opacity 0.2s';
+      var _updDsc=function(){var d=document.getElementById('dropScrollCue');if(!d)return;var ov=scrEl.scrollHeight>scrEl.clientHeight+24;var ab=scrEl.scrollTop+scrEl.clientHeight>=scrEl.scrollHeight-32;d.style.display=(S.scr==='dropDetail'&&ov&&!ab)?'block':'none';};
+      if(!scrEl._dscBound){scrEl._dscBound=true;scrEl.addEventListener('scroll',_updDsc);}
+      setTimeout(_updDsc,0);
+    })();
+  }else if(_dsc){_dsc.style.display='none';}
   // Back-of-ticket scroll cue: hide fade when content fits (no overflow)
   setTimeout(function(){var bs=document.querySelectorAll('[id^="tkback_"]');for(var i=0;i<bs.length;i++){var el=bs[i];var f=document.getElementById('tkfade_'+el.id.substring(7));if(f)f.style.opacity=(el.scrollHeight-el.clientHeight>12)?'1':'0';}},0);
   // Join request toast
