@@ -1751,16 +1751,10 @@ function renderDropDetail(){
         <button onclick="modal('ticketPrivacy_${d.myTicket}')" style="margin-left:auto;background:none;border:none;font-size:10px;font-weight:600;color:rgba(14,78,245,0.8);cursor:pointer;font-family:inherit;padding:0;white-space:nowrap">Change</button>
       </div>`:''}
       ${friendsOn.length?`
-      <div style="display:flex;gap:8px;padding-bottom:2px;margin-bottom:10px">
+      <div onclick="modal('friendsGoing')" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer">
         ${(friendsOn.length>5?friendsOn.slice(0,4):friendsOn).map(f=>`
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative">${f.av}<div style="position:absolute;bottom:-3px;right:-3px;width:15px;height:15px;border-radius:50%;background:#22C55E;border:2px solid #1c1c1c;display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#0B0B1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.7);white-space:nowrap">${f.name.split(' ')[0]}</div>
-        </div>`).join('')}
-        ${friendsOn.length>5?`<div onclick="modal('friendsGoing')" style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;cursor:pointer">
-          <div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,0.85)">+${friendsOn.length-4}</div>
-          <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.45);white-space:nowrap">more</div>
-        </div>`:''}
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${f.av}</div>`).join('')}
+        ${friendsOn.length>5?`<div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0">+${friendsOn.length-4}</div>`:''}
       </div>`:''}
       <div style="display:flex;gap:8px">
         <button onclick="event.stopPropagation();shareDrop(${S.drop})" style="flex:1;background:rgba(14,78,245,0.12);border:1px solid rgba(14,78,245,0.3);border-radius:10px;padding:9px 8px;font-size:12px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px">${ic('share',13)} Share Drop</button>
@@ -1787,7 +1781,7 @@ function renderDropDetail(){
 
     if(isMine&&isSoldOut){
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <div style="font-size:13px;font-weight:600;color:#93C5FD">You have a ticket for this drop</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.45)">You have a ticket for this drop</div>
       </div>`;
     }
 
@@ -1795,10 +1789,7 @@ function renderDropDetail(){
       // User has ticket + spots still available + maxPerUser > 1 → same layout as normal flow
       const fLabel=friendsQty===1?'1 Friend':`${friendsQty} Friends`;
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <!-- You're going row -->
-        <div style="width:100%;background:rgba(14,78,245,0.12);border:1px solid rgba(14,78,245,0.3);border-radius:12px;padding:8px 14px;text-align:center">
-          <span style="font-size:12px;font-weight:700;color:#93C5FD">You have a ticket for this drop</span>
-        </div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.45);text-align:center">You have a ticket for this drop</div>
         <!-- Same ticket selector as normal flow -->
         <div style="display:flex;align-items:center;gap:12px">
           <div style="display:flex;align-items:center;border:2px solid rgba(255,255,255,0.7);border-radius:24px">
@@ -1816,7 +1807,7 @@ function renderDropDetail(){
     if(isMine){
       // User has ticket, maxPerUser:1, nothing more to buy
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <div style="font-size:13px;font-weight:600;color:#93C5FD">You have a ticket for this drop</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.45)">You have a ticket for this drop</div>
       </div>`;
     }
 
