@@ -2625,12 +2625,10 @@ function fullTicketCard(tk){
     <div style="margin-bottom:24px">${(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
 
   const venueRow=`
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">${hostInitials}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1">
-        <div><div style="font-size:13px;font-weight:700;color:#fff">${tk.host}</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px">${tk.addr}</div></div>
-      </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div><div style="font-size:13px;font-weight:700;color:#fff">${tk.host}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:1px">${tk.addr}</div></div>
+      <button onclick="event.stopPropagation();openMaps('${tk.addr}')" style="background:none;border:none;padding:6px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.55);cursor:pointer;flex-shrink:0;margin-left:auto">${ic('map',18)}</button>
     </div>`;
 
   // Transfer / cancel action (additional tickets only)
