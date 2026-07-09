@@ -2509,6 +2509,23 @@ function updateTicketScrollbar(){
   thumb.style.height=th+'px';
   thumb.style.top=top+'px';
 }
+function updateDropScrollbar(){
+  var bar=document.getElementById('dropScroll');
+  if(!bar)return;
+  if(S.scr!=='dropDetail'){bar.style.display='none';return;}
+  var sc=document.getElementById('scr');
+  var thumb=document.getElementById('dropScrollThumb');
+  if(!sc||!thumb)return;
+  var sh=sc.scrollHeight, ch=sc.clientHeight;
+  if(sh<=ch+4){bar.style.display='none';return;}
+  bar.style.display='block';
+  var trackH=bar.clientHeight||1;
+  var th=Math.max(24, trackH*ch/sh);
+  var maxTop=Math.max(0,trackH-th);
+  var top=maxTop*(sc.scrollTop/(sh-ch));
+  thumb.style.height=th+'px';
+  thumb.style.top=top+'px';
+}
 function fullTicketCard(tk){
   if(!S.checkedIn)S.checkedIn={};
   if(!S.collSubIdx)S.collSubIdx={};
@@ -7768,6 +7785,20 @@ function render(){
     if(_fscEl && !_fscEl._fsBound){ _fscEl._fsBound=true; _fscEl.addEventListener('scroll',updateFeedScrollbar); }
     setTimeout(updateFeedScrollbar,0);
   } else if(fsBar){ fsBar.style.display='none'; }
+  // Drop Details: fixed left scroll indicator (shown when content overflows)
+  var dsBar=document.getElementById('dropScroll');
+  var showDS=(S.scr==='dropDetail');
+  if(showDS){
+    if(!dsBar){
+      dsBar=document.createElement('div');dsBar.id='dropScroll';
+      dsBar.style.cssText='position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:84px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
+      dsBar.innerHTML='<div id="dropScrollThumb" style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.7);top:0;height:30%"></div>';
+      document.getElementById('app').appendChild(dsBar);
+    }
+    var _dscEl=document.getElementById('scr');
+    if(_dscEl && !_dscEl._dsBound){ _dscEl._dsBound=true; _dscEl.addEventListener('scroll',updateDropScrollbar); }
+    setTimeout(updateDropScrollbar,0);
+  } else if(dsBar){ dsBar.style.display='none'; }
   if(onFeed){
     scrEl.scrollTop=S.drop*762;
   } else if(S.scr==='dm'){
