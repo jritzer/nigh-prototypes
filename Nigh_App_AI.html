@@ -2804,13 +2804,12 @@ function fullTicketCard(tk){
   const _cardSvg='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>';
   const receiptHtml=`
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
-    <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Order Receipt</div>
     ${_rSub>0?`
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">${_rQty} ${_rQty>1?'spots':'spot'} × ${_money(_rUnit)}</span><span style="color:rgba(255,255,255,0.88)">${_money(_rSub)}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">Service fee</span><span style="color:rgba(255,255,255,0.88)">${_money(_rFee)}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">Tax</span><span style="color:rgba(255,255,255,0.88)">${_money(_rTax)}</span></div>
       <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:9px;margin-top:2px;border-top:1px solid rgba(255,255,255,0.08)"><span style="color:#fff">Total paid</span><span style="color:#22C55E">${_money(_rTotal)}</span></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-top:12px">${_cardSvg}<span style="font-size:12px;color:rgba(255,255,255,0.72)">${_rPm.brand} •••• ${_rPm.last4}</span><span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.42)">${tk.orderDate?'Charged '+tk.orderDate:''}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px">${_cardSvg}<span style="font-size:12px;color:rgba(255,255,255,0.72)">${_rPm.brand} •••• ${_rPm.last4}</span></div>
     `:`
       <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:#fff">Total</span><span style="color:#22C55E">Free</span></div>
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:6px">No payment required &#8212; this Drop was free.</div>
@@ -2827,7 +2826,7 @@ function fullTicketCard(tk){
       <span style="color:rgba(255,255,255,0.45)">Location</span><span style="color:rgba(255,255,255,0.88)">${tk.addr}</span>
       <span style="color:rgba(255,255,255,0.45)">Ordered</span><span style="color:rgba(255,255,255,0.88)">${tk.orderDate||'—'}</span>
       <span style="color:rgba(255,255,255,0.45)">Order</span><span style="color:rgba(255,255,255,0.88)">${tk.orderId}</span>
-      <span style="color:rgba(255,255,255,0.45)">Ticket</span><span style="color:rgba(255,255,255,0.88)">${tkNum(tk.orderId,subIdx+1)}${subCount>1?' · Spot '+(subIdx+1)+' of '+subCount:''}</span>
+      ${subCount===1?`<span style="color:rgba(255,255,255,0.45)">Ticket</span><span style="color:rgba(255,255,255,0.88)">${tkNum(tk.orderId,subIdx+1)}</span>`:''}
     </div>
     ${receiptHtml}
     ${_tkDesc?`<div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div><div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55;margin-bottom:16px">${_tkDesc}</div>`:''}
