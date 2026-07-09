@@ -416,6 +416,18 @@ const feedDrops=[
    desc:'An exclusive underground cocktail experience in The Bitter Bar\'s hidden back room. Master mixologist Ava Chen crafts a five-course cocktail pairing with small bites from local chefs. Password required at the door and in-app. Dress code: smart casual. 21+ only.',
    slug:'thebitterbar/VIP9'},
 ];
+// V1: nearly all drops start within ~24h of broadcast. Date each feed drop relative to "now"
+// (dayOffset: 0=today, 1=tomorrow, 2+=that weekday). Feed/detail then show TODAY / TOMORROW / weekday.
+(function(){
+  const _mo2=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const _off={D006:1,D009:1,D013:1,D011:4}; // most Today; a few Tomorrow; one further out
+  const _n2=new Date();
+  feedDrops.forEach(function(d){
+    const o=_off[d.id]||0;
+    const dt=new Date(_n2); dt.setDate(dt.getDate()+o);
+    d.date=_mo2[dt.getMonth()]+' '+dt.getDate();
+  });
+})();
 
 const myTickets=[
   {id:'TK001',dropId:'D001',title:'Nike Air Max Day Access',
@@ -1421,8 +1433,8 @@ function renderFeed(){
 
     // Date/time label for feed card
     let feedDay;
-    if(d.date===_todayStr) feedDay='Today';
-    else if(d.date===_tomStr) feedDay='Tomorrow';
+    if(d.date===_todayStr) feedDay='TODAY';
+    else if(d.date===_tomStr) feedDay='TOMORROW';
     else{
       const pts=d.date.split(' ');
       const mIdx=_mo.indexOf(pts[0]);
