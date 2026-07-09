@@ -4132,7 +4132,11 @@ ${(()=>{
     <div class="field"><label class="label">No-Show Policy</label>
       <select class="select">${['Standard — capture after 15 min','Strict — capture immediately','Lenient — no capture, warning only'].map((p,i)=>`<option value="${['standard','strict','lenient'][i]}" ${o.noShowPolicy===['standard','strict','lenient'][i]?'selected':''}>${p}</option>`).join('')}</select>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="field"><label class="label">No-Show Grace Period (hours after drop ends)</label>
+      <input class="input" type="number" value="${o.noShowGraceHours||3}" min="0" max="72" onchange="(function(){var x=orgs.find(g=>g.id==='${o.id}');if(x)x.noShowGraceHours=parseInt(this.value)||0;}).call(this)"/>
+    </div>
+    <div style="font-size:11px;color:#9CA3AF;margin-top:6px">How long after a drop ends before a guest ticket that was never checked in is marked a no-show. Once elapsed, the ticket is gently grayed out in the guest&#x2019;s app with a note to contact the host if they attended. Only the host can check the guest in afterward &#x2014; doing so restores the ticket to full visibility and shows the guest as attended to their friends.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
       <div class="field"><label class="label">Drop Visibility Default</label>
         <select class="select"><option selected>Full City Feed</option><option>Followers Only</option><option>Members Only</option><option>Select Specific List</option><option>Anyone with the Link</option><option>Password Protected Link</option></select>
       </div>

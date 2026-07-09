@@ -687,6 +687,11 @@ function friendsWithTicketForDrop(dropId){
 // Attendance (prototype): for a past drop, which ticket-holding friends actually checked in.
 const NO_SHOW_IDS=['F012','F016'];
 function friendAttended(f){return NO_SHOW_IDS.indexOf(f.id)===-1;}
+// Post-drop no-show grace: hours after a drop ends before an un-checked-in ticket is grayed as a no-show.
+// Set per host in the Support app; falls back to the default here.
+const DEFAULT_NOSHOW_GRACE_HOURS=3;
+const HOST_NOSHOW_GRACE={'@nikeboulder':3,'@centroboulder':2};
+function hostGraceHours(tk){return (tk&&HOST_NOSHOW_GRACE[tk.hostHandle])||DEFAULT_NOSHOW_GRACE_HOURS;}
 
 const phoneContacts=[
   {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW'},
@@ -2583,6 +2588,7 @@ function updateDropScrollbar(){
 }
 function fullTicketCard(tk){
   if(!S.checkedIn)S.checkedIn={};
+  if(!S._ciSeed){S._ciSeed=1;S.checkedIn['TK002']=true;} // prototype: one past drop the host checked us in for
   if(!S.collSubIdx)S.collSubIdx={};
   if(!S.collFlip)S.collFlip={};
   const flipped=S.collFlip[tk.id]||false;
@@ -2597,7 +2603,7 @@ function fullTicketCard(tk){
   const subInvitee=ov.invitee||baseSub.invitee||null;
   const subInvitedAt=ov.invitedAt||baseSub.invitedAt||'';
   const isOwner=subIdx===0;
-  const checkedIn=!isPast&&isOwner&&(S.checkedIn[tk.id]||false);
+  const checkedIn=isOwner&&(S.checkedIn[tk.id]||false);
 
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
   const fullDays=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -2656,6 +2662,16 @@ function fullTicketCard(tk){
         <div><div style="font-size:14px;font-weight:700;color:#fff">${isPast?'Attended':'Checked In'}</div><div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">${dayDateStr} · ${timeDisplay}</div></div>
       </div>
     </div>`;
+  const noShowTile=`
+    <div style="${STATE_H}">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:7px">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:rgba(255,255,255,0.55)">${ic('info',15)}</div>
+          <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.82)">Looks like you didn't make it</div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5">If you attended but weren't checked in, contact the host — only the host can update this.</div>
+      </div>
+    </div>`;
   const pendingTile=`
     <div style="${STATE_H}">
       <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center">
@@ -2676,15 +2692,24 @@ function fullTicketCard(tk){
         ${subTransferTo?`<div style="font-size:13px;color:rgba(255,255,255,0.8);font-weight:600">${subTransferTo.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">${subTransferTo.uname||''}</div><div style="font-size:10px;color:rgba(255,255,255,0.44);margin-top:4px">They hold the QR for this spot now.</div>`:''}
       </div>
     </div>`;
+  // Post-drop no-show: past + not checked in + the host's grace window has elapsed.
+  const _graceHours=hostGraceHours(tk);
+  const _endTime=new Date(rawDate+' 2026 '+(tk.endTime||tk.time||'11:59 PM'));
+  const _hrsSince=(Date.now()-_endTime.getTime())/3600000;
+  const _graceElapsed=isNaN(_hrsSince)?isPast:(_hrsSince>_graceHours);
+  const noShow=isPast&&!checkedIn&&_graceElapsed;
+
   let stateBlock;
-  if(isPast||checkedIn) stateBlock=attendedTile;
+  if(checkedIn) stateBlock=attendedTile;
+  else if(isPast) stateBlock=noShow?noShowTile:attendedTile;
   else if(subStatus==='pending') stateBlock=pendingTile;
   else if(subStatus==='transferred') stateBlock=transferredTile;
   else stateBlock=qrTile;
   const stateIsQR=!isPast&&!checkedIn&&(subStatus==='active'||subStatus==='available');
 
   let holderLine;
-  if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
+  if(noShow) holderLine='';
+  else if(isPast||checkedIn) holderLine=`Experienced by <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
   else if(subStatus==='transferred') holderLine=`Reserved for <span style="color:#fff;font-weight:600">${subTransferTo?subTransferTo.name:'—'}</span>`;
   else if(subStatus==='pending') holderLine='';
   else if(subIdx>0) holderLine='';
@@ -2737,6 +2762,9 @@ function fullTicketCard(tk){
     } else if(subStatus==='pending'){
       actionInner=`<button onclick="event.stopPropagation();cancelTransfer('${tk.id}',${subIdx})" style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.28);border-radius:14px;padding:12px 30px;font-size:14px;font-weight:700;color:#F5A623;display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-family:inherit">${ic('x',16)} Cancel Transfer</button>`;
     }
+  }
+  if(noShow&&isOwner){
+    actionInner=`<button onclick="event.stopPropagation();S.checkedIn['${tk.id}']=true;render()" style="background:none;border:1px dashed rgba(255,255,255,0.2);border-radius:10px;padding:8px 16px;font-size:10px;color:rgba(255,255,255,0.45);cursor:pointer;font-family:inherit">Simulate host check-in (prototype)</button>`;
   }
   // Fixed-height bottom region: holder line centered, action pinned to bottom (keeps every spot the same size)
   const bottomRegion=`<div style="height:74px;display:flex;flex-direction:column;margin-top:6px">
@@ -2793,7 +2821,7 @@ function fullTicketCard(tk){
     <div id="tkcard_${tk.id}" class="tk-snap" onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
       ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
-      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)">
+      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)${noShow?';filter:saturate(0.12) brightness(0.85);opacity:0.68':''}">
       <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
         <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(14,78,245,0.14),transparent 70%);pointer-events:none"></div>
