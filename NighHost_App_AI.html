@@ -1399,6 +1399,10 @@ function renderTB(){
 
 // ═══ CREATE / JOIN HOST ACCOUNT ═══
 function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).userDisplayName||'Josh Ritzer';}
+// Per-account display photo options (prototype stand-in for uploaded photos). '' = use the member's Nigh photo (initials).
+const DISPLAY_PHOTOS=['📷','🧑','🎧','🎤','🎸','🍸','🍺','🌮','⚽','✨'];
+// Renders the inner content of an avatar circle: the account display photo (emoji) if set, else initials.
+function avInner(photo,initials){return photo?`<span style="font-size:20px;line-height:1">${photo}</span>`:initials;}
 // The person's identity (shared across Nigh and Nigh Host) — phone + email live here
 let personIdentity={phone:'(720) 555-0199',email:'josh@nigh.com',legalName:'Joshua Ritzer'};
 function handleTaken(h){h=(h||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];return !!h&&(accts.some(a=>(a.handle||'').toLowerCase()===h)||reserved.includes(h));}
@@ -3028,9 +3032,10 @@ function saveTeamMember(uname,loc){
   const a=m&&m.assignments&&m.assignments.find(x=>x.location===loc);
   if(a){
     if(S.editDispName!=null)a.displayName=S.editDispName.trim();
+    if(S.editDispPhoto!=null)a.displayPhoto=S.editDispPhoto;
     if(S.editTeamRole&&canFull('team'))a.role=S.editTeamRole;
   }
-  S.editTeamMember=null;S.editTeamRole=null;S.editDispName=null;render();
+  S.editTeamMember=null;S.editTeamRole=null;S.editDispName=null;S.editDispPhoto=null;render();
 }
 function renderTeam(){
   if(!canView('team'))return `${hdr('Team',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Team')}</div>`;
@@ -3067,8 +3072,9 @@ function renderTeam(){
       const assignment=t.assignments&&t.assignments.find(a=>a.location===locName);
       const locRole=assignment?assignment.role:t.role;
       const isMe=t.name==='Josh Ritzer';
+      const mPhoto=isMe?(acct().userDisplayPhoto||''):((assignment&&assignment.displayPhoto)||'');
       return `<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:50%;background:${roleBg(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0">${t.av}</div>
+        <div style="width:40px;height:40px;border-radius:50%;background:${roleBg(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0">${avInner(mPhoto,t.av)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
             ${isMe?(acct().userDisplayName||t.name):((assignment&&assignment.displayName)||t.name)}
@@ -3079,7 +3085,7 @@ function renderTeam(){
             ${t.uname?`<span style="font-size:10px;color:#9CA3AF">${t.uname}</span>`:''}
           </div>
         </div>
-        ${isMe?`<button onclick="S.dispNameNew=acct().userDisplayName||'';S.modal='changeDisplayName';render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit name</button>`:(!t.accountOwner&&canFull('teamDisplayName'))?`<button onclick="S.editTeamMember='${t.uname}';S.editTeamRole=null;S.editDispName=null;render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:''}
+        ${isMe?`<button onclick="S.dispNameNew=acct().userDisplayName||'';S.dispPhotoNew=null;S.modal='changeDisplayName';render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:(!t.accountOwner&&canFull('teamDisplayName'))?`<button onclick="S.editTeamMember='${t.uname}';S.editTeamRole=null;S.editDispName=null;S.editDispPhoto=null;render()" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:''}
       </div>`;
     }).join('')}
 
@@ -6771,21 +6777,27 @@ function renderModal(){
       const editRole=S.editTeamRole||locRole;
       const roleColor=(r)=>r==='Account Owner'?'#7c3aed':r==='Account Admin'?'#1d4ed8':r==='Manager'?'#0369a1':r==='Team Member'?'#475569':'#64748b';
       const roleBgFn=(r)=>r==='Account Owner'?'#f5f3ff':r==='Account Admin'?'#eff6ff':r==='Manager'?'#f0f9ff':r==='Team Member'?'#f8fafc':'#f1f5f9';
+      const curEditPhoto=S.editDispPhoto!=null?S.editDispPhoto:((assignment&&assignment.displayPhoto)||'');
       mr.innerHTML=`<div class="modal-bg" onclick="S.editTeamMember=null;S.editTeamRole=null;render()"><div class="modal fi" onclick="event.stopPropagation()" style="padding:24px 20px 32px">
         <div class="mh"></div>
         <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:16px">Edit Member</div>
 
         <div style="display:flex;align-items:center;gap:12px;background:#F8FAFC;border-radius:10px;padding:12px;margin-bottom:20px">
-          <div style="width:40px;height:40px;border-radius:50%;background:${roleBgFn(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0">${t.av}</div>
+          <div style="width:40px;height:40px;border-radius:50%;background:${roleBgFn(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0">${avInner(curEditPhoto,t.av)}</div>
           <div>
             <div style="font-size:13px;font-weight:600;color:#111827">${t.name}</div>
             <div style="font-size:11px;color:#9CA3AF">${t.uname}</div>
           </div>
         </div>
 
-        ${canFull('teamDisplayName')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display name for ${locName}</div>
+        ${canFull('teamDisplayName')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display photo for ${locName}</div>
+        <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px">
+          <button onclick="S.editDispPhoto='';render()" title="Use their Nigh photo" style="flex-shrink:0;width:38px;height:38px;border-radius:50%;border:1.5px solid ${!curEditPhoto?'#0E4EF5':'#E5E7EB'};background:#F3F4F6;font-size:11px;font-weight:800;color:#475569;cursor:pointer;font-family:inherit">${t.av}</button>
+          ${DISPLAY_PHOTOS.map(e=>`<button onclick="S.editDispPhoto='${e}';render()" style="flex-shrink:0;width:38px;height:38px;border-radius:50%;border:1.5px solid ${curEditPhoto===e?'#0E4EF5':'#E5E7EB'};background:#fff;font-size:19px;cursor:pointer;font-family:inherit">${e}</button>`).join('')}
+        </div>
+        <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display name for ${locName}</div>
         <input id="editDispInput" type="text" value="${S.editDispName!=null?S.editDispName:((assignment&&assignment.displayName)||'')}" placeholder="${t.name}" oninput="S.editDispName=this.value" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:6px"/>
-        <div style="font-size:10px;color:#9CA3AF;margin-bottom:${canFull('team')?'22px':'24px'};line-height:1.4">How user&#x2019;s name appears for this host account activity.</div>`:''}
+        <div style="font-size:10px;color:#9CA3AF;margin-bottom:${canFull('team')?'22px':'24px'};line-height:1.4">How this member&#x2019;s name and photo appear for this host account&#x2019;s activity.</div>`:''}
 
         ${canFull('team')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Role</div>
         <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px">
@@ -7055,12 +7067,25 @@ function renderModal(){
   else if(S.modal==='changeDisplayName'){
     const cur=acct().userDisplayName||ownerDisplayName();
     const val=S.dispNameNew!=null?S.dispNameNew:cur;
+    const curPhoto=S.dispPhotoNew!=null?S.dispPhotoNew:(acct().userDisplayPhoto||'');
+    const meAv=(team.find(t=>t.name==='Josh Ritzer')||{}).av||'JR';
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding:24px 20px 28px"><div class="mh"></div>
-      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">Display Name</div>
-      <div style="font-size:12px;color:#6B7280;margin-bottom:16px;line-height:1.5">How you appear on <strong>${acct().name}</strong> &#8212; to this account&#x2019;s team and on activity. Your legal name on file doesn&#x2019;t change, and this is set per account.</div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">Display name &amp; photo</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:18px;line-height:1.5">How you appear on <strong>${acct().name}</strong> &#8212; to this account&#x2019;s team and on activity. Set per account; your Nigh name and photo don&#x2019;t change.</div>
+
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:8px">Display photo</label>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="width:54px;height:54px;border-radius:50%;background:#EEF2FF;border:1.5px solid #C7D2FE;display:flex;align-items:center;justify-content:center;font-size:${curPhoto?'26px':'17px'};font-weight:800;color:#0E4EF5;flex-shrink:0">${curPhoto||meAv}</div>
+        <div style="font-size:11px;color:#6B7280;line-height:1.45">Use a photo just for this account, or keep your Nigh photo.</div>
+      </div>
+      <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px">
+        <button onclick="S.dispPhotoNew='';render()" title="Use my Nigh photo" style="flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1.5px solid ${!curPhoto?'#0E4EF5':'#E5E7EB'};background:#F3F4F6;font-size:12px;font-weight:800;color:#475569;cursor:pointer;font-family:inherit">${meAv}</button>
+        ${DISPLAY_PHOTOS.map(e=>`<button onclick="S.dispPhotoNew='${e}';render()" style="flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1.5px solid ${curPhoto===e?'#0E4EF5':'#E5E7EB'};background:#fff;font-size:20px;cursor:pointer;font-family:inherit">${e}</button>`).join('')}
+      </div>
+
       <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Display name</label>
       <input id="dispNameInput" type="text" value="${val}" placeholder="e.g. Josh R." oninput="S.dispNameNew=this.value" style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:18px"/>
-      <button onclick="var v=(document.getElementById('dispNameInput').value||'').trim();if(v){acct().userDisplayName=v;}S.dispNameNew=null;S.modal=null;render()" style="width:100%;padding:13px;border-radius:10px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
+      <button onclick="var v=(document.getElementById('dispNameInput').value||'').trim();if(v){acct().userDisplayName=v;}if(S.dispPhotoNew!=null){acct().userDisplayPhoto=S.dispPhotoNew;}S.dispNameNew=null;S.dispPhotoNew=null;S.modal=null;render()" style="width:100%;padding:13px;border-radius:10px;background:#0E4EF5;color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Save</button>
     </div></div>`;
   }
   else if(S.modal==='changePhone'||S.modal==='changeEmail'){
