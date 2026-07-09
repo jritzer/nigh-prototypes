@@ -2799,6 +2799,10 @@ function fullTicketCard(tk){
   const _rFee=_rSub>0?Math.round(_rSub*0.10*100)/100:0;
   const _rTax=_rSub>0?Math.round(_rSub*0.0885*100)/100:0;
   const _rTotal=Math.round((_rSub+_rFee+_rTax)*100)/100;
+  // Per-ticket breakdown (for non-purchaser spots)
+  const _tFee=_rUnit>0?Math.round(_rUnit*0.10*100)/100:0;
+  const _tTax=_rUnit>0?Math.round(_rUnit*0.0885*100)/100:0;
+  const _tTotal=Math.round((_rUnit+_tFee+_tTax)*100)/100;
   const _rPm=tk.payment||{brand:'Visa',last4:'4242'};
   const _money=n=>'$'+n.toFixed(2);
   const _cardSvg='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>';
@@ -2816,10 +2820,15 @@ function fullTicketCard(tk){
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:6px">No payment required &#8212; this Drop was free.</div>
     `}`:`
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
-    ${_rUnit>0
-      ?`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:9px"><span style="color:rgba(255,255,255,0.55)">Ticket price</span><span style="color:rgba(255,255,255,0.88)">${_money(_rUnit)}</span></div>`
-      :`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:9px"><span style="color:#fff">Ticket price</span><span style="color:#22C55E">Free</span></div>`}
-    <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5">Purchased by <span style="color:rgba(255,255,255,0.8);font-weight:600">${_purchaserName}</span>${tk.orderDate?' · '+tk.orderDate:''}</div>`;
+    ${_rUnit>0?`
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">Ticket price</span><span style="color:rgba(255,255,255,0.88)">${_money(_rUnit)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">Service fee</span><span style="color:rgba(255,255,255,0.88)">${_money(_tFee)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">Tax</span><span style="color:rgba(255,255,255,0.88)">${_money(_tTax)}</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:9px;margin-top:2px;border-top:1px solid rgba(255,255,255,0.08)"><span style="color:#fff">Ticket total</span><span style="color:#22C55E">${_money(_tTotal)}</span></div>
+    `:`
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:#fff">Ticket price</span><span style="color:#22C55E">Free</span></div>
+    `}
+    <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5;margin-top:12px">Purchased by <span style="color:rgba(255,255,255,0.8);font-weight:600">${_purchaserName}</span>${tk.orderDate?' · '+tk.orderDate:''}</div>`;
 
   const backFace=`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px">
