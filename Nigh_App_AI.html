@@ -2500,8 +2500,8 @@ function renderTicketEmptyState(){
   return`<div style="text-align:center;padding:48px 24px;color:rgba(255,255,255,0.38)">
     <div style="margin-bottom:24px;color:#41EFF9;transform:rotate(-35deg);display:inline-block">${ic('ticket',90)}</div>
     <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.35">No Drop Tickets yet.</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:10px;max-width:280px;margin-left:auto;margin-right:auto">When you reserve spots for Drops, your tickets will show up here.</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:28px;max-width:280px;margin-left:auto;margin-right:auto">Want to see more Drops? Just ask Niya for help.</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:10px;max-width:280px;margin-left:auto;margin-right:auto">When you reserve spots for Drops, your tickets show up here.</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:28px;max-width:280px;margin-left:auto;margin-right:auto">Want to see more Nigh Drops? Ask Niya for help.</div>
     <div style="display:flex;flex-direction:column;align-items:center">
       <button onclick="go('niya')" style="display:flex;align-items:center;gap:10px;background:#0E4EF5;border:none;border-radius:40px;padding:8px 20px 8px 8px;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(14,78,245,0.5)">
         <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 12px rgba(14,78,245,0.5)">
@@ -2913,6 +2913,10 @@ function renderTicketCollection(){
     body=tab==='current'?renderTicketEmptyState():`<div style="text-align:center;padding:60px 24px"><div style="margin-bottom:18px;color:rgba(255,255,255,0.25);transform:rotate(-35deg);display:inline-block">${ic('ticket',70)}</div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">No past Drops yet</div><div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;max-width:260px;margin:0 auto">Drops you've attended will show up here once they wrap.</div></div>`;
   } else {
     body=list.map(function(tk){return fullTicketCard(tk);}).join('');
+    // Preview: also surface the first-run empty state at the bottom of the Current list
+    if(tab==='current'){
+      body+=`<div id="tkPreviewEmpty" class="tk-snap" style="border-top:1px solid rgba(255,255,255,0.08);margin-top:14px;padding-top:6px">${renderTicketEmptyState()}</div>`;
+    }
   }
 
   return`
