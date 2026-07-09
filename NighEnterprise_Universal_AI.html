@@ -1751,6 +1751,9 @@ function dayBadge(dayId){
 function pct(a,b){return b>0?Math.round(a/b*100):0;}
 function fmtMoney(n){return '$'+n.toLocaleString();}
 function fmtNum(n){return n>=1000?(n/1000).toFixed(1)+'K':String(n);}
+// Engagement metrics (prototype, aggregate counts only — never per-user). Real view/like tracking is a v1 data dependency.
+function dropViews(d){var r=d.res||0,c=d.cap||0;if(!r&&!c)return 0;return Math.round(r*3.8+c*1.6+(d.status==='ended'?4:24));}
+function dropLikes(d){var v=dropViews(d);if(!v)return 0;return Math.max(d.res||0,Math.round(v*0.35));}
 function hAt(h){return h?(h.startsWith('@')?h:'@'+h):'';}  // safe handle display — prevents @@
 function showColor(p){return p>=80?'#16a34a':p>=60?'#ca8a04':'#dc2626';}
 function infoRow(l,v){return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f1f5f9;"><span style="font-size:0.78rem;color:#64748b;">${l}</span><span style="font-size:0.78rem;font-weight:700;color:#0f172a;">${v}</span></div>`;}
@@ -3756,6 +3759,16 @@ function dropDetail(d){
           ${isScheduled?`<span style="color:${c.color};font-weight:700;display:flex;align-items:center;gap:4px;">🕐 Goes live ${dateLabel} at ${tm}</span>`:''}
         </div>
       </div>
+    </div>
+
+    <!-- Engagement bar (views + likes — aggregate totals) -->
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;display:flex;margin-bottom:14px;">
+      ${[['Views',fmtNum(dropViews(d)),'#0ea5e9'],['Likes',fmtNum(dropLikes(d)),'#ec1977'],['Tickets',(isLive||isPaused||isEnded)?fmtNum(d.res):'—','#0E4EF5']].map((s,i)=>`
+        ${i?'<div style="width:1px;background:#f1f5f9;"></div>':''}
+        <div style="flex:1;text-align:center;padding:12px 8px;">
+          <div style="font-size:1.4rem;font-weight:900;color:${s[2]};">${s[1]}</div>
+          <div style="font-size:0.62rem;color:#94a3b8;margin-top:2px;">${s[0]}</div>
+        </div>`).join('')}
     </div>
 
     <!-- Stats bar -->

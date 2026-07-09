@@ -4394,6 +4394,9 @@ ${drops.map(d=>`<tr>
 </tr>`).join('')}
 </tbody></table></div>`;}
 
+// Engagement metrics (prototype, aggregate counts only — never per-user). Real view/like tracking is a v1 data dependency.
+function dropViews(d){var r=d.res||0,c=parseInt(d.cap)||0;if(!r&&!c)return 0;return Math.round(r*3.8+c*1.6+(String(d.status).toLowerCase()==='ended'?4:24));}
+function dropLikes(d){var v=dropViews(d);if(!v)return 0;return Math.max(d.res||0,Math.round(v*0.35));}
 function rDropDetail(id){
   const d=drops.find(x=>x.id===id);if(!d)return '';
   const ended=['Ended','Cancelled'].includes(d.status);
@@ -4533,7 +4536,7 @@ function rDropDetail(id){
     <!-- Stats card -->
     <div class="card card-p">
       <div style="font-size:12px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Drop Stats</div>
-      ${[['ID',d.id],['Host Account',d.org],['Reservations',d.res+' / '+d.cap],['Fill Rate',Math.round(d.res/d.cap*100)+'%'],['Pricing',d.segmentPricing?d.segmentPricing.map(t=>t.segment+': $'+t.price).join(', '):(d.price===0?'Free':'$'+d.price)],['Revenue','$'+d.revenue],['Guest Phone',d.phoneRequest==='required'?'Required':d.phoneRequest==='optional'?'Optional':'Not requested']].map(([k,v])=>`
+      ${[['ID',d.id],['Host Account',d.org],['Views',dropViews(d).toLocaleString()],['Likes',dropLikes(d).toLocaleString()],['Reservations',d.res+' / '+d.cap],['Fill Rate',Math.round(d.res/d.cap*100)+'%'],['Pricing',d.segmentPricing?d.segmentPricing.map(t=>t.segment+': $'+t.price).join(', '):(d.price===0?'Free':'$'+d.price)],['Revenue','$'+d.revenue],['Guest Phone',d.phoneRequest==='required'?'Required':d.phoneRequest==='optional'?'Optional':'Not requested']].map(([k,v])=>`
       <div class="detail-row"><span class="detail-key" style="font-size:11px">${k}</span><span class="detail-val" style="font-size:12px">${v}</span></div>`).join('')}
     </div>
 
