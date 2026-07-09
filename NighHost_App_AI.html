@@ -323,6 +323,7 @@ tiktok:'<path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/>',
 xtwitter:'<path d="M4 4l6.5 8L4 20h2l5.5-6.8L16 20h4l-6.8-8.4L19.5 4h-2l-5.2 6.4L8 4z"/>',
 youtube:'<rect x="2" y="4" width="20" height="16" rx="4"/><polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none"/>',
 facebook:'<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>',
+spotify:'<circle cx="12" cy="12" r="10"/><path d="M7 9.6c3-1 6.6-.7 9.2.9"/><path d="M7.6 12.6c2.5-.8 5.6-.5 7.7.8"/><path d="M8.1 15.4c2-.6 4.3-.4 5.9.6"/>',
 mail:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/>',
 };
 function ic(n,s,c,vb){return`<svg width="${s||20}" height="${s||20}" viewBox="${vb||'0 0 24 24'}" stroke="${c||'currentColor'}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
@@ -5502,6 +5503,7 @@ function renderProfile(){
   const hasX=!!(a.socX&&a.socX.trim());
   const hasYT=!!(a.socYT&&a.socYT.trim());
   const hasFB=!!(a.socFB&&a.socFB.trim());
+  const hasSpotify=!!(a.socSpotify&&a.socSpotify.trim());
   const fldShown=(key,hasData)=>hasData||S.proOptFields[key];
   const optToggle=(key)=>"S.proOptFields['"+key+"']=true;S.proAddMenu=false;render()";
   const optRemove=(key)=>"S.proOptFields['"+key+"']=false;render()";
@@ -5556,6 +5558,7 @@ function renderProfile(){
   const xBlock=socField('X (Twitter)','xtwitter',a.socX||'','e.g. centroboulder');
   const ytBlock=socField('YouTube','youtube',a.socYT||'','e.g. centroboulder');
   const fbBlock=socField('Facebook','facebook',a.socFB||'','e.g. CentroBoulder');
+  const spotifyBlock=socField('Spotify','spotify',a.socSpotify||'','e.g. centroboulder');
 
   // Removable wrapper for personal opt-in fields
   const optWrap=(content,key)=>pers?`<div style="position:relative">${content}<button onclick="${optRemove(key)}" style="position:absolute;top:0;right:0;background:none;border:none;color:#9CA3AF;cursor:pointer;padding:4px;font-size:10px;display:flex;align-items:center;gap:3px">${ic('x',10)} Remove</button></div>`:content;
@@ -5608,7 +5611,8 @@ function renderProfile(){
       const showX=fldShown('socX',hasX);
       const showYT=fldShown('socYT',hasYT);
       const showFB=fldShown('socFB',hasFB);
-      const anyShown=showAddr||showPhone||showEmail||showWeb||showIG||showTiktok||showX||showYT||showFB;
+      const showSpotify=fldShown('socSpotify',hasSpotify);
+      const anyShown=showAddr||showPhone||showEmail||showWeb||showIG||showTiktok||showX||showYT||showFB||showSpotify;
       // Main-level hidden items
       const mainHidden=[];
       if(!showAddr)mainHidden.push(['Address','map',optToggle('addr')]);
@@ -5622,6 +5626,7 @@ function renderProfile(){
       if(!showX)socHidden.push(['X (Twitter)','xtwitter',optToggle('socX')]);
       if(!showYT)socHidden.push(['YouTube','youtube',optToggle('socYT')]);
       if(!showFB)socHidden.push(['Facebook','facebook',optToggle('socFB')]);
+      if(!showSpotify)socHidden.push(['Spotify','spotify',optToggle('socSpotify')]);
       const canAdd=mainHidden.length>0||socHidden.length>0;
       if(!anyShown&&!canAdd)return '';
       const menuOpen=S.proAddMenu==='main'||S.proAddMenu==='social';
@@ -5635,6 +5640,7 @@ function renderProfile(){
         (showX?optWrap(xBlock,'socX'):'')+
         (showYT?optWrap(ytBlock,'socYT'):'')+
         (showFB?optWrap(fbBlock,'socFB'):'')+
+        (showSpotify?optWrap(spotifyBlock,'socSpotify'):'')+
         (canAdd?'<div style="position:relative;'+(anyShown?'border-top:1px solid #F3F4F6;padding-top:10px;margin-top:4px':'')+'">'+
           '<div onclick="S.proAddMenu=S.proAddMenu?false:\'main\';render()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px dashed #A5B4FC;border-radius:8px;background:#EEF2FF;cursor:pointer;font-size:12px;font-weight:600;color:#6366F1">'+ic('plus',14,'#6366F1')+' Add</div>'+
           (menuOpen?'<div onclick="S.proAddMenu=false;render()" style="position:fixed;inset:0;z-index:9"></div><div style="position:absolute;left:0;bottom:100%;margin-bottom:6px;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);overflow:hidden;z-index:10;min-width:220px">'+
