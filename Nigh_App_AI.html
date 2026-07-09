@@ -684,6 +684,9 @@ function friendsGoingForDrop(dropId){
 function friendsWithTicketForDrop(dropId){
   return friendsList.filter(f=>f.hasTicket===dropId);
 }
+// Attendance (prototype): for a past drop, which ticket-holding friends actually checked in.
+const NO_SHOW_IDS=['F012','F016'];
+function friendAttended(f){return NO_SHOW_IDS.indexOf(f.id)===-1;}
 
 const phoneContacts=[
   {name:'Jordan Williams',phone:'(303) 555-0192',av:'JW'},
@@ -1489,7 +1492,7 @@ function renderFeed(){
           <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.9)">${d.host.name}</span>
         </div>
         ${d.partners.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${d.partners.map(p=>`<button onclick="event.stopPropagation();S.drop=${idx};openProfile('${p.handle}')" style="background:rgba(14,78,245,0.35);border:1px solid rgba(14,78,245,0.6);backdrop-filter:blur(4px);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:''}
-        ${friendsOn.length?`<div onclick="event.stopPropagation();S.drop=${idx};modal('friendsGoing')" style="display:flex;align-items:center;gap:7px;cursor:pointer">
+        ${friendsOn.length?`<div onclick="event.stopPropagation();S.friendsDropId=null;S.friendsPast=false;S.drop=${idx};modal('friendsGoing')" style="display:flex;align-items:center;gap:7px;cursor:pointer">
           <div style="display:flex">${friendsOn.slice(0,3).map((f,i)=>`<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;margin-left:${i>0?'-6px':'0'};position:relative;z-index:${3-i}">${f.av}</div>`).join('')}</div>
           <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">${(()=>{const n=friendsOn.length,nm=i=>friendsOn[i].name.split(' ')[0];if(n===1)return nm(0)+' is going';if(n===2)return nm(0)+' & '+nm(1)+' are going';return nm(0)+', '+nm(1)+' +'+(n-2)+' more are going';})()}</span>
         </div>`:''}
@@ -1746,7 +1749,7 @@ function renderDropDetail(){
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;margin-bottom:12px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em">${friendsOn.length?'FRIENDS GOING':'FRIENDS'}</div>
-        ${friendsOn.length>5?`<button onclick="modal('friendsGoing')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit">View all ${friendsOn.length}</button>`:''}
+        ${friendsOn.length>5?`<button onclick="S.friendsDropId=null;S.friendsPast=false;modal('friendsGoing')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit">View all ${friendsOn.length}</button>`:''}
       </div>
       ${d.myTicket&&(S.ticketPrivacy[d.myTicket]||'friends')==='only_me'?`
       <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border-radius:8px;padding:6px 10px;margin-bottom:8px">
@@ -1755,7 +1758,7 @@ function renderDropDetail(){
         <button onclick="modal('ticketPrivacy_${d.myTicket}')" style="margin-left:auto;background:none;border:none;font-size:10px;font-weight:600;color:rgba(14,78,245,0.8);cursor:pointer;font-family:inherit;padding:0;white-space:nowrap">Change</button>
       </div>`:''}
       ${friendsOn.length?`
-      <div onclick="modal('friendsGoing')" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer">
+      <div onclick="S.friendsDropId=null;S.friendsPast=false;modal('friendsGoing')" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer">
         ${(friendsOn.length>5?friendsOn.slice(0,4):friendsOn).map(f=>`
         <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${f.av}</div>`).join('')}
         ${friendsOn.length>5?`<div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0">+${friendsOn.length-4}</div>`:''}
@@ -2707,6 +2710,25 @@ function fullTicketCard(tk){
       <button onclick="event.stopPropagation();openMaps('${tk.addr}')" style="background:none;border:none;padding:6px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.55);cursor:pointer;flex-shrink:0;margin-left:auto">${ic('map',18)}</button>
     </div>`;
 
+  // ── Friends going / went row (below the location) ──
+  let friendsRow='';
+  {
+    const tkFriends=friendsGoingForDrop(tk.dropId);
+    const shown=isPast?tkFriends.filter(friendAttended):tkFriends;
+    if(shown.length){
+      const nm=i=>shown[i].name.split(' ')[0], n=shown.length;
+      const verb=isPast?'went':'going', be=isPast?'':(n===1?'is ':'are ');
+      const txt = n===1?`${nm(0)} ${be}${verb}`
+                : n===2?`${nm(0)} & ${nm(1)} ${be}${verb}`
+                : `${nm(0)}, ${nm(1)} +${n-2} more ${be}${verb}`;
+      friendsRow=`<div onclick="event.stopPropagation();S.friendsDropId='${tk.dropId}';S.friendsPast=${isPast?'true':'false'};modal('friendsGoing')" style="display:flex;align-items:center;gap:9px;margin-top:16px;padding-top:15px;border-top:1px solid rgba(255,255,255,0.08);cursor:pointer">
+        <div style="display:flex">${shown.slice(0,3).map((f,i)=>`<div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid #0B0B1A;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;margin-left:${i>0?'-7px':'0'};position:relative;z-index:${3-i}">${f.av}</div>`).join('')}</div>
+        <span style="flex:1;min-width:0;font-size:12px;font-weight:600;color:rgba(255,255,255,0.72)">${txt}</span>
+        <span style="color:rgba(255,255,255,0.35);flex-shrink:0">${ic('right',15)}</span>
+      </div>`;
+    }
+  }
+
   // Transfer / cancel action (additional tickets only)
   let actionInner='';
   if(!isPast&&!checkedIn&&subIdx>0){
@@ -2762,7 +2784,7 @@ function fullTicketCard(tk){
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
-  const frontFace=`${cardTop}${stateBlock}${venueRow}${bottomRegion}`;
+  const frontFace=`${cardTop}${stateBlock}${venueRow}${friendsRow}${bottomRegion}`;
 
   // Dots only (no arrows) — swipe to move between tickets
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
@@ -5611,16 +5633,24 @@ function renderModal(){
 
   // ── Friends going modal (full list) ────────────────────
   if(S.modal==='friendsGoing'){
-    const d=feedDrops[S.drop];const list=d?friendsGoingForDrop(d.id):[];
+    const dropId=S.friendsDropId||(feedDrops[S.drop]&&feedDrops[S.drop].id);
+    const d=feedDrops.find(x=>x.id===dropId);
+    const past=!!S.friendsPast;
+    let list=dropId?friendsGoingForDrop(dropId):[];
+    if(past) list=[...list].sort((a,b)=>(friendAttended(b)?1:0)-(friendAttended(a)?1:0));
+    const attended=list.filter(friendAttended).length;
+    const goingTag=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#16A34A;background:#ECFDF5;border:1px solid #BBF7D0;border-radius:20px;padding:3px 9px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Going</span>`;
+    const checkedTag=`<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#16A34A;background:#ECFDF5;border:1px solid #BBF7D0;border-radius:20px;padding:3px 9px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Checked in</span>`;
+    const noShowTag=`<span style="font-size:11px;font-weight:600;color:#9CA3AF;flex-shrink:0">No-show</span>`;
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
-      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:2px">Friends going</div>
-      <div style="font-size:12px;color:#6B7280;margin-bottom:14px">${list.length} of your friends ${list.length===1?'has':'have'} a ticket${d?' to '+d.title:''}</div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:2px">${past?'Friends who went':'Friends going'}</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:14px">${past?`${attended} of ${list.length} friend${list.length===1?'':'s'} checked in${d?' at '+d.title:''}`:`${list.length} of your friends ${list.length===1?'has':'have'} a ticket${d?' to '+d.title:''}`}</div>
       <div style="max-height:52vh;overflow-y:auto;margin:0 -4px;padding:0 4px">
-        ${list.map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6">
+        ${list.map(f=>{const att=friendAttended(f);return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F3F4F6${past&&!att?';opacity:0.6':''}">
           ${av(f.av,40)}
           <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827">${f.name}</div><div style="font-size:11px;color:#9CA3AF">${f.uname}</div></div>
-          <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#16A34A;background:#ECFDF5;border:1px solid #BBF7D0;border-radius:20px;padding:3px 9px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Going</span>
-        </div>`).join('')}
+          ${past?(att?checkedTag:noShowTag):goingTag}
+        </div>`;}).join('')}
       </div>
       <button onclick="modal(null)" style="width:100%;padding:13px;border-radius:12px;background:#F3F4F6;color:#374151;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:16px">Done</button>
     </div></div>`;return;
