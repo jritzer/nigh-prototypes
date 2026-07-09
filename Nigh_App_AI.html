@@ -1489,9 +1489,9 @@ function renderFeed(){
           <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.9)">${d.host.name}</span>
         </div>
         ${d.partners.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${d.partners.map(p=>`<button onclick="event.stopPropagation();S.drop=${idx};openProfile('${p.handle}')" style="background:rgba(14,78,245,0.35);border:1px solid rgba(14,78,245,0.6);backdrop-filter:blur(4px);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:''}
-        ${friendsOn.length?`<div style="display:flex;align-items:center;gap:7px">
+        ${friendsOn.length?`<div onclick="event.stopPropagation();S.drop=${idx};modal('friendsGoing')" style="display:flex;align-items:center;gap:7px;cursor:pointer">
           <div style="display:flex">${friendsOn.slice(0,3).map((f,i)=>`<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;margin-left:${i>0?'-6px':'0'};position:relative;z-index:${3-i}">${f.av}</div>`).join('')}</div>
-          <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">${friendsOn.slice(0,2).map(f=>f.name.split(' ')[0]).join(' & ')} ${friendsOn.length===1?'is':'are'} going</span>
+          <span style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">${(()=>{const n=friendsOn.length,nm=i=>friendsOn[i].name.split(' ')[0];if(n===1)return nm(0)+' is going';if(n===2)return nm(0)+' & '+nm(1)+' are going';return nm(0)+', '+nm(1)+' +'+(n-2)+' more are going';})()}</span>
         </div>`:''}
       </div>
 
