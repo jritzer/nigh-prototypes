@@ -16,11 +16,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .scrollDark::-webkit-scrollbar-track{background:transparent}
 .scrollDark::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:3px}
 .scrollDark::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.45)}
-.scrollTk{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.6) rgba(255,255,255,0.08)}
-.scrollTk::-webkit-scrollbar{width:5px}
-.scrollTk::-webkit-scrollbar-track{background:rgba(255,255,255,0.08);border-radius:3px}
-.scrollTk::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.6);border-radius:3px}
-.scrollTk::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.8)}
+.noBar{scrollbar-width:none;-ms-overflow-style:none}
+.noBar::-webkit-scrollbar{width:0;height:0;display:none}
 #scr.feed-mode{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
 #scr.tickets-mode{scroll-snap-type:y mandatory}
 #scr.tickets-mode .tk-snap{scroll-snap-align:start;scroll-snap-stop:always}
@@ -2407,7 +2404,8 @@ function renderTicketView(){
   const ticketBack=`
     <div style="background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:26px;padding:2px;box-shadow:0 0 50px rgba(98,38,233,0.4)">
       <div style="background:#0B0B1A;border-radius:24px;padding:20px;height:540px;position:relative;overflow:hidden">
-        <div class="scrollTk" style="height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:52px;padding-right:12px;margin-right:-6px;box-sizing:border-box">${backInner}</div>
+        <div id="tkback_${tk.id}_${subIdx}" class="noBar" style="height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:52px;padding-right:12px;box-sizing:border-box">${backInner}</div>
+        <div id="tkbBar_${tk.id}_${subIdx}" style="position:absolute;top:16px;right:8px;bottom:58px;width:3px;border-radius:2px;background:rgba(255,255,255,0.12);z-index:6;pointer-events:none;display:none"><div style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.7);top:0;height:30%"></div></div>
         ${tapHintBack}
       </div>
     </div>`;
@@ -2513,6 +2511,27 @@ function updateTicketScrollbar(){
   var top=maxTop*(sc.scrollTop/(sh-ch));
   thumb.style.height=th+'px';
   thumb.style.top=top+'px';
+}
+function updateTkBackBar(scEl){
+  var bar=document.getElementById(scEl.id.replace('tkback_','tkbBar_'));
+  if(!bar)return;
+  var thumb=bar.firstElementChild;
+  var sh=scEl.scrollHeight, ch=scEl.clientHeight;
+  if(sh<=ch+4){bar.style.display='none';return;}
+  bar.style.display='block';
+  var trackH=bar.clientHeight||1;
+  var th=Math.max(24, trackH*ch/sh);
+  var maxTop=Math.max(0,trackH-th);
+  var top=maxTop*(scEl.scrollTop/(sh-ch));
+  thumb.style.height=th+'px';
+  thumb.style.top=top+'px';
+}
+function initTicketBackBars(){
+  var els=document.querySelectorAll('[id^="tkback_"]');
+  els.forEach(function(el){
+    if(!el._tkbBound){ el._tkbBound=true; el.addEventListener('scroll',function(){updateTkBackBar(el);}); }
+    updateTkBackBar(el);
+  });
 }
 function updateDropScrollbar(){
   var bar=document.getElementById('dropScroll');
@@ -7775,6 +7794,7 @@ function render(){
     if(_scEl && !_scEl._tsBound){ _scEl._tsBound=true; _scEl.addEventListener('scroll',updateTicketScrollbar); }
     setTimeout(updateTicketScrollbar,0);
   } else if(tsBar){ tsBar.style.display='none'; }
+  if(S.scr==='ticketCollection'){ setTimeout(initTicketBackBars,0); }
   // Feed: fixed left scroll indicator (stays on screen, thumb tracks scroll)
   var fsBar=document.getElementById('feedScroll');
   var showFS=(S.scr==='feed' && feedDrops.length>1);
