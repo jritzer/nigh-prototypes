@@ -1399,10 +1399,9 @@ function renderTB(){
 
 // ═══ CREATE / JOIN HOST ACCOUNT ═══
 function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).userDisplayName||'Josh Ritzer';}
-// Per-account display photo options (prototype stand-in for uploaded photos). '' = use the member's Nigh photo (initials).
-const DISPLAY_PHOTOS=['📷','🧑','🎧','🎤','🎸','🍸','🍺','🌮','⚽','✨'];
-// Renders the inner content of an avatar circle: the account display photo (emoji) if set, else initials.
-function avInner(photo,initials){return photo?`<span style="font-size:20px;line-height:1">${photo}</span>`:initials;}
+// Per-account display photo (prototype): '' = use the member's Nigh photo (initials); any truthy value = a custom uploaded/captured photo.
+// Renders the inner content of an avatar circle: a photo placeholder if a custom photo is set, else initials.
+function avInner(photo,initials){return photo?`<span style="width:100%;height:100%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#C7D2FE"><svg width="58%" height="58%" viewBox="0 0 24 24" fill="#3B4CCA"><circle cx="12" cy="8.5" r="3.7"/><path d="M5 20.5c0-3.6 3.1-5.8 7-5.8s7 2.2 7 5.8z"/></svg></span>`:initials;}
 // The person's identity (shared across Nigh and Nigh Host) — phone + email live here
 let personIdentity={phone:'(720) 555-0199',email:'josh@nigh.com',legalName:'Joshua Ritzer'};
 function handleTaken(h){h=(h||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];return !!h&&(accts.some(a=>(a.handle||'').toLowerCase()===h)||reserved.includes(h));}
@@ -6791,10 +6790,14 @@ function renderModal(){
         </div>
 
         ${canFull('teamDisplayName')?`<div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display photo for ${locName}</div>
-        <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px">
-          <button onclick="S.editDispPhoto='';render()" title="Use their Nigh photo" style="flex-shrink:0;width:38px;height:38px;border-radius:50%;border:1.5px solid ${!curEditPhoto?'#0E4EF5':'#E5E7EB'};background:#F3F4F6;font-size:11px;font-weight:800;color:#475569;cursor:pointer;font-family:inherit">${t.av}</button>
-          ${DISPLAY_PHOTOS.map(e=>`<button onclick="S.editDispPhoto='${e}';render()" style="flex-shrink:0;width:38px;height:38px;border-radius:50%;border:1.5px solid ${curEditPhoto===e?'#0E4EF5':'#E5E7EB'};background:#fff;font-size:19px;cursor:pointer;font-family:inherit">${e}</button>`).join('')}
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:50%;background:${roleBgFn(locRole)};border:1.5px solid ${roleColor(locRole)}40;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${roleColor(locRole)};flex-shrink:0;overflow:hidden">${avInner(curEditPhoto,t.av)}</div>
+          <div style="flex:1;display:flex;gap:7px;min-width:0">
+            <button onclick="S.editDispPhoto='__photo__';render()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:8px;border:1px solid #D1D5DB;background:#fff;font-size:11px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload</button>
+            <button onclick="S.editDispPhoto='__photo__';render()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:8px;border:1px solid #D1D5DB;background:#fff;font-size:11px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Take</button>
+          </div>
         </div>
+        ${curEditPhoto?`<button onclick="S.editDispPhoto='';render()" style="background:none;border:none;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;padding:0 0 14px;font-family:inherit;display:block">Use their Nigh photo</button>`:''}
         <div style="font-size:11px;font-weight:600;color:#374151;margin-bottom:8px">Display name for ${locName}</div>
         <input id="editDispInput" type="text" value="${S.editDispName!=null?S.editDispName:((assignment&&assignment.displayName)||'')}" placeholder="${t.name}" oninput="S.editDispName=this.value" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:6px"/>
         <div style="font-size:10px;color:#9CA3AF;margin-bottom:${canFull('team')?'22px':'24px'};line-height:1.4">How this member&#x2019;s name and photo appear for this host account&#x2019;s activity.</div>`:''}
@@ -7074,13 +7077,13 @@ function renderModal(){
       <div style="font-size:12px;color:#6B7280;margin-bottom:18px;line-height:1.5">How you appear on <strong>${acct().name}</strong> &#8212; to this account&#x2019;s team and on activity. Set per account; your Nigh name and photo don&#x2019;t change.</div>
 
       <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:8px">Display photo</label>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-        <div style="width:54px;height:54px;border-radius:50%;background:#EEF2FF;border:1.5px solid #C7D2FE;display:flex;align-items:center;justify-content:center;font-size:${curPhoto?'26px':'17px'};font-weight:800;color:#0E4EF5;flex-shrink:0">${curPhoto||meAv}</div>
-        <div style="font-size:11px;color:#6B7280;line-height:1.45">Use a photo just for this account, or keep your Nigh photo.</div>
-      </div>
-      <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px">
-        <button onclick="S.dispPhotoNew='';render()" title="Use my Nigh photo" style="flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1.5px solid ${!curPhoto?'#0E4EF5':'#E5E7EB'};background:#F3F4F6;font-size:12px;font-weight:800;color:#475569;cursor:pointer;font-family:inherit">${meAv}</button>
-        ${DISPLAY_PHOTOS.map(e=>`<button onclick="S.dispPhotoNew='${e}';render()" style="flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1.5px solid ${curPhoto===e?'#0E4EF5':'#E5E7EB'};background:#fff;font-size:20px;cursor:pointer;font-family:inherit">${e}</button>`).join('')}
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <div style="width:60px;height:60px;border-radius:50%;background:#EEF2FF;border:1.5px solid #C7D2FE;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#0E4EF5;flex-shrink:0;overflow:hidden">${avInner(curPhoto,meAv)}</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0">
+          <button onclick="S.dispPhotoNew='__photo__';render()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:9px;border:1px solid #D1D5DB;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload photo</button>
+          <button onclick="S.dispPhotoNew='__photo__';render()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:9px;border:1px solid #D1D5DB;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg> Take photo</button>
+          ${curPhoto?`<button onclick="S.dispPhotoNew='';render()" style="background:none;border:none;font-size:11px;font-weight:600;color:#0E4EF5;cursor:pointer;padding:2px 0;font-family:inherit;text-align:left">Use my Nigh photo</button>`:''}
+        </div>
       </div>
 
       <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Display name</label>
