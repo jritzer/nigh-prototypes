@@ -2802,7 +2802,8 @@ function fullTicketCard(tk){
   const _rPm=tk.payment||{brand:'Visa',last4:'4242'};
   const _money=n=>'$'+n.toFixed(2);
   const _cardSvg='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>';
-  const receiptHtml=`
+  const _purchaserName=tk.purchaserName||currentUser.name;
+  const receiptHtml=isOwner?`
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
     ${_rSub>0?`
       <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:rgba(255,255,255,0.55)">${_rQty} ${_rQty>1?'spots':'spot'} × ${_money(_rUnit)}</span><span style="color:rgba(255,255,255,0.88)">${_money(_rSub)}</span></div>
@@ -2813,7 +2814,12 @@ function fullTicketCard(tk){
     `:`
       <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:#fff">Total</span><span style="color:#22C55E">Free</span></div>
       <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:6px">No payment required &#8212; this Drop was free.</div>
-    `}`;
+    `}`:`
+    <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
+    ${_rUnit>0
+      ?`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:9px"><span style="color:rgba(255,255,255,0.55)">Ticket price</span><span style="color:rgba(255,255,255,0.88)">${_money(_rUnit)}</span></div>`
+      :`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:9px"><span style="color:#fff">Ticket price</span><span style="color:#22C55E">Free</span></div>`}
+    <div style="font-size:11px;color:rgba(255,255,255,0.5);line-height:1.5">Purchased by <span style="color:rgba(255,255,255,0.8);font-weight:600">${_purchaserName}</span>${tk.orderDate?' · '+tk.orderDate:''}</div>`;
 
   const backFace=`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px">
