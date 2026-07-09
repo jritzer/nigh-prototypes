@@ -7791,7 +7791,7 @@ function render(){
   if(showDS){
     if(!dsBar){
       dsBar=document.createElement('div');dsBar.id='dropScroll';
-      dsBar.style.cssText='position:absolute;left:8px;top:50%;transform:translateY(-50%);width:3px;height:84px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
+      dsBar.style.cssText='position:absolute;right:8px;top:50%;transform:translateY(-50%);width:3px;height:84px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
       dsBar.innerHTML='<div id="dropScrollThumb" style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.7);top:0;height:30%"></div>';
       document.getElementById('app').appendChild(dsBar);
     }
