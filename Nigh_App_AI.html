@@ -16,6 +16,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .scrollDark::-webkit-scrollbar-track{background:transparent}
 .scrollDark::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:3px}
 .scrollDark::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.45)}
+.scrollTk{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.6) rgba(255,255,255,0.08)}
+.scrollTk::-webkit-scrollbar{width:5px}
+.scrollTk::-webkit-scrollbar-track{background:rgba(255,255,255,0.08);border-radius:3px}
+.scrollTk::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.6);border-radius:3px}
+.scrollTk::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.8)}
 #scr.feed-mode{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
 #scr.tickets-mode{scroll-snap-type:y mandatory}
 #scr.tickets-mode .tk-snap{scroll-snap-align:start;scroll-snap-stop:always}
@@ -2402,7 +2407,7 @@ function renderTicketView(){
   const ticketBack=`
     <div style="background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:26px;padding:2px;box-shadow:0 0 50px rgba(98,38,233,0.4)">
       <div style="background:#0B0B1A;border-radius:24px;padding:20px;height:540px;position:relative;overflow:hidden">
-        <div class="scrollDark" style="height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:52px;box-sizing:border-box">${backInner}</div>
+        <div class="scrollTk" style="height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:52px;padding-right:12px;margin-right:-6px;box-sizing:border-box">${backInner}</div>
         ${tapHintBack}
       </div>
     </div>`;
