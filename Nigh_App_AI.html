@@ -2664,12 +2664,12 @@ function fullTicketCard(tk){
     </div>`;
   const noShowTile=`
     <div style="${STATE_H}">
-      <div style="background:rgba(245,166,35,0.13);border:1px solid rgba(245,166,35,0.50);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:7px">
+      <div style="background:rgba(245,166,35,0.20);border:1px solid rgba(245,166,35,0.75);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:center;gap:7px;box-shadow:0 0 18px rgba(245,166,35,0.25)">
         <div style="display:flex;align-items:center;gap:9px">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,0.22);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F5A623">${ic('info',15)}</div>
-          <div style="font-size:13px;font-weight:700;color:#F5A623">Looks like you didn't make it</div>
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(245,166,35,0.32);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FFB93D">${ic('info',15)}</div>
+          <div style="font-size:13px;font-weight:800;color:#FFC24B">Looks like you didn't make it</div>
         </div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.72);line-height:1.5">If you attended but weren't checked in, contact the host — only the host can update this.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.85);line-height:1.5">If you attended but weren't checked in, contact the host — only the host can update this.</div>
       </div>
     </div>`;
   const pendingTile=`
@@ -2821,7 +2821,7 @@ function fullTicketCard(tk){
     <div id="tkcard_${tk.id}" class="tk-snap" onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
       ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
-      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)${noShow?';filter:saturate(0.5);opacity:0.82':''}">
+      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)${noShow?';filter:saturate(0.8);opacity:0.88':''}">
       <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
         <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(14,78,245,0.14),transparent 70%);pointer-events:none"></div>
