@@ -2860,10 +2860,7 @@ function renderMenu(){
     {ic:'radio',    l:'Followers',    d:(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length+' followers',  act:"S.followersTab='list';S.menuSub='followers';render()", show:canView('guests'), badge:acct().privateAcct?followRequests.filter(r=>r.status==='pending').length:0},
     {ic:'ticket',   l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
-    {ic:'userPlus', l:'Team',         d:'Manage team access',                    act:"S.menuSub='team';render()", show:canView('team')&&!isPersonal()},
-    {ic:'link',l:'Partners',d:'Manage & invite partners',   act:"S.menuSub='partners';render()", show:canView('partners')},
-    {ic:'store',    l:'Host Account',      d:'Profile, plan & locations',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
-    {ic:'activity',l:'Activity Log',d:'History across account',    act:"S.menuSub='activitylog';render()", show:canView('activityLog')&&!isPersonal()},
+    {ic:'store',    l:'Host Account',      d:'Profile, team, partners & more',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
   ].filter(m=>m.show);
   return `${hdr('Menu',a.name)}
   <div style="padding:14px 16px">
@@ -3037,7 +3034,7 @@ function saveTeamMember(uname,loc){
   S.editTeamMember=null;S.editTeamRole=null;S.editDispName=null;S.editDispPhoto=null;S.editPhotoMenu=false;render();
 }
 function renderTeam(){
-  if(!canView('team'))return `${hdr('Team',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Team')}</div>`;
+  if(!canView('team'))return `${hdr('Team',null,"S.menuSub='accounthub';render()")}<div style="padding:14px 16px">${roleGate('Team')}</div>`;
   const roleColor=(r)=>r==='Account Owner'?'#7c3aed':r==='Account Admin'?'#1d4ed8':r==='Manager'?'#0369a1':r==='Team Member'?'#475569':'#64748b';
   const roleBg=(r)=>r==='Account Owner'?'#f5f3ff':r==='Account Admin'?'#eff6ff':r==='Manager'?'#f0f9ff':r==='Team Member'?'#f8fafc':'#f1f5f9';
   const locName=acct().name;
@@ -3052,7 +3049,7 @@ function renderTeam(){
   locTeam.forEach(t=>{const a=t.assignments&&t.assignments.find(a=>a.location===locName);const r=a?a.role:t.role;roleCounts[r]=(roleCounts[r]||0)+1;});
   const filterPills=[{id:'all',label:'All',count:locTeam.length},...['Account Owner','Account Admin','Manager','Team Member','Check-In Only'].filter(r=>roleCounts[r]).map(r=>({id:r,label:r,count:roleCounts[r]}))];
 
-  return `${hdr('Team','Manage team access',"S.menuSub=null;render()")}
+  return `${hdr('Team','Manage team access',"S.menuSub='accounthub';render()")}
   <div style="padding:14px 16px;overflow-y:auto">
 
     <!-- Header stats -->
@@ -3178,14 +3175,14 @@ function renderInviteTeam(){
 }
 
 function renderActivityLog(){
-  if(!canView('activityLog'))return `${hdr('Activity Log',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Activity Log')}</div>`;
+  if(!canView('activityLog'))return `${hdr('Activity Log',null,"S.menuSub='accounthub';render()")}<div style="padding:14px 16px">${roleGate('Activity Log')}</div>`;
   const areaFilter=S.alFilter||'All';
   const areaColors={drop:'#0E4EF5',team:'#8B5CF6',guest:'#16a34a',account:'#F97316'};
   const areaBg={drop:'#EEF2FF',team:'#EDE9FE',guest:'#F0FDFA',account:'#FFF7ED'};
   const areaLabels={drop:'Drop',team:'Team',guest:'Guest',account:'Account'};
   const filtered=areaFilter==='All'?auditLog:auditLog.filter(e=>e.area===areaFilter);
   const roleColor=(r)=>r==='Account Owner'?'#7c3aed':r==='Account Admin'?'#1d4ed8':r==='Manager'?'#0369a1':r==='Team Member'?'#475569':'#64748b';
-  return `${hdr('Activity Log','All team changes',"S.menuSub=null;render()")}
+  return `${hdr('Activity Log','All team changes',"S.menuSub='accounthub';render()")}
   <div style="padding:10px 16px">
     <!-- Filter bar -->
     <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px">
@@ -3510,10 +3507,13 @@ function renderAccountHub(){
   const hubItems=[
     {ic:'shield',l:'Verification',d:a.enterprise?('Managed by '+a.parentOrg):(verifyAllSet?'Verified':'You, your account & payments'),act:"S.menuSub='verifypage';render()",vf:verifyAllSet},
     {ic:'billing',l:'Subscription',  d:a.enterprise?'Managed by '+a.parentOrg:(a.plan||'Launch')+' plan', act:"S.menuSub='subscription';render()"},
+    ...(canView('team')&&!isPersonal()?[{ic:'userPlus',l:'Team',d:'Manage team access',act:"S.menuSub='team';render()"}]:[]),
+    ...(canView('partners')?[{ic:'link',l:'Partners',d:'Manage & invite partners',act:"S.menuSub='partners';render()"}]:[]),
     {ic:'map',    l:'Locations',     d:'Manage drop locations',                   act:"S.menuSub='venues';render()"},
     {ic:'qr',     l:'Stickers',      d:'Manage stickers',                        act:"S.menuSub='qrcodes';render()"},
+    ...(canView('activityLog')&&!isPersonal()?[{ic:'activity',l:'Activity Log',d:'History across account',act:"S.menuSub='activitylog';render()"}]:[]),
   ];
-  return `${hdr('Host Account','Profile, plan & locations',"S.menuSub=null;render()")}
+  return `${hdr('Host Account','Profile, team, partners & more',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div onclick="S.menuSub='profile';render()" style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer">
       <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0">${a.short.charAt(0)}</div>
@@ -4291,7 +4291,7 @@ function renderPartnerDrop(){
 function renderPartners(){
   if(S.partnerDropId)return renderPartnerDrop();
   if(S.partnerDetailId)return renderPartnerDetail();
-  if(!canView('partners'))return `${hdr('Partners',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Partners')}</div>`;
+  if(!canView('partners'))return `${hdr('Partners',null,"S.menuSub='accounthub';render()")}<div style="padding:14px 16px">${roleGate('Partners')}</div>`;
   const mpl=myPartnersList();const mip=myIncomingPartners();
   const tab=S.partnersTab||'my';
   const statusColor={Active:'#16A34A',Invited:'#0E4EF5',Declined:'#9CA3AF',Suspended:'#F97316',Pending:'#D97706',Expired:'#6B7280',Withdrawn:'#6B7280'};
@@ -4336,7 +4336,7 @@ function renderPartners(){
     </div>`;
   };
 
-  return `${hdr('Partners','Manage your partners',"S.menuSub=null;S.partnersTab=null;render()")}
+  return `${hdr('Partners','Manage your partners',"S.menuSub='accounthub';S.partnersTab=null;render()")}
   <div style="padding:0 16px">
     <div style="display:flex;border-bottom:1px solid #E5E7EB;margin-bottom:14px">
       <button onclick="S.partnersTab='my';render()" style="${tabStyle('my')}">My Partners</button>
