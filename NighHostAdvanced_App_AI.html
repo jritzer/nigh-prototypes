@@ -429,13 +429,35 @@ Object.keys(BUILTIN_ROLE_LEVELS).forEach(function(role){
 //   customRoles['Finance']={builtin:false,grants:{revenue:'full',refunds:'full',payouts:'view'}};
 // They resolve through roleGrant() and appear automatically in the role picker and Roles table.
 const customRoles={};
+// Seed a couple of example custom roles for the Enterprise demo.
+customRoles['Front Desk']={builtin:false,grants:{checkin:'full',guests:'view'}};
+customRoles['Marketing']={builtin:false,grants:{drops:'full',headsup:'full',analytics:'full',partners:'view'}};
 function roleDef(role){return ROLES[role]||customRoles[role]||null;}
 function roleGrant(role,perm){
   const r=roleDef(role);
   if(r&&r.grants&&r.grants[perm]!=null)return r.grants[perm];
   return role==='Account Owner'?'full':'none'; // unknown role/permission defaults to owner-only
 }
-function assignableRoles(){return Object.keys(ROLES).filter(function(r){return r!=='Account Owner';}).concat(Object.keys(customRoles));}
+// Custom roles are an Enterprise-plan capability. Permission GROUPS (not raw actions) keep authoring simple;
+// Owner-only powers (billing, payouts, subscription, verification, account deletion, admin management) are never grantable via a custom role.
+function canUseCustomRoles(){return acct().plan==='Enterprise'||acct().enterprise===true;}
+const ROLE_GROUPS=[
+  {key:'drops',label:'Drops & Heads Up',perms:['drops','headsup']},
+  {key:'checkin',label:'Check-in',perms:['checkin']},
+  {key:'guests',label:'Guests & Contacts',perms:['guests','messageGuests','inviteFromContacts','guestGroups','blockGuests','guestListLock','guestAuditTrail','contactImport']},
+  {key:'orders',label:'Orders & Revenue',perms:['orders','refunds','revenue']},
+  {key:'analytics',label:'Analytics',perms:['analytics']},
+  {key:'team',label:'Team',perms:['team','teamDisplayName']},
+  {key:'partners',label:'Partners',perms:['partners']},
+  {key:'account',label:'Profile & Locations',perms:['profile','locations','activityLog']},
+];
+function groupLevelForRole(name,groupKey){var r=(customRoles[name]||ROLES[name]||{});var g=r.grants||{};var grp=ROLE_GROUPS.find(function(x){return x.key===groupKey;});return grp?(g[grp.perms[0]]||'none'):'none';}
+function customRoleSummary(name){var g=(customRoles[name]||{}).grants||{};var areas=ROLE_GROUPS.filter(function(grp){return grp.perms.some(function(p){return g[p]&&g[p]!=='none';});}).map(function(grp){return grp.label;});return areas.length?areas.join(' · '):'No access';}
+function openCustomRole(name){S.crEditKey=name||null;if(name&&customRoles[name]){S.crName=name;S.crGroups={};ROLE_GROUPS.forEach(function(grp){S.crGroups[grp.key]=groupLevelForRole(name,grp.key);});}else{S.crName='';S.crGroups={};ROLE_GROUPS.forEach(function(grp){S.crGroups[grp.key]='none';});}S.modal='customRole';render();}
+function cloneCustomRoleFrom(role){S.crGroups={};ROLE_GROUPS.forEach(function(grp){S.crGroups[grp.key]=groupLevelForRole(role,grp.key);});render();}
+function saveCustomRole(){var name=(S.crName||'').trim();if(!name)return;var grants={};ROLE_GROUPS.forEach(function(grp){var lvl=S.crGroups[grp.key]||'none';if(lvl!=='none')grp.perms.forEach(function(p){grants[p]=lvl;});});if(S.crEditKey&&S.crEditKey!==name)delete customRoles[S.crEditKey];customRoles[name]={builtin:false,grants:grants};S.modal=null;S.crEditKey=null;render();}
+function deleteCustomRole(){if(S.crEditKey)delete customRoles[S.crEditKey];S.modal=null;S.crEditKey=null;render();}
+function assignableRoles(){var base=Object.keys(ROLES).filter(function(r){return r!=='Account Owner';});return canUseCustomRoles()?base.concat(Object.keys(customRoles)):base;}
 function canFull(perm){return roleGrant(uRole(),perm)==='full';}
 function canView(perm){const g=roleGrant(uRole(),perm);return g==='full'||g==='view';}
 function roleGate(title){return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;text-align:center"><div style="width:56px;height:56px;border-radius:16px;background:#FEF2F2;display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#EF4444">${ic('lock',24)}</div><div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px">${title||'Access Restricted'}</div><div style="font-size:12px;color:#6B7280;line-height:1.5">You do not have access to this page based on your current permission level.</div><div style="margin-top:12px;font-size:11px;color:#9CA3AF">Your role: <strong>${uRole()}</strong></div></div>`;}
@@ -481,7 +503,7 @@ function orgNavLabel(){
 // Personal host accounts: Account Owner is permanently the handle owner (non-transferable).
 const team=[
   {name:'Josh Ritzer',  uname:'@joshr',  role:'Account Owner', accountOwner:true, active:true, av:'JR',
-   assignments:[{location:'Josh Ritzer',role:'Account Owner'},{location:'Centro Boulder',role:'Account Owner'},{location:'Avery Brewing Co',role:'Account Owner'},{location:'Nike Boulder',role:'Manager'},{location:'Pearl Street Tavern',role:'Manager'}]},
+   assignments:[{location:'Josh Ritzer',role:'Account Owner'},{location:'Centro Boulder',role:'Account Owner'},{location:'Avery Brewing Co',role:'Account Owner'},{location:'Nike Boulder',role:'Account Admin'},{location:'Pearl Street Tavern',role:'Manager'}]},
   {name:'Alex Turner',  uname:'@alext',  role:'Manager',     active:true, av:'AT',
    assignments:[{location:'Centro Boulder',role:'Manager'}]},
   {name:'David Nguyen', uname:'@davidn', role:'Account Admin', active:true, av:'DN',
@@ -3267,6 +3289,42 @@ function renderTeam(){
             ${cols.map(c=>'<div style="width:48px;text-align:center">'+cell(roleGrant(c[1],p.key))+'</div>').join('')}
           </div>`).join('')}`;
         }).join('')}
+      </div>`;
+    })()}
+
+    <!-- Custom Roles (Enterprise) -->
+    ${(function(){
+      const canManage=canFull('team'); // Admin+ (or Owner)
+      if(!canUseCustomRoles()){
+        if(!canManage)return '';
+        return `<div style="background:#fff;border-radius:10px;border:1px dashed #C7D2FE;overflow:hidden;margin-top:14px;padding:14px;display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#6366F1;flex-shrink:0">${ic('lock',16)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:700;color:#111827">Custom Roles <span style="font-size:9px;font-weight:700;color:#5B21B6;background:#EDE9FE;padding:1px 7px;border-radius:8px;margin-left:4px">Enterprise</span></div>
+            <div style="font-size:10px;color:#6B7280;margin-top:2px;line-height:1.4">Define roles with the exact permissions your team needs. Available on the Enterprise plan.</div>
+          </div>
+          <button onclick="S.menuSub='subscription';render()" style="background:#0E4EF5;border:none;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">Upgrade</button>
+        </div>`;
+      }
+      const custom=Object.keys(customRoles);
+      return `<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden;margin-top:14px">
+        <div style="padding:12px 14px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="min-width:0">
+            <div style="font-size:12px;font-weight:700;color:#111827">Custom Roles <span style="font-size:9px;font-weight:700;color:#5B21B6;background:#EDE9FE;padding:1px 7px;border-radius:8px;margin-left:2px">Enterprise</span></div>
+            <div style="font-size:10px;color:#9CA3AF;margin-top:2px">Roles with the exact permissions your team needs.</div>
+          </div>
+          ${canManage?`<button onclick="openCustomRole(null)" style="background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#4338CA;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0">${ic('plus',13,'#4338CA')} Create</button>`:''}
+        </div>
+        ${custom.length?custom.map(function(name){
+          return `<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid #F3F4F6">
+            <div style="width:30px;height:30px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic('shield',15)}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600;color:#111827">${name}</div>
+              <div style="font-size:10px;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${customRoleSummary(name)}</div>
+            </div>
+            ${canManage?`<button onclick="openCustomRole('${name.replace(/'/g,"\\'")}')" style="padding:5px 11px;border-radius:8px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#F9FAFB;color:#374151;flex-shrink:0;cursor:pointer;font-family:inherit">Edit</button>`:''}
+          </div>`;
+        }).join(''):`<div style="padding:16px 14px;font-size:11px;color:#9CA3AF;text-align:center">No custom roles yet.${canManage?' Tap Create to add one.':''}</div>`}
       </div>`;
     })()}
   </div>`;
@@ -7153,6 +7211,37 @@ function renderModal(){
         <button onclick="declineAccountInvite('${inv.id}')" style="flex-shrink:0;padding:6px;border-radius:8px;border:none;background:none;color:#9CA3AF;cursor:pointer;display:flex" title="Decline">${ic('x',16)}</button>
       </div>`).join('')}
       <button onclick="S.modal=null;render()" style="width:100%;margin-top:16px;padding:11px;border-radius:10px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Not now</button>
+    </div></div>`;
+  }
+  else if(S.modal==='customRole'){
+    const editing=!!S.crEditKey;
+    const segBtn=(gk,lvl,label,col)=>{const on=(S.crGroups[gk]||'none')===lvl;return `<button onclick="S.crGroups['${gk}']='${lvl}';render()" style="flex:1;padding:6px 4px;border:none;background:${on?col:'#fff'};color:${on?'#fff':'#6B7280'};font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">${label}</button>`;};
+    mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding:22px 18px 26px;max-height:86vh;overflow-y:auto"><div class="mh"></div>
+      <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">${editing?'Edit Custom Role':'Create Custom Role'}</div>
+      <div style="font-size:12px;color:#6B7280;margin-bottom:16px;line-height:1.5">Set what this role can do on <strong>${acct().name}</strong>. Owner-only powers (billing, payouts, subscription, verification) can&#x2019;t be granted here.</div>
+
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Role name</label>
+      <input id="crNameInput" type="text" value="${(S.crName||'').replace(/"/g,'&quot;')}" placeholder="e.g. Front Desk, Marketing, Door Lead" oninput="S.crName=this.value" style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #0E4EF5;font-size:14px;color:#111827;background:#fff;box-sizing:border-box;font-family:inherit;outline:none;margin-bottom:16px"/>
+
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Start from</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">
+        ${['Account Admin','Manager','Team Member','Check-In Only'].map(r=>`<button onclick="cloneCustomRoleFrom('${r}')" style="padding:6px 11px;border-radius:16px;border:1px solid #E5E7EB;background:#F9FAFB;font-size:11px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">${r}</button>`).join('')}
+        <button onclick="ROLE_GROUPS.forEach(function(g){S.crGroups[g.key]='none';});render()" style="padding:6px 11px;border-radius:16px;border:1px solid #E5E7EB;background:#F9FAFB;font-size:11px;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Blank</button>
+      </div>
+
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:10px">Permissions</label>
+      ${ROLE_GROUPS.map(grp=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+        <div style="flex:1;min-width:0;font-size:13px;font-weight:600;color:#111827">${grp.label}</div>
+        <div style="display:flex;width:150px;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden;flex-shrink:0">
+          ${segBtn(grp.key,'none','None','#9CA3AF')}<div style="width:1px;background:#E5E7EB"></div>${segBtn(grp.key,'view','View','#0E4EF5')}<div style="width:1px;background:#E5E7EB"></div>${segBtn(grp.key,'full','Full','#16A34A')}
+        </div>
+      </div>`).join('')}
+
+      <div style="display:flex;gap:10px;margin-top:22px">
+        <button onclick="modal(null)" style="flex:1;background:#F1F5F9;border:none;padding:12px;border-radius:10px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;font-family:inherit">Cancel</button>
+        <button onclick="saveCustomRole()" style="flex:2;background:${(S.crName||'').trim()?'#0E4EF5':'#B7C6F5'};color:#fff;border:none;padding:12px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">${editing?'Save Role':'Create Role'}</button>
+      </div>
+      ${editing?`<div style="text-align:center;margin-top:12px"><button onclick="deleteCustomRole()" style="background:none;border:none;font-size:12px;font-weight:600;color:#EF4444;cursor:pointer;font-family:inherit;padding:6px 16px">Delete role</button></div>`:''}
     </div></div>`;
   }
   else if(S.modal==='changeDisplayName'){
