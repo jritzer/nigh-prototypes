@@ -2860,7 +2860,7 @@ function renderMenu(){
     {ic:'radio',    l:'Followers',    d:(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length+' followers',  act:"S.followersTab='list';S.menuSub='followers';render()", show:canView('guests'), badge:acct().privateAcct?followRequests.filter(r=>r.status==='pending').length:0},
     {ic:'ticket',   l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
-    {ic:'store',    l:'Host Account',      d:'Profile, team, partners & more',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
+    {ic:'store',    l:'Host Account',      d:'Manage host account',     act:"S.menuSub='accounthub';render()", show:canView('profile')},
   ].filter(m=>m.show);
   return `${hdr('Menu',a.name)}
   <div style="padding:14px 16px">
@@ -3513,7 +3513,7 @@ function renderAccountHub(){
     {ic:'qr',     l:'Stickers',      d:'Manage stickers',                        act:"S.menuSub='qrcodes';render()"},
     ...(canView('activityLog')&&!isPersonal()?[{ic:'activity',l:'Activity Log',d:'History across account',act:"S.menuSub='activitylog';render()"}]:[]),
   ];
-  return `${hdr('Host Account','Profile, team, partners & more',"S.menuSub=null;render()")}
+  return `${hdr('Host Account','Manage host account',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div onclick="S.menuSub='profile';render()" style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer">
       <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0">${a.short.charAt(0)}</div>
