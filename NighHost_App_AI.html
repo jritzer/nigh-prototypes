@@ -4460,7 +4460,7 @@ function renderBusinessVerify(){
 
         '<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">'+
           '<div style="padding:14px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">What Verification Unlocks</div></div>'+
-          ['Verified badge on your profile and drops','Public drops in the city feed and Niya picks','Reach people beyond your followers','Stronger trust signals for guests'].map(function(item,i,arr){
+          ['Verified badge on your profile and drops','Public drops people nearby can discover','Guests know you&#39;re for real'].map(function(item,i,arr){
             return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+item+'</span></div>';
           }).join('')+
         '</div>'+
@@ -4669,7 +4669,7 @@ function renderBusinessVerify(){
           '<div style="font-size:13px;color:#6B7280;text-align:center;line-height:1.5;max-width:280px;margin-bottom:24px">Your host account has been confirmed as '+confirmPhrase+'. You\'ve unlocked enhanced trust features.</div>'+
           '<div class="card" style="padding:0;overflow:hidden;width:100%;margin-bottom:16px">'+
             '<div style="padding:12px 16px;border-bottom:1px solid #F3F4F6"><div style="font-size:13px;font-weight:700;color:#111827">Now Available</div></div>'+
-            ['Verified badge on your profile and drops','Public drops in the city feed and Niya picks','Reach people beyond your followers','Stronger trust signals for guests'].map(function(f,i,arr){
+            ['Verified badge on your profile and drops','Public drops people nearby can discover','Guests know you&#39;re for real'].map(function(f,i,arr){
               return '<div style="display:flex;gap:10px;align-items:center;padding:10px 16px'+(i<arr.length-1?';border-bottom:1px solid #F3F4F6':'')+'"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#374151">'+f+'</span></div>';
             }).join('')+
           '</div>'+
@@ -4812,13 +4812,13 @@ function renderVerificationPage(){
       </div>`
     :`<div style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:16px;padding:16px 18px;margin-bottom:16px;color:#fff">
         <div style="font-size:17px;font-weight:800;margin-bottom:5px">Get verified</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:12px">Reach new people beyond your followers and build trust with guests. Takes about 2 minutes.</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.5;margin-bottom:12px">Get discovered by people nearby and build trust with guests. Takes about 2 minutes.</div>
         <div style="height:6px;border-radius:4px;background:rgba(255,255,255,0.2);overflow:hidden"><div style="height:100%;width:${Math.round(stepsDone/2*100)}%;background:#41EFF9;border-radius:4px"></div></div>
         <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.8);margin-top:6px">${stepsDone} of 2 steps done</div>
       </div>`;
   const benefits=[
-    ['shield','Verified badge','On your profile and every drop, so guests trust you.'],
-    ['radio','Public drops','Show up in the city feed and Niya picks — reach people beyond your followers.'],
+    ['shield','Verified badge','On your profile and every drop, so guests know you&#39;re for real.'],
+    ['radio','Public drops','Show up in the feed for people nearby to discover — no link needed.'],
     ['billing','Charge for tickets','Take payment for paid drops once payments are set up.'],
   ];
   const benefitsCard=`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;padding:14px 16px;margin-bottom:14px">
