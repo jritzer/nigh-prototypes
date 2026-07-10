@@ -3020,9 +3020,9 @@ function renderMenu(){
   const a=acct();
   const billingDesc=a.enterprise?`Managed by ${a.parentOrg}`:'Plan, billing & usage';
   const items=[
+    {ic:'ticket',   l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'users',    l:'Guests',       d:'Guest lists & import',      act:"S.menuSub='customers';render()", show:canView('guests')},
     {ic:'radio',    l:'Followers',    d:(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length+' followers',  act:"S.followersTab='list';S.menuSub='followers';render()", show:canView('guests'), badge:acct().privateAcct?followRequests.filter(r=>r.status==='pending').length:0},
-    {ic:'ticket',   l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
     {ic:'userPlus', l:'Team',         d:'Manage team access',                    act:"S.menuSub='team';render()", show:canView('team')&&!isPersonal()},
     {ic:'link',l:'Partners',d:'Manage & invite partners',   act:"S.menuSub='partners';render()", show:canView('partners')},
