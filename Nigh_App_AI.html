@@ -2065,6 +2065,25 @@ function renderPlaceOrder(){
 }
 
 // ── ORDER CONFIRMATION ──────────────────────────────────
+// After a reservation, create the real ticket and drop the user into their Tickets feed
+// (focused on the new ticket) rather than a separate one-off ticket page.
+function viewNewTicket(){
+  const d=feedDrops[S.drop]||feedDrops[0];
+  const nid='TKNEW_'+d.id;
+  if(!myTickets.some(t=>t.id===nid)){
+    const qty=S.orderQty||1;
+    myTickets.unshift({
+      id:nid,dropId:d.id,title:d.title,
+      host:d.host.name,hostHandle:d.host.handle,
+      date:d.date,time:d.start,endTime:d.endTime||'',timing:d.timing||'Start Time',
+      addr:d.host.addr,price:d.price||0,age21:d.age21||false,
+      desc:d.desc||'',startsIn:d.startsIn||'',partners:d.partners||[],
+      qty:qty,extras:[],status:'Active',orderId:'ORD-7291',orderDate:'Just now',
+      subTickets:Array.from({length:qty},(_,i)=>({idx:i+1,status:'active'}))
+    });
+  }
+  go('ticketCollection',{ticketTab:'current',focusTicket:nid});
+}
 function renderOrderConfirmation(){
   const d=feedDrops[S.drop];
   const qty=S.orderQty;
@@ -2112,7 +2131,7 @@ function renderOrderConfirmation(){
     <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5;max-width:300px;margin-bottom:28px">${isWindow?'Arrive during your arrival window. Your ticket and QR code are ready in your Tickets.':'Show up on time. Your ticket and QR code are ready in your Tickets.'}</div>
 
     <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px">
-      <button onclick="go('ticketView',{ticketId:'TK_NEW',drop:S.drop,orderQty:S.orderQty,confirmNew:true})" style="padding:14px 32px;border-radius:14px;background:#0E4EF5;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">View Ticket ${ic('right',16)}</button>
+      <button onclick="viewNewTicket()" style="padding:14px 32px;border-radius:14px;background:#0E4EF5;border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">View Ticket ${ic('right',16)}</button>
       <button onclick="go('feed')" style="padding:12px 32px;border-radius:14px;background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Back to Drops</button>
     </div>
   </div>`;
