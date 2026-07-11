@@ -3220,7 +3220,7 @@ function renderInbox(){
   <div style="font-size:32px;margin-bottom:12px">&#x1F4CD;</div>
   <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:6px">No updates from hosts yet</div>
   <div style="font-size:12px;color:rgba(255,255,255,0.30);line-height:1.5;margin-bottom:16px">Follow your favorite hosts to see their Drops and announcements here.</div>
-  <button onclick="go('socialFollowing')" style="padding:9px 18px;border-radius:20px;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.3);color:#93C5FD;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Discover Hosts</button>
+  <button onclick="go('feed')" style="padding:9px 18px;border-radius:20px;background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.3);color:#93C5FD;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Discover Hosts</button>
 </div>`;
         if(filter==='nigh') return`<div style="text-align:center;padding:40px 24px;">
   <div style="font-size:32px;margin-bottom:12px">&#x2728;</div>
@@ -6242,7 +6242,7 @@ function renderModal(){
           </div>
           <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px">${bd.dropRef.title}</div>
           <div style="font-size:12px;color:rgba(255,255,255,0.50);margin-bottom:12px">${bd.dropRef.venue} · ${bd.dropRef.time} · ${bd.dropRef.spotsLeft} spots left</div>
-          <button onclick="modal(null);S.drop=feedDrops.findIndex(d=>d.id==='${bd.dropRef.dropId}');S.scr='drop';render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">${bd.cta||'View Drop'}</button>
+          <button onclick="modal(null);S.drop=feedDrops.findIndex(d=>d.id==='${bd.dropRef.dropId}');S.scr='dropDetail';render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">${bd.cta||'View Drop'}</button>
         </div>`:''}
         <!-- Share with friends CTA -->
         <button onclick="modal(null)" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:11px 20px;font-size:13px;font-weight:600;color:rgba(34,197,94,0.9);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px;margin-bottom:10px">
