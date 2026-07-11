@@ -2256,7 +2256,7 @@ function renderTicketView(){
     </div>
     <div style="font-size:26px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:8px">${tk.title}</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:3px">Hosted by <button onclick="event.stopPropagation();openProfile('${tk.hostHandle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${tk.host}</button></div>
-    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px;line-height:1.7;min-height:41px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Partnering with${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px;min-height:41px;line-height:1.7">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:16px;min-height:41px"></div>`)}
+    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Partnering with ${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:14px"></div>`)}
     <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">${frontDate}</div>
     <div style="margin-bottom:10px"><span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.6)">${isWindow?'Arrive between ':'Starts at '}</span><span style="font-size:${isWindow?'19':'24'}px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em">${timeDisplay}</span></div>
     <div style="margin-bottom:18px">${(tk.price||0)>0?`<span style="font-size:24px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:14px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:22px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
@@ -2684,7 +2684,7 @@ function fullTicketCard(tk){
   const flip=`if(S._swipeTs&&Date.now()-S._swipeTs<500)return;if(!S.collFlip)S.collFlip={};S.collFlip['${tk.id}']=!S.collFlip['${tk.id}'];render()`;
 
   // Fixed-height state block so every spot is identical regardless of status
-  const STATE_H='height:132px;display:flex;flex-direction:column;justify-content:center;margin-bottom:24px';
+  const STATE_H='height:122px;display:flex;flex-direction:column;justify-content:center;margin-bottom:14px';
   const qrTile=`
     <div style="${STATE_H}">
       <div style="display:flex;gap:10px;align-items:stretch">
@@ -2759,17 +2759,17 @@ function fullTicketCard(tk){
   else holderLine=`Reserved for <span style="color:#fff;font-weight:600">${currentUser.name}</span>`;
 
   const cardTop=`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isPast?'14px':'18px'};gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${isPast?'10px':'12px'};gap:10px">
       ${isOwner?privacyIcon:'<div style="width:20px;flex-shrink:0"></div>'}
       <div style="flex:1;min-height:32px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;line-height:1.2">${stateIsQR?ctaMsg:''}</div></div>
       <div style="color:rgba(255,255,255,0.40);flex-shrink:0">${ic('flip',18)}</div>
     </div>
-    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;min-height:51px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${tk.title}</div>
+    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${tk.title}</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:3px">Hosted by <button onclick="event.stopPropagation();openProfile('${tk.hostHandle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${tk.host}</button></div>
-    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px;line-height:1.7;min-height:41px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Partnering with${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px;min-height:41px;line-height:1.7">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:16px;min-height:41px"></div>`)}
+    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Partnering with ${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:14px"></div>`)}
     <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">${frontDate}</div>
     <div style="margin-bottom:13px"><span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.6)">${isWindow?'Arrive between ':'Starts at '}</span><span style="font-size:${isWindow?'18':'22'}px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em">${timeDisplay}</span></div>
-    <div style="margin-bottom:24px">${(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
+    <div style="margin-bottom:14px">${(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
 
   const venueRow=`
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
@@ -2797,8 +2797,6 @@ function fullTicketCard(tk){
     }
   }
 
-  if(!friendsRow) friendsRow='<div style="margin-top:16px;height:42px"></div>';
-
   // Transfer / cancel action (additional tickets only)
   let actionInner='';
   if(!isPast&&!checkedIn&&subIdx>0){
@@ -2812,7 +2810,7 @@ function fullTicketCard(tk){
     actionInner=`<button onclick="event.stopPropagation();S.checkedIn['${tk.id}']=true;render()" style="background:none;border:1px dashed rgba(255,255,255,0.2);border-radius:10px;padding:8px 16px;font-size:10px;color:rgba(255,255,255,0.45);cursor:pointer;font-family:inherit">Simulate host check-in (prototype)</button>`;
   }
   // Fixed-height bottom region: holder line centered, action pinned to bottom (keeps every spot the same size)
-  const bottomRegion=`<div style="height:74px;display:flex;flex-direction:column;margin-top:6px">
+  const bottomRegion=`<div style="height:60px;display:flex;flex-direction:column;margin-top:4px">
     <div style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.55)">${holderLine}</div></div>
     ${actionInner?`<div style="height:50px;display:flex;align-items:flex-end;justify-content:center">${actionInner}</div>`:''}
   </div>`;
@@ -2895,7 +2893,7 @@ function fullTicketCard(tk){
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
-  const frontFace=`${cardTop}${stateBlock}${venueRow}${friendsRow}${bottomRegion}`;
+  const frontFace=`<div style="display:flex;flex-direction:column;height:540px">${cardTop}${stateBlock}<div style="flex:1;min-height:6px"></div>${venueRow}${friendsRow}${bottomRegion}</div>`;
 
   // Dots only (no arrows) — swipe to move between tickets
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
