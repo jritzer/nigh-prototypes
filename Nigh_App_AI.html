@@ -2157,6 +2157,9 @@ function cancelTransfer(tId,subIdx){
 function tkNum(orderId,spotIdx){return'TKT-'+orderId.replace('ORD-','')+'-'+spotIdx;}
 
 // ── TICKET VIEW ─────────────────────────────────────────
+/* DEPRECATED (unused): the post-reservation "View Ticket" button now calls viewNewTicket(),
+   which creates the ticket and opens it in the Tickets feed (ticketCollection). This standalone
+   ticket page is no longer routed. Kept commented for reference.
 function renderTicketView(){
   const isNew=S.confirmNew;
   const tId=S.ticketId;
@@ -2525,6 +2528,7 @@ function renderTicketView(){
     ${dots}
   </div>`;
 }
+*/
 
 
 // ── TICKET COLLECTION ──────────────────────────────────
@@ -7911,7 +7915,7 @@ function render(){
     case 'passwordDrop': html=renderPasswordDrop();break;
     case 'placeOrder': html=renderPlaceOrder();break;
     case 'orderConfirmation': html=renderOrderConfirmation();break;
-    case 'ticketView': html=renderTicketView();break;
+    /* DEPRECATED: case 'ticketView': html=renderTicketView();break; — replaced by viewNewTicket() → ticketCollection */
     case 'ticketCollection': html=renderTicketCollection();break;
     case 'transferTicket': html=renderTransferTicket();break;
     case 'inbox': html=renderInbox();break;
