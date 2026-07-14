@@ -30,7 +30,7 @@ button{cursor:pointer}
 .bg-ended{background:#F3F4F6;color:#6B7280}.bg-ended .dt{background:#9CA3AF}
 .bg-ci{background:#DCFCE7;color:#166534}.bg-ci .dt{display:none}
 .bg-res{background:#DBEAFE;color:#0E4EF5}.bg-res .dt{background:#0E4EF5}
-.bg-ns{background:#FFF7ED;color:#C2410C}.bg-ns .dt{background:#F97316}
+.bg-ns{background:#FFF7ED;color:#C2410C}.bg-ns .dt{display:none}
 .bg-sched{background:#EDE9FE;color:#5B21B6}.bg-sched .dt{background:#8B5CF6}
 .bg-paused{background:#FFFBEB;color:#92400E}.bg-paused .dt{background:#F59E0B}
 .tb{display:flex;justify-content:space-evenly;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
@@ -2636,6 +2636,11 @@ function renderLive(){
               ${bg(t.status,true)}
               <button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Undo</button>
             </div>`
+            :t.status==='No-Show'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
+              ${bg(t.status,true)}
+              <button onclick="lvCheckIn('${t.tid}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0E4EF5;color:#fff;flex-shrink:0;cursor:pointer">Check In</button>
+              <button onclick="S.cancelTid='${t.tid}';S.cancelGuestName='${g.name.replace(/'/g,"\\'")}';modal('cancelTicket')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#EF4444;cursor:pointer">Cancel</button>
+            </div>`
             :bg(t.status,true)}
           </div>`).join('')
           :`<div style="text-align:center;padding:40px 16px;color:#9CA3AF"><div style="font-size:13px">No tickets in this category</div></div>`}
@@ -2798,6 +2803,7 @@ function renderCIBody(){
 }
 function renderCI(){return `${hdr('Check-In','',"go('home')")}${renderCIBody()}`; }
 function ciManualCheck(gid){var g=myGuests().find(function(x){return x.id===gid;});if(g&&g.tickets){g.tickets.forEach(function(t){if(t.status!=='Checked In')t.status='Checked In';});}render();}
+function lvCheckIn(tid){var g=myGuests().find(function(x){return x.tickets&&x.tickets.some(function(t){return t.tid===tid;});});if(g){var t=g.tickets.find(function(t){return t.tid===tid;});if(t)t.status='Checked In';}render();}
 
 // ═══ GUESTS ═══
 function renderG(){
