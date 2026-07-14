@@ -2634,7 +2634,7 @@ function renderLive(){
             </div>`
             :t.status==='Checked In'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
               ${bg(t.status,true)}
-              <button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Undo</button>
+              <button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Uncheck</button>
             </div>`
             :t.status==='No-Show'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
               ${bg(t.status,true)}
@@ -2656,7 +2656,7 @@ function renderLive(){
           ${p.status==='Pending'
             ?`<span style="font-size:10px;font-weight:700;color:#92400E;background:#FEF3C7;padding:3px 8px;border-radius:7px;flex-shrink:0">Invited</span>`
             :p.status==='CheckedIn'
-              ?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center"><span style="font-size:10px;font-weight:700;color:#166534;background:#DCFCE7;padding:3px 8px;border-radius:7px">Checked In</span><button onclick="gpUndoCheckIn('${p.id}')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Undo</button></div>`
+              ?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center"><span style="font-size:10px;font-weight:700;color:#166534;background:#DCFCE7;padding:3px 8px;border-radius:7px">Checked In</span><button onclick="gpUndoCheckIn('${p.id}')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Uncheck</button></div>`
               :(isLive||isPaused||isEnded)
                 ?`<button onclick="gpCheckIn('${p.id}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;flex-shrink:0">Check In</button>`
                 :`<span style="font-size:10px;font-weight:700;color:#1d4ed8;background:#EFF6FF;padding:3px 8px;border-radius:7px;flex-shrink:0">Claimed</span>`}
