@@ -3714,7 +3714,10 @@ function renderAccountHub(){
   return `${hdr('Host Account','Profile, plan & locations',"S.menuSub=null;render()")}
   <div style="padding:14px 16px">
     <div onclick="S.menuSub='profile';render()" style="background:linear-gradient(135deg,#1B2A4A,#0E4EF5);border-radius:14px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;cursor:pointer">
-      <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0">${a.short.charAt(0)}</div>
+      <div style="position:relative;flex-shrink:0">
+        <div style="width:44px;height:44px;border-radius:${isPersonal()?'50%':'12px'};background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff">${a.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div>
+        ${verifyAllSet?`<div title="Verified" style="position:absolute;bottom:-4px;right:-4px;line-height:0"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 9.6 4.6-1.2 8-4.6 8-9.6V5z" fill="#0E4EF5" stroke="#fff" stroke-width="1.5"/><path d="M8.5 12l2.3 2.3 4.7-4.8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`:''}
+      </div>
       <div style="flex:1;min-width:0">
         <div style="font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.name}</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px">@${a.handle}${isPersonal()?'':' · '+(isBrand?'Brand Account':'Place Account')}</div>
