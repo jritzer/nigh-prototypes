@@ -60,7 +60,7 @@ button{cursor:pointer}
 
 <div id="app"><div id="scr"></div><div id="niya-bar"></div><div class="tb" id="tb"></div><div id="mr"></div></div>
 <script>
-let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,loginStep:'welcome',loginPhone:'',loginCode:'',loginIsNew:false,loginUserType:'new',loginFirstName:'',loginLastName:'',loginHandle:'',loginObStep:0,loginHostType:'',loginDropIdea:'',loginListening:false,loginExHandle:'',loginExChoice:'',loginBizCategory:'',loginBizSubCat:'',
+let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,loginStep:'welcome',loginPhone:'',loginCode:'',loginIsNew:false,loginUserType:'new',loginFirstName:'',loginLastName:'',loginHandle:'',loginDob:'',loginObStep:0,loginHostType:'',loginDropIdea:'',loginListening:false,loginExHandle:'',loginExChoice:'',loginBizCategory:'',loginBizSubCat:'',
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,venueEdit:null,selectedVenue:null,showNiyaBar:false,
   formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,dropPhoneRequest:'none',guestListTab:'guests',guestListDetail:null,guestListCreateName:'',guestListAddMode:false,addGuestModal:false,addGuestSearch:'',addGuestTab:'add',addGuestAdded:false,
   niyaMode:null,niyaStep:0,niyaListening:false,niyaOnboarding:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05',visibility:'public'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',handleModal:false,handleNew:'',handleAvail:null,handleConfirm:false,verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null,bizVerifyStep:'welcome',bizVerifyType:null,bizVerifyDoc:false,bizVerifyEin:false,bizVerifyDomain:false,bizVerifyResult:null,contactPicker:false,contactPickerSearch:'',contactPickerSelected:[],contactSynced:true,contactSyncCount:47};
@@ -1450,6 +1450,23 @@ function ownerDisplayName(){return (accts.find(a=>a.hostType==='personal')||{}).
 let personIdentity={phone:'(720) 555-0199',email:'josh@nigh.com'};
 function handleTaken(h){h=(h||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();const reserved=['centro','nigh','avery','nike','mercantile','admin','support','boulder','rayback','test'];return !!h&&(accts.some(a=>(a.handle||'').toLowerCase()===h)||reserved.includes(h));}
 // Signing into Host ensures the user has a personal host account (created from their Nigh identity if missing)
+function lpValidate(){
+  const fn=(S.loginFirstName||'').trim();
+  const ln=(S.loginLastName||'').trim();
+  const h=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+  const dob=S.loginDob||'';
+  const age=dob?ageFromDob(dob):null;
+  const adult=age!=null&&age>=18;
+  const taken=h?handleTaken(h):false;
+  const handleOk=h.length>=2&&!taken;
+  const hm=document.getElementById('lpHandleMsg');
+  if(hm){ if(!h){hm.textContent='';} else if(handleOk){hm.textContent='@'+h+' is available';hm.style.color='#22C55E';} else if(taken){hm.textContent='@'+h+' is already taken';hm.style.color='#EF4444';} else {hm.textContent='Handles must be at least 2 characters';hm.style.color='rgba(255,255,255,0.4)';} }
+  const dm=document.getElementById('lpDobMsg');
+  if(dm){ if(dob&&age!=null&&age<18){dm.textContent='You must be 18+ to own a host account. Under 18 can still join an adult’s account as a team member.';dm.style.display='block';} else {dm.style.display='none';} }
+  const ok=!!(fn&&ln&&handleOk&&dob&&adult);
+  const b=document.getElementById('lpBtn');
+  if(b){b.disabled=!ok;b.style.opacity=ok?'1':'0.5';b.style.cursor=ok?'pointer':'not-allowed';}
+}
 function ensurePersonalHostAccount(){
   let pi=accts.findIndex(a=>a.hostType==='personal');
   if(pi<0){
@@ -8409,7 +8426,7 @@ function renderNiyaBar(){
 }
 
 // ═══ LOGIN / SIGNUP ═══
-const NIGH_BUG_SVG=`<svg viewBox="60 40 220 250" xmlns="http://www.w3.org/2000/svg"><g><g><path fill="#6226E9" d="M242.8,82.1c-0.2-4-1.7-7.8-4.1-10.7c-0.4-0.5-0.8-0.9-1.2-1.3c-3.3-3.3-7.8-5.3-12.9-5.3h-94.1c-0.3,0-0.6,0-0.9,0h-0.1c-7.9,0.1-15.3,2.5-21.4,6.6c-10.5,7-17.5,19.1-17.5,32.7V71.4C90.7,56.3,103,44,118.2,44h86.6c17,0.5,31.4,11.9,36.2,27.5C242.1,74.8,242.7,78.4,242.8,82.1z"/><path fill="#0E4EF5" d="M264.5,143.9v43c0,6.9-2.8,13.4-7.7,18.2l-79.2,76.4l-50.7-48.9c0,0,0,0,0,0l-3.6-5.2c-7.1-10.1-10.9-22.2-10.9-34.5v-12c0.1,5.2,2.2,10.1,6,13.7l59.2,56.7l-0.3,0.2h0.5l-0.3-0.2l59.3-56.8l7.2-6.9c8.2-7.9,14-17.9,16.8-28.9L264.5,143.9z"/><path fill="#41EFF9" d="M123.3,227.4l3.6,5.2c0,0,0,0,0,0l-28.5-27.5c-4.9-4.8-7.7-11.3-7.7-18.2v-82.7c0-13.6,6.9-25.7,17.5-32.7c6.1-4.1,13.5-6.5,21.4-6.6c-5.3,0.3-9.9,2.8-13.1,6.6c-2.6,3.1-4.1,7.2-4.1,11.5v97.6c0,0.1,0,0.2,0,0.3v12C112.4,205.2,116.2,217.3,123.3,227.4z"/><path fill="#FFFFFF" d="M242.8,83v97.6c0,5.3-2.1,10.3-6,14l-59.3,56.8l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-97.9,0-97.9c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6h0.1c0.3,0,95,0,95,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7C242.8,82.4,242.8,82.7,242.8,83z"/><path fill="#EC1977" d="M264.5,71.4v72.5l-3.7,14.8c-2.8,11-8.6,21-16.8,28.9l-7.2,6.9c3.8-3.7,6-8.7,6-14V85.5h0v-2.2c0-0.1,0-0.2,0-0.3c0-0.3,0-0.6,0-0.9c-0.1-3.7-0.7-7.3-1.8-10.7c-4.9-15.6-19.2-26.9-36.2-27.5H237c7.6,0,14.5,3.1,19.4,8C261.4,57,264.5,63.8,264.5,71.4z"/></g><g><polygon fill="#0E4EF5" points="199.3,86.5 199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5"/><path fill="#0E4EF5" d="M171.2,214.8c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6c-3.5-3.5-9.1-3.5-12.6,0c0,0,0,0,0,0C167.7,205.7,167.7,211.3,171.2,214.8z"/></g></g></svg>`;
+const NIGH_BUG_SVG=`<svg viewBox="0 0 233 353" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M184.738 0H176.934C197.176 7.10759 208.438 24.8646 208.438 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.738 0Z"/><path d="M152.249 144.721L79.0001 50.4976H51.4102V191.617H80.717V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z"/><path d="M33.905 201.03C34.4693 215.569 37.1347 228.62 48.3964 243.735L57.3769 254.565C74.4975 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.646 232.978 196.671 232.978 181.7V157.592C226.23 172.887 215.173 185.626 203.947 196.635C200.933 199.685 197.74 202.554 194.354 205.196L116.483 274.183L34.3973 201.462L33.905 201.018V201.03Z"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z"/></svg>`;
 
 function renderLogin(){
   const step=S.loginStep||'welcome';
@@ -8420,7 +8437,7 @@ function renderLogin(){
     <div style="display:flex;flex-direction:column;height:100%;background:linear-gradient(160deg,#0B1628 0%,#1B2A4A 55%,#0D1E52 100%);position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%,rgba(14,78,245,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(98,38,233,0.12) 0%,transparent 50%)"></div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:0 32px;gap:16px">
-        <div style="width:120px;height:120px;filter:drop-shadow(0 8px 24px rgba(14,78,245,0.4))">${NIGH_BUG_SVG}</div>
+        <div style="width:120px;height:120px;color:#fff;filter:drop-shadow(0 8px 24px rgba(14,78,245,0.4))">${NIGH_BUG_SVG}</div>
         <div style="font-size:38px;font-weight:600;color:#0E4EF5;letter-spacing:-0.5px;text-shadow:0 0 18px rgba(14,78,245,0.55)">Nigh Host <span style="font-size:16px;font-weight:700;color:#7C3AED;vertical-align:middle;background:#EDE9FE;padding:2px 8px;border-radius:8px;letter-spacing:0.02em">ADVANCED</span></div>
         <div style="font-size:13px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.5;margin-top:4px">Create moments that bring<br>people together in real life.</div>
       </div>
@@ -8477,7 +8494,7 @@ function renderLogin(){
         <input id="loginCodeInput" type="tel" maxlength="6" autocomplete="one-time-code"
           value="${code}"
           oninput="let d=this.value.replace(/\\D/g,'').slice(0,6);this.value=d;S.loginCode=d;S.otpError=false;S.otpResent=false;for(let i=0;i<6;i++){const bx=document.getElementById('lBox'+i);if(bx){bx.textContent=d[i]||'·';bx.style.background=d[i]?'rgba(14,78,245,0.2)':'rgba(255,255,255,0.08)';bx.style.borderColor=i===d.length?'#0E4EF5':d[i]?'rgba(14,78,245,0.5)':'rgba(255,255,255,0.14)'}}const b=document.getElementById('loginVerifyBtn');if(b){b.disabled=d.length<6;b.style.opacity=d.length<6?'0.5':'1';b.style.cursor=d.length<6?'not-allowed':'pointer'};const ee=document.getElementById('lErrMsg');if(ee)ee.style.display='none'"
-          onkeydown="if(event.key==='Enter'&&!document.getElementById('loginVerifyBtn').disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.scr='niya';S.niyaMode='onboarding';render()}"
+          onkeydown="if(event.key==='Enter'&&!document.getElementById('loginVerifyBtn').disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=false;S.loginStep='profile';S.loginCode='';render()}"
           style="position:absolute;opacity:0;width:100%;height:52px;top:0;left:0;z-index:2;cursor:pointer;font-size:16px">
         <div style="display:flex;gap:10px;justify-content:center">
           ${[0,1,2,3,4,5].map(i=>`<div id="lBox${i}" style="width:44px;height:52px;border-radius:12px;background:${otpErr?'rgba(239,68,68,0.1)':code[i]?'rgba(14,78,245,0.2)':'rgba(255,255,255,0.08)'};border:2px solid ${otpErr?'#EF4444':i===code.length?'#0E4EF5':code[i]?'rgba(14,78,245,0.5)':'rgba(255,255,255,0.14)'};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff">${code[i]||'·'}</div>`).join('')}
@@ -8487,7 +8504,7 @@ function renderLogin(){
       ${otpResent?`<div style="text-align:center;font-size:12px;color:#22C55E;margin-bottom:12px;font-weight:600">New code sent!</div>`:''}
       <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:28px">Didn't get it? <span onclick="S.otpResent=true;S.otpError=false;render()" style="color:#0E4EF5;font-weight:600;cursor:pointer">Resend code</span></div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-        <button id="loginVerifyBtn" onclick="if(!this.disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.scr='niya';S.niyaMode='onboarding';render()}"
+        <button id="loginVerifyBtn" onclick="if(!this.disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=false;S.loginStep='profile';S.loginCode='';render()}"
           ${canVerify?'':'disabled'}
           style="width:72%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:${canVerify?'pointer':'not-allowed'};opacity:${canVerify?'1':'0.5'};transition:opacity 0.2s">Verify</button>
         <button onclick="S.otpError=true;S.otpResent=false;render()" style="width:72%;background:none;border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:7px;font-family:inherit;font-size:10px;color:rgba(255,255,255,0.44);cursor:pointer">Simulate Error (prototype)</button>
@@ -8495,10 +8512,69 @@ function renderLogin(){
       <div style="margin-top:28px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:16px">
         <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);text-align:center;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Prototype: Choose user scenario</div>
         <div style="display:flex;flex-direction:column;gap:6px">
-          <button onclick="S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.scr='niya';S.niyaMode='onboarding';render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🆕</span><span><strong style="color:rgba(255,255,255,0.7)">New to Nigh</strong><br>Full Niya onboarding — name, handle, account</span></button>
+          <button onclick="S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=false;S.loginStep='profile';S.loginCode='';render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🆕</span><span><strong style="color:rgba(255,255,255,0.7)">New to Nigh</strong><br>Set up your profile — quick form</span></button>
           <button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.loginIsNew=false;S.loginUserType='existing';S.niyaOnboarding=false;ensurePersonalHostAccount();S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">👤</span><span><strong style="color:rgba(255,255,255,0.7)">Existing Nigh User</strong><br>Lands on your personal host account</span></button>
           <button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.loginIsNew=false;S.loginUserType='returning';S.niyaOnboarding=false;S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render()" style="width:100%;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:10px 14px;font-family:inherit;font-size:11px;color:rgba(255,255,255,0.55);cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px"><span style="font-size:16px">🏠</span><span><strong style="color:rgba(255,255,255,0.7)">Returning Host</strong><br>Already set up — skip straight to home</span></button>
         </div>
+      </div>
+    </div>`;
+  }
+
+  // ── Manual profile setup (default for new users) ──
+  if(step==='profile'){
+    const fn=(S.loginFirstName||'').trim();
+    const ln=(S.loginLastName||'').trim();
+    const h=(S.loginHandle||'').replace(/^@/,'').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+    const dob=S.loginDob||'';
+    const age=dob?ageFromDob(dob):null;
+    const adult=age!=null&&age>=18;
+    const taken=h?handleTaken(h):false;
+    const handleOk=h.length>=2&&!taken;
+    const ok=!!(fn&&ln&&handleOk&&dob&&adult);
+    const fld="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;color:#fff;outline:none;box-sizing:border-box";
+    const lbl="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:6px";
+    return `
+    <div style="display:flex;flex-direction:column;height:100%;background:#1B2A4A;overflow-y:auto">
+      <div style="padding:20px 24px 0;flex:1">
+        <button onclick="S.loginStep='code';render()" style="background:none;border:none;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px;font-size:13px;font-family:inherit;padding:0;margin-bottom:20px;cursor:pointer">${ic('left',16)} Back</button>
+        <div style="width:56px;height:56px;color:#fff;filter:drop-shadow(0 6px 18px rgba(14,78,245,0.4));margin-bottom:14px">${NIGH_BUG_SVG}</div>
+        <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:6px">Set up your host profile</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:22px">Just a few details to create your account.</div>
+        <div style="margin-bottom:16px">
+          <div style="${lbl}">First name</div>
+          <input type="text" autocomplete="given-name" value="${fn.replace(/"/g,'&quot;')}" placeholder="Avery"
+            oninput="S.loginFirstName=this.value;lpValidate()" style="${fld}"
+            onfocus="this.style.borderColor='rgba(14,78,245,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="${lbl}">Last name</div>
+          <input type="text" autocomplete="family-name" value="${ln.replace(/"/g,'&quot;')}" placeholder="Chen"
+            oninput="S.loginLastName=this.value;lpValidate()" style="${fld}"
+            onfocus="this.style.borderColor='rgba(14,78,245,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="${lbl}">Handle</div>
+          <div style="display:flex;gap:8px;align-items:stretch">
+            <div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:12px 14px;font-size:15px;color:rgba(255,255,255,0.6);display:flex;align-items:center">@</div>
+            <input type="text" autocapitalize="none" autocomplete="off" value="${h.replace(/"/g,'&quot;')}" placeholder="yourbrand"
+              oninput="S.loginHandle=this.value;lpValidate()" style="${fld};flex:1"
+              onfocus="this.style.borderColor='rgba(14,78,245,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
+          </div>
+          <div id="lpHandleMsg" style="font-size:12px;margin-top:6px;font-weight:600;color:${handleOk?'#22C55E':(taken?'#EF4444':'rgba(255,255,255,0.4)')}">${h?(handleOk?'@'+h+' is available':(taken?'@'+h+' is already taken':'Handles must be at least 2 characters')):''}</div>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="${lbl}">Date of birth</div>
+          <input type="date" value="${dob}"
+            oninput="S.loginDob=this.value;lpValidate()" style="${fld}"
+            onfocus="this.style.borderColor='rgba(14,78,245,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
+          <div id="lpDobMsg" style="font-size:12px;margin-top:6px;font-weight:600;color:#F59E0B;display:${(dob&&age!=null&&age<18)?'block':'none'}">You must be 18+ to own a host account. Under 18 can still join an adult’s account as a team member.</div>
+        </div>
+      </div>
+      <div style="padding:16px 24px 32px;display:flex;flex-direction:column;align-items:center;gap:14px">
+        <button id="lpBtn" ${ok?'':'disabled'}
+          onclick="if(!this.disabled){ensurePersonalHostAccount();S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.niyaOnboarding=false;S.scr='home';S.modal=accountInvites.length?'welcome-invites':null;render()}"
+          style="width:72%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:${ok?'pointer':'not-allowed'};opacity:${ok?'1':'0.5'};transition:opacity 0.2s">Create Host Account</button>
+        <div onclick="S.niyaOnboarding=true;S.loginStep='welcome';S.loginPhone='';S.scr='niya';S.niyaMode='onboarding';render()" style="font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;text-align:center">Prefer a guided setup? <span style="color:#0E4EF5;font-weight:600">Set up with Niya instead</span></div>
       </div>
     </div>`;
   }
