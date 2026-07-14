@@ -539,11 +539,13 @@ const ORG_CUSTOM_ROLES={
   O006:[{name:'Game Day Staff',summary:'Check-in only, across all locations'},{name:'Concessions Lead',summary:'Manage drops and reservations for their venue'}]
 };
 function orgCustomRoles(o){return (o&&o.plan==='Enterprise'&&ORG_CUSTOM_ROLES[o.id])?ORG_CUSTOM_ROLES[o.id]:[];}
+function ageFromDob(d){if(!d)return null;var b=new Date(d),n=new Date();var a=n.getFullYear()-b.getFullYear();var m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))a--;return a;}
 const orgTeams={
   'O001':[
-    {id:'TM001',name:'Marco Reyes',email:'marco@centro.com',phone:'(720) 555-0101',access:'Account Owner',status:'Active',since:'Jan 15, 2026',left:null},
-    {id:'TM002',name:'Lucia Herrera',email:'lucia@centro.com',phone:'(720) 555-0102',access:'Manager',status:'Active',since:'Jan 20, 2026',left:null},
+    {id:'TM001',name:'Marco Reyes',email:'marco@centro.com',phone:'(720) 555-0101',access:'Account Owner',status:'Active',since:'Jan 15, 2026',left:null,dob:'1985-06-15'},
+    {id:'TM002',name:'Lucia Herrera',email:'lucia@centro.com',phone:'(720) 555-0102',access:'Manager',status:'Active',since:'Jan 20, 2026',left:null,dob:'1992-03-22'},
     {id:'TM003',name:'Carlos Vega',email:'carlos@centro.com',phone:'(720) 555-0103',access:'Team Member',status:'Removed',since:'Jan 25, 2026',left:'Feb 10, 2026'},
+    {id:'TM003B',name:'Mateo Reyes',email:'mateo@centro.com',phone:'(720) 555-0104',access:'Check-In Only',status:'Active',since:'Mar 1, 2026',left:null,dob:'2009-08-10'},
   ],
   'O002':[
     {id:'TM004',name:'Devon Clarke',email:'devon@nikeboulder.com',phone:'(720) 555-0201',access:'Account Owner',status:'Active',since:'Feb 3, 2026',left:null},
@@ -3638,7 +3640,7 @@ ${(()=>{
   </div>
   ${team.length?`<div class="card"><table class="tbl"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Since</th><th>Left</th><th></th></tr></thead><tbody>
   ${team.map(m=>`<tr style="opacity:${m.status==='Removed'?'0.4':'1'}">
-    <td style="font-weight:600">${m.name}</td>
+    <td style="font-weight:600">${m.name}${m.dob?`<div style="font-size:10px;font-weight:600;color:${ageFromDob(m.dob)>=18?'#16A34A':'#B45309'};margin-top:1px">Age ${ageFromDob(m.dob)} · ${ageFromDob(m.dob)>=18?'adult (verified)':'minor · team member'}</div>`:''}</td>
     <td style="font-size:12px;color:#6B7280">${m.email}</td>
     <td>${m.status==='Removed'
       ?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${accessColor(m.access).bg};color:${accessColor(m.access).fg}">${m.access}</span>`

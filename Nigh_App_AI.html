@@ -4780,10 +4780,11 @@ function renderProProfile(){
 }
 
 // ── USER ACCOUNT ───────────────────────────────────────
+function ageFromDob(d){if(!d)return null;var b=new Date(d),n=new Date();var a=n.getFullYear()-b.getFullYear();var m=n.getMonth()-b.getMonth();if(m<0||(m===0&&n.getDate()<b.getDate()))a--;return a;}
 function renderUserVerify(){
   var step=S.verifyStep||'welcome';
   var backToAcct="S.menuSub='userAccount';render()";
-  var resetV="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;";
+  var resetV="S.verifyStep='welcome';S.verifyIdType=null;S.verifyIdFront=false;S.verifyIdBack=false;S.selfie1=false;S.selfie2=false;S.selfie3=false;S.verifyResult=null;S.verifyDob=null;";
   // progress bar helper: 6 segments for id-type, id-front, id-back, selfie-front, selfie-left, selfie-right
   var pbar=function(n){var h='';for(var i=0;i<6;i++){h+='<div style="flex:1;height:4px;border-radius:2px;background:'+(i<n?'#0E4EF5':'#E5E7EB')+'"></div>';}return '<div style="display:flex;gap:6px;margin-bottom:20px;width:100%;max-width:300px">'+h+'</div>';};
 
@@ -4938,7 +4939,7 @@ function renderUserVerify(){
         '</div>'+
         (S.selfie3?
           '<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin-bottom:16px;max-width:300px"><div style="display:flex;gap:8px;align-items:center"><div style="color:#16A34A">'+ic('check',14)+'</div><span style="font-size:12px;color:#15803D;font-weight:500">All photos captured</span></div></div>'+
-          '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
+          '<button onclick="S.verifyStep=\'dob\';render()" style="width:100%;max-width:300px;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Next: Confirm Date of Birth</button>'+
           '<button onclick="S.selfie3=false;render()" style="width:100%;max-width:300px;padding:12px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;font-size:13px;font-weight:500;cursor:pointer;margin-top:8px">Retake Photo</button>'
           :
           '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;max-width:280px">'+
@@ -4950,6 +4951,22 @@ function renderUserVerify(){
   }
 
   // ── Processing ──
+  if(step==='dob'){
+    if(!S.verifyDob)S.verifyDob='1996-04-12';
+    var _a=ageFromDob(S.verifyDob);
+    return '<div style="display:flex;flex-direction:column;height:100%">'+
+      hdr('Date of Birth','From your ID',"S.verifyStep='selfie-right';render()")+
+      '<div style="flex:1;padding:20px 16px;overflow-y:auto">'+
+        '<div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px">Confirm your date of birth</div>'+
+        '<div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:18px">We read this from your ID. It confirms your age on Nigh and becomes your verified date of birth &#8212; it overrides anything you entered at signup. If it&#x2019;s wrong, correct it to match your ID.</div>'+
+        '<label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:6px">Date of birth</label>'+
+        '<input type="date" value="'+S.verifyDob+'" max="2025-12-31" oninput="S.verifyDob=this.value;render()" style="width:100%;padding:12px;border-radius:10px;border:1px solid #E5E7EB;font-size:14px;color:#111827;background:#fff;font-family:inherit;box-sizing:border-box"/>'+
+        '<div style="margin-top:12px;background:'+(_a>=13?'#F0FDF4':'#FEF2F2')+';border:1px solid '+(_a>=13?'#BBF7D0':'#FECACA')+';border-radius:10px;padding:11px 12px;font-size:12px;color:'+(_a>=13?'#15803D':'#B91C1C')+';line-height:1.5">'+(_a>=13?'Age '+_a+' &#183; this becomes your verified date of birth.':'Nigh is not available to anyone under 13.')+'</div>'+
+        '<button onclick="S.verifyStep=\'processing\';render();setTimeout(function(){S.verifyResult=\'success\';S.verifyStep=\'result\';render()},2500)" style="width:100%;max-width:300px;margin:20px auto 0;display:block;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Submit for Verification</button>'+
+      '</div>'+
+    '</div>';
+  }
+
   if(step==='processing'){
     return '<div style="display:flex;flex-direction:column;height:100%">'+
       hdr('Verifying','Processing...',null,null,true)+
