@@ -2881,6 +2881,13 @@ function renderCIBody(){
   const _ciDrop=S.ciDropFilter?_mdc.find(d=>d.id===S.ciDropFilter):_mdc.find(d=>d.status==='Live')||_mdc[0];
   const _seated=!!(_ciDrop&&_ciDrop.seated);
   let c='';
+  const ciGuests=_ciDrop?myGuests().filter(g=>g.drop===_ciDrop.id):[];
+  const ciDone=g=>g.tickets.length>0&&g.tickets.every(t=>t.status==='Checked In');
+  const ciLast=n=>{const p=(n||'').trim().split(' ');return (p.length>1?p[p.length-1]:(p[0]||'')).toLowerCase();};
+  const ciSorted=ciGuests.slice().sort((a,b)=>{const ca=ciDone(a),cb=ciDone(b);if(ca!==cb)return ca?1:-1;const la=ciLast(a.name),lb=ciLast(b.name);if(la!==lb)return la<lb?-1:1;return (a.name||'').toLowerCase()<(b.name||'').toLowerCase()?-1:1;});
+  let ciIn=0,ciRes=0,ciNs=0;ciGuests.forEach(g=>g.tickets.forEach(t=>{if(t.status==='Checked In')ciIn++;else if(t.status==='No-Show')ciNs++;else ciRes++;}));
+  const ciTot=ciIn+ciRes+ciNs;
+  const manualList=ciSorted.length?`<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;margin:14px 2px 8px">Guests · not checked in first</div>${ciSorted.map(g=>{const done=ciDone(g);return `<div style="background:#fff;border-radius:10px;padding:10px 12px;border:1px solid #E5E7EB;margin-bottom:6px;display:flex;align-items:center;gap:10px;${done?'opacity:0.65':''}"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${g.av}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.name}</div><div style="font-size:11px;color:#9CA3AF">${g.uname}${g.tickets.length>1?' · '+g.tickets.length+' spots':''}</div></div>${done?`<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:12px;background:#DCFCE7;color:#166534;display:inline-flex;align-items:center;gap:3px;flex-shrink:0">${ic('check',11)} In</span>`:`<button onclick="ciManualCheck('${g.id}')" style="padding:7px 14px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:4px">${ic('check',13)} Check In</button>`}</div>`;}).join('')}`:`<div style="text-align:center;padding:24px 12px;color:#9CA3AF;font-size:12px">No guests with tickets for this drop yet.</div>`;
   if(S.ciMode==='scan'){
     c=`<div style="background:#111827;border-radius:14px;height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:14px">
       <div style="width:180px;height:180px;border:3px solid rgba(255,255,255,0.25);border-radius:14px;position:relative">
@@ -2927,10 +2934,12 @@ function renderCIBody(){
     </select>
     <div style="display:flex;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:14px">${modes.map(m=>{const act=S.ciMode===m.id||(m.id==='scan'&&S.ciMode==='ok');return`<button onclick="S.ciMode='${m.id}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:4px;background:${act?'#fff':'transparent'};color:${act?'#1F2937':'#6B7280'};box-shadow:${act?'0 1px 2px rgba(0,0,0,0.06)':'none'}">${ic(m.i,14)} ${m.l}</button>`;}).join('')}</div>
     ${c}
-    <div class="card" style="margin-top:12px"><div class="cb" style="display:flex;justify-content:space-around">${[['5','In','#16a34a'],['2','Reserved','#0E4EF5'],['1','No-Show','#F97316'],['8','Total','#1F2937']].map((s,i)=>`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`).join('')}</div></div>
+    <div class="card" style="margin-top:12px"><div class="cb" style="display:flex;justify-content:space-around">${[[String(ciIn),'In','#16a34a'],[String(ciRes),'Reserved','#0E4EF5'],[String(ciNs),'No-Show','#F97316'],[String(ciTot),'Total','#1F2937']].map((s,i)=>`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`).join('')}</div></div>
+    ${S.ciMode==='manual'?manualList:''}
   </div>`;
 }
 function renderCI(){return `${hdr('Check-In','',"go('home')")}${renderCIBody()}`; }
+function ciManualCheck(gid){var g=myGuests().find(function(x){return x.id===gid;});if(g&&g.tickets){g.tickets.forEach(function(t){if(t.status!=='Checked In')t.status='Checked In';});}render();}
 
 // ═══ GUESTS ═══
 function renderG(){
