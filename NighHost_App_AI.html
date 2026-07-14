@@ -2625,7 +2625,7 @@ function renderLive(){
               <div style="font-size:10px;color:#9CA3AF;font-family:monospace;letter-spacing:0.04em;margin-top:${ti?2:0}px">${t.tid}${ti&&g.addedBy&&canView('guestAuditTrail')&&!isPersonal()?' · <span style="font-family:inherit;letter-spacing:normal;color:#9CA3AF">Added by '+g.addedBy+'</span>':''}</div>
             </div>
             ${isEnded?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
-              ${t.status==='Reserved'?`<button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer">Attended</button><button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#9CA3AF;cursor:pointer">No Show</button>`:bg(t.status,true)}
+              ${t.status==='Reserved'?`<button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#16a34a;color:#fff;cursor:pointer">Attended</button><button onclick="render()" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#9CA3AF;cursor:pointer">No-Show</button>`:bg(t.status,true)}
               ${t.status!=='No-Show'?`<button onclick="S.cancelTid='${t.tid}';S.cancelGuestName='${g.name.replace(/'/g,"\\'")}';modal('cancelTicket')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#EF4444;cursor:pointer">Refund</button>`:''}
             </div>`
             :t.status==='Reserved'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">

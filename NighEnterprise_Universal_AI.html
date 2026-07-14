@@ -3771,14 +3771,14 @@ function dropDetail(d){
     {name:'Morgan Rivera',  email:'morgan.r@email.com',tid:'T002',mobile:'+1 (303) 555-0198',status:'Checked In',at:'8:45 PM'},
     {name:'Alex Chen',      email:'alex.c@email.com',  tid:'T003',mobile:'+1 (303) 555-0211',status:'Reserved',  at:'9:01 PM'},
     {name:'Avery Thompson', email:'avery.t@email.com', tid:'T004',mobile:'+1 (303) 555-0167',status:'Reserved',  at:'9:14 PM'},
-    {name:'Jordan Kim',     email:'jordan.k@email.com',tid:'T005',mobile:'+1 (303) 555-0183',status:'No Show',   at:'7:55 PM'},
+    {name:'Jordan Kim',     email:'jordan.k@email.com',tid:'T005',mobile:'+1 (303) 555-0183',status:'No-Show',   at:'7:55 PM'},
     {name:'Casey Patel',    email:'casey.p@email.com', tid:'T006',mobile:'+1 (303) 555-0229',status:'Reserved',  at:'9:22 PM'},
     {name:'Sam Williams',   email:'sam.w@email.com',   tid:'T007',mobile:'+1 (303) 555-0301',status:'Checked In',at:'8:10 PM'},
     {name:'Drew Wilson',    email:'drew.w@email.com',  tid:'T008',mobile:'+1 (303) 555-0344',status:'Reserved',  at:'9:38 PM'},
   ];
-  const guestsWithDisplay=sampleGuests.map(g=>{const over=(S.ticketStatusOverrides||{})[g.tid];const base=over||g.status;return {...g,displayStatus:(base==='No Show'&&!noShowVisible)?'Reserved':base};});
+  const guestsWithDisplay=sampleGuests.map(g=>{const over=(S.ticketStatusOverrides||{})[g.tid];const base=over||g.status;return {...g,displayStatus:(base==='No-Show'&&!noShowVisible)?'Reserved':base};});
   const gFilteredGuests=gFilter==='All'?guestsWithDisplay:guestsWithDisplay.filter(g=>g.displayStatus===gFilter);
-  const gStatusStyle={'Reserved':{bg:'#eff6ff',col:'#1d4ed8'},'Checked In':{bg:'#dcfce7',col:'#15803d'},'No Show':{bg:'#fee2e2',col:'#b91c1c'},'Refunded':{bg:'#fee2e2',col:'#dc2626'}};
+  const gStatusStyle={'Reserved':{bg:'#eff6ff',col:'#1d4ed8'},'Checked In':{bg:'#dcfce7',col:'#15803d'},'No-Show':{bg:'#fee2e2',col:'#b91c1c'},'Refunded':{bg:'#fee2e2',col:'#dc2626'}};
 
   const statusBorderColor=isLive?'#22c55e':isScheduled?c.color:'#e5e7eb';
 
@@ -3842,7 +3842,7 @@ function dropDetail(d){
             ${isScheduled
               ? `<span style="font-size:0.75rem;color:#94a3b8;font-weight:600;">Guests will appear here once the drop goes live</span>`
               : `<div style="display:flex;gap:6px;">
-                  ${['All','Reserved','Checked In','No Show'].filter(f=>f!=='No Show'||noShowVisible).map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+guestsWithDisplay.filter(g=>g.displayStatus==='Checked In').length+')':f==='Reserved'?'Reserved ('+guestsWithDisplay.filter(g=>g.displayStatus==='Reserved').length+')':f==='No Show'?'No Show ('+guestsWithDisplay.filter(g=>g.displayStatus==='No Show').length+')':'All ('+guestsWithDisplay.length+')'}</button>`).join('')}
+                  ${['All','Reserved','Checked In','No-Show'].filter(f=>f!=='No-Show'||noShowVisible).map(f=>`<button onclick="ss({dropGFilter:'${f}'})" style="padding:4px 12px;border-radius:16px;border:1px solid ${gFilter===f?c.color:'#e5e7eb'};background:${gFilter===f?c.color+'18':'transparent'};color:${gFilter===f?c.color:'#64748b'};font-size:0.7rem;font-weight:600;cursor:pointer;">${f==='Checked In'?'Checked In ('+guestsWithDisplay.filter(g=>g.displayStatus==='Checked In').length+')':f==='Reserved'?'Reserved ('+guestsWithDisplay.filter(g=>g.displayStatus==='Reserved').length+')':f==='No-Show'?'No-Show ('+guestsWithDisplay.filter(g=>g.displayStatus==='No-Show').length+')':'All ('+guestsWithDisplay.length+')'}</button>`).join('')}
                 </div>`}
           </div>
           ${isScheduled?`<div style="padding:48px;text-align:center;color:#94a3b8;">
@@ -3868,9 +3868,10 @@ function dropDetail(d){
               <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
                 <span style="padding:3px 9px;border-radius:8px;font-size:0.65rem;font-weight:700;background:${gs.bg};color:${gs.col};white-space:nowrap;">${g.displayStatus}</span>
                 ${g.displayStatus==='Reserved'&&(isLive||isPaused)?`<button onclick="checkIn('${g.tid}');event.stopPropagation()" style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button>`:''}
-                ${g.displayStatus==='Reserved'&&isEnded?`<button onclick="checkIn('${g.tid}');event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;white-space:nowrap;">No Show</button>`:''}
+                ${g.displayStatus==='Reserved'&&isEnded?`<button onclick="checkIn('${g.tid}');event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Attended</button><button style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#94a3b8;cursor:pointer;white-space:nowrap;">No-Show</button>`:''}
                 ${g.displayStatus==='Reserved'&&(isLive||isPaused||isScheduled)?`<button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}',cancelTicketName:'${g.name}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b;cursor:pointer;white-space:nowrap;">Cancel</button>`:''}
                 ${g.displayStatus==='Checked In'&&(isLive||isPaused||isEnded)?`<button onclick="uncheckIn('${g.tid}');event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #e5e7eb;background:#fff;color:#64748b;cursor:pointer;white-space:nowrap;">Uncheck</button><button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}',cancelTicketName:'${g.name}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #fecaca;background:#fff5f5;color:#b91c1c;cursor:pointer;white-space:nowrap;">Cancel</button>`:''}
+                ${g.displayStatus==='No-Show'&&(isLive||isPaused||isEnded)?`<button onclick="checkIn('${g.tid}');event.stopPropagation()" style="padding:4px 10px;border-radius:7px;font-size:0.68rem;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;white-space:nowrap;">Check In</button><button onclick="ss({dropModal:'cancelTicket',cancelTicketId:'${g.tid}',cancelTicketName:'${g.name}'});event.stopPropagation()" style="padding:4px 9px;border-radius:7px;font-size:0.68rem;font-weight:600;border:1px solid #fecaca;background:#fff5f5;color:#b91c1c;cursor:pointer;white-space:nowrap;">Cancel</button>`:''}
               </div>
             </div>`;
           }).join('')}`}

@@ -533,6 +533,12 @@ const nighTeam=[
 const HOST_ROLES=['Account Owner','Account Admin','Manager','Team Member','Check-In Only'];
 let customHostRoles=[];
 function assignableHostRoles(){return HOST_ROLES.concat(customHostRoles);}
+// Enterprise custom roles are defined per host account in Nigh Host (mobile/web). Support mirrors them per org (read-only view + assignable).
+const ORG_CUSTOM_ROLES={
+  O003:[{name:'Front Desk',summary:'Check in guests and view the guest list'},{name:'Marketing',summary:'Create and edit drops, view analytics'}],
+  O006:[{name:'Game Day Staff',summary:'Check-in only, across all locations'},{name:'Concessions Lead',summary:'Manage drops and reservations for their venue'}]
+};
+function orgCustomRoles(o){return (o&&o.plan==='Enterprise'&&ORG_CUSTOM_ROLES[o.id])?ORG_CUSTOM_ROLES[o.id]:[];}
 const orgTeams={
   'O001':[
     {id:'TM001',name:'Marco Reyes',email:'marco@centro.com',phone:'(720) 555-0101',access:'Account Owner',status:'Active',since:'Jan 15, 2026',left:null},
@@ -3637,7 +3643,7 @@ ${(()=>{
     <td>${m.status==='Removed'
       ?`<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:${accessColor(m.access).bg};color:${accessColor(m.access).fg}">${m.access}</span>`
       :`<select class="select" style="font-size:11px;padding:2px 6px;height:26px;min-width:180px">
-          ${assignableHostRoles().map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
+          ${HOST_ROLES.concat(orgCustomRoles(o).map(r=>r.name)).map(r=>`<option${m.access===r?' selected':''}>${r}</option>`).join('')}
         </select>`}
     </td>
     <td>${bg(m.status==='Active'?'bg-green':m.status==='Suspended'?'bg-red':'bg-gray','',m.status)}</td>
@@ -3653,6 +3659,17 @@ ${(()=>{
     </td>
   </tr>`).join('')}
   </tbody></table></div>`:`<div style="color:#9CA3AF;font-size:13px;padding:12px 0">No team members yet.</div>`}
+
+  ${o.plan==='Enterprise'?`
+  <div style="margin-top:22px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="font-size:14px;font-weight:700">Custom Roles</div>
+      <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:#EDE9FE;color:#6B21A8;text-transform:uppercase;letter-spacing:0.04em">Enterprise</span>
+    </div>
+    ${orgCustomRoles(o).length?`<div class="card"><table class="tbl"><thead><tr><th>Role</th><th>Access summary</th></tr></thead><tbody>
+    ${orgCustomRoles(o).map(r=>`<tr><td style="font-weight:600">${r.name}</td><td style="font-size:12px;color:#6B7280">${r.summary}</td></tr>`).join('')}
+    </tbody></table></div>`:`<div style="color:#9CA3AF;font-size:13px;padding:12px 0">No custom roles defined by this account. Enterprise accounts can create custom roles in Nigh Host; they appear here and in the role options above.</div>`}
+  </div>`:''}
 </div>
 
 <!-- TAB: ORDERS (Revenue & Payouts) -->
