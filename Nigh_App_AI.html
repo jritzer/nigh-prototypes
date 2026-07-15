@@ -289,7 +289,7 @@ function niyaOn(){return currentUser.niyaEnabled!==false;}
 function headsUpOn(){return currentUser.headsUpEnabled!==false;}
 const feedDrops=[
   {id:'D001',title:'Nike Air Max Day Access',
-   host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},
+   host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},locationDetails:'Enter at the 29th St entrance and take the stairs to the 2nd-floor studio. Look for the Nigh sign at check-in. Street parking on 29th, or the 30th St garage two blocks north.',
    partners:[{handle:'@titosvodka',name:"Tito's Vodka"},{handle:'@redbull',name:'Red Bull'},{handle:'@complex',name:'Complex'},{handle:'@footlocker',name:'Foot Locker'},{handle:'@hypebeast',name:'Hypebeast'}],
    status:'Live',timing:'Start Time',start:'2:00 PM',date:'Apr 20',
    closesIn:'3h 45m',startsIn:'30m',price:0,cap:8,spotsLeft:2,age21:false,
@@ -307,7 +307,7 @@ const feedDrops=[
    desc:'An intimate four-course farm-to-table dinner featuring locally sourced ingredients from Boulder County farms. Executive Chef Dana Park will walk you through each course, paired with selections from Sladoga Winery. Limited to 10 guests. Smart casual attire. Valid ID required at door.',
    slug:'shineboulder/DT72PX'},
   {id:'D003',title:"Whole Foods Chef's Table",
-   host:{name:'Whole Foods Market',handle:'@wholefoodsboulder',short:'WFM',addr:'2905 Pearl St, Boulder, CO'},
+   host:{name:'Whole Foods Market',handle:'@wholefoodsboulder',short:'WFM',addr:'2905 Pearl St, Boulder, CO'},locationDetails:'Come in through the main Pearl St doors and head upstairs to the mezzanine dining room. A host greets you at the top of the stairs. Parking is validated in the Pearl St garage.',
    partners:[{handle:'@kendallj',name:'Kendall Jenner'}],
    status:'Live',timing:'Arrival Window',start:'6:30 PM',endTime:'8:00 PM',date:'Apr 20',
    closesIn:'5h 00m',startsIn:'2h 15m',price:45,cap:12,spotsLeft:3,age21:true,
@@ -316,7 +316,7 @@ const feedDrops=[
    desc:'5-course tasting menu with seasonal organic ingredients, paired with natural wines. Chef Maria will guide you through each course. Arrive within your window — late arrivals may forfeit their seat. Smart casual dress code. Parking validated in the Pearl St garage.',
    slug:'wholefoodsboulder/CF89QW'},
   {id:'D004',title:'Samsung Galaxy S25 Ultra Launch',
-   host:{name:'Best Buy Boulder',handle:'@bestbuyboulder',short:'BBY',addr:'1855 29th St, Boulder, CO'},
+   host:{name:'Best Buy Boulder',handle:'@bestbuyboulder',short:'BBY',addr:'1855 29th St, Boulder, CO'},locationDetails:'Check in at the front entrance and a Nigh host will walk you back to the demo area near the mobile department. Free lot parking out front.',
    partners:[{handle:'@samsung',name:'Samsung'}],
    status:'Live',timing:'Start Time',start:'11:00 AM',date:'Apr 20',
    closesIn:'1h 45m',startsIn:'30m',price:0,cap:50,spotsLeft:0,age21:false,
@@ -325,7 +325,7 @@ const feedDrops=[
    desc:'Be among the first to get hands-on with the Samsung Galaxy S25 Ultra before its official retail launch. Demo the new AI camera features, try the new S Pen, and get entered to win one. Free to attend — ticket required for entry. Best Buy Totaltech members get priority access.',
    slug:'bestbuyboulder/SMG25'},
   {id:'D005',title:'Colorado Limited Tap Takeover',
-   host:{name:'Fate Brewing Co',handle:'@fatebrewing',short:'FATE',addr:'1600 38th St, Boulder, CO'},
+   host:{name:'Fate Brewing Co',handle:'@fatebrewing',short:'FATE',addr:'1600 38th St, Boulder, CO'},locationDetails:'Head to the back patio bar, not the main entrance. Enter through the side gate off 38th St. Rideshare recommended, limited street parking.',
    partners:[{handle:'@oskarblues',name:"Oskar Blues"}],
    status:'Live',timing:'Start Time',start:'5:00 PM',date:'Apr 20',
    closesIn:'3h 00m',startsIn:'2h 00m',price:12,cap:40,spotsLeft:7,age21:true,
@@ -1797,6 +1797,7 @@ function renderDropDetail(){
         <div style="color:rgba(255,255,255,0.55);flex-shrink:0">${ic('map',20)}</div>
       </button>
     </div>
+    ${d.myTicket&&d.locationDetails?`<div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">GETTING THERE</div><div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.locationDetails}</div></div>`:''}
 
     <!-- Friends section -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;margin-bottom:12px">
@@ -2096,7 +2097,7 @@ function viewNewTicket(){
       host:d.host.name,hostHandle:d.host.handle,
       date:d.date,time:d.start,endTime:d.endTime||'',timing:d.timing||'Start Time',
       addr:d.host.addr,price:d.price||0,age21:d.age21||false,
-      desc:d.desc||'',startsIn:d.startsIn||'',partners:d.partners||[],
+      desc:d.desc||'',locationDetails:d.locationDetails||'',startsIn:d.startsIn||'',partners:d.partners||[],
       qty:qty,extras:[],status:'Active',orderId:'ORD-7291',orderDate:'Just now',
       subTickets:Array.from({length:qty},(_,i)=>({idx:i+1,status:'active'}))
     });
@@ -2876,6 +2877,7 @@ function fullTicketCard(tk){
   // ── Back side ──
   const _dropMatch=feedDrops.find(dd=>dd.id===tk.dropId);
   const _tkDesc=tk.desc||(_dropMatch?_dropMatch.desc:'')||'';
+  const _tkLoc=tk.locationDetails||(_dropMatch?_dropMatch.locationDetails:'')||'';
   const termsList=[...((tk.price||0)>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),'Each guest may hold only one ticket per drop. Additional tickets can be transferred to other Nigh accounts or phone numbers.','Must arrive within the arrival window — late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
   // ── Order receipt (back side) ──
   const _rQty=tk.qty||subCount||1;
@@ -2930,6 +2932,7 @@ function fullTicketCard(tk){
     ${receiptHtml}
     ${(isOwner&&subCount>1)?summaryHtml:''}
     ${_tkDesc?`<div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">About this Drop</div><div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55">${_tkDesc}</div>`:''}
+    ${_tkLoc?`<div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Getting there</div><div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.55">${_tkLoc}</div>`:''}
     <div style="border-top:1px solid rgba(255,255,255,0.1);margin:14px 0"></div>
     <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">Terms</div>
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
