@@ -1260,17 +1260,17 @@ function renderOnboarding(){
     return `
   <div style="display:flex;flex-direction:column;min-height:762px;background:#0E0E12;padding:20px 24px 32px">
     <div style="margin-bottom:22px">
-      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px">Set up your profile</div>
+      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px">Set up your user profile</div>
       <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5">Real people. Real life.</div>
       <div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:7px 13px"><span style="color:#22C55E;display:flex">${ic('check',14)}</span><span style="font-size:13px;font-weight:600;color:#fff">${S.obPhone||'Your number'}</span><span style="font-size:11px;color:rgba(255,255,255,0.45)">Verified</span></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:15px;flex:1">
       <div>${lab('First name')}<input value="${fn}" oninput="S.obFirstName=this.value" onblur="render()" placeholder="First name" style="${fld}"/></div>
       <div>${lab('Last name')}<input value="${ln}" oninput="S.obLastName=this.value" onblur="render()" placeholder="Last name" style="${fld}"/></div>
-      <div>${lab('Handle')}<div style="display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid ${taken?'#EF4444':'rgba(255,255,255,0.15)'};border-radius:10px;padding:0 12px"><span style="color:rgba(255,255,255,0.5);font-size:15px">@</span><input value="${h}" oninput="S.obHandle=this.value" onblur="render()" placeholder="${sug}" style="flex:1;background:none;border:none;color:#fff;font-size:15px;padding:12px 6px;outline:none;font-family:inherit"/></div>${taken?`<div style="font-size:11px;color:#FCA5A5;margin-top:5px">@${h} is taken. Try another.</div>`:`<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:5px">Your unique handle across Nigh</div>`}</div>
+      <div>${lab('Handle')}<div style="display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid ${taken?'#EF4444':'rgba(255,255,255,0.15)'};border-radius:10px;padding:0 12px"><span style="color:rgba(255,255,255,0.5);font-size:15px">@</span><input value="${h}" oninput="S.obHandle=this.value" onblur="render()" placeholder="${sug}" style="flex:1;background:none;border:none;color:#fff;font-size:15px;padding:12px 6px;outline:none;font-family:inherit"/></div>${taken?`<div style="font-size:11px;color:#FCA5A5;margin-top:5px">@${h} is taken. Try another.</div>`:`<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:5px">Your personal handle across Nigh</div>`}</div>
       <div>${lab('Date of birth')}<input type="date" value="${dob}" max="2025-12-31" oninput="S.obDob=this.value" onchange="S.obDob=this.value;render()" onblur="render()" style="${fld};color:${dob?'#fff':'rgba(255,255,255,0.4)'}"/>${dob&&age<13?`<div style="font-size:11px;color:#FCA5A5;margin-top:5px">You must be at least 13 to use Nigh.</div>`:`<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:5px">Used to confirm your age. Not shared.</div>`}</div>
     </div>
-    <button onclick="${ok?done:'void 0'}" style="width:100%;margin-top:20px;background:${ok?'#0E4EF5':'rgba(255,255,255,0.15)'};color:#fff;border:none;border-radius:12px;padding:15px;font-family:inherit;font-size:15px;font-weight:700;cursor:${ok?'pointer':'not-allowed'}">Create Account</button>
+    <button onclick="${ok?done:'void 0'}" style="width:100%;margin-top:20px;background:${ok?'#0E4EF5':'rgba(255,255,255,0.15)'};color:#fff;border:none;border-radius:12px;padding:15px;font-family:inherit;font-size:15px;font-weight:700;cursor:${ok?'pointer':'not-allowed'}">Create User Account</button>
     <button onclick="S.niyaOnboarding=true;S.obStep=0;S.scr='niya';render()" style="width:100%;margin-top:10px;background:none;border:none;color:rgba(255,255,255,0.5);font-family:inherit;font-size:12px;cursor:pointer">Prefer a guided setup? Set up with Niya instead</button>
   </div>`;
   }
