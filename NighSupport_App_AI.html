@@ -1846,8 +1846,8 @@ function go(page,extra){
   const navKey=page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='orgOrgDetail'?'organizations':page==='dropDetail'?'drops':page==='orderDetail'?'orders':page;
   const nav=document.getElementById('nav-'+navKey);
   if(nav)nav.classList.add('active');
-  const titles={dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration',promos:'Subscription Promos'};
-  const subs={dashboard:'Welcome back, Josh',inbox:'Escalations, Pro messages, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all host accounts',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts'};
+  const titles={dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Niya Configuration',promos:'Subscription Promos',stickers:'Sticker Program'};
+  const subs={dashboard:'Welcome back, Josh',inbox:'Escalations, Pro messages, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Open cases across all host accounts',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Niya\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts',stickers:'Configure free sticker allowance and pricing (platform-wide)'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   document.getElementById('topbar-sub').textContent=subs[page]||'';
   document.getElementById('content').innerHTML=renderPage(page);
@@ -1888,6 +1888,7 @@ function renderPage(p){
   if(p==='orderDetail')return rOrderDetail(S.orderId);
   if(p==='credits')return rCredits();
   if(p==='promos')return rPromos();
+  if(p==='stickers')return rStickers();
   if(p==='refunds')return rRefunds();
   if(p==='financials')return rFinancials();
   if(p==='team')return rTeam();
@@ -4926,6 +4927,37 @@ function rOrderDetail(id){
 // ── PROMOS PAGE ────────────────────────────────────────────────────────
 function promoTypeBadge(t){const m={priceLock:['Price Lock','#7C3AED'],percentOff:['% Off','#0E4EF5'],fixedOff:['$ Off','#059669'],freeMonths:['Free Months','#EA580C']};const v=m[t]||['—','#6B7280'];return`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:${v[1]}15;color:${v[1]}">${v[0]}</span>`;}
 function promoStatusBadge(s){const c=s==='Active'?'#16A34A':s==='Scheduled'?'#0284C7':s==='Expired'?'#DC2626':'#6B7280';return`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:${c}15;color:${c}">${s}</span>`;}
+let stickerConfig={freeStickers:3,priceEach:5}; // Platform-wide sticker program config
+function rStickers(){
+  const c=stickerConfig;
+  return `
+  <div style="max-width:720px">
+    <div style="background:#fff;border:1px solid #E2E8F0;border-radius:14px;overflow:hidden;margin-bottom:16px">
+      <div style="padding:16px 20px;border-bottom:1px solid #E2E8F0">
+        <div style="font-size:15px;font-weight:700;color:#111827">Sticker Program</div>
+        <div style="font-size:12px;color:#6B7280;margin-top:2px">Platform-wide settings for the host &ldquo;Request Stickers&rdquo; flow</div>
+      </div>
+      <div style="padding:18px 20px">
+        <div class="field" style="max-width:300px">
+          <label class="label">Free stickers per host account</label>
+          <select class="select" onchange="stickerConfig.freeStickers=parseInt(this.value)||0;go('stickers')">
+            ${[1,2,3].map(n=>`<option value="${n}" ${c.freeStickers===n?'selected':''}>${n} free sticker${n>1?'s':''}</option>`).join('')}
+          </select>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:6px">How many stickers each host account can request for free. Default is 3. Additional stickers are charged at the price below. Applies to every host.</div>
+        </div>
+        <div class="field" style="max-width:300px;margin-top:16px">
+          <label class="label">Price per additional sticker ($)</label>
+          <input class="input" type="number" min="0" max="99" step="1" value="${c.priceEach}" onchange="stickerConfig.priceEach=parseFloat(this.value)||0;go('stickers')"/>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Charged to the host account&rsquo;s card on file. Includes shipping.</div>
+        </div>
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px 14px;margin-top:18px;font-size:12px;color:#1E3A8A;line-height:1.55">
+          <strong>Current policy:</strong> First ${c.freeStickers} sticker${c.freeStickers>1?'s':''} free, then $${c.priceEach} each (shipping included). A card on file is required for paid orders.
+        </div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:14px;line-height:1.5">This is a platform-wide default enforced in the Nigh Host app. Changing it here updates the free allowance and pricing shown to every host requesting stickers.</div>
+      </div>
+    </div>
+  </div>`;
+}
 function rPromos(){
   const tab=S.promoTab||'groups';
   return`<div style="display:flex;gap:8px;margin-bottom:20px">
@@ -6678,6 +6710,7 @@ function renderSidebar(){
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Niya Config
     </button>
+    <button class="sb-item" id="nav-stickers" onclick="go('stickers')">${svgI('tag')} Sticker Program</button>
     <div class="sb-section">CONTENT</div>
     <button class="sb-item" id="nav-videos" onclick="go('videos')">${svgI('play')} From Nigh Videos</button>
   `;
