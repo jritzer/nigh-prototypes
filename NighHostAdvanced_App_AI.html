@@ -8539,7 +8539,7 @@ function renderLogin(){
         <button onclick="S.loginStep='code';render()" style="background:none;border:none;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px;font-size:13px;font-family:inherit;padding:0;margin-bottom:20px;cursor:pointer">${ic('left',16)} Back</button>
         <div style="width:56px;height:56px;color:#0E4EF5;filter:drop-shadow(0 6px 18px rgba(14,78,245,0.4));margin-bottom:14px">${NIGH_BUG_SVG}</div>
         <div style="font-size:24px;font-weight:800;color:#fff;margin-bottom:6px">Set up your host profile</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:22px">Just a few details to create your account.</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5)">Real people. Real life.</div><div style="display:inline-flex;align-items:center;gap:8px;margin-top:14px;margin-bottom:22px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:7px 13px"><span style="color:#22C55E;display:flex">${ic('check',14)}</span><span style="font-size:13px;font-weight:600;color:#fff">${S.loginPhone||'Your number'}</span><span style="font-size:11px;color:rgba(255,255,255,0.45)">Verified</span></div>
         <div style="margin-bottom:16px">
           <div style="${lbl}">First name</div>
           <input type="text" autocomplete="given-name" value="${fn.replace(/"/g,'&quot;')}" placeholder="Avery"
@@ -8565,7 +8565,7 @@ function renderLogin(){
         <div style="margin-bottom:8px">
           <div style="${lbl}">Date of birth</div>
           <input type="date" value="${dob}"
-            oninput="S.loginDob=this.value;lpValidate()" style="${fld}"
+            oninput="S.loginDob=this.value;lpValidate()" onchange="S.loginDob=this.value;render()" style="${fld};color:${dob?'#fff':'rgba(255,255,255,0.4)'}"
             onfocus="this.style.borderColor='rgba(14,78,245,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
           <div id="lpDobMsg" style="font-size:12px;margin-top:6px;font-weight:600;color:#F59E0B;display:${(dob&&age!=null&&age<18)?'block':'none'}">You must be 18+ to own a host account. Under 18 can still join an adult’s account as a team member.</div>
         </div>
