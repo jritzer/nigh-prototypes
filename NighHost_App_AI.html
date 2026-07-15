@@ -3423,8 +3423,8 @@ function renderRequestStickers(){
     </div>
     <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Ship to</div>
     <div style="margin-bottom:14px">${lab('Full name')}<input value="${name.replace(/"/g,'&quot;')}" oninput="S.skName=this.value" onblur="render()" placeholder="Full name" style="${ist}"/></div>
-    <div style="margin-bottom:14px">${lab('Street address')}<input value="${a1.replace(/"/g,'&quot;')}" oninput="S.skAddr1=this.value" onblur="render()" placeholder="123 Main St" style="${ist}"/></div>
-    <div style="margin-bottom:14px">${lab('Apt / Suite',true)}<input value="${a2.replace(/"/g,'&quot;')}" oninput="S.skAddr2=this.value" onblur="render()" placeholder="Apt, suite, unit (optional)" style="${ist}"/></div>
+    <div style="margin-bottom:14px">${lab('Address Line 1')}<input value="${a1.replace(/"/g,'&quot;')}" oninput="S.skAddr1=this.value" onblur="render()" placeholder="123 Main St" style="${ist}"/></div>
+    <div style="margin-bottom:14px">${lab('Address Line 2',true)}<input value="${a2.replace(/"/g,'&quot;')}" oninput="S.skAddr2=this.value" onblur="render()" placeholder="Apt, suite, unit (optional)" style="${ist}"/></div>
     <div style="display:grid;grid-template-columns:1fr 66px 92px;gap:8px;margin-bottom:16px">
       <div>${lab('City')}<input value="${city.replace(/"/g,'&quot;')}" oninput="S.skCity=this.value" onblur="render()" placeholder="City" style="${ist}"/></div>
       <div>${lab('State')}<input value="${st.replace(/"/g,'&quot;')}" maxlength="2" oninput="S.skState=this.value.toUpperCase()" onblur="render()" placeholder="CO" style="${ist};text-transform:uppercase"/></div>
