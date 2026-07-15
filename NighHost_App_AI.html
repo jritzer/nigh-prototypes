@@ -3379,17 +3379,17 @@ function renderQRCodes(){
     </div>`}
     <div style="margin-top:16px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px">
       <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px">Need stickers?</div>
-      <div style="font-size:11px;color:#6B7280;line-height:1.5;margin-bottom:12px">Get Nigh stickers mailed to you. First ${PLATFORM_CONFIG.freeStickers} free &mdash; additional $5 each (shipping included).</div>
+      <div style="font-size:11px;color:#6B7280;line-height:1.5;margin-bottom:12px">Get Nigh stickers mailed to you. ${PLATFORM_CONFIG.freeStickers>0?`First ${PLATFORM_CONFIG.freeStickers} free &mdash; additional $5 each`:`$5 each`} (shipping included).</div>
       <button onclick="S.menuSub='requeststickers';render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">Request Stickers</button>
     </div>
   </div>`;
 }
-const PLATFORM_CONFIG={freeStickers:3}; // Platform-wide; configured by internal Support team
+const PLATFORM_CONFIG={freeStickers:0}; // Platform-wide; configured by internal Support team
 function renderRequestStickers(){
   const FREE=PLATFORM_CONFIG.freeStickers;
   const name=(S.skName!==undefined)?S.skName:ownerDisplayName();
   const a1=S.skAddr1||'',a2=S.skAddr2||'',city=S.skCity||'',st=S.skState||'',zip=S.skZip||'';
-  const qty=S.skQty||FREE;
+  const qty=S.skQty||(FREE||1);
   const card=(S.skCard!==undefined)?S.skCard:{brand:'Visa',last4:'4821'};
   const freeCount=Math.min(qty,FREE);
   const paidCount=Math.max(0,qty-FREE);
@@ -3408,7 +3408,7 @@ function renderRequestStickers(){
       <div style="font-size:18px;font-weight:800;color:#111827;margin-bottom:6px">Stickers on the way!</div>
       <div style="font-size:13px;color:#6B7280;line-height:1.55;margin-bottom:20px">We're mailing ${qty} sticker${qty>1?'s':''} to ${name}.<br/>${a1}${a2?', '+a2:''}, ${city}, ${st} ${zip}</div>
       <div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px;text-align:left;max-width:320px;margin:0 auto 22px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span>$0.00</span></div>
+        ${freeCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span>$0.00</span></div>`:''}
         ${paidCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${paidCount} additional &times; $5</span><span>$${total}.00</span></div>`:''}
         <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#111827;border-top:1px solid #E5E7EB;padding-top:8px;margin-top:4px"><span>Total${total>0?` &middot; ${card.brand} &middot;&middot;&middot;&middot;${card.last4}`:''}</span><span>$${total}.00</span></div>
       </div>
@@ -3419,7 +3419,7 @@ function renderRequestStickers(){
   return `${hdr('Request Stickers','Get Nigh stickers mailed to you',"S.menuSub='qrcodes';render()")}
   <div style="padding:16px 16px 28px;overflow-y:auto">
     <div style="background:#EEF2FF;border-radius:12px;padding:13px 15px;font-size:12px;color:#3730A3;line-height:1.55;margin-bottom:18px">
-      Your first <strong>${FREE} sticker${FREE>1?'s':''} ${FREE>1?'are':'is'} free</strong>. Additional stickers are <strong>$5 each</strong> (shipping included).
+      ${FREE>0?`Your first <strong>${FREE} sticker${FREE>1?'s':''} ${FREE>1?'are':'is'} free</strong>. Additional stickers are <strong>$5 each</strong> (shipping included).`:`Stickers are <strong>$5 each</strong> (shipping included).`}
     </div>
     <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Ship to</div>
     <div style="margin-bottom:14px">${lab('Full name')}<input value="${name.replace(/"/g,'&quot;')}" oninput="S.skName=this.value" onblur="render()" placeholder="Full name" style="${ist}"/></div>
@@ -3434,13 +3434,13 @@ function renderRequestStickers(){
     <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:12px 16px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:700;color:#111827">Stickers</div>
       <div style="display:flex;align-items:center;gap:16px">
-        <button onclick="S.skQty=Math.max(1,(S.skQty||PLATFORM_CONFIG.freeStickers)-1);render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#111827;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">&minus;</button>
+        <button onclick="S.skQty=Math.max(1,(S.skQty||(PLATFORM_CONFIG.freeStickers||1))-1);render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#111827;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">&minus;</button>
         <div style="font-size:16px;font-weight:800;color:#111827;min-width:24px;text-align:center">${qty}</div>
-        <button onclick="S.skQty=(S.skQty||PLATFORM_CONFIG.freeStickers)+1;render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#0E4EF5;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">+</button>
+        <button onclick="S.skQty=(S.skQty||(PLATFORM_CONFIG.freeStickers||1))+1;render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#0E4EF5;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">+</button>
       </div>
     </div>
     <div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:13px 16px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span style="color:#16A34A;font-weight:700">Free</span></div>
+      ${freeCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span style="color:#16A34A;font-weight:700">Free</span></div>`:''}
       ${paidCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${paidCount} additional &times; $5</span><span>$${total}.00</span></div>`:''}
       <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;color:#111827;border-top:1px solid #E5E7EB;padding-top:9px;margin-top:5px"><span>Total</span><span>${total>0?'$'+total+'.00':'Free'}</span></div>
     </div>
@@ -3455,7 +3455,7 @@ function renderRequestStickers(){
       <div style="font-size:11px;color:#92400E;line-height:1.5;margin-bottom:10px">Your host account needs a credit card on file to order paid stickers.</div>
       <button onclick="S.skCard={brand:'Visa',last4:'4821'};render()" style="background:#0E4EF5;color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer">Add a card</button>
     </div>`):''}
-    <div style="font-size:10.5px;color:#9CA3AF;line-height:1.5;margin:10px 2px 16px">${needCard?'A credit card on file is required for paid sticker orders. ':''}The first ${FREE} sticker${FREE>1?'s':''} per host account ${FREE>1?'are':'is'} free. Allow 7&ndash;10 business days for delivery.</div>
+    <div style="font-size:10.5px;color:#9CA3AF;line-height:1.5;margin:10px 2px 16px">${needCard?'A credit card on file is required for paid sticker orders. ':''}${FREE>0?`The first ${FREE} sticker${FREE>1?'s':''} per host account ${FREE>1?'are':'is'} free. `:''}Allow 7&ndash;10 business days for delivery.</div>
     <button onclick="${canSubmit?'S.skDone=true;render()':'void 0'}" style="width:100%;background:${canSubmit?'#0E4EF5':'#D1D5DB'};color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:${canSubmit?'pointer':'default'};font-family:inherit">${total>0?'Place Order &middot; $'+total+'.00':'Request '+qty+' Free Sticker'+(qty>1?'s':'')}</button>
   </div>`;
 }

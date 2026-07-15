@@ -4927,7 +4927,7 @@ function rOrderDetail(id){
 // ── PROMOS PAGE ────────────────────────────────────────────────────────
 function promoTypeBadge(t){const m={priceLock:['Price Lock','#7C3AED'],percentOff:['% Off','#0E4EF5'],fixedOff:['$ Off','#059669'],freeMonths:['Free Months','#EA580C']};const v=m[t]||['—','#6B7280'];return`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:${v[1]}15;color:${v[1]}">${v[0]}</span>`;}
 function promoStatusBadge(s){const c=s==='Active'?'#16A34A':s==='Scheduled'?'#0284C7':s==='Expired'?'#DC2626':'#6B7280';return`<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:${c}15;color:${c}">${s}</span>`;}
-let stickerConfig={freeStickers:3,priceEach:5}; // Platform-wide sticker program config
+let stickerConfig={freeStickers:0,priceEach:5}; // Platform-wide sticker program config
 function rStickers(){
   const c=stickerConfig;
   return `
@@ -4941,9 +4941,9 @@ function rStickers(){
         <div class="field" style="max-width:300px">
           <label class="label">Free stickers per host account</label>
           <select class="select" onchange="stickerConfig.freeStickers=parseInt(this.value)||0;go('stickers')">
-            ${[1,2,3].map(n=>`<option value="${n}" ${c.freeStickers===n?'selected':''}>${n} free sticker${n>1?'s':''}</option>`).join('')}
+            ${[0,1,2,3].map(n=>`<option value="${n}" ${c.freeStickers===n?'selected':''}>${n===0?'No free stickers':n+' free sticker'+(n>1?'s':'')}</option>`).join('')}
           </select>
-          <div style="font-size:11px;color:#9CA3AF;margin-top:6px">How many stickers each host account can request for free. Default is 3. Additional stickers are charged at the price below. Applies to every host.</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:6px">How many stickers each host account can request for free. Default is none (all stickers are paid). Additional stickers are charged at the price below. Applies to every host.</div>
         </div>
         <div class="field" style="max-width:300px;margin-top:16px">
           <label class="label">Price per additional sticker ($)</label>
@@ -4951,7 +4951,7 @@ function rStickers(){
           <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Charged to the host account&rsquo;s card on file. Includes shipping.</div>
         </div>
         <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px 14px;margin-top:18px;font-size:12px;color:#1E3A8A;line-height:1.55">
-          <strong>Current policy:</strong> First ${c.freeStickers} sticker${c.freeStickers>1?'s':''} free, then $${c.priceEach} each (shipping included). A card on file is required for paid orders.
+          <strong>Current policy:</strong> ${c.freeStickers>0?`First ${c.freeStickers} sticker${c.freeStickers>1?'s':''} free, then $${c.priceEach} each`:`$${c.priceEach} each &mdash; no free stickers`} (shipping included). A card on file is required for paid orders.
         </div>
         <div style="font-size:11px;color:#9CA3AF;margin-top:14px;line-height:1.5">This is a platform-wide default enforced in the Nigh Host app. Changing it here updates the free allowance and pricing shown to every host requesting stickers.</div>
       </div>
