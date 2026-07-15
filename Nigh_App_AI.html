@@ -2039,11 +2039,12 @@ function renderPlaceOrder(){
       </div>
       <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
         ${[
-          ...(d.price>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),
-          d.price>0?'Your ticket is non-transferable. Any additional tickets purchased for friends may be transferred.':'Your spot is non-transferable. Any additional spots reserved for friends may be transferred.',
-          'Must arrive within the arrival window — too early or late arrivals may result in a loss of spot at the host\'s discretion.',
-          'Any questions, you must contact the host directly. Nigh is a booking system and can\'t modify a host\'s drop.',
-          ...(d.age21?['Valid ID required at check-in.']:[]),
+          'One person per spot. Additional spots reserved for friends may be transferred.',
+          'Arrive on time. Arriving early or late may result in the loss of your spot at the host\'s discretion.',
+          'Reservations are final and non-refundable unless the host cancels.',
+          'Hosts are responsible for their Drops — contact the host for any questions or issues.',
+          'Nigh is the technology platform. The host is responsible for resolving any disputes.',
+          ...((d.age21||d.age18)?['Valid ID required at check-in.']:[]),
         ].map(t=>`<div style="display:flex;gap:8px;align-items:flex-start">
           <div style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.6);margin-top:6px;flex-shrink:0"></div>
           <span style="font-size:11px;color:#fff;line-height:1.5">${t}</span>
@@ -2879,7 +2880,7 @@ function fullTicketCard(tk){
   const _dropMatch=feedDrops.find(dd=>dd.id===tk.dropId);
   const _tkDesc=tk.desc||(_dropMatch?_dropMatch.desc:'')||'';
   const _tkLoc=tk.locationDetails||(_dropMatch?_dropMatch.locationDetails:'')||'';
-  const termsList=[...((tk.price||0)>0?['All sales are final — no refunds or exchanges. One person per spot.']:['One person per spot.']),'Each guest may hold only one ticket per drop. Additional tickets can be transferred to other Nigh accounts or phone numbers.','Must arrive within the arrival window — late arrivals may result in loss of spot at the host\'s discretion.','Contact the host directly with questions. Nigh is a booking system and can\'t modify a host\'s drop.',...(tk.age21?['Valid ID required at check-in.']:[])];
+  const termsList=['One person per spot. Additional spots reserved for friends may be transferred.','Arrive on time. Arriving early or late may result in the loss of your spot at the host\'s discretion.','Reservations are final and non-refundable unless the host cancels.','Hosts are responsible for their Drops — contact the host for any questions or issues.','Nigh is the technology platform. The host is responsible for resolving any disputes.',...((tk.age21||tk.age18)?['Valid ID required at check-in.']:[])];
   // ── Order receipt (back side) ──
   const _rQty=tk.qty||subCount||1;
   const _rUnit=tk.price||0;
