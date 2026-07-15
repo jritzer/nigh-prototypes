@@ -8372,7 +8372,7 @@ function renderLogin(){
   // ── Welcome screen ──
   if(step==='welcome'){
     return `
-    <div style="display:flex;flex-direction:column;height:100%;background:#000000;position:relative;overflow:hidden">
+    <div style="display:flex;flex-direction:column;height:100%;background:#0E0E12;position:relative;overflow:hidden">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%,rgba(14,78,245,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(98,38,233,0.12) 0%,transparent 50%)"></div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:0 32px;gap:16px">
         <div style="width:120px;height:120px;color:#0E4EF5;filter:drop-shadow(0 8px 24px rgba(14,78,245,0.4))">${NIGH_BUG_SVG}</div>
@@ -8390,7 +8390,7 @@ function renderLogin(){
     const digits=(S.loginPhone||'').replace(/\D/g,'');
     const canContinue=digits.length===10;
     return `
-    <div style="display:flex;flex-direction:column;height:100%;background:#1B2A4A">
+    <div style="display:flex;flex-direction:column;height:100%;background:#0E0E12">
       <div style="padding:20px 24px 0;flex:1">
         <button onclick="S.loginStep='welcome';S.loginPhone='';render()" style="background:none;border:none;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px;font-size:13px;font-family:inherit;padding:0;margin-bottom:28px;cursor:pointer">${ic('left',16)} Back</button>
         <div style="font-size:26px;font-weight:800;color:#fff;margin-bottom:8px">What's your number?</div>
@@ -8422,7 +8422,7 @@ function renderLogin(){
     const otpErr=S.otpError||false;
     const otpResent=S.otpResent||false;
     return `
-    <div style="display:flex;flex-direction:column;height:100%;background:#1B2A4A;padding:20px 24px 32px">
+    <div style="display:flex;flex-direction:column;height:100%;background:#0E0E12;padding:20px 24px 32px">
       <button onclick="S.loginStep='phone';S.loginCode='';S.otpError=false;S.otpResent=false;render()" style="background:none;border:none;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px;font-size:13px;font-family:inherit;padding:0;margin-bottom:28px;cursor:pointer">${ic('left',16)} Back</button>
       <div style="margin-bottom:32px">
         <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:8px">Check your texts</div>
@@ -8472,7 +8472,7 @@ function renderLogin(){
     const fld="width:100%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;color:#fff;outline:none;box-sizing:border-box";
     const lbl="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:6px";
     return `
-    <div style="display:flex;flex-direction:column;height:100%;background:#1B2A4A;overflow-y:auto">
+    <div style="display:flex;flex-direction:column;height:100%;background:#0E0E12;overflow-y:auto">
       <div style="padding:20px 24px 0;flex:1">
         <button onclick="S.loginStep='code';render()" style="background:none;border:none;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:6px;font-size:13px;font-family:inherit;padding:0;margin-bottom:20px;cursor:pointer">${ic('left',16)} Back</button>
         <div style="width:56px;height:56px;color:#0E4EF5;filter:drop-shadow(0 6px 18px rgba(14,78,245,0.4));margin-bottom:14px">${NIGH_BUG_SVG}</div>
