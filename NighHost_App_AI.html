@@ -3453,7 +3453,7 @@ function renderRequestStickers(){
       <div style="font-size:11px;color:#92400E;line-height:1.5;margin-bottom:10px">Your host account needs a credit card on file to order paid stickers.</div>
       <button onclick="S.skCard={brand:'Visa',last4:'4821'};render()" style="background:#0E4EF5;color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer">Add a card</button>
     </div>`):''}
-    <div style="font-size:10.5px;color:#9CA3AF;line-height:1.5;margin:10px 2px 16px">${needCard?'A credit card on file is required for paid sticker orders. ':''}The first 3 stickers per host account are free. Allow 5&ndash;7 business days for delivery.</div>
+    <div style="font-size:10.5px;color:#9CA3AF;line-height:1.5;margin:10px 2px 16px">${needCard?'A credit card on file is required for paid sticker orders. ':''}The first 3 stickers per host account are free. Allow 7&ndash;10 business days for delivery.</div>
     <button onclick="${canSubmit?'S.skDone=true;render()':'void 0'}" style="width:100%;background:${canSubmit?'#0E4EF5':'#D1D5DB'};color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:${canSubmit?'pointer':'default'};font-family:inherit">${total>0?'Place Order &middot; $'+total+'.00':'Request '+qty+' Free Sticker'+(qty>1?'s':'')}</button>
   </div>`;
 }
