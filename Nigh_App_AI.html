@@ -360,7 +360,7 @@ const feedDrops=[
    liked:false,likeCount:41,
    desc:'Start your Saturday with sunrise yoga on the Chautauqua lawn with the Flatirons as your backdrop. Led by certified Lululemon ambassador Casey Rhodes. All levels welcome. Bring your own mat. Free with ticket — very limited spots.',
    slug:'chautauqua/SNRS5'},
-  {id:'D009',title:'Boulder Book Store: Matt Haig',
+  {id:'D009',title:'Boulder Book Store: Matt Haig',reservationsClosed:true,
    host:{name:'Boulder Book Store',handle:'@boulderbookstore',short:'BBS',addr:'1107 Pearl St, Boulder, CO'},
    partners:[],
    status:'Upcoming',timing:'Doors Open',start:'6:00 PM',date:'Apr 8',
@@ -387,7 +387,7 @@ const feedDrops=[
    liked:false,likeCount:56,
    desc:"Bring in worn Patagonia gear for free professional repairs and learn basic stitching from Patagonia's repair team. Shop Worn Wear items at 40–60% off. Ticket required for the repair clinic — walk-ins welcome for shopping.",
    slug:'patagoniabouldercO/WW5'},
-  {id:'D012',title:'Spruce Confections: Weekend Pastry Drop',
+  {id:'D012',title:'Spruce Confections: Weekend Pastry Drop',visibility:'followers',onList:false,
    host:{name:'Spruce Confections',handle:'@spruceboulder',short:'SC',addr:'767 Pearl St, Boulder, CO'},
    partners:[],
    status:'Live',timing:'While Supplies Last',start:'8:00 AM',date:'Apr 25',
@@ -396,7 +396,7 @@ const feedDrops=[
    liked:true,likeCount:112,
    desc:'Saturday morning fresh-baked pastry drop. This week: cardamom morning buns, pistachio croissants, and rhubarb tarts. Ticket required — limited quantities available.',
    slug:'spruceboulder/PAS34'},
-  {id:'D013',title:'Fox Theatre: CU Buffs Watch Party',
+  {id:'D013',title:'Fox Theatre: CU Buffs Watch Party',canceled:true,
    host:{name:'Fox Theatre',handle:'@foxtheatreboulder',short:'FOX',addr:'1135 13th St, Boulder, CO'},
    partners:[{handle:'@coorslight',name:'Coors Light'}],
    status:'Upcoming',timing:'Doors Open',start:'5:30 PM',date:'Apr 4',
@@ -1577,7 +1577,7 @@ function renderFeed(){
         }
         if(cannotReserve(d)){
           return`<div style="position:absolute;bottom:18px;left:16px;right:16px;z-index:10;display:flex;justify-content:center">
-            <button disabled style="background:rgba(255,255,255,0.10);backdrop-filter:blur(8px);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.15);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;cursor:not-allowed">Unable to reserve</button>
+            <button disabled style="background:rgba(255,255,255,0.10);backdrop-filter:blur(8px);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.15);border-radius:24px;padding:10px 32px;font-size:14px;font-weight:700;cursor:not-allowed">${reserveBlockReason(d)==='canceled'?'Canceled':'Unable to reserve'}</button>
           </div>`;
         }
         if(soldOut){
@@ -1667,7 +1667,10 @@ function checkDropPassword(){
 const BLOCKED_BY_HOSTS=['@shineboulder'];
 function isBlockedByHost(d){return !!(d&&d.host&&BLOCKED_BY_HOSTS.indexOf(d.host.handle)>=0);}
 function underageForDrop(d){var min=d&&d.age21?21:(d&&d.age18?18:0);return min>0&&typeof currentUser.age==='number'&&currentUser.age<min;}
-function cannotReserve(d){return isBlockedByHost(d)||underageForDrop(d);}
+function notOnList(d){return !!(d&&d.visibility&&d.visibility!=='public'&&d.onList===false);}
+function reservationsClosed(d){return !!(d&&d.reservationsClosed);}
+function reserveBlockReason(d){if(!d)return null;if(d.canceled)return 'canceled';if(isBlockedByHost(d))return 'blocked';if(underageForDrop(d))return 'age';if(notOnList(d))return 'notlisted';if(reservationsClosed(d))return 'closed';return null;}
+function cannotReserve(d){return !!reserveBlockReason(d);}
 
 // ── DROP DETAIL ────────────────────────────────────────
 function renderDropDetail(){
@@ -1756,7 +1759,11 @@ function renderDropDetail(){
         </div>`:''}
       </div>
     </div>
-    ${d.spotsLeft===0
+    ${d.canceled
+      ?`<div style="background:#2a1416;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.08)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span style="font-size:13px;font-weight:700;color:#F87171;letter-spacing:0.04em">CANCELED</span></div>`
+      :d.reservationsClosed
+      ?`<div style="background:#1a1a1a;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.08)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.04em">RESERVATIONS CLOSED</span></div>`
+      :d.spotsLeft===0
       ?`<div style="background:#1a1a1a;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.08)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.04em">SOLD OUT</span>
@@ -1848,8 +1855,8 @@ function renderDropDetail(){
     const friendsQty=Math.min(Math.max(qty,1),maxFriends);
     const friendsTotal=d.price*friendsQty;
 
-    // Blocked by this host — read-only Drop, no reservation (see BRD §16.x).
-    if(isBlockedByHost(d)){
+    // Cannot reserve (blocked / underage / not on list / reservations closed / canceled) — read-only Drop.
+    if(cannotReserve(d)){
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:16px;display:flex;flex-direction:column;align-items:center;gap:5px">
         <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.78);text-align:center;line-height:1.5">Reservations currently not available to you.</div>
         <div style="font-size:12px;color:rgba(255,255,255,0.5);text-align:center;line-height:1.5">Please contact the host for any questions.</div>
