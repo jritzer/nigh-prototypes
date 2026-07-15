@@ -3039,6 +3039,7 @@ function renderMenu(){
   if(S.menuSub==='privacy')return renderPrivacy();
   if(S.menuSub==='activitylog')return renderActivityLog();
   if(S.menuSub==='qrcodes')return renderQRCodes();
+  if(S.menuSub==='requeststickers')return renderRequestStickers();
   if(S.menuSub==='followers')return renderFollowers();
   if(S.menuSub==='followlink')return renderFollowLink();
   if(S.menuSub==='followrequests')return renderFollowRequests();
@@ -3518,12 +3519,87 @@ function renderQRCodes(){
       <div style="font-size:13px;font-weight:600">No stickers linked yet</div>
       <div style="font-size:11px;margin-top:6px">Tap "Activate Sticker" to link your first sticker</div>
     </div>`}
-    <div style="margin-top:16px;padding:12px 14px;background:#F8FAFC;border-radius:10px;font-size:11px;color:#64748B;line-height:1.6">
-      <div style="font-weight:700;color:#374151;margin-bottom:4px">Need stickers?</div>
-      Ask Niya to help with that.
+    <div style="margin-top:16px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px">
+      <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px">Need stickers?</div>
+      <div style="font-size:11px;color:#6B7280;line-height:1.5;margin-bottom:12px">Get Nigh stickers mailed to you. First 3 free &mdash; additional $5 each (shipping included).</div>
+      <button onclick="S.menuSub='requeststickers';render()" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">Request Stickers</button>
     </div>
   </div>`;
 }
+function renderRequestStickers(){
+  const name=(S.skName!==undefined)?S.skName:ownerDisplayName();
+  const a1=S.skAddr1||'',a2=S.skAddr2||'',city=S.skCity||'',st=S.skState||'',zip=S.skZip||'';
+  const qty=S.skQty||3;
+  const card=(S.skCard!==undefined)?S.skCard:{brand:'Visa',last4:'4821'};
+  const freeCount=Math.min(qty,3);
+  const paidCount=Math.max(0,qty-3);
+  const total=paidCount*5;
+  const needCard=total>0;
+  const hasCard=!!card;
+  const addrOk=name.trim()&&a1.trim()&&city.trim()&&st.trim()&&zip.trim();
+  const canSubmit=addrOk&&(!needCard||hasCard);
+  const ist='width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;font-family:inherit;box-sizing:border-box';
+  const lab=(t,opt)=>`<label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6B7280;display:block;margin-bottom:4px">${t}${opt?'':' <span style="color:#EF4444">*</span>'}</label>`;
+
+  if(S.skDone){
+    return `${hdr('Request Stickers',null,"S.skDone=false;S.menuSub='qrcodes';render()")}
+    <div style="padding:32px 20px;text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:#F0FDF4;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#16A34A">${ic('check',30)}</div>
+      <div style="font-size:18px;font-weight:800;color:#111827;margin-bottom:6px">Stickers on the way!</div>
+      <div style="font-size:13px;color:#6B7280;line-height:1.55;margin-bottom:20px">We're mailing ${qty} sticker${qty>1?'s':''} to ${name}.<br/>${a1}${a2?', '+a2:''}, ${city}, ${st} ${zip}</div>
+      <div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px;text-align:left;max-width:320px;margin:0 auto 22px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span>$0.00</span></div>
+        ${paidCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${paidCount} additional &times; $5</span><span>$${total}.00</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#111827;border-top:1px solid #E5E7EB;padding-top:8px;margin-top:4px"><span>Total${total>0?` &middot; ${card.brand} &middot;&middot;&middot;&middot;${card.last4}`:''}</span><span>$${total}.00</span></div>
+      </div>
+      <button onclick="S.skDone=false;S.menuSub='qrcodes';render()" style="background:#0E4EF5;color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer">Done</button>
+    </div>`;
+  }
+
+  return `${hdr('Request Stickers','Get Nigh stickers mailed to you',"S.menuSub='qrcodes';render()")}
+  <div style="padding:16px 16px 28px;overflow-y:auto">
+    <div style="background:#EEF2FF;border-radius:12px;padding:13px 15px;font-size:12px;color:#3730A3;line-height:1.55;margin-bottom:18px">
+      Your first <strong>3 stickers are free</strong>. Additional stickers are <strong>$5 each</strong> (shipping included).
+    </div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Ship to</div>
+    <div style="margin-bottom:14px">${lab('Full name')}<input value="${name.replace(/"/g,'&quot;')}" oninput="S.skName=this.value" onblur="render()" placeholder="Full name" style="${ist}"/></div>
+    <div style="margin-bottom:14px">${lab('Street address')}<input value="${a1.replace(/"/g,'&quot;')}" oninput="S.skAddr1=this.value" onblur="render()" placeholder="123 Main St" style="${ist}"/></div>
+    <div style="margin-bottom:14px">${lab('Apt / Suite',true)}<input value="${a2.replace(/"/g,'&quot;')}" oninput="S.skAddr2=this.value" onblur="render()" placeholder="Apt, suite, unit (optional)" style="${ist}"/></div>
+    <div style="display:grid;grid-template-columns:1fr 66px 92px;gap:8px;margin-bottom:16px">
+      <div>${lab('City')}<input value="${city.replace(/"/g,'&quot;')}" oninput="S.skCity=this.value" onblur="render()" placeholder="City" style="${ist}"/></div>
+      <div>${lab('State')}<input value="${st.replace(/"/g,'&quot;')}" maxlength="2" oninput="S.skState=this.value.toUpperCase()" onblur="render()" placeholder="CO" style="${ist};text-transform:uppercase"/></div>
+      <div>${lab('ZIP')}<input value="${zip.replace(/"/g,'&quot;')}" inputmode="numeric" maxlength="10" oninput="S.skZip=this.value" onblur="render()" placeholder="80202" style="${ist}"/></div>
+    </div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9CA3AF;margin-bottom:10px">Quantity</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:12px 16px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:700;color:#111827">Stickers</div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <button onclick="S.skQty=Math.max(1,(S.skQty||3)-1);render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#111827;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">&minus;</button>
+        <div style="font-size:16px;font-weight:800;color:#111827;min-width:24px;text-align:center">${qty}</div>
+        <button onclick="S.skQty=(S.skQty||3)+1;render()" style="width:32px;height:32px;border-radius:50%;border:1px solid #E5E7EB;background:#F9FAFB;color:#0E4EF5;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">+</button>
+      </div>
+    </div>
+    <div style="background:#F8FAFC;border:1px solid #E5E7EB;border-radius:12px;padding:13px 16px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${freeCount} free sticker${freeCount>1?'s':''}</span><span style="color:#16A34A;font-weight:700">Free</span></div>
+      ${paidCount>0?`<div style="display:flex;justify-content:space-between;font-size:12px;color:#374151;margin-bottom:6px"><span>${paidCount} additional &times; $5</span><span>$${total}.00</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:800;color:#111827;border-top:1px solid #E5E7EB;padding-top:9px;margin-top:5px"><span>Total</span><span>${total>0?'$'+total+'.00':'Free'}</span></div>
+    </div>
+    ${needCard?(hasCard?`
+    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:12px 14px;margin-bottom:8px">
+      <div style="width:34px;height:24px;border-radius:5px;background:#1A1F71;display:flex;align-items:center;justify-content:center;color:#fff;font-size:7px;font-weight:800;flex-shrink:0">${card.brand.toUpperCase()}</div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:700;color:#111827">${card.brand} &middot;&middot;&middot;&middot;${card.last4}</div><div style="font-size:10px;color:#9CA3AF">Card on file &middot; charged when your order ships</div></div>
+      <span style="color:#16A34A">${ic('check',16)}</span>
+    </div>`:`
+    <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:13px 15px;margin-bottom:8px">
+      <div style="font-size:12px;font-weight:700;color:#78350F;margin-bottom:4px">Payment method required</div>
+      <div style="font-size:11px;color:#92400E;line-height:1.5;margin-bottom:10px">Your host account needs a credit card on file to order paid stickers.</div>
+      <button onclick="S.skCard={brand:'Visa',last4:'4821'};render()" style="background:#0E4EF5;color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer">Add a card</button>
+    </div>`):''}
+    <div style="font-size:10.5px;color:#9CA3AF;line-height:1.5;margin:10px 2px 16px">${needCard?'A credit card on file is required for paid sticker orders. ':''}The first 3 stickers per host account are free. Allow 5&ndash;7 business days for delivery.</div>
+    <button onclick="${canSubmit?'S.skDone=true;render()':'void 0'}" style="width:100%;background:${canSubmit?'#0E4EF5':'#D1D5DB'};color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:${canSubmit?'pointer':'default'};font-family:inherit">${total>0?'Place Order &middot; $'+total+'.00':'Request '+qty+' Free Sticker'+(qty>1?'s':'')}</button>
+  </div>`;
+}
+
 function renderFollowers(){
   if(!canView('guests'))return `${hdr('Followers',null,"S.menuSub=null;render()")}<div style="padding:14px 16px">${roleGate('Followers')}</div>`;
   const a=acct();
