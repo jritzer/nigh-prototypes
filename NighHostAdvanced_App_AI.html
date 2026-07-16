@@ -253,7 +253,7 @@ grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7
 trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 seatIc:'<path d="M4 18v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M6 12V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5"/><line x1="4" y1="21" x2="4" y2="18"/><line x1="20" y1="21" x2="20" y2="18"/>',
 qr:'<rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z"/>',
-ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><line x1="14" y1="6" x2="14" y2="18" stroke-dasharray="2 2"/>',
+ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><line x1="14" y1="6" x2="14" y2="18" stroke-dasharray="2 2"/>',ticketNav:'<path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/>',
 store:'<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h4v-5h6v5h4a1 1 0 001-1V8"/>',
 users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',
 menu2:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
@@ -3054,7 +3054,7 @@ function renderMenu(){
   const a=acct();
   const billingDesc=a.enterprise?`Managed by ${a.parentOrg}`:'Plan, billing & usage';
   const items=[
-    {ic:'ticket',   l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
+    {ic:'ticketNav', tilt:true, l:'Reservations',  d:'Orders & finances',                  act:"S.menuSub='payout';render()", show:canView('orders')},
     {ic:'users',    l:'Guests',       d:'Guest lists & import',      act:"S.menuSub='customers';render()", show:canView('guests')},
     {ic:'radio',    l:'Followers',    d:(isPersonal()?customerList:myCustomers()).filter(c=>c.follower).length+' followers',  act:"S.followersTab='list';S.menuSub='followers';render()", show:canView('guests'), badge:acct().privateAcct?followRequests.filter(r=>r.status==='pending').length:0},
     {ic:'chart',    l:'Analytics',    d:'Performance & metrics',                   act:"S.menuSub='analytics';render()", show:canView('analytics')},
@@ -3065,7 +3065,7 @@ function renderMenu(){
   ].filter(m=>m.show);
   return `${hdr('Menu',a.name)}
   <div style="padding:14px 16px">
-    ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}${m.badge?`<span style="margin-left:6px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle">${m.badge}</span>`:''}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
+    ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${m.tilt?`<div style="transform:rotate(-45deg)">${ic(m.ic,18)}</div>`:ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}${m.badge?`<span style="margin-left:6px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle">${m.badge}</span>`:''}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
     <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">User account &amp; preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
 
     <!-- Build your community — host follow-link share card -->
