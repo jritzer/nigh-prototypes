@@ -1829,11 +1829,11 @@ function renderDropDetail(){
 
     <!-- About this Drop -->
     <div>
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.50);letter-spacing:0.08em;margin-bottom:10px">ABOUT THIS DROP</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.65">${d.desc}</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">ABOUT THIS DROP</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.desc}</div>
     </div>
 
-    ${d.myTicket&&d.locationDetails?`<div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-top:20px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">GETTING THERE</div><div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.locationDetails}</div></div>`:''}
+    ${d.myTicket&&d.locationDetails?`<div style="margin-top:20px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">GETTING THERE</div><div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.locationDetails}</div></div>`:''}
 
   </div>
 
