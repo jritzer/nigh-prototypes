@@ -8543,6 +8543,7 @@ function pushTimePicker(pid,val,skey){
   const items=times.map(t=>{const isSel=t===val;return`<div onclick="S.${skey}='${t}';S.pushOpenTimePicker=null;render()" style="padding:9px 16px;font-size:13px;cursor:pointer;color:${isSel?'#fff':'#111827'};background:${isSel?c.color:'transparent'};font-weight:${isSel?'600':'400'};">${fmt(t)}</div>`;}).join('');
   return trigger+`<div style="background:#fff;border:1px solid ${c.color};border-top:none;border-radius:0 0 10px 10px;max-height:180px;overflow-y:auto;">${items}</div>`;
 }
+var dropMediaPolicy={photo:false,video:true,solid:false}; // Set by Nigh Support: which cover media a host may use (default: video only)
 function pushModal(){
   const c=cfg();
   const step=S.pushStep||1;
@@ -8705,17 +8706,25 @@ function pushModal(){
         <textarea id="push-desc" placeholder="Enter drop details" maxlength="${descMax}" rows="5" oninput="document.getElementById('push-desc-count').textContent=this.value.length+'/${descMax}'" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;resize:none;box-sizing:border-box;font-family:inherit;line-height:1.5;" onfocus="this.style.borderColor='${c.color}'" onblur="this.style.borderColor='#E5E7EB'"></textarea>
         <div style="text-align:right;margin-top:3px;"><span id="push-desc-count" style="font-size:10px;color:#9CA3AF;">0/${descMax}</span></div>
       </div>
-      <div>
-        <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;">Drop Video or Picture <span style="color:#EF4444;">*</span></label>
-        <label style="display:block;cursor:pointer;">
-          <input type="file" accept="image/*,video/*" style="display:none;"/>
-          <div style="border:1.5px dashed #D1D5DB;border-radius:10px;padding:10px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#F9FAFB'">
-            <div style="width:36px;height:54px;border-radius:6px;border:1.5px solid #D1D5DB;background:#E5E7EB;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">📷</div>
-            <div><div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Portrait Orientation</div><div style="font-size:11px;color:#6B7280;">Click to upload · Portrait recommended</div></div>
-            <div style="margin-left:auto;color:#9CA3AF;flex-shrink:0;">›</div>
-          </div>
-        </label>
-      </div>
+      ${(function(){
+        var mp=(typeof dropMediaPolicy!=='undefined'&&dropMediaPolicy)||{photo:false,video:true,solid:false};
+        var canUpload=mp.photo||mp.video;
+        var accepts=[mp.photo?'image/*':'',mp.video?'video/*':''].filter(Boolean).join(',');
+        var mlabel=(mp.photo&&mp.video)?'Drop Video or Picture':mp.video?'Drop Video':mp.photo?'Drop Picture':'Drop Cover';
+        var req=canUpload&&!mp.solid;
+        if(!canUpload){
+          return '<div><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;">Drop Cover</label><div style="border:1.5px solid #E5E7EB;border-radius:10px;padding:12px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px;"><div style="width:36px;height:54px;border-radius:6px;background:linear-gradient(140deg,#0E4EF5,#6226E9);flex-shrink:0;"></div><div style="font-size:12px;color:#6B7280;line-height:1.5;">A colored background will be used for this Drop.</div></div></div>';
+        }
+        return '<div>'
+          +'<label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;">'+mlabel+' <span style="'+(req?'color:#EF4444;':'font-weight:400;color:#9CA3AF;')+'">'+(req?'*':'(optional)')+'</span></label>'
+          +'<label style="display:block;cursor:pointer;">'
+          +'<input type="file" accept="'+accepts+'" style="display:none;"/>'
+          +'<div style="border:1.5px dashed #D1D5DB;border-radius:10px;padding:10px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px;">'
+          +'<div style="width:36px;height:54px;border-radius:6px;border:1.5px solid #D1D5DB;background:#E5E7EB;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;">'+((mp.video&&!mp.photo)?'🎥':'📷')+'</div>'
+          +'<div><div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px;">Portrait Orientation</div><div style="font-size:11px;color:#6B7280;">'+((mp.video&&!mp.photo)?'Click to upload a video · Portrait recommended':'Click to upload · Portrait recommended')+'</div>'+(mp.solid?'<div style="font-size:10px;color:#9CA3AF;margin-top:2px;">If skipped, a colored background will be used</div>':'')+'</div>'
+          +'<div style="margin-left:auto;color:#9CA3AF;flex-shrink:0;">›</div>'
+          +'</div></label></div>';
+      })()}
       <div>
         <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block;">Drop Partners <span style="font-weight:400;color:#9CA3AF;">(optional — up to ${c.maxPartners||3})</span></label>
         ${pushPartners.length>0?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">${pushPartners.map(h=>{const p=partnersList2.find(x=>x.handle===h);return`<div style="display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:18px;background:#EEF2FF;border:1px solid ${c.color};font-size:11px;color:${c.color};font-weight:500;">${p?p.name:h}<button onclick="S.pushPartners=(S.pushPartners||[]).filter(x=>x!=='${h}');render()" style="background:none;border:none;padding:0;cursor:pointer;color:${c.color};display:flex;margin-left:2px;">✕</button></div>`;}).join('')}</div>`:''}
