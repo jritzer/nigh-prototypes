@@ -1864,6 +1864,7 @@ function checkCreateSave(){
   sb.style.color=ok?'#0E4EF5':'#D1D5DB';
   sb.style.cursor=ok?'pointer':'default';
 }
+var dropMediaPolicy={photo:false,video:true,solid:false}; // Set by Nigh Support: which cover media a host may use (default: video only)
 function renderCreate(){
   if(!canFull('drops'))return `${hdr('Create',null,"go('home')")}<div style="padding:14px 16px">${roleGate('Create Drop')}</div>`;
   const clone=S.cloneFrom!==null?drops[S.cloneFrom]:null;
@@ -2141,24 +2142,31 @@ function renderCreate(){
       <textarea id="drop-desc" placeholder="Enter drop details" maxlength="${descMax}" rows="7" oninput="document.getElementById('desc-count').textContent=this.value.length+'/${descMax}';document.getElementById('desc-count').style.color=this.value.length>${descMax*0.9}?'#EF4444':'#9CA3AF'" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;resize:none;font-family:inherit;box-sizing:border-box;line-height:1.5" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'">${descVal}</textarea>
       <div style="text-align:right;margin-top:3px"><span id="desc-count" style="font-size:10px;color:#9CA3AF">${descVal.length}/${descMax}</span></div>
     </div>
-    <div style="margin-bottom:14px">
-      <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Video or Picture <span style="font-weight:400;color:#9CA3AF">(optional)</span></label>
-      <label style="display:block;cursor:pointer">
-        <input type="file" accept="image/*,video/*" capture="environment" style="display:none"/>
-        <div style="border:1.5px dashed #D1D5DB;border-radius:10px;padding:10px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px">
-          <div style="width:36px;height:54px;border-radius:6px;border:1.5px solid #D1D5DB;background:#E5E7EB;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <div style="color:#9CA3AF">${ic('cam',16)}</div>
-          </div>
-          <div>
-            <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px">Portrait Orientation</div>
-            <div style="font-size:11px;color:#6B7280">Tap to open camera or photos</div>
-            <div style="font-size:10px;color:#9CA3AF;margin-top:2px">JPG, PNG, MP4, or MOV — Video up to 30s</div>
-            <div style="font-size:10px;color:#9CA3AF;margin-top:1px">If skipped, a colored background will be used</div>
-          </div>
-          <div style="margin-left:auto;color:#9CA3AF;flex-shrink:0">${ic('chevRight',16)}</div>
-        </div>
-      </label>
-    </div>
+    ${(function(){
+      var mp=(typeof dropMediaPolicy!=='undefined'&&dropMediaPolicy)||{photo:false,video:true,solid:false};
+      var canUpload=mp.photo||mp.video;
+      var accepts=[mp.photo?'image/*':'',mp.video?'video/*':''].filter(Boolean).join(',');
+      var mlabel=(mp.photo&&mp.video)?'Drop Video or Picture':mp.video?'Drop Video':mp.photo?'Drop Picture':'Drop Cover';
+      var fmts=[mp.photo?'JPG or PNG':'',mp.video?'MP4 or MOV — Video up to 30s':''].filter(Boolean).join(' · ');
+      var req=canUpload&&!mp.solid;
+      if(!canUpload){
+        return '<div style="margin-bottom:14px"><label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">Drop Cover</label><div style="border:1.5px solid #E5E7EB;border-radius:10px;padding:12px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px"><div style="width:36px;height:54px;border-radius:6px;background:linear-gradient(140deg,#0E4EF5,#6226E9);flex-shrink:0"></div><div style="font-size:12px;color:#6B7280;line-height:1.5">A colored background will be used for this Drop.</div></div></div>';
+      }
+      return '<div style="margin-bottom:14px">'
+        +'<label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block">'+mlabel+' <span style="font-weight:400;color:'+(req?'#EF4444':'#9CA3AF')+'">'+(req?'*':'(optional)')+'</span></label>'
+        +'<label style="display:block;cursor:pointer">'
+        +'<input type="file" accept="'+accepts+'" capture="environment" style="display:none"/>'
+        +'<div style="border:1.5px dashed #D1D5DB;border-radius:10px;padding:10px 14px;background:#F9FAFB;display:flex;align-items:center;gap:12px">'
+        +'<div style="width:36px;height:54px;border-radius:6px;border:1.5px solid #D1D5DB;background:#E5E7EB;display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="color:#9CA3AF">'+ic('cam',16)+'</div></div>'
+        +'<div>'
+        +'<div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:2px">Portrait Orientation</div>'
+        +'<div style="font-size:11px;color:#6B7280">'+((mp.video&&!mp.photo)?'Tap to record or upload a video':'Tap to open camera or photos')+'</div>'
+        +'<div style="font-size:10px;color:#9CA3AF;margin-top:2px">'+fmts+'</div>'
+        +(mp.solid?'<div style="font-size:10px;color:#9CA3AF;margin-top:1px">If skipped, a colored background will be used</div>':'')
+        +'</div>'
+        +'<div style="margin-left:auto;color:#9CA3AF;flex-shrink:0">'+ic('chevRight',16)+'</div>'
+        +'</div></label></div>';
+    })()}
     <div style="margin-bottom:14px">
       <label style="font-size:12px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Drop Partners <span style="font-weight:400;color:#9CA3AF">(optional — up to ${maxP})</span></label>
       ${selPartners.length>0?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">

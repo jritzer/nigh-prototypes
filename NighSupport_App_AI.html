@@ -4138,6 +4138,11 @@ ${(()=>{
     </div>
     <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Controls whether the Niya in-app AI assistant (icon, tab, and prompts) appears for this host account. Disable to hold Niya back from this host while it rolls out to a limited group before general availability.</div>
 
+    ${secHdr('Drop Media')}
+    <div style="font-size:11px;color:#9CA3AF;margin-bottom:8px">Controls what this host can use as a Drop cover. If no upload type is allowed, a solid colored background is used automatically.</div>
+    ${[['dmVideo','Allow video upload',true],['dmPhoto','Allow photo upload',false],['dmSolid','Allow solid colored background (no upload)',false]].map(function(r){var key=r[0],label=r[1],def=r[2];var val=(o[key]!==undefined)?o[key]:def;return '<label style="display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer"><input type="checkbox" '+(val?'checked':'')+' onchange="(function(){var x=orgs.find(g=>g.id===\''+o.id+'\');if(x)x.'+key+'=this.checked;}).call(this)" style="width:16px;height:16px;accent-color:#0E4EF5;flex-shrink:0"/><span style="font-size:0.85rem;color:#0f172a">'+label+'</span></label>';}).join('')}
+    <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Default is video only. Enable additional options to let this host upload photos or skip media for a solid background.</div>
+
     ${secHdr('Behavior')}
     <div class="field"><label class="label">No-Show Policy</label>
       <select class="select">${['Standard — capture after 15 min','Strict — capture immediately','Lenient — no capture, warning only'].map((p,i)=>`<option value="${['standard','strict','lenient'][i]}" ${o.noShowPolicy===['standard','strict','lenient'][i]?'selected':''}>${p}</option>`).join('')}</select>
