@@ -1487,11 +1487,7 @@ function renderFeed(){
       ?'to bottom,#0a0a1a,#0d1b4a'
       :'to bottom,#0a0a1a,#1a0a2e';
     // Parse closes in for big H/M/S display
-    const [hPart,mPart]=d.closesIn.includes('h')
-      ?d.closesIn.split(' ')
-      :[null,d.closesIn];
-    const hrs=hPart?hPart.replace('h',''):'00';
-    const mins=mPart?mPart.replace('m',''):'14';
+    const cdu=cdUnits(d.closesIn);
     return`<div class="feed-card">
       <!-- BG photo/video -->
       <div style="position:absolute;inset:0;background:linear-gradient(${bgGrad})">
@@ -1513,9 +1509,7 @@ function renderFeed(){
           :`<div style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);padding:8px 18px;border-radius:14px;text-align:center">
               <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;margin-bottom:4px">TIME LEFT TO RESERVE</div>
               <div style="display:flex;align-items:baseline;gap:2px;justify-content:center">
-                ${d.closesIn.includes('h')?`<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">${hrs}</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65);margin-right:5px">h</span>`:''}
-                <span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">${mins}</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65);margin-right:5px">m</span>
-                <span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">08</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)">s</span>
+                ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
               </div>
             </div>`}
       </div>
@@ -1665,6 +1659,7 @@ function checkDropPassword(){
 // Hosts that have blocked the current user (prototype demo). A blocked guest can still open the Drop
 // (e.g. from a friend-forwarded link) and view it, but cannot reserve or share it.
 const BLOCKED_BY_HOSTS=['@shineboulder'];
+function cdUnits(ci){ci=ci||'';var d=(ci.match(/(\d+)\s*d/)||[])[1];var h=(ci.match(/(\d+)\s*h/)||[])[1];var m=(ci.match(/(\d+)\s*m/)||[])[1];if(d)return h?[[d,'d'],[h,'h']]:[[d,'d']];if(h)return [[h,'h'],[m||'00','m']];return [[m||'00','m'],['08','s']];}
 function isBlockedByHost(d){return !!(d&&d.host&&BLOCKED_BY_HOSTS.indexOf(d.host.handle)>=0);}
 function underageForDrop(d){var min=d&&d.age21?21:(d&&d.age18?18:0);return min>0&&typeof currentUser.age==='number'&&currentUser.age<min;}
 function notOnList(d){return !!(d&&d.visibility&&d.visibility!=='public'&&d.onList===false);}
@@ -1729,9 +1724,7 @@ function renderDropDetail(){
   const pplLabel=qty===1?'Just Me':qty===2?'Me + 1':`Me + ${qty-1}`;
 
   // Timer parsing
-  const [hPart,mPart]=d.closesIn.includes('h')?d.closesIn.split(' '):[null,d.closesIn];
-  const hrs=hPart?hPart.replace('h',''):'00';
-  const mins=mPart?mPart.replace('m',''):'00';
+  const cdu=cdUnits(d.closesIn);
 
   return`
   <!-- Sticky header + timer -->
@@ -1770,9 +1763,7 @@ function renderDropDetail(){
         </div>`
       :`<div style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px">
           <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT TO RESERVE</span>
-          ${d.closesIn.includes('h')?`<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">${hrs}</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65);margin-right:5px">h</span>`:''}
-          <span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">${mins}</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65);margin-right:5px">m</span>
-          <span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">08</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)">s</span>
+          ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
         </div>`}
   </div>
 
