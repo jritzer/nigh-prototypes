@@ -8471,23 +8471,9 @@ function render(){
       else{sp.style.height='0';}
     },0);
   }else{scrEl.style.scrollPaddingTop='';}
-  // Drop Detail: "Scroll for details" cue — shows when content overflows, hides near the bottom
+  // Drop Detail "Scroll for details" cue removed — the reserve view is designed to fit without scrolling
   var _dsc=document.getElementById('dropScrollCue');
-  if(S.scr==='dropDetail'){
-    if(!_dsc){
-      _dsc=document.createElement('div');_dsc.id='dropScrollCue';
-      _dsc.innerHTML='<div style="display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:0.03em;color:rgba(255,255,255,0.6)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>Scroll for details</div>';
-      document.getElementById('app').appendChild(_dsc);
-    }
-    (function(){
-      var tb=document.querySelector('.tb');var tbh=tb?tb.offsetHeight:0;
-      var bar=scrEl.children[scrEl.children.length-1];var barh=bar?bar.offsetHeight:0;
-      _dsc.style.cssText='position:absolute;left:0;right:0;bottom:'+(tbh+barh)+'px;height:42px;z-index:40;pointer-events:none;background:linear-gradient(to bottom,rgba(10,10,10,0) 0%,#0a0a0a 82%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;transition:opacity 0.25s';
-      var _updDsc=function(){var d=document.getElementById('dropScrollCue');if(!d)return;var ov=scrEl.scrollHeight>scrEl.clientHeight+24;var ab=scrEl.scrollTop+scrEl.clientHeight>=scrEl.scrollHeight-32;d.style.display=(S.scr==='dropDetail'&&ov&&!ab)?'flex':'none';};
-      if(!scrEl._dscBound){scrEl._dscBound=true;scrEl.addEventListener('scroll',_updDsc);}
-      setTimeout(_updDsc,0);
-    })();
-  }else if(_dsc){_dsc.style.display='none';}
+  if(_dsc){_dsc.remove();}
   // Back-of-ticket scroll cue: hide fade when content fits (no overflow)
   setTimeout(function(){var bs=document.querySelectorAll('[id^="tkback_"]');for(var i=0;i<bs.length;i++){var el=bs[i];var f=document.getElementById('tkfade_'+el.id.substring(7));if(f)f.style.opacity=(el.scrollHeight-el.clientHeight>12)?'1':'0';}},0);
   // Join request toast
