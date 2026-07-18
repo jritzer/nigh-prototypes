@@ -2178,7 +2178,7 @@ function renderDropDetail(){
         +'</div>';
       }).join('');
       var dots='<div style="display:flex;justify-content:center;gap:6px;margin-top:8px">'
-        +d.slots.map(function(s,si){return '<button onclick="S.moView='+si+';render()" style="width:'+(si===moView?'20px':'7px')+';height:7px;border-radius:4px;border:none;background:'+(si===moView?'#0E4EF5':'rgba(255,255,255,0.25)')+';cursor:pointer;transition:all 0.2s;padding:0"></button>';}).join('')
+        +d.slots.map(function(s,si){return '<button onclick="S.moView='+si+';render()" style="width:8px;height:8px;border-radius:50%;border:none;background:'+(si===moView?'#0E4EF5':'rgba(255,255,255,0.25)')+';cursor:pointer;transition:all 0.2s;padding:0"></button>';}).join('')
         +'</div>';
       return expired+pools+'<div>'
         +'<div ontouchstart="S._tx=event.touches[0].clientX" ontouchend="var dx=event.changedTouches[0].clientX-(S._tx||0);if(dx<-40&&S.moView<'+(N-1)+'){S.moView++;render()}else if(dx>40&&S.moView>0){S.moView--;render()}" style="overflow:hidden">'
