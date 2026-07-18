@@ -292,6 +292,8 @@ function holdMMSS(){var ms=S.holdUntil?Math.max(0,S.holdUntil-Date.now()):0;var 
 function holdBanner(){if(!S.holdUntil)return '';return '<div style="display:flex;align-items:center;gap:8px;background:rgba(14,78,245,0.14);border:1px solid rgba(14,78,245,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px">'+ic('clock',15,'#93C5FD')+'<span style="font-size:12px;font-weight:700;color:#93C5FD">Held for you · '+holdMMSS()+'</span><span style="font-size:11px;color:rgba(255,255,255,0.55);margin-left:2px">We\'re holding your picks while you check out.</span></div>';}
 function isMulti(d){return !!(d&&d.slots&&d.slots.length);}
 function isSeated(d){return !!(d&&d.seating&&d.sections&&d.sections.length);}
+// The one time-slot the user has committed offers to (offers carry unique ids per drop). Enforces one-window-per-reservation.
+function moCommittedSlot(d){var res=null;(d&&d.slots||[]).forEach(function(s){if(s.offers.some(function(o){return (S.moQty||{})[o.id]>0;}))res=s;});return res;}
 function moOffers(d){var a=[];(d.slots||[]).forEach(function(sl){(sl.offers||[]).forEach(function(of){a.push(of);});});return a;}
 function moMinPrice(d){if(isSeated(d)){var sp=d.sections.map(function(s){return s.price;});return sp.length?Math.min.apply(null,sp):0;}var ps=moOffers(d).map(function(o){return o.price;});return ps.length?Math.min.apply(null,ps):0;}
 function moOfferCount(d){return moOffers(d).length;}
@@ -1902,13 +1904,13 @@ function renderDropDetail(){
   // Multi-offer + seated-event state
   const multi=isMulti(d);
   const seated=isSeated(d);
-  if((multi||seated)&&S.moDropId!==d.id){S.moDropId=d.id;S.moSlot=multi?d.slots[0].id:null;S.moQty={};S.seatSec=seated?d.sections[0].id:null;S.seatSel={};}
+  if((multi||seated)&&S.moDropId!==d.id){S.moDropId=d.id;S.moView=0;S.moQty={};S.seatSec=seated?d.sections[0].id:null;S.seatSel={};}
   if(!multi&&!seated&&S.holdUntil){S.holdUntil=null;S.holdExpired=false;}
-  const selSlot=multi?(S.moSlot||d.slots[0].id):null;
-  const curSlot=multi?(d.slots.find(function(s){return s.id===selSlot;})||d.slots[0]):null;
   const moQtyMap=S.moQty||{};
-  const moTotalQty=multi?(curSlot.offers.reduce(function(t,o){return t+(moQtyMap[o.id]||0);},0)):0;
-  const moTotalPrice=multi?curSlot.offers.reduce(function(t,o){return t+(moQtyMap[o.id]||0)*o.price;},0):0;
+  const moCommitted=multi?moCommittedSlot(d):null; // the slot the user has picked offers from (or null)
+  const moView=multi?Math.min(Math.max(S.moView||0,0),d.slots.length-1):0; // visible window in the carousel
+  const moTotalQty=multi?Object.keys(moQtyMap).reduce(function(t,k){return t+(moQtyMap[k]||0);},0):0;
+  const moTotalPrice=multi?moOffers(d).reduce(function(t,o){return t+(moQtyMap[o.id]||0)*o.price;},0):0;
   // Seated-event selection
   const selSec=seated?(S.seatSec||d.sections[0].id):null;
   const curSec=seated?(d.sections.find(function(s){return s.id===selSec;})||d.sections[0]):null;
@@ -1964,6 +1966,7 @@ function renderDropDetail(){
         <div style="font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Drop Details</div>
       </div>
       ${!isBlockedByHost(d)?`<button onclick="shareDrop(S.drop)" title="Share" style="background:none;border:none;padding:6px;cursor:pointer;color:rgba(255,255,255,0.8);display:flex;flex-shrink:0">${ic('share',20)}</button>`:''}
+      ${(function(){var fg=friendsGoingForDrop(d.id);var active=fg.length>0;return `<button onclick="${active?"S.friendsDropId='"+d.id+"';S.friendsPast=false;modal('friendsGoing')":"void(0)"}" title="${active?fg.length+' friend'+(fg.length>1?'s':'')+' going':'No friends going yet'}" style="background:none;border:none;padding:6px;cursor:${active?'pointer':'default'};color:${active?'#EC1977':'rgba(255,255,255,0.35)'};display:flex;flex-shrink:0;position:relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="${active?'#EC1977':'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>${active?`<span style="position:absolute;top:2px;right:0;background:#EC1977;color:#fff;font-size:8px;font-weight:800;min-width:13px;height:13px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 2px;border:1.5px solid #0a0a0a">${fg.length}</span>`:''}</button>`;})()}
       ${headsUpOn()&&!isBlockedByHost(d)?`<button onclick="modal('headsup-drop-'+S.drop)" title="Heads Up" style="background:none;border:none;padding:6px;cursor:pointer;color:rgba(255,255,255,0.8);display:flex;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></button>`:''}
       <div style="position:relative;flex-shrink:0">
         <button onclick="S.dropMenu=S.dropMenu?null:S.drop;render()" style="background:none;border:none;padding:6px;cursor:pointer;color:rgba(255,255,255,0.8);font-size:22px;font-weight:700;letter-spacing:2px;line-height:1">&#x22EF;</button>
@@ -2008,7 +2011,10 @@ function renderDropDetail(){
 
     <!-- Attribution: Hosted by + Partnering with (under title, kept separate from the drop location) -->
     <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:2px">Hosted by <button onclick="openProfile('${d.host.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${d.host.name}</button></div>
-    ${d.partners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with ${d.partners.map(p=>`<button onclick="openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:'<div style="margin-bottom:16px"></div>'}
+    ${d.partners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with ${d.partners.map(p=>`<button onclick="openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:'<div style="margin-bottom:14px"></div>'}
+
+    <!-- Summary (unlabeled; formerly the "About this Drop" section) -->
+    <div style="font-size:13px;color:rgba(255,255,255,0.72);line-height:1.55;margin-bottom:18px">${d.desc}</div>
 
     <!-- Price (single-offer drops only; multi/seated show prices inline per option) -->
     ${multi||isSeated(d)?'':`<div style="margin-bottom:20px">
@@ -2017,58 +2023,85 @@ function renderDropDetail(){
         :`<span style="font-size:24px;font-weight:700;color:#22C55E">$${d.price}</span><span style="font-size:14px;color:rgba(255,255,255,0.60);margin-left:4px">per spot</span><span style="font-size:11px;color:rgba(255,255,255,0.35);margin-left:8px">before tax</span>`}
     </div>`}
 
-    <!-- Date / Time pill — level 1 priority -->
-    <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:16px;margin-bottom:12px">
-      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
-        <span style="font-size:18px;font-weight:700;color:#fff">${detailDay==='Today'||detailDay==='Tomorrow'?`${detailDay}, ${fullDate}`:`${detailDay}, ${fullDate}`}</span>
+    <!-- Date + Location (combined) -->
+    <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:15px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:18px;font-weight:700;color:#fff">${detailDay}, ${fullDate}</div>
+        ${multi||isSeated(d)?'':`<div style="font-size:14px;font-weight:300;color:#fff;margin-top:3px">${arrivalLine}</div>`}
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-top:9px">${d.host.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.host.addr}</div>
       </div>
-      ${multi||isSeated(d)?'':`<div style="font-size:15px;font-weight:300;color:#fff">${arrivalLine}</div>`}
+      <button onclick="openMaps('${d.host.addr}')" title="Directions" style="background:none;border:none;padding:4px;color:rgba(255,255,255,0.55);flex-shrink:0;cursor:pointer;display:flex">${ic('map',20)}</button>
     </div>
 
-    ${multi&&!d.myTicket&&!cannotReserve(d)?`
+    ${(d.myTicket&&d.locationDetails)?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">GETTING THERE</div><div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.locationDetails}</div></div>`:''}
+
+    <!-- Friends going (compact; header icon covers the empty state) -->
+    ${friendsOn.length?`<div onclick="S.friendsDropId=null;S.friendsPast=false;modal('friendsGoing')" style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;cursor:pointer">
+      <div style="display:flex">${(friendsOn.length>5?friendsOn.slice(0,4):friendsOn).map((f,i)=>`<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid #1c1c1c;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-left:${i>0?'-8px':'0'}">${f.av}</div>`).join('')}${friendsOn.length>5?`<div style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.12);border:2px solid #1c1c1c;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-left:-8px">+${friendsOn.length-4}</div>`:''}</div>
+      <span style="flex:1;font-size:12px;font-weight:600;color:rgba(255,255,255,0.85)">${(()=>{const n=friendsOn.length,nm=i=>friendsOn[i].name.split(' ')[0];if(n===1)return nm(0)+' is going';if(n===2)return nm(0)+' & '+nm(1)+' are going';return nm(0)+', '+nm(1)+' +'+(n-2)+' more going';})()}</span>
+      <span style="color:rgba(255,255,255,0.3)">${ic('right',16)}</span>
+    </div>`:''}
+
+    ${multi&&!d.myTicket&&!cannotReserve(d)?(function(){
+      var N=d.slots.length;
+      var shift=moView*100/N;
+      return `
     ${holdBanner()}
     ${S.holdExpired&&!S.holdUntil?`<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">${ic('info',15,'#FCD34D')}</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select to continue.</span></div>`:''}
-    <!-- Windows (accordion): tap a window to reveal its offers -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:10px">PICK A WINDOW, THEN YOUR OFFERS</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        ${d.slots.map(function(s){
-          var sel=s.id===selSlot;
-          var sLeft=s.offers.reduce(function(t,o){return t+(o.left||0);},0);
-          var full=sLeft<=0;
-          var head='<button onclick="S.moSlot=\''+s.id+'\';S.moQty={};render()" style="width:100%;text-align:left;background:none;border:none;padding:14px 15px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
-            +'<div style="width:20px;height:20px;border-radius:50%;border:2px solid '+(sel?'#0E4EF5':'rgba(255,255,255,0.3)')+';flex-shrink:0;display:flex;align-items:center;justify-content:center">'+(sel?'<div style=\'width:10px;height:10px;border-radius:50%;background:#0E4EF5\'></div>':'')+'</div>'
-            +'<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;color:#fff">'+s.window+'</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">'+s.offers.length+' offers · '+(full?'sold out':sLeft+' spots left')+'</div></div>'
-            +(full?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:13px;font-weight:700;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
-            +'</button>';
-          var body='';
-          if(sel){
-            body='<div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:8px">'
-              +s.offers.map(function(o){
-                var q=(moQtyMap[o.id]||0);var out=(o.left||0)<=0;var low=(o.left||0)>0&&(o.left||0)<=3;var ek=d.id+'_'+o.id;var exp=!!(S.offerExpand&&S.offerExpand[ek]);
-                return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px 13px;opacity:'+(out?'0.5':'1')+'">'
-                  +'<div style="display:flex;align-items:flex-start;gap:12px">'
-                    +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+o.name+'</div>'
-                      +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:3px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+(out?'sold out':o.left+' left')+'</span></div>'
-                    +'</div>'
-                    +(out?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0;margin-top:4px">Sold out</span>'
-                      :'<div style="display:flex;align-items:center;border:1.5px solid rgba(255,255,255,0.5);border-radius:20px;flex-shrink:0">'
-                       +'<button onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.max(0,(m[\''+o.id+'\']||0)-1);S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(q>0?'0.85':'0.25')+');line-height:1;cursor:pointer">−</button>'
-                       +'<span style="font-size:14px;font-weight:700;color:#fff;width:24px;text-align:center">'+q+'</span>'
-                       +'<button onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.min('+o.left+',(m[\''+o.id+'\']||0)+1);S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(q<o.left?'0.85':'0.25')+');line-height:1;cursor:pointer">+</button>'
-                      +'</div>')
-                  +'</div>'
-                  +(o.desc?'<div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;margin-top:8px'+(exp?'':';display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden')+'">'+o.desc+'</div>'
-                     +'<button onclick="if(!S.offerExpand)S.offerExpand={};S.offerExpand[\''+ek+'\']=!S.offerExpand[\''+ek+'\'];render()" style="background:none;border:none;padding:5px 0 0;font-size:11px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">'+(exp?'Hide details ▲':'Details ▼')+'</button>'
-                    :'')
-                +'</div>';
-              }).join('')
-            +'</div>';
-          }
-          return '<div style="background:#1c1c1c;border:1.5px solid '+(sel?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;overflow:hidden">'+head+body+'</div>';
-        }).join('')}
+    <!-- Windows carousel: swipe / arrows to switch windows; offers show in full -->
+    <div style="margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em">ARRIVAL WINDOW ${moView+1} OF ${N}</div>
+        <div style="display:flex;gap:8px">
+          <button ${moView<=0?'disabled':''} onclick="if(S.moView>0){S.moView--;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:${moView<=0?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)'};color:rgba(255,255,255,${moView<=0?'0.25':'0.85'});font-size:16px;line-height:1;cursor:${moView<=0?'default':'pointer'};display:flex;align-items:center;justify-content:center">‹</button>
+          <button ${moView>=N-1?'disabled':''} onclick="if(S.moView<${N-1}){S.moView++;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:${moView>=N-1?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)'};color:rgba(255,255,255,${moView>=N-1?'0.25':'0.85'});font-size:16px;line-height:1;cursor:${moView>=N-1?'default':'pointer'};display:flex;align-items:center;justify-content:center">›</button>
+        </div>
       </div>
-    </div>`:''}
+      <div ontouchstart="S._tx=event.touches[0].clientX" ontouchend="var dx=event.changedTouches[0].clientX-(S._tx||0);if(dx<-40&&S.moView<${N-1}){S.moView++;render()}else if(dx>40&&S.moView>0){S.moView--;render()}" style="overflow:hidden">
+        <div style="display:flex;width:${N*100}%;transition:transform 0.28s ease;transform:translateX(-${shift}%)">
+          ${d.slots.map(function(s,si){
+            var sLeft=s.offers.reduce(function(t,o){return t+(o.left||0);},0);
+            var full=sLeft<=0;
+            var locked=!!(moCommitted&&moCommitted.id!==s.id);
+            var isCommitted=!!(moCommitted&&moCommitted.id===s.id);
+            var panel='<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px">'
+              +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:14px">'
+                +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px">'
+                  +'<div style="min-width:0"><div style="font-size:16px;font-weight:800;color:#fff">'+s.window+'</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">'+s.offers.length+' offers · '+(full?'sold out':sLeft+' spots left')+'</div></div>'
+                  +(full?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
+                +'</div>'
+                +(locked?'<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:9px 11px;margin-bottom:10px"><span style="font-size:11px;color:#FCD34D;font-weight:600;flex:1;line-height:1.4">Reserving the '+moCommitted.window+' window. Clear it to pick this time.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.2);border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit;white-space:nowrap">Clear</button></div>':'')
+                +'<div style="display:flex;flex-direction:column;gap:8px">'
+                +s.offers.map(function(o){
+                  var q=(moQtyMap[o.id]||0);var out=(o.left||0)<=0;var low=(o.left||0)>0&&(o.left||0)<=3;
+                  var canDec=!locked&&q>0;var canInc=!locked&&!out&&q<(o.left||0);
+                  return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px 13px;opacity:'+(out||locked?'0.55':'1')+'">'
+                    +'<div style="display:flex;align-items:flex-start;gap:12px">'
+                      +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+o.name+'</div>'
+                        +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:3px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+(out?'sold out':o.left+' left')+'</span></div>'
+                      +'</div>'
+                      +(out?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0;margin-top:4px">Sold out</span>'
+                        :'<div style="display:flex;align-items:center;border:1.5px solid rgba(255,255,255,'+(locked?'0.15':'0.5')+');border-radius:20px;flex-shrink:0">'
+                         +'<button '+(canDec?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.max(0,(m[\''+o.id+'\']||0)-1);if(!m[\''+o.id+'\'])delete m[\''+o.id+'\'];S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canDec?'0.85':'0.2')+');line-height:1;cursor:'+(canDec?'pointer':'default')+'">−</button>'
+                         +'<span style="font-size:14px;font-weight:700;color:#fff;width:24px;text-align:center">'+q+'</span>'
+                         +'<button '+(canInc?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.min('+o.left+',(m[\''+o.id+'\']||0)+1);S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canInc?'0.85':'0.2')+');line-height:1;cursor:'+(canInc?'pointer':'default')+'">+</button>'
+                        +'</div>')
+                    +'</div>'
+                    +(o.desc?'<div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;margin-top:8px">'+o.desc+'</div>':'')
+                  +'</div>';
+                }).join('')
+                +'</div>'
+              +'</div>'
+            +'</div>';
+            return panel;
+          }).join('')}
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:6px;margin-top:12px">
+        ${d.slots.map(function(s,si){return '<button onclick="S.moView='+si+';render()" style="width:'+(si===moView?'20px':'7px')+';height:7px;border-radius:4px;border:none;background:'+(si===moView?'#0E4EF5':'rgba(255,255,255,0.25)')+';cursor:pointer;transition:all 0.2s;padding:0"></button>';}).join('')}
+      </div>
+    </div>`;})():''}
 
     ${seated&&!d.myTicket&&!cannotReserve(d)?`
     ${holdBanner()}
@@ -2102,45 +2135,6 @@ function renderDropDetail(){
       </div>
     </div>`:''}
 
-    <!-- Venue row (tappable → profile/map) -->
-    <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:14px">
-      <button onclick="openMaps('${d.host.addr}')" style="width:100%;background:none;border:none;padding:0;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">${d.host.name}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.60);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.host.addr}</div>
-        </div>
-        <div style="color:rgba(255,255,255,0.55);flex-shrink:0">${ic('map',20)}</div>
-      </button>
-    </div>
-
-    <!-- Friends section -->
-    <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:10px 14px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em">${friendsOn.length?'FRIENDS GOING':'FRIENDS'}</div>
-        ${friendsOn.length>5?`<button onclick="S.friendsDropId=null;S.friendsPast=false;modal('friendsGoing')" style="background:none;border:none;padding:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit">View all ${friendsOn.length}</button>`:''}
-      </div>
-      ${d.myTicket&&(S.ticketPrivacy[d.myTicket]||'friends')==='only_me'?`
-      <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border-radius:8px;padding:6px 10px;margin-bottom:8px">
-        <svg width="11" height="11" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span style="font-size:11px;color:rgba(255,255,255,0.40)">Your attendance is private</span>
-        <button onclick="modal('ticketPrivacy_${d.myTicket}')" style="margin-left:auto;background:none;border:none;font-size:10px;font-weight:600;color:rgba(14,78,245,0.8);cursor:pointer;font-family:inherit;padding:0;white-space:nowrap">Change</button>
-      </div>`:''}
-      ${friendsOn.length?`
-      <div onclick="S.friendsDropId=null;S.friendsPast=false;modal('friendsGoing')" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer">
-        ${(friendsOn.length>5?friendsOn.slice(0,4):friendsOn).map(f=>`
-        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">${f.av}</div>`).join('')}
-        ${friendsOn.length>5?`<div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.20);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0">+${friendsOn.length-4}</div>`:''}
-      </div>`:''}
-    </div>
-
-    <!-- About this Drop -->
-    <div>
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">ABOUT THIS DROP</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.desc}</div>
-    </div>
-
-    ${d.myTicket&&d.locationDetails?`<div style="margin-top:20px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:6px">GETTING THERE</div><div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">${d.locationDetails}</div></div>`:''}
-
   </div>
 
   <!-- Fixed bottom bar -->
@@ -2170,7 +2164,7 @@ function renderDropDetail(){
     if(multi&&!isMine){
       const ready=moTotalQty>0;
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);text-align:center">${ready?`${moTotalQty} item${moTotalQty>1?'s':''} · ${curSlot.window}`:'Select at least one offer to reserve'}</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);text-align:center">${ready?`${moTotalQty} item${moTotalQty>1?'s':''} · ${moCommitted?moCommitted.window:''}`:'Select at least one offer to reserve'}</div>
         <button ${ready?'':'disabled'} onclick="go('placeOrder',{drop:S.drop})" style="width:100%;background:${ready?'#0E4EF5':'rgba(255,255,255,0.10)'};color:${ready?'#fff':'rgba(255,255,255,0.4)'};border:none;border-radius:24px;padding:12px 32px;font-size:14px;font-weight:700;cursor:${ready?'pointer':'not-allowed'};box-shadow:${ready?'4px -4px 0px rgba(0,0,0,0.3)':'none'}">${ready?`Review Order · $${moTotalPrice.toFixed(2)}`:'Review Order'}</button>
       </div>`;
     }
@@ -2252,7 +2246,7 @@ function renderPlaceOrder(){
   const seated=isSeated(d);
   let moItems=[],moQtyTotal=0,moSub=0,moWindow='';
   if(multi){
-    const slot=d.slots.find(function(s){return s.id===(S.moSlot||d.slots[0].id);})||d.slots[0];
+    const slot=moCommittedSlot(d)||d.slots[0];
     moWindow=slot.window;
     slot.offers.forEach(function(o){var q=(S.moQty||{})[o.id]||0;if(q>0){moItems.push({name:o.name,price:o.price,qty:q});moQtyTotal+=q;moSub+=q*o.price;}});
     S.moOrder={window:moWindow,items:moItems,qty:moQtyTotal,subtotal:moSub};
@@ -8338,6 +8332,8 @@ function render(){
   if(S.scr!=='ticketCollection'&&S.collFlip){S.collFlip={};}
   var _tcStay=(S.scr==='ticketCollection'&&S._lastScr==='ticketCollection');
   var _tcScroll=_tcStay?scrEl.scrollTop:0;
+  var _ddStay=(S.scr==='dropDetail'&&S._lastScr==='dropDetail');
+  var _ddScroll=_ddStay?scrEl.scrollTop:0;
   const onFeed=S.scr==='feed';
   const onTickets=S.scr==='ticketCollection';
   scrEl.className=onFeed?'feed-mode':(onTickets?'tickets-mode':'');
@@ -8465,6 +8461,9 @@ function render(){
     setTimeout(function(){var el=document.getElementById('tkcard_'+_ft);if(el){var cr=el.getBoundingClientRect(),sr=scrEl.getBoundingClientRect();var hd=document.getElementById('tkColHeader');var hh=hd?hd.offsetHeight:92;scrEl.scrollTop+=(cr.top-sr.top)-hh-12;}if(typeof updateTicketScrollbar==='function')updateTicketScrollbar();},0);
   } else if(_tcStay){
     scrEl.scrollTop=_tcScroll;
+  } else if(_ddStay){
+    // Preserve scroll position while staying on the Drop Detail screen (selecting offers, hold ticker)
+    scrEl.scrollTop=_ddScroll;
   } else if(S.modal){
     // Preserve scroll when opening a modal overlay
   } else {
