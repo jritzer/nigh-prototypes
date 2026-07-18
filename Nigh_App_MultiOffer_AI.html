@@ -688,6 +688,35 @@ const feedDrops=[
        {id:'o6',name:'Sports Physical',price:55,left:2,desc:'School or league physical with the standard form completed and signed before you leave.'}]}
    ]},
 
+  // ── Windows × assigned seats (pick a claim window AND an exact seat) — geofenced in-venue ──
+  {id:'GF03',title:'Ball Arena — In-Seat Upgrade',
+   host:{name:'Ball Arena',handle:'@ballarena',short:'BA',addr:'1000 Chopper Cir, Denver, CO'},
+   locationDetails:'Take your new seat directly — an usher scans your updated QR at the section entrance. Your original seat is released automatically.',
+   partners:[{handle:'@nuggets',name:'Denver Nuggets'}],status:'Live',timing:'Arrival Window',start:'7:00 PM',endTime:'8:30 PM',date:'Apr 19',
+   closesIn:'1h 45m',startsIn:'20m',price:35,cap:120,spotsLeft:46,age21:false,
+   media:'video',maxPerUser:4,liked:false,likeCount:51,
+   geofenced:true,seating:true,schedule:'windows',select:'seats',
+   desc:'In-arena only. Move down to a better seat mid-game — pick when you want to move and exactly which seat you want.',
+   slug:'ballarena/UPGRADE',
+   slots:[
+     {id:'s1',window:'End of Q1',closeIn:'25m',offers:[]},
+     {id:'s2',window:'Halftime',closeIn:'1h 10m',offers:[]},
+     {id:'s3',window:'End of Q3',closeIn:'1h 45m',offers:[]}
+   ],
+   sections:[
+     {id:'court',name:'Courtside',price:180,desc:'First rows off the floor — closest possible view, drink service at your seat.',rows:[
+       {row:'A',seats:[{n:1,taken:true},{n:2},{n:3},{n:4,taken:true},{n:5},{n:6}]},
+       {row:'B',seats:[{n:1},{n:2,taken:true},{n:3},{n:4},{n:5},{n:6}]}
+     ]},
+     {id:'lower',name:'Lower Bowl',price:75,desc:'Sideline lower bowl with a full view of both baskets.',rows:[
+       {row:'C',seats:[{n:1},{n:2},{n:3,taken:true},{n:4},{n:5},{n:6},{n:7},{n:8}]},
+       {row:'D',seats:[{n:1,taken:true},{n:2},{n:3},{n:4},{n:5},{n:6},{n:7,taken:true},{n:8}]}
+     ]},
+     {id:'club',name:'Club Level',price:35,desc:'Club concourse access with padded seats and shorter concession lines.',rows:[
+       {row:'E',seats:[{n:1},{n:2},{n:3},{n:4},{n:5},{n:6},{n:7},{n:8}]}
+     ]}
+   ]},
+
   {id:'D001',title:'Nike Air Max Day Access',
    host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},locationDetails:'Enter at the 29th St entrance and take the stairs to the 2nd-floor studio. Look for the Nigh sign at check-in. Street parking on 29th, or the 30th St garage two blocks north.',
    partners:[{handle:'@titosvodka',name:"Tito's Vodka"},{handle:'@redbull',name:'Red Bull'},{handle:'@complex',name:'Complex'},{handle:'@footlocker',name:'Foot Locker'},{handle:'@hypebeast',name:'Hypebeast'}],
@@ -2100,8 +2129,11 @@ function renderDropDetail(){
   const sel=dropSelect(d), sched=dropSchedule(d), inv=dropInventory(d);
   const multi=isMulti(d)&&sel==='quantity';   // quantity engine (fixed OR windows)
   const seated=isSeated(d);                    // seat-map engine
-  const windowed=multi&&sched==='windows';     // needs the window carousel
-  if((multi||seated)&&S.moDropId!==d.id){S.moDropId=d.id;S.moView=0;S.moQty={};S.seatSec=seated?d.sections[0].id:null;S.seatSel={};S.holdExpired=false;}
+  const windowed=(multi||seated)&&sched==='windows';  // this drop has arrival windows
+  const seatWindowed=seated&&sched==='windows';       // pick a window AND a seat
+  if((multi||seated)&&S.moDropId!==d.id){S.moDropId=d.id;S.moView=0;S.moQty={};S.seatSec=seated?d.sections[0].id:null;S.seatSel={};S.seatWin=seatWindowed?d.slots[0].id:null;S.holdExpired=false;}
+  const seatWin=seatWindowed?(S.seatWin||d.slots[0].id):null;
+  const seatWinSlot=seatWindowed?(d.slots.find(function(s){return s.id===seatWin;})||d.slots[0]):null;
   if(S.holdUntil){S.holdUntil=null;} // the hold only runs on the Place Order screen, never on Drop Detail
   const moQtyMap=S.moQty||{};
   const moCommitted=multi?moCommittedSlot(d):null; // the slot the user has picked offers from (or null)
@@ -2283,9 +2315,20 @@ function renderDropDetail(){
 
     ${seated&&!d.myTicket&&!cannotReserve(d)?`
     ${S.holdExpired&&!S.holdUntil?`<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">${ic('info',15,'#FCD34D')}</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select your seats to continue.</span></div>`:''}
+    ${seatWindowed?`<!-- Arrival window picker (seat drops that also have windows) -->
+    <div style="margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">1 · PICK YOUR ARRIVAL WINDOW</div>
+      <div style="display:flex;gap:8px">
+        ${d.slots.map(function(s){var sw=s.id===seatWin;return '<button onclick="S.seatWin=\''+s.id+'\';render()" style="flex:1;min-width:0;background:'+(sw?'rgba(14,78,245,0.15)':'#1c1c1c')+';border:1.5px solid '+(sw?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:12px;padding:9px 10px;cursor:pointer;font-family:inherit;text-align:left">'
+          +'<div style="font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+s.window+'</div>'
+          +'<div style="font-size:9px;font-weight:700;color:#EC1977;margin-top:2px">'+(s.closeIn||'—')+' left</div>'
+        +'</button>';}).join('')}
+      </div>
+    </div>`:''}
+
     <!-- Section selector -->
     <div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">1 · CHOOSE A SECTION</div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">${seatWindowed?'2':'1'} · CHOOSE A SECTION</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         ${d.sections.map(function(sec){var sel=sec.id===selSec;var open=(sec.rows||[]).reduce(function(t,r){return t+r.seats.filter(function(s){return !s.taken;}).length;},0);return '<div style="width:100%;background:'+(sel?'rgba(14,78,245,0.15)':'#1c1c1c')+';border:1.5px solid '+(sel?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:12px;padding:13px 15px;display:flex;align-items:center;gap:12px">'
           +'<button onclick="S.seatSec=\''+sec.id+'\';render()" style="background:none;border:none;padding:0;flex:1;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:12px">'
@@ -2298,7 +2341,7 @@ function renderDropDetail(){
 
     <!-- Seat map for chosen section -->
     <div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">2 · PICK YOUR SEATS <span style="color:rgba(255,255,255,0.3);font-weight:600">· ${curSec.name}</span></div>
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:8px">${seatWindowed?'3':'2'} · PICK YOUR SEATS <span style="color:rgba(255,255,255,0.3);font-weight:600">· ${curSec.name}</span></div>
       <div style="background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px">
         <div style="text-align:center;font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);border-radius:6px;padding:5px;margin-bottom:14px">STAGE</div>
         ${curSec.rows.map(function(r){return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center"><span style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);width:14px;flex-shrink:0">'+r.row+'</span>'
@@ -2351,7 +2394,7 @@ function renderDropDetail(){
       const ready=seatTotalQty>0;
       const seatLabels=seatKeys.map(function(k){var p=k.split('__');var sec=d.sections.find(function(s){return s.id===p[1];});return (sec?sec.name:'')+' '+p[2];});
       return`<div style="position:sticky;bottom:0;background:#111;border-top:1px solid rgba(255,255,255,0.1);padding:14px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:10px">
-        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);text-align:center">${ready?`${seatTotalQty} seat${seatTotalQty>1?'s':''} · ${seatLabels.join(', ')}`:'Tap the seats you want on the map'}</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.55);text-align:center">${ready?`${seatTotalQty} seat${seatTotalQty>1?'s':''} · ${seatLabels.join(', ')}${seatWindowed&&seatWinSlot?' · '+seatWinSlot.window:''}`:'Tap the seats you want on the map'}</div>
         <button ${ready?'':'disabled'} onclick="go('placeOrder',{drop:S.drop})" style="width:100%;background:${ready?'#0E4EF5':'rgba(255,255,255,0.10)'};color:${ready?'#fff':'rgba(255,255,255,0.4)'};border:none;border-radius:24px;padding:12px 32px;font-size:14px;font-weight:700;cursor:${ready?'pointer':'not-allowed'};box-shadow:${ready?'4px -4px 0px rgba(0,0,0,0.3)':'none'}">${ready?`Review Order · $${seatTotalPrice.toFixed(2)}`:'Review Order'}</button>
       </div>`;
     }
@@ -2419,7 +2462,7 @@ function renderDropDetail(){
 function renderPlaceOrder(){
   const d=feedDrops[S.drop];
   // Multi-offer / seated: build the order from the chosen window + selected offers, or picked seats
-  const multi=isMulti(d);
+  const multi=isMulti(d)&&dropSelect(d)==='quantity'; // seats drops may also carry slots — never treat them as quantity
   const seated=isSeated(d);
   let moItems=[],moQtyTotal=0,moSub=0,moWindow='';
   if(multi){
@@ -2428,7 +2471,9 @@ function renderPlaceOrder(){
     slot.offers.forEach(function(o){var q=(S.moQty||{})[o.id]||0;if(q>0){moItems.push({name:o.name,price:o.price,qty:q});moQtyTotal+=q;moSub+=q*o.price;}});
     S.moOrder={window:moWindow,items:moItems,qty:moQtyTotal,subtotal:moSub};
   }else if(seated){
-    moWindow='Assigned seats';
+    // Seat drops can also carry arrival windows — pick up the chosen window if there is one
+    var sWinSlot=(d.slots&&d.slots.length>1)?(d.slots.find(function(s){return s.id===(S.seatWin||d.slots[0].id);})||d.slots[0]):null;
+    moWindow=sWinSlot?sWinSlot.window:'Assigned seats';
     seatSelList().filter(function(k){return k.split('__')[0]===d.id;}).forEach(function(k){var p=k.split('__');var sec=d.sections.find(function(s){return s.id===p[1];});var lbl=(sec?sec.name:'')+' '+p[2];moItems.push({name:lbl,price:sec?sec.price:0,qty:1});moQtyTotal++;moSub+=sec?sec.price:0;});
     S.moOrder={window:moWindow,items:moItems,qty:moQtyTotal,subtotal:moSub,seated:true};
   }
@@ -2442,7 +2487,7 @@ function renderPlaceOrder(){
   const useCredits=(hasAutoApply||S.useNCredits===true)&&d.price>0&&creditBal>0;
   const creditAmt=useCredits?Math.min(creditBal,subtotal+tax):0;
   const total=subtotal+tax-creditAmt;
-  const windowed=multi&&dropSchedule(d)==='windows';
+  const windowed=(multi||seated)&&dropSchedule(d)==='windows';
   const isWindow=windowed;
   const arrivalLine=windowed?`Arrive between ${moWindow}`:(!multi&&!seated&&d.timing==='Arrival Window'?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`);
   // Full month expansion for date
@@ -2628,12 +2673,12 @@ function renderPlaceOrder(){
 function viewNewTicket(){
   const d=feedDrops[S.drop]||feedDrops[0];
   const nid='TKNEW_'+d.id;
-  const multi=isMulti(d);
+  const multi=isMulti(d)&&dropSelect(d)==='quantity'; // seats drops may also carry slots — never treat them as quantity
   const seated=isSeated(d);
   if(!myTickets.some(t=>t.id===nid)){
     if(multi||seated){
       const mo=S.moOrder||{window:'',items:[],qty:1,subtotal:0};
-      const windowed=multi&&dropSchedule(d)==='windows';
+      const windowed=(multi||seated)&&dropSchedule(d)==='windows';
       // Windowed: split the window into start/end. Fixed / seated: use the event start time.
       const wparts=(mo.window||'').split('–').map(function(s){return s.trim();});
       const wStart=windowed?(wparts[0]||mo.window):d.start;const wEnd=windowed?(wparts[1]||''):'';
@@ -2664,13 +2709,13 @@ function viewNewTicket(){
 }
 function renderOrderConfirmation(){
   const d=feedDrops[S.drop];
-  const multi=isMulti(d);
+  const multi=isMulti(d)&&dropSelect(d)==='quantity'; // seats drops may also carry slots — never treat them as quantity
   const seated=isSeated(d);
   const mo=(multi||seated)?(S.moOrder||{window:'',items:[],qty:1}):null;
   const qty=(multi||seated)?mo.qty:S.orderQty;
   const isFree=(multi||seated)?false:d.price===0;
   const confNum='ORD-'+Math.random().toString(36).slice(2,8).toUpperCase();
-  const windowed=multi&&dropSchedule(d)==='windows';
+  const windowed=(multi||seated)&&dropSchedule(d)==='windows';
   const isWindow=windowed||(!multi&&!seated&&d.timing==='Arrival Window');
   const arrivalLine=windowed?`Arrive between ${mo.window}`:(!multi&&!seated&&d.timing==='Arrival Window'?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`);
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
