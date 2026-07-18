@@ -329,13 +329,13 @@ function offerCardHTML(d,slot,o,locked){
       +'<span style="font-size:14px;font-weight:700;color:#fff;width:24px;text-align:center">'+q+'</span>'
       +'<button '+(canInc?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=(m[\''+o.id+'\']||0)+1;S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canInc?'0.85':'0.2')+');line-height:1;cursor:'+(canInc?'pointer':'default')+'">+</button>'
     +'</div>';
-  return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:10px 12px;opacity:'+(out||locked?'0.55':'1')+'">'
+  return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:9px 12px;opacity:'+(out||locked?'0.55':'1')+'">'
     +'<div style="display:flex;align-items:flex-start;gap:12px">'
       +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+o.name+'</div>'
         +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:2px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+leftTxt+'</span></div>'
       +'</div>'+stepper
     +'</div>'
-    +(o.desc?'<div style="font-size:11.5px;color:rgba(255,255,255,0.55);line-height:1.4;margin-top:6px">'+o.desc+'</div>':'')
+    +(o.desc?'<div style="font-size:11.5px;color:rgba(255,255,255,0.55);line-height:1.35;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+o.desc+'</div>':'')
   +'</div>';
 }
 // Drop-level "N left today" banners for pooled inventory
@@ -2105,17 +2105,17 @@ function renderDropDetail(){
   </div>
 
   <!-- Scrollable content -->
-  <div style="background:#0a0a0a;padding:22px 16px 150px">
+  <div style="background:#0a0a0a;padding:16px 16px 130px">
 
     <!-- Title -->
-    <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:5px">${d.title}</div>
+    <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:4px">${d.title}</div>
 
     <!-- Attribution: Hosted by + Partnering with (under title, kept separate from the drop location) -->
     <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:2px">Hosted by <button onclick="openProfile('${d.host.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${d.host.name}</button></div>
     ${d.partners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with ${d.partners.map(p=>`<button onclick="openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:'<div style="margin-bottom:14px"></div>'}
 
     <!-- Summary (unlabeled; formerly the "About this Drop" section) -->
-    <div style="font-size:12px;color:rgba(255,255,255,0.72);line-height:1.45;margin-bottom:10px${(multi||seated)?';display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden':''}">${d.desc}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.72);line-height:1.4;margin-bottom:9px${(multi||seated)?';display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden':''}">${d.desc}</div>
 
     <!-- Price (single-offer drops only; multi/seated show prices inline per option) -->
     ${multi||isSeated(d)?'':`<div style="margin-bottom:20px">
@@ -2163,13 +2163,13 @@ function renderDropDetail(){
         var locked=!!(moCommitted&&moCommitted.id!==s.id);
         var isCommitted=!!(moCommitted&&moCommitted.id===s.id);
         return '<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px">'
-          +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:13px">'
-            +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">'
+          +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:12px">'
+            +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">'
               +'<div style="min-width:0;font-size:19px;font-weight:800;color:#fff">'+s.window+'</div>'
               +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
             +'</div>'
             +(locked?'<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:8px 11px;margin-bottom:9px"><span style="font-size:11px;color:#FCD34D;font-weight:600;flex:1;line-height:1.4">Reserving the '+moCommitted.window+' window. Clear it to pick this time.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.2);border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit;white-space:nowrap">Clear</button></div>':'')
-            +'<div style="display:flex;flex-direction:column;gap:7px">'
+            +'<div style="display:flex;flex-direction:column;gap:6px">'
             +s.offers.map(function(o){return offerCardHTML(d,s,o,locked);}).join('')
             +'</div>'
           +'</div>'
