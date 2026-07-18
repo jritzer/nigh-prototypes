@@ -294,6 +294,59 @@ function isMulti(d){return !!(d&&d.slots&&d.slots.length);}
 function isSeated(d){return !!(d&&d.seating&&d.sections&&d.sections.length);}
 // The one time-slot the user has committed offers to (offers carry unique ids per drop). Enforces one-window-per-reservation.
 function moCommittedSlot(d){var res=null;(d&&d.slots||[]).forEach(function(s){if(s.offers.some(function(o){return (S.moQty||{})[o.id]>0;}))res=s;});return res;}
+
+// ── Reservation engine: three orthogonal knobs (inferred from data for back-compat) ──
+// schedule: 'fixed' (one time) | 'windows' (several times in the day)
+// select:   'quantity' (steppers) | 'seats' (seat map)
+// inventory:'per_slot' | 'pooled' (shared daily supply) | 'seat' | 'slot_capacity' (window headcount cap)
+function dropSchedule(d){if(d.schedule)return d.schedule;if(d.slots&&d.slots.length>1)return 'windows';return 'fixed';}
+function dropSelect(d){if(d.select)return d.select;if(isSeated(d))return 'seats';return 'quantity';}
+function dropInventory(d){if(d.inventory)return d.inventory;if(isSeated(d))return 'seat';if(d.pools)return 'pooled';return 'per_slot';}
+function usesEngine(d){return !!((d.slots&&d.slots.length)||isSeated(d)||d.schedule);}
+// Inventory math (cart-aware, so counts decrement live as the user picks)
+function cartQty(oid){return (S.moQty||{})[oid]||0;}
+function poolCartUsed(d,pid){var n=0;moOffers(d).forEach(function(o){if(o.pool===pid)n+=cartQty(o.id);});return n;}
+function poolLeft(d,pid){var p=d.pools&&d.pools[pid];return (p?p.left:0)-poolCartUsed(d,pid);}
+function slotCartUsed(d,slot){var n=0;(slot&&slot.offers||[]).forEach(function(o){if(o.counts!==false)n+=cartQty(o.id);});return n;}
+function slotCapLeft(d,slot){return slot&&slot.capacity!=null?slot.capacity-slotCartUsed(d,slot):Infinity;}
+function offerSoldOut(d,o){if(o.pool)return (d.pools&&d.pools[o.pool]?d.pools[o.pool].left:0)<=0;return (o.left||0)<=0;}
+function offerCanAdd(d,slot,o){
+  if(o.pool){if(poolLeft(d,o.pool)<=0)return false;}
+  else{if((o.left||0)-cartQty(o.id)<=0)return false;}
+  if(slot&&slot.capacity!=null&&o.counts!==false&&slotCapLeft(d,slot)<=0)return false;
+  return true;
+}
+// One offer card (used by both the windowed carousel and the fixed single-time list)
+function offerCardHTML(d,slot,o,locked){
+  var q=cartQty(o.id);var out=offerSoldOut(d,o);
+  var canInc=!locked&&!out&&offerCanAdd(d,slot,o);var canDec=!locked&&q>0;
+  var low=!o.pool&&(o.left||0)>0&&(o.left||0)<=3;
+  var leftTxt=out?'sold out':(o.pool?Math.max(0,poolLeft(d,o.pool))+' left today':(o.left||0)+' left');
+  var stepper=out
+    ?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0;margin-top:4px">Sold out</span>'
+    :'<div style="display:flex;align-items:center;border:1.5px solid rgba(255,255,255,'+(locked?'0.15':'0.5')+');border-radius:20px;flex-shrink:0">'
+      +'<button '+(canDec?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.max(0,(m[\''+o.id+'\']||0)-1);if(!m[\''+o.id+'\'])delete m[\''+o.id+'\'];S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canDec?'0.85':'0.2')+');line-height:1;cursor:'+(canDec?'pointer':'default')+'">−</button>'
+      +'<span style="font-size:14px;font-weight:700;color:#fff;width:24px;text-align:center">'+q+'</span>'
+      +'<button '+(canInc?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=(m[\''+o.id+'\']||0)+1;S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canInc?'0.85':'0.2')+');line-height:1;cursor:'+(canInc?'pointer':'default')+'">+</button>'
+    +'</div>';
+  return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px 13px;opacity:'+(out||locked?'0.55':'1')+'">'
+    +'<div style="display:flex;align-items:flex-start;gap:12px">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+o.name+'</div>'
+        +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:3px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+leftTxt+'</span></div>'
+      +'</div>'+stepper
+    +'</div>'
+    +(o.desc?'<div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;margin-top:8px">'+o.desc+'</div>':'')
+  +'</div>';
+}
+// Drop-level "N left today" banners for pooled inventory
+function poolBannerHTML(d){
+  if(!d.pools)return '';
+  return Object.keys(d.pools).map(function(pid){var p=d.pools[pid];var left=Math.max(0,poolLeft(d,pid));var pct=p.total?Math.round(left/p.total*100):0;
+    return '<div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 14px;margin-bottom:10px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:12px;font-weight:700;color:#fff">'+p.name+'</span><span style="font-size:12px;font-weight:700;color:'+(left<=p.total*0.15?'#FCA5A5':'#22C55E')+'">'+left+' left today</span></div>'
+      +'<div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(left<=p.total*0.15?'#EF4444':'#0E4EF5')+'"></div></div>'
+    +'</div>';}).join('');
+}
 function moOffers(d){var a=[];(d.slots||[]).forEach(function(sl){(sl.offers||[]).forEach(function(of){a.push(of);});});return a;}
 function moMinPrice(d){if(isSeated(d)){var sp=d.sections.map(function(s){return s.price;});return sp.length?Math.min.apply(null,sp):0;}var ps=moOffers(d).map(function(o){return o.price;});return ps.length?Math.min.apply(null,ps):0;}
 function moOfferCount(d){return moOffers(d).length;}
@@ -494,6 +547,54 @@ const feedDrops=[
      {id:'s2',window:'4:00 – 6:00 PM',closeIn:'4h 20m',offers:[{id:'o3',name:'Bay Rental — 1 Hour',price:45,left:6,desc:'One hitting bay for up to 6 players, per hour (peak rate). Clubs provided free.'},{id:'o4',name:'Shareables Platter Add-On',price:32,left:10,desc:'Chips & queso, wings, and flatbread brought to your bay. Feeds 3–4.'}]},
      {id:'s3',window:'7:00 – 9:00 PM',closeIn:'7h 40m',offers:[{id:'o5',name:'Bay Rental — 2 Hours (Prime)',price:100,left:3,desc:'Two prime-time hours in one bay for up to 6 players. The busy evening slot — reserve early.'},{id:'o6',name:'Premium Bay (up to 8)',price:150,left:2,desc:'Larger premium bay with lounge seating for groups up to 8. Two-hour prime-time reservation.'}]}
    ]},
+  // ── Pooled inventory (shared daily supply across windows) + per-window capacity ──
+  {id:'MB01',title:'Sunrise Bagel Co. — Daily Bake',
+   host:{name:'Sunrise Bagel Co.',handle:'@sunrisebagel',short:'SB',addr:'1327 Pearl St, Boulder, CO'},
+   locationDetails:'Pickup counter to the right as you walk in — give your name. We bag your order fresh at your window.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'7:00 AM',endTime:'10:00 AM',date:'Apr 19',
+   closesIn:'19h 00m',startsIn:'17h',price:2.5,cap:200,spotsLeft:142,age21:false,
+   media:'video',maxPerUser:12,liked:false,likeCount:57,
+   schedule:'windows',select:'quantity',inventory:'pooled',
+   pools:{bagels:{name:'Today’s Bagels',total:200,left:142}},
+   desc:'We bake a fixed batch each morning and it sells out. Reserve your bagels from today’s supply and pick a window to grab them.',
+   slug:'sunrisebagel/BAKE',
+   slots:[
+     {id:'s1',window:'7:00 – 8:00 AM',closeIn:'1h 10m',capacity:60,offers:[
+       {id:'o1',name:'Everything Bagel',price:3,pool:'bagels',desc:'Hand-rolled, boiled, and baked; crusted with garlic, onion, poppy, sesame, and salt.'},
+       {id:'o2',name:'Sesame Bagel',price:3,pool:'bagels',desc:'Classic chewy bagel rolled in toasted white sesame seeds.'},
+       {id:'o3',name:'Plain Bagel',price:2.5,pool:'bagels',desc:'The original — crisp crust, dense chew. Great toasted with cream cheese.'},
+       {id:'o7',name:'Fresh-Squeezed OJ',price:4,left:20,counts:false,desc:'12oz cold-pressed orange juice. Add-on — doesn’t count against the daily bagel supply or window cap.'}
+     ]},
+     {id:'s2',window:'8:00 – 9:00 AM',closeIn:'2h 10m',capacity:60,offers:[
+       {id:'o4',name:'Everything Bagel',price:3,pool:'bagels',desc:'Hand-rolled, boiled, and baked; crusted with garlic, onion, poppy, sesame, and salt.'},
+       {id:'o5',name:'Jalapeño Cheddar Bagel',price:3.5,pool:'bagels',desc:'Baked with sharp cheddar and fresh jalapeño for a little heat.'},
+       {id:'o6',name:'Plain Bagel',price:2.5,pool:'bagels',desc:'The original — crisp crust, dense chew. Great toasted with cream cheese.'}
+     ]},
+     {id:'s3',window:'9:00 – 10:00 AM',closeIn:'3h 10m',capacity:60,offers:[
+       {id:'o8',name:'Sesame Bagel',price:3,pool:'bagels',desc:'Classic chewy bagel rolled in toasted white sesame seeds.'},
+       {id:'o9',name:'Everything Bagel',price:3,pool:'bagels',desc:'Hand-rolled, boiled, and baked; crusted with garlic, onion, poppy, sesame, and salt.'}
+     ]}
+   ]},
+
+  // ── Fixed time, quantity selection: ticket tiers (all at one time) ──
+  {id:'EV02',title:'Mission Ballroom — Neon Fields (Live)',
+   host:{name:'Mission Ballroom',handle:'@missionballroom',short:'MB',addr:'4242 Wynkoop St, Denver, CO'},
+   locationDetails:'Doors at 7:00 PM. Enter on Wynkoop and have your ticket QR ready. Box office to the left for will-call.',
+   partners:[{handle:'@axs',name:'AXS'}],status:'Live',timing:'Start Time',start:'8:00 PM',date:'Apr 24',
+   closesIn:'2d 6h',startsIn:'',price:55,cap:190,spotsLeft:196,age21:false,
+   media:'video',maxPerUser:8,liked:false,likeCount:88,
+   schedule:'fixed',select:'quantity',inventory:'per_slot',
+   desc:'One night, one set — pick your ticket type. General admission, the pit, or a reserved balcony lounge, all for the 8 PM show.',
+   slug:'missionballroom/NEON',
+   slots:[
+     {id:'s1',window:'8:00 PM',offers:[
+       {id:'o1',name:'General Admission',price:55,left:120,desc:'Standing-room floor access for the full show. First in, best spots.'},
+       {id:'o2',name:'The Pit (front rail)',price:75,left:30,desc:'Dedicated front-of-stage standing section, closest to the band.'},
+       {id:'o3',name:'Balcony VIP Seat',price:95,left:40,desc:'Reserved balcony seat with an elevated view and a dedicated bar.'},
+       {id:'o4',name:'Lounge Table (seats 4)',price:320,left:6,desc:'Private mezzanine table for four with bottle service and skip-the-line entry.'}
+     ]}
+   ]},
+
   {id:'D001',title:'Nike Air Max Day Access',
    host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},locationDetails:'Enter at the 29th St entrance and take the stairs to the 2nd-floor studio. Look for the Nigh sign at check-in. Street parking on 29th, or the 30th St garage two blocks north.',
    partners:[{handle:'@titosvodka',name:"Tito's Vodka"},{handle:'@redbull',name:'Red Bull'},{handle:'@complex',name:'Complex'},{handle:'@footlocker',name:'Foot Locker'},{handle:'@hypebeast',name:'Hypebeast'}],
@@ -1744,15 +1845,15 @@ function renderFeed(){
       <!-- Bottom left: title + host -->
       <div style="position:absolute;left:16px;right:78px;bottom:66px;z-index:10">
         <div style="font-size:21px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,0.5)">${d.title}</div>
-        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:6px;letter-spacing:0.01em">${feedDay} · ${isMulti(d)?d.slots.length+' arrival windows':feedTime}</div>
+        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:6px;letter-spacing:0.01em">${feedDay} · ${dropSchedule(d)==='windows'?d.slots.length+' arrival windows':feedTime}</div>
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
           <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.9)">${d.host.name}</span>
         </div>
-        ${isMulti(d)?`<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);padding:5px 11px;border-radius:20px;margin-bottom:8px">
-          <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.02em">${moOfferCount(d)} offers · ${d.slots.length} windows · from $${moMinPrice(d)}</span>
-        </div>`:isSeated(d)?`<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);padding:5px 11px;border-radius:20px;margin-bottom:8px">
-          <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.02em">Assigned seating · ${d.sections.length} sections · from $${moMinPrice(d)}</span>
-        </div>`:''}
+        ${(function(){var pill=null;
+          if(isSeated(d))pill='Assigned seating · '+d.sections.length+' sections · from $'+moMinPrice(d);
+          else if(isMulti(d)&&dropSchedule(d)==='windows')pill=moOfferCount(d)+' offers · '+d.slots.length+' windows · from $'+moMinPrice(d);
+          else if(isMulti(d))pill=moOfferCount(d)+' options · from $'+moMinPrice(d);
+          return pill?'<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);padding:5px 11px;border-radius:20px;margin-bottom:8px"><span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.02em">'+pill+'</span></div>':'';})()}
         ${d.partners.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${d.partners.map(p=>`<button onclick="event.stopPropagation();S.drop=${idx};openProfile('${p.handle}')" style="background:rgba(14,78,245,0.35);border:1px solid rgba(14,78,245,0.6);backdrop-filter:blur(4px);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:''}
         ${friendsOn.length?`<div onclick="event.stopPropagation();S.friendsDropId=null;S.friendsPast=false;S.drop=${idx};modal('friendsGoing')" style="display:flex;align-items:center;gap:7px;cursor:pointer">
           <div style="display:flex">${friendsOn.slice(0,3).map((f,i)=>`<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;margin-left:${i>0?'-6px':'0'};position:relative;z-index:${3-i}">${f.av}</div>`).join('')}</div>
@@ -1901,14 +2002,16 @@ function renderDropDetail(){
   const hiddenCount=friendsTotal.length-friendsOn.length;
   const isWindow=d.timing==='Arrival Window';
 
-  // Multi-offer + seated-event state
-  const multi=isMulti(d);
-  const seated=isSeated(d);
+  // Reservation-engine knobs (schedule × selection × inventory) drive the whole reserve UI
+  const sel=dropSelect(d), sched=dropSchedule(d), inv=dropInventory(d);
+  const multi=isMulti(d)&&sel==='quantity';   // quantity engine (fixed OR windows)
+  const seated=isSeated(d);                    // seat-map engine
+  const windowed=multi&&sched==='windows';     // needs the window carousel
   if((multi||seated)&&S.moDropId!==d.id){S.moDropId=d.id;S.moView=0;S.moQty={};S.seatSec=seated?d.sections[0].id:null;S.seatSel={};S.holdExpired=false;}
   if(S.holdUntil){S.holdUntil=null;} // the hold only runs on the Place Order screen, never on Drop Detail
   const moQtyMap=S.moQty||{};
   const moCommitted=multi?moCommittedSlot(d):null; // the slot the user has picked offers from (or null)
-  const moView=multi?Math.min(Math.max(S.moView||0,0),d.slots.length-1):0; // visible window in the carousel
+  const moView=windowed?Math.min(Math.max(S.moView||0,0),d.slots.length-1):0; // visible window in the carousel
   const moTotalQty=multi?Object.keys(moQtyMap).reduce(function(t,k){return t+(moQtyMap[k]||0);},0):0;
   const moTotalPrice=multi?moOffers(d).reduce(function(t,o){return t+(moQtyMap[o.id]||0)*o.price;},0):0;
   // Seated-event selection
@@ -1994,7 +2097,7 @@ function renderDropDetail(){
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
           <span style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.04em">SOLD OUT</span>
         </div>`
-      :multi
+      :windowed
       ?''
       :`<div style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px">
           <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT TO RESERVE</span>
@@ -2026,7 +2129,7 @@ function renderDropDetail(){
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:15px 16px;margin-bottom:14px;display:flex;align-items:flex-start;gap:12px">
       <div style="flex:1;min-width:0">
         <div style="font-size:18px;font-weight:700;color:#fff">${detailDay}, ${fullDate}</div>
-        ${multi||isSeated(d)?'':`<div style="font-size:14px;font-weight:300;color:#fff;margin-top:3px">${arrivalLine}</div>`}
+        ${windowed?'':`<div style="font-size:14px;font-weight:300;color:#fff;margin-top:3px">${arrivalLine}</div>`}
         <div style="font-size:13px;font-weight:700;color:#fff;margin-top:9px">${d.host.name}</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.host.addr}</div>
       </div>
@@ -2043,63 +2146,54 @@ function renderDropDetail(){
     </div>`:''}
 
     ${multi&&!d.myTicket&&!cannotReserve(d)?(function(){
-      var N=d.slots.length;
-      var shift=moView*100/N;
-      return `
-    ${S.holdExpired&&!S.holdUntil?`<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">${ic('info',15,'#FCD34D')}</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select to continue.</span></div>`:''}
-    <!-- Windows carousel: swipe / arrows to switch windows; offers show in full -->
-    <div style="margin-bottom:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em">ARRIVAL WINDOW ${moView+1} OF ${N}</div>
-        <div style="display:flex;gap:8px">
-          <button ${moView<=0?'disabled':''} onclick="if(S.moView>0){S.moView--;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:${moView<=0?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)'};color:rgba(255,255,255,${moView<=0?'0.25':'0.85'});font-size:16px;line-height:1;cursor:${moView<=0?'default':'pointer'};display:flex;align-items:center;justify-content:center">‹</button>
-          <button ${moView>=N-1?'disabled':''} onclick="if(S.moView<${N-1}){S.moView++;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:${moView>=N-1?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)'};color:rgba(255,255,255,${moView>=N-1?'0.25':'0.85'});font-size:16px;line-height:1;cursor:${moView>=N-1?'default':'pointer'};display:flex;align-items:center;justify-content:center">›</button>
-        </div>
-      </div>
-      <div ontouchstart="S._tx=event.touches[0].clientX" ontouchend="var dx=event.changedTouches[0].clientX-(S._tx||0);if(dx<-40&&S.moView<${N-1}){S.moView++;render()}else if(dx>40&&S.moView>0){S.moView--;render()}" style="overflow:hidden">
-        <div style="display:flex;width:${N*100}%;transition:transform 0.28s ease;transform:translateX(-${shift}%)">
-          ${d.slots.map(function(s,si){
-            var sLeft=s.offers.reduce(function(t,o){return t+(o.left||0);},0);
-            var full=sLeft<=0;
-            var locked=!!(moCommitted&&moCommitted.id!==s.id);
-            var isCommitted=!!(moCommitted&&moCommitted.id===s.id);
-            var panel='<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px">'
-              +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:14px">'
-                +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px">'
-                  +'<div style="min-width:0"><div style="font-size:16px;font-weight:800;color:#fff">'+s.window+'</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">'+s.offers.length+' offers · '+(full?'sold out':sLeft+' spots left')+'</div></div>'
-                  +(full?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
-                +'</div>'
-                +(locked?'<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:9px 11px;margin-bottom:10px"><span style="font-size:11px;color:#FCD34D;font-weight:600;flex:1;line-height:1.4">Reserving the '+moCommitted.window+' window. Clear it to pick this time.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.2);border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit;white-space:nowrap">Clear</button></div>':'')
-                +'<div style="display:flex;flex-direction:column;gap:8px">'
-                +s.offers.map(function(o){
-                  var q=(moQtyMap[o.id]||0);var out=(o.left||0)<=0;var low=(o.left||0)>0&&(o.left||0)<=3;
-                  var canDec=!locked&&q>0;var canInc=!locked&&!out&&q<(o.left||0);
-                  return '<div style="background:#151515;border:1px solid '+(q>0?'rgba(14,78,245,0.55)':'rgba(255,255,255,0.08)')+';border-radius:12px;padding:12px 13px;opacity:'+(out||locked?'0.55':'1')+'">'
-                    +'<div style="display:flex;align-items:flex-start;gap:12px">'
-                      +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff">'+o.name+'</div>'
-                        +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:3px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+(out?'sold out':o.left+' left')+'</span></div>'
-                      +'</div>'
-                      +(out?'<span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);flex-shrink:0;margin-top:4px">Sold out</span>'
-                        :'<div style="display:flex;align-items:center;border:1.5px solid rgba(255,255,255,'+(locked?'0.15':'0.5')+');border-radius:20px;flex-shrink:0">'
-                         +'<button '+(canDec?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.max(0,(m[\''+o.id+'\']||0)-1);if(!m[\''+o.id+'\'])delete m[\''+o.id+'\'];S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canDec?'0.85':'0.2')+');line-height:1;cursor:'+(canDec?'pointer':'default')+'">−</button>'
-                         +'<span style="font-size:14px;font-weight:700;color:#fff;width:24px;text-align:center">'+q+'</span>'
-                         +'<button '+(canInc?'':'disabled')+' onclick="var m=Object.assign({},S.moQty||{});m[\''+o.id+'\']=Math.min('+o.left+',(m[\''+o.id+'\']||0)+1);S.moQty=m;render()" style="background:none;border:none;padding:6px 12px;font-size:16px;color:rgba(255,255,255,'+(canInc?'0.85':'0.2')+');line-height:1;cursor:'+(canInc?'pointer':'default')+'">+</button>'
-                        +'</div>')
-                    +'</div>'
-                    +(o.desc?'<div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;margin-top:8px">'+o.desc+'</div>':'')
-                  +'</div>';
-                }).join('')
-                +'</div>'
-              +'</div>'
-            +'</div>';
-            return panel;
-          }).join('')}
-        </div>
-      </div>
-      <div style="display:flex;justify-content:center;gap:6px;margin-top:12px">
-        ${d.slots.map(function(s,si){return '<button onclick="S.moView='+si+';render()" style="width:'+(si===moView?'20px':'7px')+';height:7px;border-radius:4px;border:none;background:'+(si===moView?'#0E4EF5':'rgba(255,255,255,0.25)')+';cursor:pointer;transition:all 0.2s;padding:0"></button>';}).join('')}
-      </div>
-    </div>`;})():''}
+      var expired=(S.holdExpired&&!S.holdUntil)?('<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">'+ic('info',15,'#FCD34D')+'</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select to continue.</span></div>'):'';
+      var pools=poolBannerHTML(d);
+      // FIXED schedule → single option list (no window carousel)
+      if(!windowed){
+        var s0=d.slots[0];
+        return expired+pools
+          +'<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em;margin-bottom:10px">CHOOSE YOUR OPTIONS</div>'
+          +'<div style="display:flex;flex-direction:column;gap:8px">'
+          +s0.offers.map(function(o){return offerCardHTML(d,s0,o,false);}).join('')
+          +'</div></div>';
+      }
+      // WINDOWS schedule → swipeable carousel
+      var N=d.slots.length;var shift=moView*100/N;
+      var arrows='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+        +'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.40);letter-spacing:0.08em">ARRIVAL WINDOW '+(moView+1)+' OF '+N+'</div>'
+        +'<div style="display:flex;gap:8px">'
+        +'<button '+(moView<=0?'disabled':'')+' onclick="if(S.moView>0){S.moView--;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:'+(moView<=0?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)')+';color:rgba(255,255,255,'+(moView<=0?'0.25':'0.85')+');font-size:16px;line-height:1;cursor:'+(moView<=0?'default':'pointer')+';display:flex;align-items:center;justify-content:center">‹</button>'
+        +'<button '+(moView>=N-1?'disabled':'')+' onclick="if(S.moView<'+(N-1)+'){S.moView++;render()}" style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.18);background:'+(moView>=N-1?'rgba(255,255,255,0.04)':'rgba(255,255,255,0.1)')+';color:rgba(255,255,255,'+(moView>=N-1?'0.25':'0.85')+');font-size:16px;line-height:1;cursor:'+(moView>=N-1?'default':'pointer')+';display:flex;align-items:center;justify-content:center">›</button>'
+        +'</div></div>';
+      var panels=d.slots.map(function(s){
+        var allSold=s.offers.every(function(o){return offerSoldOut(d,o);});
+        var locked=!!(moCommitted&&moCommitted.id!==s.id);
+        var isCommitted=!!(moCommitted&&moCommitted.id===s.id);
+        var anyPool=s.offers.some(function(o){return !!o.pool;});
+        var sub;
+        if(s.capacity!=null) sub=s.offers.length+' offers · '+Math.max(0,s.capacity-slotCartUsed(d,s))+' of '+s.capacity+' spots';
+        else if(anyPool) sub=s.offers.length+' offers';
+        else{var sLeft=s.offers.reduce(function(t,o){return t+(o.left||0);},0);sub=s.offers.length+' offers · '+(sLeft<=0?'sold out':sLeft+' spots left');}
+        return '<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px">'
+          +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:14px">'
+            +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px">'
+              +'<div style="min-width:0"><div style="font-size:16px;font-weight:800;color:#fff">'+s.window+'</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">'+sub+'</div></div>'
+              +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
+            +'</div>'
+            +(locked?'<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:9px 11px;margin-bottom:10px"><span style="font-size:11px;color:#FCD34D;font-weight:600;flex:1;line-height:1.4">Reserving the '+moCommitted.window+' window. Clear it to pick this time.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.2);border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit;white-space:nowrap">Clear</button></div>':'')
+            +'<div style="display:flex;flex-direction:column;gap:8px">'
+            +s.offers.map(function(o){return offerCardHTML(d,s,o,locked);}).join('')
+            +'</div>'
+          +'</div>'
+        +'</div>';
+      }).join('');
+      var dots='<div style="display:flex;justify-content:center;gap:6px;margin-top:12px">'
+        +d.slots.map(function(s,si){return '<button onclick="S.moView='+si+';render()" style="width:'+(si===moView?'20px':'7px')+';height:7px;border-radius:4px;border:none;background:'+(si===moView?'#0E4EF5':'rgba(255,255,255,0.25)')+';cursor:pointer;transition:all 0.2s;padding:0"></button>';}).join('')
+        +'</div>';
+      return expired+pools+'<div style="margin-bottom:8px">'+arrows
+        +'<div ontouchstart="S._tx=event.touches[0].clientX" ontouchend="var dx=event.changedTouches[0].clientX-(S._tx||0);if(dx<-40&&S.moView<'+(N-1)+'){S.moView++;render()}else if(dx>40&&S.moView>0){S.moView--;render()}" style="overflow:hidden">'
+        +'<div style="display:flex;width:'+(N*100)+'%;transition:transform 0.28s ease;transform:translateX(-'+shift+'%)">'+panels+'</div></div>'+dots+'</div>';
+    })():''}
 
     ${seated&&!d.myTicket&&!cannotReserve(d)?`
     ${S.holdExpired&&!S.holdUntil?`<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">${ic('info',15,'#FCD34D')}</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select your seats to continue.</span></div>`:''}
@@ -2262,8 +2356,9 @@ function renderPlaceOrder(){
   const useCredits=(hasAutoApply||S.useNCredits===true)&&d.price>0&&creditBal>0;
   const creditAmt=useCredits?Math.min(creditBal,subtotal+tax):0;
   const total=subtotal+tax-creditAmt;
-  const isWindow=multi||d.timing==='Arrival Window';
-  const arrivalLine=multi?`Arrive between ${moWindow}`:isWindow?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`;
+  const windowed=multi&&dropSchedule(d)==='windows';
+  const isWindow=windowed;
+  const arrivalLine=windowed?`Arrive between ${moWindow}`:(!multi&&!seated&&d.timing==='Arrival Window'?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`);
   // Full month expansion for date
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
   const fullDate=d.date.replace(/^(\w+)/,m=>monthFull[m]||m);
@@ -2298,7 +2393,7 @@ function renderPlaceOrder(){
     <div style="background:#1c1c1c;border-radius:14px;border:1px solid rgba(255,255,255,0.08);margin-bottom:14px;overflow:hidden">
       <div style="padding:14px;border-bottom:1px solid rgba(255,255,255,0.06)">
         <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px">${d.title}</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.55)">${d.host.name} · ${fullDate} · ${seated?d.start:multi?moWindow:isWindow?`${d.start} – ${d.endTime}`:d.start}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55)">${d.host.name} · ${fullDate} · ${windowed?moWindow:(!multi&&!seated&&d.timing==='Arrival Window')?`${d.start} – ${d.endTime}`:d.start}</div>
       </div>
       ${[
         ...((multi||seated)
@@ -2452,16 +2547,17 @@ function viewNewTicket(){
   if(!myTickets.some(t=>t.id===nid)){
     if(multi||seated){
       const mo=S.moOrder||{window:'',items:[],qty:1,subtotal:0};
-      // Multi: split the window into start/end. Seated: use the event start time.
+      const windowed=multi&&dropSchedule(d)==='windows';
+      // Windowed: split the window into start/end. Fixed / seated: use the event start time.
       const wparts=(mo.window||'').split('–').map(function(s){return s.trim();});
-      const wStart=seated?d.start:(wparts[0]||mo.window);const wEnd=seated?'':(wparts[1]||'');
+      const wStart=windowed?(wparts[0]||mo.window):d.start;const wEnd=windowed?(wparts[1]||''):'';
       myTickets.unshift({
         id:nid,dropId:d.id,title:d.title,
         host:d.host.name,hostHandle:d.host.handle,
-        date:d.date,time:wStart,endTime:wEnd,timing:seated?'Start Time':'Arrival Window',
+        date:d.date,time:wStart,endTime:wEnd,timing:windowed?'Arrival Window':'Start Time',
         addr:d.host.addr,price:mo.subtotal||0,age21:d.age21||false,
         desc:d.desc||'',locationDetails:d.locationDetails||'',startsIn:d.startsIn||'',partners:d.partners||[],
-        qty:1,offers:mo.items||[],windowLabel:seated?'Assigned seating':(mo.window||''),seated:seated,orderTotal:(mo.subtotal||0).toFixed(2),
+        qty:1,offers:mo.items||[],windowLabel:seated?'Assigned seating':(windowed?(mo.window||''):''),seated:seated,orderTotal:(mo.subtotal||0).toFixed(2),
         extras:[],status:'Active',orderId:'ORD-7291',orderDate:'Just now',
         subTickets:[{idx:1,status:'active'}]
       });
@@ -2488,8 +2584,9 @@ function renderOrderConfirmation(){
   const qty=(multi||seated)?mo.qty:S.orderQty;
   const isFree=(multi||seated)?false:d.price===0;
   const confNum='ORD-'+Math.random().toString(36).slice(2,8).toUpperCase();
-  const isWindow=!seated&&(multi||d.timing==='Arrival Window');
-  const arrivalLine=seated?`Starts at ${d.start}`:multi?`Arrive between ${mo.window}`:isWindow?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`;
+  const windowed=multi&&dropSchedule(d)==='windows';
+  const isWindow=windowed||(!multi&&!seated&&d.timing==='Arrival Window');
+  const arrivalLine=windowed?`Arrive between ${mo.window}`:(!multi&&!seated&&d.timing==='Arrival Window'?`Arrive between ${d.start} – ${d.endTime}`:`Starts at ${d.start}`);
   const monthFull={Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December'};
   const fullDate=d.date.replace(/^(\w+)/,m=>monthFull[m]||m);
   return`<div style="background:#0a0a0a;min-height:100%;display:flex;flex-direction:column;align-items:center;padding:48px 24px 32px;text-align:center">
