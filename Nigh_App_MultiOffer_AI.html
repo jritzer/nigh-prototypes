@@ -2157,6 +2157,7 @@ function renderDropDetail(){
       }
       // WINDOWS schedule → swipeable carousel (swipe or tap dots; no header row)
       var N=d.slots.length;var shift=moView*100/N;
+      var timePrefix=d.timing==='Arrival Window'?'Arrive Between':'Starts at';
       var panels=d.slots.map(function(s){
         var allSold=s.offers.every(function(o){return offerSoldOut(d,o);});
         var locked=!!(moCommitted&&moCommitted.id!==s.id);
@@ -2164,7 +2165,7 @@ function renderDropDetail(){
         return '<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px;display:flex">'
           +'<div style="flex:1;background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:11px 11px 12px">'
             +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">'
-              +'<div style="min-width:0;font-size:19px;font-weight:800;color:#fff">'+s.window+'</div>'
+              +'<div style="min-width:0"><div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:1px">'+timePrefix+'</div><div style="font-size:19px;font-weight:800;color:#fff">'+s.window+'</div></div>'
               +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">TIME LEFT</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
             +'</div>'
             // offers list + (when another window is committed) an absolute lock overlay so the card height never changes
