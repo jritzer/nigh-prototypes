@@ -335,7 +335,7 @@ function offerCardHTML(d,slot,o,locked){
         +'<div style="font-size:12px;color:#22C55E;font-weight:600;margin-top:2px">$'+o.price+'<span style="color:'+(low?'#FCA5A5':'rgba(255,255,255,0.4)')+';font-weight:'+(low?'700':'500')+';margin-left:8px">'+leftTxt+'</span></div>'
       +'</div>'+stepper
     +'</div>'
-    +(o.desc?'<div style="font-size:11.5px;color:rgba(255,255,255,0.55);line-height:1.35;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+o.desc+'</div>':'')
+    +'<div style="font-size:11.5px;color:rgba(255,255,255,0.55);line-height:1.35;margin-top:5px;height:47px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">'+(o.desc||'')+'</div>'
   +'</div>';
 }
 // Drop-level "N left today" banners for pooled inventory
@@ -2114,8 +2114,8 @@ function renderDropDetail(){
     <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:2px">Hosted by <button onclick="openProfile('${d.host.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${d.host.name}</button></div>
     ${d.partners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:16px">Partnering with ${d.partners.map(p=>`<button onclick="openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;text-decoration:underline;text-underline-offset:2px">${p.name}</button>`).join(' <span style="color:rgba(255,255,255,0.40)">&</span> ')}</div>`:'<div style="margin-bottom:14px"></div>'}
 
-    <!-- Summary (unlabeled; formerly the "About this Drop" section) -->
-    <div style="font-size:12px;color:rgba(255,255,255,0.72);line-height:1.4;margin-bottom:9px${(multi||seated)?';display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden':''}">${d.desc}</div>
+    <!-- Summary (unlabeled; formerly the "About this Drop" section) — fixed 3-line box so text isn't cut off -->
+    <div style="font-size:12px;color:rgba(255,255,255,0.72);line-height:1.4;margin-bottom:10px${(multi||seated)?';display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden':''}">${d.desc}</div>
 
     <!-- Price (single-offer drops only; multi/seated show prices inline per option) -->
     ${multi||isSeated(d)?'':`<div style="margin-bottom:20px">
@@ -2162,8 +2162,8 @@ function renderDropDetail(){
         var allSold=s.offers.every(function(o){return offerSoldOut(d,o);});
         var locked=!!(moCommitted&&moCommitted.id!==s.id);
         var isCommitted=!!(moCommitted&&moCommitted.id===s.id);
-        return '<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px">'
-          +'<div style="background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:12px">'
+        return '<div style="width:'+(100/N)+'%;flex-shrink:0;box-sizing:border-box;padding:0 3px;display:flex">'
+          +'<div style="flex:1;background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:12px">'
             +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">'
               +'<div style="min-width:0;font-size:19px;font-weight:800;color:#fff">'+s.window+'</div>'
               +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
@@ -8520,20 +8520,9 @@ function render(){
     if(_fscEl && !_fscEl._fsBound){ _fscEl._fsBound=true; _fscEl.addEventListener('scroll',updateFeedScrollbar); }
     setTimeout(updateFeedScrollbar,0);
   } else if(fsBar){ fsBar.style.display='none'; }
-  // Drop Details: fixed left scroll indicator (shown when content overflows)
+  // Drop Details scroll indicator removed — the reserve view is designed to fit without scrolling
   var dsBar=document.getElementById('dropScroll');
-  var showDS=(S.scr==='dropDetail');
-  if(showDS){
-    if(!dsBar){
-      dsBar=document.createElement('div');dsBar.id='dropScroll';
-      dsBar.style.cssText='position:absolute;right:8px;top:50%;transform:translateY(-50%);width:3px;height:84px;border-radius:2px;background:rgba(255,255,255,0.15);z-index:60;pointer-events:none';
-      dsBar.innerHTML='<div id="dropScrollThumb" style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.7);top:0;height:30%"></div>';
-      document.getElementById('app').appendChild(dsBar);
-    }
-    var _dscEl=document.getElementById('scr');
-    if(_dscEl && !_dscEl._dsBound){ _dscEl._dsBound=true; _dscEl.addEventListener('scroll',updateDropScrollbar); }
-    setTimeout(updateDropScrollbar,0);
-  } else if(dsBar){ dsBar.style.display='none'; }
+  if(dsBar){ dsBar.remove(); }
   if(onFeed){
     scrEl.scrollTop=S.drop*762;
   } else if(S.scr==='dm'){
