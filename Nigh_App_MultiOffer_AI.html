@@ -594,6 +594,100 @@ const feedDrops=[
      ]}
    ]},
 
+  // ── Mobile host (truck / stall that moves — today's stop only) ──
+  {id:'MO01',title:'Rolling Smoke BBQ — Today’s Stop',
+   host:{name:'Rolling Smoke BBQ',handle:'@rollingsmokebbq',short:'RS',addr:'Interlocken Office Park, Lot C, Broomfield, CO'},
+   locationDetails:'Look for the black truck in Lot C near the fountain. We move daily — today’s stop is Interlocken only.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'11:00 AM',endTime:'2:00 PM',date:'Apr 19',
+   closesIn:'3h 30m',startsIn:'1h',price:9,cap:120,spotsLeft:64,age21:false,
+   media:'video',maxPerUser:6,liked:false,likeCount:41,
+   mobile:true,schedule:'windows',select:'quantity',inventory:'per_slot',
+   desc:'We park, we sell out, we move on. Reserve your plate and a pickup window at today’s stop before the truck rolls out.',
+   slug:'rollingsmokebbq/STOP',
+   slots:[
+     {id:'s1',window:'11:00 – 11:45 AM',closeIn:'1h 20m',offers:[
+       {id:'o1',name:'Brisket Plate',price:17,left:14,desc:'Half-pound of 14-hour smoked brisket with two sides and a slice of white bread.'},
+       {id:'o2',name:'Pulled Pork Sandwich',price:12,left:18,desc:'Slow-smoked pork shoulder piled on a brioche bun with slaw and house sauce.'},
+       {id:'o3',name:'Mac & Cheese (side)',price:5,left:24,desc:'Three-cheese baked mac with a smoked breadcrumb top. Add it to any plate.'}]},
+     {id:'s2',window:'12:00 – 12:45 PM',closeIn:'2h 20m',offers:[
+       {id:'o4',name:'Rib Basket (½ rack)',price:21,left:10,desc:'Half rack of St. Louis ribs, dry-rubbed and smoked, with pickles and onion.'},
+       {id:'o5',name:'Brisket Plate',price:17,left:12,desc:'Half-pound of 14-hour smoked brisket with two sides and a slice of white bread.'},
+       {id:'o6',name:'Burnt Ends Cup',price:11,left:9,desc:'Caramelized brisket point cubes tossed in sauce. Sells out first every stop.'}]},
+     {id:'s3',window:'1:00 – 2:00 PM',closeIn:'3h 20m',offers:[
+       {id:'o7',name:'Pulled Pork Sandwich',price:12,left:15,desc:'Slow-smoked pork shoulder piled on a brioche bun with slaw and house sauce.'},
+       {id:'o8',name:'Family Pack (feeds 4)',price:58,left:5,desc:'A pound of brisket, a pound of pork, four sides, and buns. Feeds four hungry people.'}]}
+   ]},
+
+  // ── Geofenced, in-venue only (arrival windows + bundles) ──
+  {id:'GF01',title:'Coors Field — Merch Bundle Pickup',
+   host:{name:'Coors Field Team Store',handle:'@coorsfield',short:'CF',addr:'2001 Blake St, Denver, CO'},
+   locationDetails:'Team Store on the main concourse behind section 132. Show your QR at the pickup counter — separate line from walk-ups.',
+   partners:[{handle:'@rockies',name:'Colorado Rockies'}],status:'Live',timing:'Arrival Window',start:'6:30 PM',endTime:'9:30 PM',date:'Apr 19',
+   closesIn:'4h 15m',startsIn:'2h',price:15,cap:300,spotsLeft:180,age21:false,
+   media:'video',maxPerUser:4,liked:false,likeCount:63,
+   geofenced:true,schedule:'windows',select:'quantity',inventory:'per_slot',
+   desc:'In-stadium only — this drop is visible while you are at the ballpark. Reserve a bundle and grab it during your window, skipping the postgame rush.',
+   slug:'coorsfield/MERCH',
+   slots:[
+     {id:'s1',window:'6:30 – 7:15 PM',closeIn:'1h 05m',offers:[
+       {id:'o1',name:'Cap + Tee Bundle',price:45,left:40,desc:'On-field cap and a home tee in your size, bagged and ready at the counter.'},
+       {id:'o2',name:'Kids Fan Pack',price:30,left:25,desc:'Youth tee, foam finger, and a mini pennant. Sizes 4–12 available at pickup.'},
+       {id:'o3',name:'Rally Towel 2-Pack',price:15,left:60,desc:'Two embroidered rally towels — the cheapest way to look like a regular.'}]},
+     {id:'s2',window:'7:30 – 8:15 PM',closeIn:'2h 05m',offers:[
+       {id:'o4',name:'Replica Jersey Bundle',price:120,left:12,desc:'Replica home jersey plus a matching cap. Sizes S–XXL, swapped at the counter.'},
+       {id:'o5',name:'Cap + Tee Bundle',price:45,left:30,desc:'On-field cap and a home tee in your size, bagged and ready at the counter.'},
+       {id:'o6',name:'Rally Towel 2-Pack',price:15,left:50,desc:'Two embroidered rally towels — the cheapest way to look like a regular.'}]},
+     {id:'s3',window:'8:30 – 9:30 PM',closeIn:'3h 05m',offers:[
+       {id:'o7',name:'Postgame Clearance Tee',price:20,left:35,desc:'Last season’s tee at a ballpark-only price. Limited sizes, no exchanges.'},
+       {id:'o8',name:'Kids Fan Pack',price:30,left:18,desc:'Youth tee, foam finger, and a mini pennant. Sizes 4–12 available at pickup.'}]}
+   ]},
+
+  // ── Geofenced, in-venue only (fixed start time + assigned seats) ──
+  {id:'GF02',title:'Elitch Gardens — Night Show Reserved Seats',
+   host:{name:'Elitch Gardens',handle:'@elitchgardens',short:'EG',addr:'2000 Elitch Cir, Denver, CO'},
+   locationDetails:'Lakeside amphitheater — enter through the Kingdom gate. Ushers scan your QR at the row entrance.',
+   partners:[],status:'Live',timing:'Start Time',start:'8:30 PM',date:'Apr 19',
+   closesIn:'5h 30m',startsIn:'',price:8,cap:60,spotsLeft:34,age21:false,
+   media:'video',maxPerUser:6,liked:false,likeCount:29,
+   geofenced:true,seating:true,
+   desc:'In-park only. Claim a reserved seat for tonight’s 8:30 light show instead of standing along the rail — pick your exact seat.',
+   slug:'elitchgardens/NIGHTSHOW',
+   sections:[
+     {id:'front',name:'Front Rows',price:18,desc:'Closest to the lake stage — best view of the fountain and fire effects.',rows:[
+       {row:'A',seats:[{n:1,taken:true},{n:2},{n:3},{n:4},{n:5},{n:6,taken:true},{n:7},{n:8}]},
+       {row:'B',seats:[{n:1},{n:2},{n:3,taken:true},{n:4},{n:5},{n:6},{n:7},{n:8}]}
+     ]},
+     {id:'mid',name:'Center Tier',price:12,desc:'Elevated middle rows with a full view of the show and the water screen.',rows:[
+       {row:'C',seats:[{n:1},{n:2},{n:3},{n:4,taken:true},{n:5},{n:6},{n:7},{n:8}]},
+       {row:'D',seats:[{n:1,taken:true},{n:2},{n:3},{n:4},{n:5},{n:6},{n:7},{n:8}]}
+     ]},
+     {id:'lawn',name:'Lawn Bench',price:8,desc:'Back bench seating on the lawn — relaxed and roomy, good for families.',rows:[
+       {row:'E',seats:[{n:1},{n:2},{n:3},{n:4},{n:5},{n:6},{n:7,taken:true},{n:8}]}
+     ]}
+   ]},
+
+  // ── 1:1 appointment slots, healthcare (same shape as spa/salon, different category) ──
+  {id:'AP01',title:'Front Range Clinic — Same-Day Openings',
+   host:{name:'Front Range Clinic',handle:'@frontrangeclinic',short:'FRC',addr:'1650 28th St, Boulder, CO'},
+   locationDetails:'Walk-in entrance on 28th. Check in at the kiosk with your name — bring an ID and insurance card if you have one.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'9:00 AM',endTime:'4:00 PM',date:'Apr 19',
+   closesIn:'18h 00m',startsIn:'16h',price:35,cap:12,spotsLeft:7,age21:false,
+   media:'video',maxPerUser:2,liked:false,likeCount:12,
+   schedule:'windows',select:'quantity',inventory:'per_slot',
+   desc:'Cancellations opened up today. Reserve a same-day slot with a nurse practitioner — one patient per slot, so spots go quickly.',
+   slug:'frontrangeclinic/SAMEDAY',
+   slots:[
+     {id:'s1',window:'9:00 – 11:00 AM',closeIn:'1h 40m',offers:[
+       {id:'o1',name:'Flu Shot',price:35,left:2,desc:'Quadrivalent flu vaccine administered by a nurse. In and out in about 10 minutes.'},
+       {id:'o2',name:'Flu + COVID Booster',price:65,left:1,desc:'Both vaccines in one visit, one arm each. Allow 20 minutes including the wait period.'}]},
+     {id:'s2',window:'12:00 – 2:00 PM',closeIn:'3h 40m',offers:[
+       {id:'o3',name:'Same-Day Sick Visit',price:89,left:1,desc:'15-minute visit with a nurse practitioner for cold, flu, sore throat, or sinus symptoms.'},
+       {id:'o4',name:'Flu Shot',price:35,left:2,desc:'Quadrivalent flu vaccine administered by a nurse. In and out in about 10 minutes.'}]},
+     {id:'s3',window:'2:30 – 4:00 PM',closeIn:'5h 10m',offers:[
+       {id:'o5',name:'Travel Vaccine Consult',price:75,left:1,desc:'20-minute consult to review destination requirements and start any needed series.'},
+       {id:'o6',name:'Sports Physical',price:55,left:2,desc:'School or league physical with the standard form completed and signed before you leave.'}]}
+   ]},
+
   {id:'D001',title:'Nike Air Max Day Access',
    host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},locationDetails:'Enter at the 29th St entrance and take the stairs to the 2nd-floor studio. Look for the Nigh sign at check-in. Street parking on 29th, or the 30th St garage two blocks north.',
    partners:[{handle:'@titosvodka',name:"Tito's Vodka"},{handle:'@redbull',name:'Red Bull'},{handle:'@complex',name:'Complex'},{handle:'@footlocker',name:'Foot Locker'},{handle:'@hypebeast',name:'Hypebeast'}],
@@ -1852,7 +1946,8 @@ function renderFeed(){
           if(isSeated(d))pill='Assigned seating · '+d.sections.length+' sections · from $'+moMinPrice(d);
           else if(isMulti(d)&&dropSchedule(d)==='windows')pill=moOfferCount(d)+' offers · '+d.slots.length+' windows · from $'+moMinPrice(d);
           else if(isMulti(d))pill=moOfferCount(d)+' options · from $'+moMinPrice(d);
-          return pill?'<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);padding:5px 11px;border-radius:20px;margin-bottom:8px"><span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.02em">'+pill+'</span></div>':'';})()}
+          var tag=d.geofenced?'<span style="font-size:10px;font-weight:800;color:#FCD34D;background:rgba(245,166,35,0.2);border-radius:20px;padding:4px 9px;margin-bottom:8px;margin-right:6px;display:inline-block">IN-VENUE ONLY</span>':(d.mobile?'<span style="font-size:10px;font-weight:800;color:#93C5FD;background:rgba(14,78,245,0.25);border-radius:20px;padding:4px 9px;margin-bottom:8px;margin-right:6px;display:inline-block">MOBILE STOP</span>':'');
+          return tag+(pill?'<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);padding:5px 11px;border-radius:20px;margin-bottom:8px"><span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0.02em">'+pill+'</span></div>':'');})()}
         ${d.partners.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">${d.partners.map(p=>`<button onclick="event.stopPropagation();S.drop=${idx};openProfile('${p.handle}')" style="background:rgba(14,78,245,0.35);border:1px solid rgba(14,78,245,0.6);backdrop-filter:blur(4px);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:#93C5FD;cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:''}
         ${friendsOn.length?`<div onclick="event.stopPropagation();S.friendsDropId=null;S.friendsPast=false;S.drop=${idx};modal('friendsGoing')" style="display:flex;align-items:center;gap:7px;cursor:pointer">
           <div style="display:flex">${friendsOn.slice(0,3).map((f,i)=>`<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#EC1977);border:2px solid rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;margin-left:${i>0?'-6px':'0'};position:relative;z-index:${3-i}">${f.av}</div>`).join('')}</div>
@@ -2129,7 +2224,7 @@ function renderDropDetail(){
       <div style="flex:1;min-width:0">
         <div style="font-size:19px;font-weight:800;color:#fff">${detailDay}, ${fullDate}</div>
         ${windowed?'':`<div style="font-size:13px;font-weight:300;color:#fff;margin-top:1px">${arrivalLine}</div>`}
-        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:#fff;font-weight:700">${d.host.name}</span> · ${d.host.addr}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.geofenced?`<span style="background:rgba(245,166,35,0.18);color:#FCD34D;font-weight:700;border-radius:5px;padding:1px 5px;margin-right:5px">In-venue only</span>`:''}${d.mobile?`<span style="background:rgba(14,78,245,0.22);color:#93C5FD;font-weight:700;border-radius:5px;padding:1px 5px;margin-right:5px">Mobile stop</span>`:''}<span style="color:#fff;font-weight:700">${d.host.name}</span> · ${d.host.addr}</div>
       </div>
       <button onclick="openMaps('${d.host.addr}')" title="Directions" style="background:none;border:none;padding:4px;color:rgba(255,255,255,0.55);flex-shrink:0;cursor:pointer;display:flex">${ic('map',20)}</button>
     </div>
