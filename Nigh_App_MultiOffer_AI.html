@@ -2127,7 +2127,7 @@ function renderDropDetail(){
     <!-- Date + Location (combined, compact) -->
     <div style="background:#1c1c1c;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:9px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
       <div style="flex:1;min-width:0">
-        <div style="font-size:16px;font-weight:700;color:#fff">${detailDay}, ${fullDate}</div>
+        <div style="font-size:19px;font-weight:800;color:#fff">${detailDay}, ${fullDate}</div>
         ${windowed?'':`<div style="font-size:13px;font-weight:300;color:#fff;margin-top:1px">${arrivalLine}</div>`}
         <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="color:#fff;font-weight:700">${d.host.name}</span> · ${d.host.addr}</div>
       </div>
@@ -2165,11 +2165,14 @@ function renderDropDetail(){
           +'<div style="flex:1;background:#1c1c1c;border:1.5px solid '+(isCommitted?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:14px;padding:11px 11px 12px">'
             +'<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">'
               +'<div style="min-width:0;font-size:19px;font-weight:800;color:#fff">'+s.window+'</div>'
-              +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">CLOSES IN</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
+              +(allSold?'':'<div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.4)">TIME LEFT</div><div style="font-size:14px;font-weight:800;color:#EC1977">'+(s.closeIn||'—')+'</div></div>')
             +'</div>'
-            +(locked?'<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px;padding:8px 11px;margin-bottom:9px"><span style="font-size:11px;color:#FCD34D;font-weight:600;flex:1;line-height:1.4">Reserving the '+moCommitted.window+' window. Clear it to pick this time.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.2);border:none;border-radius:8px;padding:6px 11px;font-size:11px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit;white-space:nowrap">Clear</button></div>':'')
-            +'<div style="display:flex;flex-direction:column;gap:5px">'
-            +s.offers.map(function(o){return offerCardHTML(d,s,o,locked);}).join('')
+            // offers list + (when another window is committed) an absolute lock overlay so the card height never changes
+            +'<div style="position:relative">'
+              +'<div style="display:flex;flex-direction:column;gap:5px">'
+              +s.offers.map(function(o){return offerCardHTML(d,s,o,locked);}).join('')
+              +'</div>'
+              +(locked?'<div style="position:absolute;inset:0;border-radius:10px;background:rgba(20,20,20,0.72);backdrop-filter:blur(1px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 18px;gap:9px"><span style="font-size:12px;color:#FCD34D;font-weight:600;line-height:1.4">Reserving the '+moCommitted.window+' window.</span><button onclick="S.moQty={};render()" style="background:rgba(245,166,35,0.22);border:1px solid rgba(245,166,35,0.4);border-radius:10px;padding:8px 16px;font-size:12px;font-weight:700;color:#FCD34D;cursor:pointer;font-family:inherit">Clear to pick this time</button></div>':'')
             +'</div>'
           +'</div>'
         +'</div>';
