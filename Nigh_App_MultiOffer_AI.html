@@ -2147,7 +2147,7 @@ function renderDropDetail(){
 
     ${multi&&!d.myTicket&&!cannotReserve(d)?(function(){
       var expired=(S.holdExpired&&!S.holdUntil)?('<div style="display:flex;align-items:center;gap:8px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.4);border-radius:12px;padding:9px 13px;margin-bottom:12px"><span style="color:#FCD34D;display:flex">'+ic('info',15,'#FCD34D')+'</span><span style="font-size:12px;font-weight:600;color:#FCD34D">Your hold expired — re-select to continue.</span></div>'):'';
-      var pools=poolBannerHTML(d);
+      var pools=''; // pool "N left today" banner removed — per-offer counts already show remaining
       // FIXED schedule → single option list (no window carousel)
       if(!windowed){
         var s0=d.slots[0];
