@@ -450,6 +450,48 @@ const feedDrops=[
      ]}
    ]},
 
+  // ── Attractions (timed entry windows, ticket + add-on offers) ──
+  {id:'M010',title:'Elitch Gardens — Timed Entry & Passes',
+   host:{name:'Elitch Gardens',handle:'@elitchgardens',short:'EG',addr:'2000 Elitch Cir, Denver, CO'},
+   locationDetails:'Enter at the main gate on Elitch Circle and scan your ticket QR at the turnstile. Parking is in the lot off Speer Blvd.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'10:00 AM',endTime:'6:00 PM',date:'Apr 19',
+   closesIn:'20h 00m',startsIn:'18h',price:39,cap:400,spotsLeft:212,age21:false,
+   media:'video',maxPerUser:8,liked:false,likeCount:64,
+   desc:'Reserve a timed entry window and choose your passes and add-ons so you skip the ticket line at the gate.',
+   slug:'elitchgardens/PARK',
+   slots:[
+     {id:'s1',window:'10:00 AM – 12:00 PM',offers:[{id:'o1',name:'Single-Day Pass',price:59,left:80,desc:'All-day admission to rides and attractions. Water park access included on operating days.'},{id:'o2',name:'Fast Lane Add-On',price:25,left:40,desc:'Skip-the-line access on participating headline rides all day. Add to any pass.'},{id:'o3',name:'Parking Pass',price:20,left:120,desc:'Reserved general parking in the Speer Blvd lot. One vehicle per pass.'}]},
+     {id:'s2',window:'12:00 – 2:00 PM',offers:[{id:'o4',name:'Single-Day Pass',price:59,left:70,desc:'All-day admission to rides and attractions. Water park access included on operating days.'},{id:'o5',name:'Cabana (up to 6)',price:180,left:6,desc:'Reserved shaded cabana by the water park for the day — seating, table, and a private spot for your group.'}]},
+     {id:'s3',window:'2:00 – 4:00 PM',offers:[{id:'o6',name:'Twilight Pass (2pm+)',price:39,left:90,desc:'Discounted admission for afternoon-and-evening entry. Same ride access, shorter day.'},{id:'o7',name:'Fast Lane Add-On',price:25,left:30,desc:'Skip-the-line access on participating headline rides. Add to any pass.'}]}
+   ]},
+  // ── Go-kart (heat time windows, race package offers) ──
+  {id:'M011',title:'Apex Karting — Race Heats',
+   host:{name:'Apex Indoor Karting',handle:'@apexkarting',short:'AK',addr:'7300 N Broadway, Denver, CO'},
+   locationDetails:'Check in at the front desk to sign the waiver and get fitted for a helmet 15 minutes before your heat. Closed-toe shoes required.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'11:00 AM',endTime:'9:00 PM',date:'Apr 19',
+   closesIn:'22h 00m',startsIn:'20h',price:25,cap:120,spotsLeft:58,age21:false,
+   media:'video',maxPerUser:6,liked:false,likeCount:47,
+   desc:'Reserve a heat time and pick your race package. Karts are limited per heat, so lock your grid spot early.',
+   slug:'apexkarting/HEATS',
+   slots:[
+     {id:'s1',window:'11:00 AM – 12:30 PM',offers:[{id:'o1',name:'Single Race (14 laps)',price:28,left:10,desc:'One 14-lap sprint race on the pro track, timing transponder included. Ages 13+ / 58" minimum.'},{id:'o2',name:'Junior Race (10 laps)',price:22,left:8,desc:'Slower junior karts on the junior circuit. Ages 8–12, height 48"+. Same green-flag fun.'}]},
+     {id:'s2',window:'2:00 – 3:30 PM',offers:[{id:'o3',name:'3-Race Pack',price:72,left:6,desc:'Three timed races across the session with a printed results sheet. Best value for the competitive crowd.'},{id:'o4',name:'Single Race (14 laps)',price:28,left:10,desc:'One 14-lap sprint race on the pro track, timing transponder included. Ages 13+ / 58" minimum.'}]},
+     {id:'s3',window:'6:00 – 7:30 PM',offers:[{id:'o5',name:'Arrive & Drive (30 min)',price:45,left:8,desc:'Open 30-minute session — jump in whenever a kart is free during your window. Great for casual laps.'},{id:'o6',name:'Group Grand Prix (party of 6)',price:240,left:2,desc:'Private grid for up to 6: practice, qualifying, a feature race, and a podium ceremony. Reserved host.'}]}
+   ]},
+  // ── Topgolf (bay reservations by time window, bay + add-on offers) ──
+  {id:'M012',title:'Topgolf Centennial — Bay Reservations',
+   host:{name:'Topgolf Centennial',handle:'@topgolfcentennial',short:'TG',addr:'10601 E Easter Ave, Centennial, CO'},
+   locationDetails:'Check in with the host desk and they’ll walk you to your assigned bay. Bay price covers the whole group — up to 6 players.',
+   partners:[],status:'Live',timing:'Arrival Window',start:'12:00 PM',endTime:'10:00 PM',date:'Apr 19',
+   closesIn:'23h 00m',startsIn:'21h',price:35,cap:90,spotsLeft:44,age21:false,
+   media:'video',maxPerUser:4,liked:false,likeCount:71,
+   desc:'Reserve a hitting bay by time window and choose your rental. Each bay fits up to 6 players — pick one bay per group.',
+   slug:'topgolfcentennial/BAYS',
+   slots:[
+     {id:'s1',window:'12:00 – 2:00 PM',offers:[{id:'o1',name:'Bay Rental — 1 Hour',price:35,left:6,desc:'One hitting bay for up to 6 players, per hour (daytime rate). Clubs provided free.'},{id:'o2',name:'Bay Rental — 2 Hours',price:65,left:4,desc:'Two hours in one bay for up to 6 players at the daytime rate. Clubs provided free.'}]},
+     {id:'s2',window:'4:00 – 6:00 PM',offers:[{id:'o3',name:'Bay Rental — 1 Hour',price:45,left:6,desc:'One hitting bay for up to 6 players, per hour (peak rate). Clubs provided free.'},{id:'o4',name:'Shareables Platter Add-On',price:32,left:10,desc:'Chips & queso, wings, and flatbread brought to your bay. Feeds 3–4.'}]},
+     {id:'s3',window:'7:00 – 9:00 PM',offers:[{id:'o5',name:'Bay Rental — 2 Hours (Prime)',price:100,left:3,desc:'Two prime-time hours in one bay for up to 6 players. The busy evening slot — reserve early.'},{id:'o6',name:'Premium Bay (up to 8)',price:150,left:2,desc:'Larger premium bay with lounge seating for groups up to 8. Two-hour prime-time reservation.'}]}
+   ]},
   {id:'D001',title:'Nike Air Max Day Access',
    host:{name:'Nike Boulder',handle:'@nikeboulder',short:'Nike',addr:'1800 29th St, Boulder, CO'},locationDetails:'Enter at the 29th St entrance and take the stairs to the 2nd-floor studio. Look for the Nigh sign at check-in. Street parking on 29th, or the 30th St garage two blocks north.',
    partners:[{handle:'@titosvodka',name:"Tito's Vodka"},{handle:'@redbull',name:'Red Bull'},{handle:'@complex',name:'Complex'},{handle:'@footlocker',name:'Foot Locker'},{handle:'@hypebeast',name:'Hypebeast'}],
