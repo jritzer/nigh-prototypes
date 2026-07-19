@@ -162,7 +162,8 @@ msgCircle:'<path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.3
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 bellOff:'<path d="M13.73 21a2 2 0 01-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0118 8"/><path d="M6.26 6.26A5.86 5.86 0 006 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 00-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/>',
 home:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/>',
-ticket:'<path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/>',
+walletIc:'<path d="M19 7V5.5A1.5 1.5 0 0017.5 4H5a2 2 0 000 4h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V6"/><circle cx="17" cy="13.5" r="1.3"/>',
+  ticket:'<path d="M2 9a2 2 0 012-2h16a2 2 0 012 2v2a2 2 0 000 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 000-4V9z"/>',
 bell:'<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>',
 msgBubble:'<path d="M2 7Q2 2 7 2H18Q24 2 24 7V15Q24 20 18 20H7Q4 20 2 23Z"/><circle cx="9" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="13" cy="11" r="1.5" fill="currentColor" stroke="none"/><circle cx="17" cy="11" r="1.5" fill="currentColor" stroke="none"/>',
 menu2:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
@@ -6496,7 +6497,7 @@ function renderTB(){
   const unreadCount=notifs.filter(n=>!n.read).length;
   const tabs=[
     {id:'feed',ic:null,l:'',nighBug:true,badge:0},
-    {id:'wallet',ic:'ticket',l:'',tilted:true,sz:29,badge:0},
+    {id:'wallet',ic:'walletIc',l:'',sz:27,badge:0},
     {id:'niya',ic:null,l:'',niyaTab:true,badge:0},
     {id:'inbox',ic:'msgBubble',l:'',sz:29,badge:0},
     {id:'menu',ic:'menu2',l:'',sz:34,badge:0},
@@ -8728,8 +8729,23 @@ function saRow(l,r,sub){return '<div style="display:flex;align-items:center;gap:
 // WALLET
 function renderWallet(){
   const tab=S.walletTab||'overview';
-  const tabBtn=(id,l)=>'<button onclick="S.walletTab=\''+id+'\';render()" style="flex:1;padding:9px 6px;border:none;background:none;border-bottom:2px solid '+(tab===id?'#0E4EF5':'transparent')+';color:'+(tab===id?'#fff':'rgba(255,255,255,0.45)')+';font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">'+l+'</button>';
+  const tabBtn=(id,l)=>'<button onclick="S.walletTab=\''+id+'\';render()" style="flex:1;padding:9px 2px;border:none;background:none;border-bottom:2px solid '+(tab===id?'#0E4EF5':'transparent')+';color:'+(tab===id?'#fff':'rgba(255,255,255,0.45)')+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">'+l+'</button>';
   const act=(emoji,l,onclick)=>'<button onclick="'+onclick+'" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:11px 4px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:17px">'+emoji+'</span><span style="font-size:10px;font-weight:700;color:#fff">'+l+'</span></button>';
+
+  const tkRow=function(t){
+    const when=(t.date||'')+(t.time?' · '+t.time+(t.endTime?' – '+t.endTime:''):'');
+    const what=t.offers&&t.offers.length
+      ? (t.seated? t.offers.length+' seat'+(t.offers.length>1?'s':'') : t.offers.reduce(function(a,o){return a+o.qty;},0)+' item'+(t.offers.reduce(function(a,o){return a+o.qty;},0)>1?'s':''))
+      : ((t.qty||1)+' spot'+((t.qty||1)>1?'s':''));
+    return '<button onclick="go(\'ticketCollection\',{ticketTab:\'current\',focusTicket:\''+t.id+'\'})" style="width:100%;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;text-align:left">'
+      +'<div style="display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06)">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff">'+ic('ticket',17)+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.title+'</div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t.host+' · '+when+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:#22C55E">'+what+'</div>'
+      +'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:1px">'+(t.status==='Active'?'Active':'Past')+'</div></div></div></button>';};
+  const activeTk=myTickets.filter(function(t){return t.status==='Active';});
+  const pastTk=myTickets.filter(function(t){return t.status!=='Active';});
   let body='';
   if(tab==='overview'){
     body=saCard('<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.06em">NIGH BALANCE</div>'
@@ -8742,6 +8758,9 @@ function renderWallet(){
         +act('📷','Scan',"go('scan')")+act('💸','Send',"go('pay',{payMode:'send'})")
         +act('🎟️','Tickets',"go('ticketCollection')")+act('🧩','Services',"go('services')")
       +'</div>'
+      +saCard('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.06em">TICKETS & PASSES</span>'
+        +'<button onclick="S.walletTab=\'tickets\';render()" style="background:none;border:none;font-size:11px;font-weight:700;color:#0E4EF5;cursor:pointer;font-family:inherit;padding:0">See all</button></div>'
+        +(activeTk.length?activeTk.slice(0,3).map(tkRow).join(''):'<div style="font-size:12px;color:rgba(255,255,255,0.45);padding:8px 0">No active tickets yet.</div>'))
       +saCard('<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.06em;margin-bottom:6px">RECENT ACTIVITY</div>'
         +wallet.txns.slice(0,5).map(t=>'<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06)">'
           +'<div style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">'+t.emoji+'</div>'
@@ -8749,6 +8768,11 @@ function renderWallet(){
           +'<div style="font-size:11px;color:rgba(255,255,255,0.45)">'+t.when+(t.note?' · '+t.note:'')+'</div></div>'
           +'<div style="font-size:13px;font-weight:800;color:'+(t.amt>0?'#22C55E':'#fff')+'">'+money(t.amt)+'</div></div>').join('')
         +'<button onclick="S.walletTab=\'activity\';render()" style="width:100%;background:none;border:none;padding:10px 0 0;font-size:12px;font-weight:700;color:#0E4EF5;cursor:pointer;font-family:inherit">See all activity</button>');
+  } else if(tab==='tickets'){
+    body=(activeTk.length?saCard('<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.06em;margin-bottom:4px">ACTIVE</div>'+activeTk.map(tkRow).join('')):'')
+      +(pastTk.length?saCard('<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.06em;margin-bottom:4px">PAST</div>'+pastTk.map(tkRow).join('')):'')
+      +(!activeTk.length&&!pastTk.length?saCard('<div style="font-size:13px;color:rgba(255,255,255,0.5);text-align:center;padding:14px">No tickets yet — reserve a drop and it lands here.</div>'):'')
+      +'<button onclick="go(\'ticketCollection\')" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">Open full ticket view</button>';
   } else if(tab==='cards'){
     body=wallet.cards.map(c=>saCard('<div style="display:flex;align-items:center;gap:12px"><div style="width:44px;height:30px;border-radius:6px;background:linear-gradient(135deg,#0E4EF5,#6226E9);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff">'+c.brand.slice(0,4).toUpperCase()+'</div>'
       +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#fff">'+c.brand+' ···'+c.last4+'</div><div style="font-size:11px;color:rgba(255,255,255,0.45)">Expires '+c.exp+'</div></div>'
@@ -8775,7 +8799,7 @@ function renderWallet(){
   }
   return '<div style="position:sticky;top:0;z-index:99;background:#0a0a0a;border-bottom:1px solid rgba(255,255,255,0.08)">'
     +'<div style="padding:14px 16px 10px;font-size:22px;font-weight:800;color:#fff">Wallet</div>'
-    +'<div style="display:flex;padding:0 8px">'+tabBtn('overview','Overview')+tabBtn('cards','Cards')+tabBtn('rewards','Rewards')+tabBtn('receipts','Receipts')+tabBtn('activity','Activity')+'</div></div>'
+    +'<div style="display:flex;padding:0 8px">'+tabBtn('overview','Overview')+tabBtn('tickets','Tickets')+tabBtn('cards','Cards')+tabBtn('rewards','Rewards')+tabBtn('receipts','Receipts')+tabBtn('activity','Activity')+'</div></div>'
     +'<div style="background:#0a0a0a;padding:14px 16px 120px">'+body+'</div>';
 }
 
