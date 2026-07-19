@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Nigh — In real life. Presence is the point.</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --purple-deep: #4A1BB5;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --pink-light: #FCC3C4;
+            --white: #FFFFFF;
+            --off-white: #F7F5FF;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius: 20px;
+            --radius-sm: 12px;
+            --gradient-brand: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+            --gradient-warm: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+            --gradient-glow: linear-gradient(135deg, var(--teal), var(--blue), var(--purple), var(--pink));
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(11,11,26,0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 72px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo img, .nav-logo svg { height: 36px; width: auto; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta {
+            background: var(--blue) !important; color: #fff !important;
+            padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; transition: all 0.2s !important;
+        }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+        .mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 16px 36px; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: inherit;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-pink { background: var(--blue); color: #fff; }
+        .btn-pink:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(14,78,245,0.35); }
+
+        /* ===== SECTION BASE ===== */
+        section { padding: 120px 24px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+        }
+
+        /* ===== ABOUT / NIGH VISION ===== */
+        .about-section {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .about-text h2 {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 900; letter-spacing: -0.03em;
+            margin-bottom: 20px; line-height: 1.15;
+        }
+        .about-text p { color: var(--text-secondary); font-size: 1rem; line-height: 1.75; margin-bottom: 16px; font-weight: 400; }
+        .about-visual {
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .about-stat {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 16px; padding: 28px 32px;
+            display: flex; align-items: center; gap: 20px;
+            transition: all 0.3s;
+        }
+        .about-stat:hover { border-color: var(--blue); }
+        .about-stat-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0; background: rgba(14,78,245,0.1);
+        }
+        .about-stat h4 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+        .about-stat p { font-size: 0.85rem; color: var(--text-secondary); margin: 0; font-weight: 400; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px;
+        }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col h4 {
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 18px; color: var(--text-secondary);
+        }
+        .footer-col a {
+            display: block; color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400;
+        }
+        .footer-col a:hover { color: var(--text); }
+        .footer-app-links { display: flex; gap: 12px; margin-top: 16px; }
+        .footer-app-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.78rem; font-weight: 600;
+            padding: 6px 12px; border-radius: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .footer-app-link:hover { border-color: var(--teal); color: var(--teal); }
+        .footer-app-link svg { width: 14px; height: 14px; }
+        .footer-bottom {
+            max-width: 1200px; margin: 48px auto 0;
+            padding-top: 24px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; color: #555; font-weight: 400;
+        }
+        .footer-bottom a { color: #555; text-decoration: none; }
+        .footer-bottom a:hover { color: var(--text-secondary); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .about-grid { grid-template-columns: 1fr; gap: 48px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            section { padding: 80px 20px; }
+            .footer-inner { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo"><img src="Nigh_Logo_Blue.svg" alt="Nigh" style="height: 56px; width: auto; display: block;"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="waitlist.html" class="nav-cta">Get on the list</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== ABOUT ===== -->
+<section style="padding:180px 24px 100px;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(98,38,233,0.14), transparent 70%);pointer-events:none;"></div>
+    <div class="container" style="max-width:720px;position:relative;z-index:2;">
+        <div class="fade-up" style="text-align:center;">
+            <div class="section-label">About Nigh</div>
+            <h2 style="font-size:clamp(2rem,4.8vw,3rem);font-weight:900;letter-spacing:-0.03em;line-height:1.12;margin-bottom:36px;">In real life,<br><span style="color:var(--pink);">presence is the point.</span></h2>
+        </div>
+        <div class="fade-up" style="font-size:1.05rem;color:var(--text-secondary);line-height:1.85;">
+            <p style="margin-bottom:20px;">Nigh exists to help people create and participate in moments worth showing up for in real life.</p>
+            <p style="margin-bottom:20px;">It&rsquo;s built on a simple belief: <strong style="color:var(--text)">Communities are strongest when people participate in them.</strong></p>
+            <p style="margin-bottom:20px;">Today, we spend more time connected to screens than ever before, yet many people feel less connected to each other, their communities, and the world around them.</p>
+            <p style="margin-bottom:20px;"><strong style="color:var(--text)">We believe technology should help people participate more in real life &mdash; not retreat further from it.</strong></p>
+            <p style="margin-bottom:20px;">A way for artists, organizers, and friends &mdash; along with the businesses and venues &mdash; to create and participate in spontaneous real-world experiences that only exist when people show up.</p>
+            <p style="margin-bottom:28px;"><strong style="color:var(--text)">We believe the real world is ready for a comeback.</strong> Not by replacing the digital world, but by reminding us what makes real life meaningful: presence, participation, and shared experiences.</p>
+            <p style="text-align:center;font-size:1.2rem;font-weight:800;letter-spacing:-0.01em;color:var(--text);margin-bottom:0;">Real people. Real places. Real moments. <span class="gradient-text">Real soon.</span></p>
+        </div>
+        <div class="fade-up" style="text-align:center;margin-top:48px;">
+            <a href="waitlist.html" class="btn btn-pink">Get on the list</a>
+        </div>
+        <p class="fade-up" style="text-align:center;margin-top:56px;font-size:0.85rem;line-height:1.7;color:var(--text-secondary);opacity:0.55;max-width:460px;margin-left:auto;margin-right:auto;">Nigh /ni/ means near in place, in time, and in relationship. That&rsquo;s where the best things in life happen.</p>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-inner" style="grid-template-columns: 2fr 1fr 1fr;">
+        <div class="footer-brand">
+            <a href="index.html" style="text-decoration:none;display:inline-block;margin-bottom:4px;"><img src="Nigh_Logo_Blue.svg" alt="Nigh" style="height:60px;width:auto;display:block;"></a>
+            <p>Real life, worth showing up for.</p>
+        </div>
+        <div class="footer-col">
+            <a href="index.html">Home</a>
+            <a href="for-hosts.html">For Hosts</a>
+            <a href="waitlist.html">Join the list</a>
+        </div>
+        <div class="footer-col">
+            <a href="about.html">About</a>
+            <a href="foundation.html">Foundation</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh. All rights reserved.</span>
+        <div style="display:flex;gap:24px;"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+</footer>
+<script>
+const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add("visible"); }); }, { threshold: 0.1 });
+document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
