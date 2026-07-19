@@ -19,3 +19,14 @@ update_brd_*.py
 
 # Config files
 claude_desktop_config.json
+
+# Documents & spreadsheets are NOT synced — repo holds websites + prototypes only
+*.docx
+*.doc
+*.xlsx
+*.xls
+*.pptx
+*.ppt
+*.pdf
+*.gdoc
+*.csv
