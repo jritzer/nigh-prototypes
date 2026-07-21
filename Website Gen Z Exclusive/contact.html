@@ -19,6 +19,7 @@
             --border-light: rgba(255,255,255,0.12);
             --text: #F5F5F7;
             --text-secondary: #A8A8C0;
+            --radius: 20px;
             --radius-sm: 12px;
         }
 
@@ -47,61 +48,74 @@
         }
         .back-link:hover { color: var(--text); }
 
-        /* ===== CHAT ===== */
+        /* ===== PAGE ===== */
         main {
-            flex: 1; width: 100%; max-width: 640px;
-            margin: 0 auto; padding: 48px 24px 32px;
-            display: flex; flex-direction: column;
+            flex: 1; width: 100%; max-width: 580px;
+            margin: 0 auto; padding: 56px 24px 64px;
         }
 
         .intro { margin-bottom: 32px; }
-        .intro h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; margin-bottom: 6px; }
-        .intro p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 400; }
+        .intro h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 10px; }
+        .intro p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 400; }
 
-        .thread { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
-
-        .msg { max-width: 88%; font-size: 0.97rem; font-weight: 400; line-height: 1.65; }
-        .msg.them { color: var(--text); align-self: flex-start; white-space: pre-line; }
-        .msg.you {
-            align-self: flex-end; background: var(--blue); color: #fff;
-            padding: 12px 17px; border-radius: 16px 16px 4px 16px;
-            font-weight: 500; white-space: pre-line;
-        }
-
-        .typing { display: inline-flex; gap: 5px; align-items: center; padding: 4px 0; }
-        .typing span {
-            width: 7px; height: 7px; border-radius: 50%; background: var(--text-secondary);
-            animation: pulse 1.3s infinite ease-in-out;
-        }
-        .typing span:nth-child(2) { animation-delay: 0.18s; }
-        .typing span:nth-child(3) { animation-delay: 0.36s; }
-        @keyframes pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
-
-        /* ===== COMPOSER ===== */
-        .composer {
-            display: flex; align-items: flex-end; gap: 10px;
+        /* ===== FORM ===== */
+        .card {
             background: var(--surface); border: 1px solid var(--border-light);
-            border-radius: 16px; padding: 12px 12px 12px 18px;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            border-radius: var(--radius); padding: 28px;
         }
-        .composer:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(14,78,245,0.15); }
-        .composer textarea {
-            flex: 1; background: transparent; border: none; outline: none; resize: none;
-            color: var(--text); font-family: inherit; font-size: 0.97rem;
-            line-height: 1.6; font-weight: 400; max-height: 160px; padding: 6px 0;
-        }
-        .composer textarea::placeholder { color: #5A5A78; }
-        .send {
-            flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
-            background: var(--blue); border: none; cursor: pointer;
-            color: #fff; font-size: 1rem; line-height: 1;
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.2s, transform 0.2s;
-        }
-        .send:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.15); }
-        .send:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .composer-hint { font-size: 0.74rem; color: #6A6A85; margin-top: 10px; font-weight: 400; }
+        .field { margin-bottom: 18px; }
+        .field:last-of-type { margin-bottom: 0; }
+        .field label {
+            display: block; font-size: 0.76rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-secondary); margin-bottom: 8px;
+        }
+        .field label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
+        .field input, .field textarea {
+            width: 100%; background: var(--bg); color: var(--text);
+            border: 1px solid var(--border-light); border-radius: 10px;
+            padding: 13px 15px; font-family: inherit; font-size: 0.95rem;
+            font-weight: 400; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field textarea { resize: vertical; min-height: 140px; line-height: 1.65; }
+        .field input:focus, .field textarea:focus {
+            border-color: var(--blue); box-shadow: 0 0 0 3px rgba(14,78,245,0.15);
+        }
+        .field input::placeholder, .field textarea::placeholder { color: #5A5A78; }
+        .field input.invalid, .field textarea.invalid { border-color: var(--pink); }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .btn {
+            width: 100%; margin-top: 24px; padding: 15px 32px;
+            border-radius: var(--radius-sm); background: var(--blue); color: #fff;
+            font-size: 0.98rem; font-weight: 700; font-family: inherit;
+            border: none; cursor: pointer; transition: all 0.25s;
+        }
+        .btn:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(14,78,245,0.35); }
+
+        .error-msg {
+            color: var(--pink); font-size: 0.83rem; font-weight: 500;
+            margin-top: 14px; display: none;
+        }
+
+        /* ===== CONFIRMATION ===== */
+        .confirm { text-align: center; padding: 12px 4px; }
+        .confirm-check {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: rgba(14,78,245,0.12); border: 1.5px solid rgba(14,78,245,0.35);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 1.6rem; color: var(--blue);
+        }
+        .confirm h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.01em; }
+        .confirm p { color: var(--text-secondary); font-size: 0.93rem; font-weight: 400; margin-bottom: 6px; }
+        .ref {
+            display: inline-block; margin-top: 16px; padding: 8px 17px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 100px; font-size: 0.78rem; font-weight: 700;
+            letter-spacing: 0.06em; color: var(--text-secondary);
+        }
 
         /* ===== FOOTER ===== */
         footer {
@@ -115,9 +129,10 @@
         .hidden { display: none !important; }
 
         @media (max-width: 600px) {
-            main { padding: 32px 20px 24px; }
-            .intro h1 { font-size: 1.35rem; }
-            .msg { max-width: 94%; }
+            main { padding: 36px 20px 48px; }
+            .intro h1 { font-size: 1.55rem; }
+            .card { padding: 22px; }
+            .row { grid-template-columns: 1fr; gap: 0; }
         }
     </style>
 </head>
@@ -133,18 +148,45 @@
 <main>
     <div class="intro">
         <h1>Contact</h1>
-        <p>Tell us what you need in your own words.</p>
+        <p>Thanks for reaching out. Tell us how we can help and we'll make sure your message reaches the right person.</p>
     </div>
 
-    <div class="thread" id="thread" aria-live="polite"></div>
-
-    <div id="composer-wrap">
-        <div class="composer">
-            <label for="input" class="hidden">Your message</label>
-            <textarea id="input" rows="1" placeholder="Type your message&hellip;"></textarea>
-            <button class="send" id="send" disabled aria-label="Send">&uarr;</button>
+    <!-- FORM -->
+    <div class="card" id="form-card">
+        <div class="row">
+            <div class="field">
+                <label for="name">Name</label>
+                <input id="name" type="text" placeholder="Your name" autocomplete="name">
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+            </div>
         </div>
-        <div class="composer-hint">Enter to send &middot; Shift + Enter for a new line</div>
+
+        <div class="field">
+            <label for="phone">Phone <span class="opt">(optional)</span></label>
+            <input id="phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
+        </div>
+
+        <div class="field">
+            <label for="message">How can we help?</label>
+            <textarea id="message" placeholder="Tell us what's going on &mdash; in your own words."></textarea>
+        </div>
+
+        <p class="error-msg" id="err"></p>
+        <button class="btn" id="submit">Send message</button>
+    </div>
+
+    <!-- CONFIRMATION -->
+    <div class="card hidden" id="done-card">
+        <div class="confirm">
+            <div class="confirm-check">&#10003;</div>
+            <h2>Thanks &mdash; we've got it.</h2>
+            <p id="done-line"></p>
+            <p>We'll reply to <strong id="done-email"></strong>.</p>
+            <div class="ref" id="done-ref"></div>
+        </div>
     </div>
 </main>
 
@@ -158,52 +200,34 @@
 (function () {
     'use strict';
 
+    /* Routing runs quietly on submit so nobody has to classify themselves. */
     var ROUTES = [
-        { team: 'the host team',      sla: 'a business day',
-          line: "Got it — sounds like you want to run drops.",
+        { team: 'our host team',        sla: 'a business day',
           kw: { host:4, hosting:4, venue:3, restaurant:3, bar:3, cafe:3, coffee:3, shop:2, store:2, brewery:3, gym:2, studio:3, salon:3, drop:2, drops:3, capacity:2, onboard:2, owner:2 } },
-        { team: 'our partnerships team', sla: 'two or three days',
-          line: "Thanks — this reads like a partnership question.",
+        { team: 'our partnerships team', sla: 'two to three business days',
           kw: { partner:4, partnership:5, collab:4, collaboration:4, sponsor:4, sponsorship:4, brand:3, agency:3, enterprise:3, franchise:3, reseller:3, integration:2, api:2 } },
-        { team: 'our press office',   sla: 'a business day',
-          line: "Thanks — press inquiry noted.",
+        { team: 'our press office',     sla: 'a business day',
           kw: { press:5, media:4, journalist:5, reporter:5, interview:4, article:3, podcast:4, coverage:3, embargo:3, publication:3, magazine:3 } },
-        { team: 'the access team',    sla: 'a couple of days',
-          line: "Nigh is invite-only during the private beta, so I'll pass this along.",
+        { team: 'our access team',      sla: 'two business days',
           kw: { invite:5, invitation:5, access:4, waitlist:5, 'private beta':4, beta:3, code:3, join:3, download:3, early:2 } },
-        { team: 'support',            sla: 'the same day',
-          line: "Sorry about that — sounds like something went wrong with a reservation.",
+        { team: 'our support team',     sla: 'the same day',
           kw: { refund:5, cancel:4, cancelled:4, ticket:3, reservation:4, booking:4, 'no-show':4, noshow:4, 'check in':3, checkin:3, order:3, missed:3, problem:3, issue:3, broken:3, bug:4, error:3, wrong:2 } },
-        { team: 'billing',            sla: 'a business day',
-          line: "Got it — that's a billing question.",
+        { team: 'our billing team',     sla: 'a business day',
           kw: { billing:5, invoice:5, payout:5, charge:4, charged:4, payment:4, subscription:5, pricing:3, receipt:3, stripe:4, tax:3 } },
-        { team: 'trust and safety',   sla: 'a few hours',
-          line: "Thank you for reporting this — we take it seriously. If anyone is in immediate danger, please contact local emergency services rather than waiting on us.",
+        { team: 'our trust and safety team', sla: 'a few hours',
           kw: { report:4, safety:5, unsafe:5, harass:5, abuse:5, scam:5, fraud:5, fake:4, impersonat:5, dangerous:4, threat:4, discriminat:5, violation:4 } },
-        { team: 'our privacy team',   sla: 'a couple of days',
-          line: "Understood — that's a privacy request.",
+        { team: 'our privacy team',     sla: 'two business days',
           kw: { privacy:5, gdpr:5, ccpa:5, 'delete my':5, 'my data':4, 'opt out':4, unsubscribe:3, consent:3, tracking:3 } },
-        { team: 'the foundation team', sla: 'a few days',
-          line: "Got it — that's one for the Nigh Foundation.",
+        { team: 'the Nigh Foundation team', sla: 'a few business days',
           kw: { foundation:5, grant:4, nonprofit:4, 'non-profit':4, charity:3, donation:3, governance:4, steward:4 } },
-        { team: 'our people team',    sla: 'about a week',
-          line: "Thanks for your interest in working with us.",
+        { team: 'our people team',      sla: 'about a week',
           kw: { job:5, jobs:5, career:5, careers:5, hiring:5, role:3, resume:5, cv:4, portfolio:3, apply:4, intern:5, internship:5, recruit:4 } },
-        { team: 'the founders',       sla: 'a few days',
-          line: "Thanks — I'll pass this straight to the founding team.",
+        { team: 'our founding team',    sla: 'a few business days',
           kw: { invest:5, investor:5, investment:5, funding:5, raise:4, round:3, venture:4, vc:4, diligence:4 } },
-        { team: 'our general queue',  sla: 'a couple of days',
-          line: "Thanks — I'll make sure the right person sees this.",
-          kw: {} }
+        { team: 'the right team',       sla: 'two business days', kw: {} }
     ];
 
-    var thread = document.getElementById('thread');
-    var input = document.getElementById('input');
-    var send = document.getElementById('send');
-    var composer = document.getElementById('composer-wrap');
-
-    var stage = 'message';   // message -> email -> done
-    var route = null;
+    var $ = function (id) { return document.getElementById(id); };
 
     function classify(text) {
         var t = ' ' + text.toLowerCase().replace(/[^a-z0-9\s'-]/g, ' ').replace(/\s+/g, ' ') + ' ';
@@ -218,77 +242,41 @@
         return (best && bestScore >= 4) ? best : ROUTES[ROUTES.length - 1];
     }
 
-    function keepInView(el) {
-        if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' });
-    }
-
-    function bubble(who, text) {
-        var el = document.createElement('div');
-        el.className = 'msg ' + who;
-        el.textContent = text;
-        thread.appendChild(el);
-        keepInView(el);
-        return el;
-    }
-
-    function reply(text, after) {
-        var t = document.createElement('div');
-        t.className = 'msg them';
-        t.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
-        thread.appendChild(t);
-        keepInView(t);
-        window.setTimeout(function () {
-            t.textContent = text;
-            keepInView(t);
-            if (after) after();
-        }, 700);
-    }
-
     function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
 
-    function grow() {
-        input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 160) + 'px';
-    }
+    ['name', 'email', 'message'].forEach(function (id) {
+        $(id).addEventListener('input', function () { $(id).classList.remove('invalid'); });
+    });
 
-    function sync() { send.disabled = input.value.trim().length === 0; }
+    $('submit').addEventListener('click', function () {
+        var name = $('name').value.trim();
+        var email = $('email').value.trim();
+        var phone = $('phone').value.trim();
+        var message = $('message').value.trim();
 
-    function submit() {
-        var text = input.value.trim();
-        if (!text) return;
+        var problems = [];
+        if (!name) { $('name').classList.add('invalid'); problems.push('your name'); }
+        if (!isEmail(email)) { $('email').classList.add('invalid'); problems.push('a valid email'); }
+        if (message.length < 5) { $('message').classList.add('invalid'); problems.push('a short message'); }
 
-        bubble('you', text);
-        input.value = ''; grow(); sync();
-
-        if (stage === 'message') {
-            route = classify(text);
-            stage = 'email';
-            reply(route.line + " I'll get this to " + route.team + ".\n\nWhat's the best email to reply to?");
+        if (problems.length) {
+            $('err').textContent = 'Please add ' + problems.join(', ').replace(/, ([^,]*)$/, ' and $1') + '.';
+            $('err').style.display = 'block';
             return;
         }
+        $('err').style.display = 'none';
 
-        if (stage === 'email') {
-            if (!isEmail(text)) {
-                reply("That doesn't look like an email address — mind trying again?");
-                return;
-            }
-            stage = 'done';
-            var ref = 'NGH-' + Math.random().toString(36).slice(2, 8).toUpperCase();
-            reply("Sent. " + route.team.charAt(0).toUpperCase() + route.team.slice(1) +
-                  " usually replies within " + route.sla + ".\n\nYour reference is " + ref + ".", function () {
-                composer.classList.add('hidden');
-            });
-        }
-    }
+        var route = classify(message);
+        var ref = 'NGH-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 
-    input.addEventListener('input', function () { grow(); sync(); });
-    input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
+        $('done-line').textContent = 'Your message is with ' + route.team + '. They usually reply within ' + route.sla + '.';
+        $('done-email').textContent = email;
+        $('done-ref').textContent = 'Reference ' + ref;
+
+        $('form-card').classList.add('hidden');
+        $('done-card').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-    send.addEventListener('click', submit);
-
-    reply("Hey — what do you need? Hosting, press, access, a problem with a reservation, anything at all.");
-    sync();
 })();
 </script>
 
