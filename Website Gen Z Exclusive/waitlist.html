@@ -35,13 +35,11 @@
 
         /* ===== NAV ===== */
         nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 28px;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
+
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
 
         .nav-logo {
             display: flex;
@@ -420,8 +418,6 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 480px) {
-            nav { padding: 12px 20px; }
-            .nav-logo img { height: 44px; }
             .option-card { padding: 16px 18px; }
         }
     </style>
@@ -430,10 +426,12 @@
 
 <!-- ===== NAV ===== -->
 <nav>
-    <a href="index.html" class="nav-logo">
-        <img src="Nigh_Logo.svg" alt="Nigh">
-    </a>
-    <a class="back-link" href="javascript:history.back()">← Back</a>
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <img src="Nigh_Logo.svg" alt="Nigh">
+        </a>
+        <a class="back-link" href="javascript:history.back()">← Back</a>
+    </div>
 </nav>
 
 <!-- ===== MAIN ===== -->
