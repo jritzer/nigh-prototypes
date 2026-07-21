@@ -88,9 +88,9 @@
         .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
         .btn {
-            width: 100%; margin-top: 24px; padding: 15px 32px;
+            display: inline-block; margin-top: 24px; padding: 14px 34px;
             border-radius: var(--radius-sm); background: var(--blue); color: #fff;
-            font-size: 0.98rem; font-weight: 700; font-family: inherit;
+            font-size: 0.95rem; font-weight: 700; font-family: inherit;
             border: none; cursor: pointer; transition: all 0.25s;
         }
         .btn:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(14,78,245,0.35); }
@@ -148,7 +148,7 @@
 <main>
     <div class="intro">
         <h1>Contact</h1>
-        <p>Thanks for reaching out. Tell us how we can help and we'll make sure your message reaches the right person.</p>
+        <p>Thanks for reaching out. Tell us how we can help and we'll make sure your message gets routed correctly.</p>
     </div>
 
     <!-- FORM -->
@@ -175,7 +175,7 @@
         </div>
 
         <p class="error-msg" id="err"></p>
-        <button class="btn" id="submit">Send message</button>
+        <button class="btn" id="submit">Submit Message</button>
     </div>
 
     <!-- CONFIRMATION -->
