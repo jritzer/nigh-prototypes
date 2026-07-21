@@ -171,7 +171,7 @@
         </div>
 
         <div class="field">
-            <label for="phone">Mobile Phone <span class="opt">(optional)</span></label>
+            <label for="phone">Mobile Phone</label>
             <input id="phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
         </div>
 
@@ -276,7 +276,15 @@
 
     function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
 
-    ['first-name', 'last-name', 'email', 'message'].forEach(function (id) {
+    /* Accepts (555) 123-4567, 555-123-4567, 5551234567, +44 20 7946 0958 and
+       similar. Deliberately lenient on punctuation, strict on digit count. */
+    function isPhone(v) {
+        if (/[a-z]/i.test(v)) return false;
+        var digits = v.replace(/\D/g, '');
+        return digits.length >= 10 && digits.length <= 15;
+    }
+
+    ['first-name', 'last-name', 'phone', 'email', 'message'].forEach(function (id) {
         $(id).addEventListener('input', function () { $(id).classList.remove('invalid'); });
     });
 
@@ -290,6 +298,7 @@
         var problems = [];
         if (!firstName) { $('first-name').classList.add('invalid'); problems.push('your first name'); }
         if (!lastName) { $('last-name').classList.add('invalid'); problems.push('your last name'); }
+        if (!isPhone(phone)) { $('phone').classList.add('invalid'); problems.push('a valid mobile number'); }
         if (!isEmail(email)) { $('email').classList.add('invalid'); problems.push('a valid email'); }
         if (message.length < 5) { $('message').classList.add('invalid'); problems.push('a short message'); }
 
