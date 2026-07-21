@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Nigh — Tell us what you need</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9;
+            --purple-deep: #4A1BB5;
+            --blue: #0E4EF5;
+            --teal: #41EFF9;
+            --pink: #EC1977;
+            --white: #FFFFFF;
+            --bg: #0B0B1A;
+            --surface: #12122A;
+            --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08);
+            --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7;
+            --text-secondary: #A8A8C0;
+            --radius: 20px;
+            --radius-sm: 12px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(11,11,26,0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            height: 72px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo img, .nav-logo svg { height: 36px; width: auto; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary);
+            font-size: 0.85rem; font-weight: 600; padding: 8px 16px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta {
+            background: var(--blue) !important; color: #fff !important;
+            padding: 10px 24px !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; transition: all 0.2s !important;
+        }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 16px 36px; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: inherit;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary { background: var(--blue); color: #fff; }
+        .btn-primary:hover:not(:disabled) { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(14,78,245,0.35); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-ghost {
+            background: transparent; color: var(--text-secondary);
+            border: 1px solid var(--border-light); padding: 13px 26px; font-size: 0.9rem;
+        }
+        .btn-ghost:hover { color: var(--text); border-color: var(--text-secondary); }
+
+        .section-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--teal);
+            text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px;
+        }
+
+        /* ===== HERO ===== */
+        .contact-hero { padding: 152px 24px 40px; text-align: center; }
+        .contact-hero h1 {
+            font-size: clamp(2.1rem, 5vw, 3.4rem); font-weight: 900;
+            line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 18px;
+        }
+        .contact-hero p {
+            color: var(--text-secondary); font-size: 1.02rem;
+            max-width: 560px; margin: 0 auto; font-weight: 400;
+        }
+
+        /* ===== PROMPT ===== */
+        .prompt-wrap { max-width: 720px; margin: 0 auto; padding: 0 24px 40px; }
+
+        .prompt-box {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 22px 22px 16px;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .prompt-box:focus-within {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(14,78,245,0.16);
+        }
+        .prompt-box textarea {
+            width: 100%; background: transparent; border: none; outline: none;
+            resize: none; color: var(--text); font-family: inherit;
+            font-size: 1.02rem; line-height: 1.65; min-height: 116px; font-weight: 400;
+        }
+        .prompt-box textarea::placeholder { color: #5A5A78; }
+        .prompt-foot {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 16px; margin-top: 12px; padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .prompt-hint { font-size: 0.76rem; color: #6A6A85; font-weight: 400; }
+        .prompt-foot .btn { padding: 12px 28px; font-size: 0.92rem; }
+
+        .examples { margin-top: 22px; }
+        .examples-label {
+            font-size: 0.72rem; font-weight: 700; color: #6A6A85;
+            text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+        }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 100px; padding: 8px 15px;
+            font-size: 0.8rem; font-weight: 500; color: var(--text-secondary);
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .chip:hover { border-color: var(--blue); color: var(--text); background: rgba(14,78,245,0.1); }
+
+        /* ===== THINKING ===== */
+        .thinking { display: flex; align-items: center; gap: 12px; padding: 28px 4px; color: var(--text-secondary); font-size: 0.92rem; }
+        .dots { display: inline-flex; gap: 5px; }
+        .dots span {
+            width: 7px; height: 7px; border-radius: 50%; background: var(--blue);
+            animation: pulse 1.3s infinite ease-in-out;
+        }
+        .dots span:nth-child(2) { animation-delay: 0.18s; }
+        .dots span:nth-child(3) { animation-delay: 0.36s; }
+        @keyframes pulse { 0%, 80%, 100% { opacity: 0.25; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+        /* ===== TRIAGE RESULT ===== */
+        .result-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius); padding: 26px; margin-bottom: 18px;
+        }
+        .result-head {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+            font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--teal);
+        }
+        .result-rows { display: grid; gap: 1px; background: var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+        .result-row {
+            display: grid; grid-template-columns: 128px 1fr; gap: 16px;
+            background: var(--surface-2); padding: 13px 16px; align-items: baseline;
+        }
+        .result-row dt {
+            font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.07em;
+        }
+        .result-row dd { font-size: 0.92rem; font-weight: 600; }
+        .result-note {
+            margin-top: 16px; font-size: 0.84rem; color: var(--text-secondary);
+            font-weight: 400; line-height: 1.6;
+        }
+        .reroute {
+            margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+            font-size: 0.82rem; color: var(--text-secondary); font-weight: 400;
+        }
+        .reroute label { display: block; margin-bottom: 8px; }
+        .reroute select {
+            width: 100%; background: var(--bg); color: var(--text);
+            border: 1px solid var(--border-light); border-radius: 10px;
+            padding: 11px 13px; font-family: inherit; font-size: 0.88rem; font-weight: 500;
+            cursor: pointer; outline: none;
+        }
+        .reroute select:focus { border-color: var(--blue); }
+
+        .field { margin-bottom: 14px; }
+        .field label {
+            display: block; font-size: 0.76rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--text-secondary); margin-bottom: 7px;
+        }
+        .field input {
+            width: 100%; background: var(--bg); color: var(--text);
+            border: 1px solid var(--border-light); border-radius: 10px;
+            padding: 13px 15px; font-family: inherit; font-size: 0.95rem;
+            font-weight: 400; outline: none; transition: border-color 0.2s;
+        }
+        .field input:focus { border-color: var(--blue); }
+        .field input::placeholder { color: #5A5A78; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .actions { display: flex; gap: 12px; margin-top: 20px; }
+        .actions .btn-primary { flex: 1; }
+
+        .error-msg {
+            color: var(--pink); font-size: 0.82rem; font-weight: 500;
+            margin-top: 10px; display: none;
+        }
+
+        /* ===== CONFIRMATION ===== */
+        .confirm { text-align: center; padding: 32px 8px; }
+        .confirm-check {
+            width: 68px; height: 68px; border-radius: 50%;
+            background: rgba(14,78,245,0.12); border: 1.5px solid rgba(14,78,245,0.35);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 22px; font-size: 1.7rem; color: var(--blue);
+        }
+        .confirm h2 { font-size: 1.55rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.01em; }
+        .confirm p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 400; max-width: 420px; margin: 0 auto 8px; }
+        .ref {
+            display: inline-block; margin-top: 18px; padding: 9px 18px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 100px; font-size: 0.8rem; font-weight: 700;
+            letter-spacing: 0.06em; color: var(--text-secondary);
+        }
+
+        /* ===== DIRECT ALTERNATIVES ===== */
+        .direct { border-top: 1px solid var(--border); padding: 56px 24px 72px; }
+        .direct-inner { max-width: 720px; margin: 0 auto; }
+        .direct h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 6px; }
+        .direct > .direct-inner > p {
+            color: var(--text-secondary); font-size: 0.88rem;
+            font-weight: 400; margin-bottom: 24px;
+        }
+        .direct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .direct-item {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 16px 18px;
+            text-decoration: none; display: block; transition: all 0.2s;
+        }
+        .direct-item:hover { border-color: var(--border-light); background: var(--surface-2); }
+        .direct-item strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+        .direct-item span { font-size: 0.8rem; color: var(--text-secondary); font-weight: 400; }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+        }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col a {
+            display: block; color: var(--text-secondary); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400;
+        }
+        .footer-col a:hover { color: var(--text); }
+        .footer-bottom {
+            max-width: 1200px; margin: 48px auto 0;
+            padding-top: 24px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.78rem; color: #555; font-weight: 400;
+        }
+        .footer-bottom a { color: #555; text-decoration: none; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 900px) {
+            .nav-links a:not(.nav-cta) { display: none; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .contact-hero { padding: 124px 20px 32px; }
+            .field-row, .direct-grid { grid-template-columns: 1fr; }
+            .result-row { grid-template-columns: 1fr; gap: 4px; }
+            .actions { flex-direction: column-reverse; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo"><img src="Nigh_Logo.svg" alt="Nigh" style="height: 56px; width: auto; display: block;"></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="waitlist.html" class="nav-cta">Get on the list</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="contact-hero">
+    <div class="section-label">Contact</div>
+    <h1>What do you need?</h1>
+    <p>One box for everything. Tell us what's going on in your own words and we'll get it to the right people.</p>
+</header>
+
+<!-- ===== PROMPT ===== -->
+<div class="prompt-wrap">
+
+    <!-- STEP 1 -->
+    <section id="step-prompt">
+        <div class="prompt-box">
+            <label for="msg" class="hidden">Your message</label>
+            <textarea id="msg" placeholder="I run a coffee shop in Boulder and want to start doing drops on weekday mornings&hellip;"></textarea>
+            <div class="prompt-foot">
+                <span class="prompt-hint">Press &#8984;&#8629; to send</span>
+                <button class="btn btn-primary" id="send-btn" disabled>Continue</button>
+            </div>
+        </div>
+
+        <div class="examples">
+            <div class="examples-label">Or start from one of these</div>
+            <div class="chips" id="chips"></div>
+        </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section id="step-thinking" class="hidden">
+        <div class="thinking">
+            <span class="dots"><span></span><span></span><span></span></span>
+            Reading your message&hellip;
+        </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section id="step-review" class="hidden">
+        <div class="result-card">
+            <div class="result-head">Here's what we understood</div>
+            <dl class="result-rows">
+                <div class="result-row"><dt>Topic</dt><dd id="r-topic"></dd></div>
+                <div class="result-row"><dt>Goes to</dt><dd id="r-team"></dd></div>
+                <div class="result-row"><dt>Reply time</dt><dd id="r-sla"></dd></div>
+            </dl>
+            <p class="result-note" id="r-note"></p>
+
+            <div class="reroute">
+                <label for="r-override">Not right? Send it somewhere else.</label>
+                <select id="r-override"></select>
+            </div>
+        </div>
+
+        <div class="result-card">
+            <div class="field-row">
+                <div class="field">
+                    <label for="c-name">Name</label>
+                    <input id="c-name" type="text" placeholder="Your name" autocomplete="name">
+                </div>
+                <div class="field">
+                    <label for="c-email">Email</label>
+                    <input id="c-email" type="email" placeholder="you@example.com" autocomplete="email">
+                </div>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+                <label for="c-org">Business or organization <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional)</span></label>
+                <input id="c-org" type="text" placeholder="Where you're writing from">
+            </div>
+            <p class="error-msg" id="err">Please add your name and a valid email so we can reply.</p>
+
+            <div class="actions">
+                <button class="btn btn-ghost" id="back-btn">Edit message</button>
+                <button class="btn btn-primary" id="submit-btn">Send message</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section id="step-done" class="hidden">
+        <div class="result-card">
+            <div class="confirm">
+                <div class="confirm-check">&#10003;</div>
+                <h2>Got it &mdash; thanks.</h2>
+                <p id="done-line">Your message is with the right team.</p>
+                <p>We'll reply to <strong id="done-email"></strong>.</p>
+                <div class="ref" id="done-ref"></div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ===== DIRECT ALTERNATIVES ===== -->
+<section class="direct">
+    <div class="direct-inner">
+        <h3>Prefer something specific?</h3>
+        <p>The box above handles all of it, but these go straight there.</p>
+        <div class="direct-grid">
+            <a class="direct-item" href="waitlist.html"><strong>Request access</strong><span>Join the private beta list</span></a>
+            <a class="direct-item" href="for-hosts.html"><strong>Become a host</strong><span>How drops work for venues</span></a>
+            <a class="direct-item" href="foundation.html"><strong>Nigh Foundation</strong><span>Our stewardship model</span></a>
+            <a class="direct-item" href="about.html"><strong>About Nigh</strong><span>Why we're building this</span></a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="index.html" style="text-decoration:none;display:inline-block;margin-bottom:4px;"><img src="Nigh_Logo.svg" alt="Nigh" style="height: 60px; width: auto; display: block;"></a>
+            <p>Real life, worth showing up for.</p>
+        </div>
+        <div class="footer-col">
+            <a href="index.html">Home</a>
+            <a href="for-hosts.html">For Hosts</a>
+            <a href="waitlist.html">Join the list</a>
+        </div>
+        <div class="footer-col">
+            <a href="about.html">About</a>
+            <a href="foundation.html">Foundation</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh. All rights reserved.</span>
+        <div style="display:flex;gap:24px;"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+</footer>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ---------- Routing table: every inquiry type the site needs to absorb ---------- */
+    var ROUTES = [
+        { id: 'host',       topic: 'Hosting a drop',        team: 'Host Team',          sla: '1 business day',
+          note: 'Sounds like you want to run drops. The host team will walk you through setup, pricing and what a first drop usually looks like.',
+          kw: { host:4, hosting:4, venue:3, restaurant:3, bar:3, cafe:3, coffee:3, shop:2, store:2, brewery:3, gym:2, studio:3, salon:3, drop:2, drops:3, capacity:2, tickets:1, onboard:2, 'sign up':2, business:1, owner:2, myplace:2 } },
+
+        { id: 'partner',    topic: 'Partnership or brand collaboration', team: 'Partnerships', sla: '2–3 business days',
+          note: 'We routed this to partnerships. They handle brand collaborations, venue networks, sponsorships and anything multi-location.',
+          kw: { partner:4, partnership:5, collab:4, collaboration:4, sponsor:4, sponsorship:4, brand:3, agency:3, enterprise:3, 'multi-location':3, franchise:3, reseller:3, integration:2, api:2, wholesale:2 } },
+
+        { id: 'press',      topic: 'Press and media',       team: 'Press Office',       sla: '1 business day',
+          note: 'Press inquiries go straight to our comms lead. Please include your outlet and deadline if you have one.',
+          kw: { press:5, media:4, journalist:5, reporter:5, interview:4, story:2, article:3, podcast:4, coverage:3, quote:2, embargo:3, publication:3, magazine:3, newsletter:2 } },
+
+        { id: 'access',     topic: 'Access and invitations', team: 'Access Team',       sla: '2 business days',
+          note: 'Nigh is invite-only during the private beta. The access team reviews requests in the order they arrive.',
+          kw: { invite:5, invitation:5, access:4, waitlist:5, 'private beta':4, beta:3, code:3, 'sign up':2, join:3, download:3, app:2, 'get in':3, early:2 } },
+
+        { id: 'support',    topic: 'Help with a reservation', team: 'Support',          sla: 'Same day',
+          note: 'This looks like a support question about an existing reservation. Including the drop name and date will speed things up.',
+          kw: { refund:5, cancel:4, cancelled:4, ticket:3, reservation:4, booking:4, 'no-show':4, noshow:4, 'check in':3, 'checked in':3, checkin:3, order:3, missed:3, late:2, problem:3, issue:3, broken:3, bug:4, error:3, help:2, wrong:2 } },
+
+        { id: 'billing',    topic: 'Billing and payments',  team: 'Billing',            sla: '1 business day',
+          note: 'Billing handles subscriptions, payouts, invoices and anything involving a charge.',
+          kw: { billing:5, invoice:5, payout:5, charge:4, charged:4, payment:4, subscription:5, plan:3, pricing:3, receipt:3, stripe:4, tax:3, card:2 } },
+
+        { id: 'trust',      topic: 'Trust and safety',      team: 'Trust & Safety',     sla: 'Within hours',
+          note: 'Trust and safety reviews these first. If someone is in immediate danger, please contact local emergency services rather than waiting on us.',
+          kw: { report:4, safety:5, unsafe:5, harass:5, harassment:5, abuse:5, scam:5, fraud:5, fake:4, impersonat:5, stolen:3, dangerous:4, threat:4, discriminat:5, violation:4 } },
+
+        { id: 'privacy',    topic: 'Privacy and data',      team: 'Privacy Team',       sla: '2 business days',
+          note: 'Privacy handles data access, deletion and anything about how your information is used.',
+          kw: { privacy:5, gdpr:5, ccpa:5, 'delete my':5, 'my data':4, data:2, personal:2, 'opt out':4, unsubscribe:3, consent:3, tracking:3 } },
+
+        { id: 'foundation', topic: 'Nigh Foundation',       team: 'Foundation',         sla: '3 business days',
+          note: 'The foundation team handles stewardship, grants and questions about our governance model.',
+          kw: { foundation:5, grant:4, nonprofit:4, 'non-profit':4, charity:3, donation:3, governance:4, steward:4, community:2, mission:2 } },
+
+        { id: 'careers',    topic: 'Careers',               team: 'People Team',        sla: '5 business days',
+          note: 'Roles and applications go to the people team. A link to your work is more useful to us than a cover letter.',
+          kw: { job:5, jobs:5, career:5, careers:5, hiring:5, hire:3, role:3, position:3, resume:5, cv:4, portfolio:3, apply:4, application:3, intern:5, internship:5, engineer:2, designer:2, recruit:4 } },
+
+        { id: 'invest',     topic: 'Investment',            team: 'Founders',           sla: '3 business days',
+          note: 'Investor conversations go directly to the founding team.',
+          kw: { invest:5, investor:5, investment:5, funding:5, raise:4, round:3, 'venture':4, vc:4, 'cap table':4, diligence:4, deck:3 } },
+
+        { id: 'general',    topic: 'General inquiry',       team: 'General Inquiries',  sla: '2 business days',
+          note: "We couldn't place this in a specific bucket, so it's going to the general queue where someone will read it and route it on.",
+          kw: {} }
+    ];
+
+    var EXAMPLES = [
+        "I want to host drops at my restaurant",
+        "I'm a journalist working on a story",
+        "How do I get an invite?",
+        "I need a refund for a drop I missed",
+        "We'd like to partner on a brand collaboration",
+        "Do you have any open roles?"
+    ];
+
+    /* ---------- Elements ---------- */
+    var $ = function (id) { return document.getElementById(id); };
+    var msg = $('msg'), sendBtn = $('send-btn'), chips = $('chips'), override = $('r-override');
+    var stepPrompt = $('step-prompt'), stepThinking = $('step-thinking'),
+        stepReview = $('step-review'), stepDone = $('step-done');
+    var current = null;
+
+    /* ---------- Classifier: weighted keyword scoring, longest-match wins ---------- */
+    function classify(text) {
+        var t = ' ' + text.toLowerCase().replace(/[^a-z0-9\s'-]/g, ' ').replace(/\s+/g, ' ') + ' ';
+        var best = null, bestScore = 0;
+
+        ROUTES.forEach(function (route) {
+            var score = 0;
+            Object.keys(route.kw).forEach(function (word) {
+                if (t.indexOf(' ' + word) !== -1 || t.indexOf(word + ' ') !== -1) {
+                    score += route.kw[word];
+                }
+            });
+            if (score > bestScore) { bestScore = score; best = route; }
+        });
+
+        // Require a meaningful signal before claiming a specific bucket.
+        return (best && bestScore >= 4) ? best : ROUTES[ROUTES.length - 1];
+    }
+
+    function routeById(id) {
+        for (var i = 0; i < ROUTES.length; i++) { if (ROUTES[i].id === id) return ROUTES[i]; }
+        return ROUTES[ROUTES.length - 1];
+    }
+
+    function show(el) {
+        [stepPrompt, stepThinking, stepReview, stepDone].forEach(function (s) { s.classList.add('hidden'); });
+        el.classList.remove('hidden');
+    }
+
+    function paint(route) {
+        current = route;
+        $('r-topic').textContent = route.topic;
+        $('r-team').textContent = route.team;
+        $('r-sla').textContent = route.sla;
+        $('r-note').textContent = route.note;
+        override.value = route.id;
+    }
+
+    /* ---------- Build UI ---------- */
+    EXAMPLES.forEach(function (text) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = text;
+        b.addEventListener('click', function () {
+            msg.value = text;
+            msg.focus();
+            sync();
+        });
+        chips.appendChild(b);
+    });
+
+    ROUTES.forEach(function (route) {
+        var o = document.createElement('option');
+        o.value = route.id;
+        o.textContent = route.topic + ' — ' + route.team;
+        override.appendChild(o);
+    });
+
+    function sync() { sendBtn.disabled = msg.value.trim().length < 8; }
+    msg.addEventListener('input', sync);
+
+    msg.addEventListener('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !sendBtn.disabled) { go(); }
+    });
+
+    sendBtn.addEventListener('click', go);
+
+    function go() {
+        var text = msg.value.trim();
+        if (text.length < 8) return;
+        show(stepThinking);
+        window.setTimeout(function () {
+            paint(classify(text));
+            show(stepReview);
+        }, 850);
+    }
+
+    override.addEventListener('change', function () { paint(routeById(override.value)); });
+
+    $('back-btn').addEventListener('click', function () {
+        show(stepPrompt);
+        msg.focus();
+    });
+
+    $('submit-btn').addEventListener('click', function () {
+        var name = $('c-name').value.trim();
+        var email = $('c-email').value.trim();
+        var ok = name.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        $('err').style.display = ok ? 'none' : 'block';
+        if (!ok) return;
+
+        var ref = 'NGH-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+        $('done-line').textContent = 'Your message is with ' + current.team + '. They usually reply within ' + current.sla.toLowerCase() + '.';
+        $('done-email').textContent = email;
+        $('done-ref').textContent = 'Reference ' + ref;
+        show(stepDone);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    sync();
+})();
+</script>
+
+</body>
+</html>
