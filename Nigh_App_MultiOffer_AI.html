@@ -357,6 +357,65 @@ function seatKey(secId,row,n){return secId+'-'+row+n;}
 function seatSelList(){return Object.keys(S.seatSel||{}).filter(function(k){return S.seatSel[k];});}
 const feedDrops=[
 
+  // ── BRAND DROPS (semi-custom tickets) — sponsor-partnered geofenced events.
+  //    Each carries ticketTheme:<key> → TICKET_THEMES applies brand hero, edition, keepsake.
+  {id:'BR01',title:'UFC Fight Night — T-Mobile Arena',
+   host:{name:'T-Mobile Arena',handle:'@tmobilearena',short:'TMA',addr:'3780 S Las Vegas Blvd, Las Vegas, NV'},
+   locationDetails:'Enter at the Toshiba Plaza gates and have your ticket QR ready. Drop offers unlock only inside the arena — you must be on-site to claim.',
+   partners:[{handle:'@ufc',name:'UFC'},{handle:'@budlight',name:'Bud Light'}],
+   status:'Live',timing:'Start Time',start:'6:00 PM',date:'Apr 24',
+   closesIn:'1d 4h',startsIn:'2h 00m',price:0,cap:200,spotsLeft:184,age21:true,
+   media:'video',maxPerUser:2,liked:false,likeCount:212,
+   geofenced:true,schedule:'fixed',select:'quantity',inventory:'per_slot',ticketTheme:'ufc',
+   desc:'Fight night is live. Claim in-arena drops from tonight’s sponsors — enter to win, or grab a limited discount before the main card. Offers unlock only once you’re inside.',
+   slug:'tmobilearena/FIGHT',
+   slots:[
+     {id:'s1',window:'6:00 PM',offers:[
+       {id:'o1',name:'Bud Light — Round Zero',price:0,left:100,desc:'Enter to win a first-round Bud Light on the house — 100 winners drawn live before the main card. 21+, ID required at the bar.'},
+       {id:'o2',name:'Backstage: Meet a Fighter',price:0,left:4,desc:'Four fans drawn at random go backstage to meet a fighter after the prelims. A once-in-a-lifetime cageside moment.'},
+       {id:'o3',name:'Fight Night Pizza — 50% Off',price:9,left:80,desc:'Half-price stone-fired pizza at any concourse stand, tonight only. Clears the kitchen before the main event.'},
+       {id:'o4',name:'UFC Fight Night Tee — 25% Off',price:30,left:60,desc:'Official Fight Night event tee, 25% off at the merch stands. Dated and venue-stamped — only printed for tonight.'}
+     ]}
+   ]},
+
+  {id:'BR02',title:'Las Vegas Grand Prix — Race Week',
+   host:{name:'Las Vegas Grand Prix',handle:'@f1lasvegas',short:'F1',addr:'Las Vegas Strip Circuit, Las Vegas, NV'},
+   locationDetails:'Verify your race ticket at any grandstand gate to unlock drops. Offers can only be claimed inside the circuit footprint.',
+   partners:[{handle:'@f1',name:'F1'},{handle:'@heineken',name:'Heineken'},{handle:'@rolex',name:'Rolex'}],
+   status:'Live',timing:'Start Time',start:'5:00 PM',date:'Apr 25',
+   closesIn:'2d 1h',startsIn:'3h 00m',price:0,cap:250,spotsLeft:238,age21:true,
+   media:'video',maxPerUser:2,liked:false,likeCount:341,
+   geofenced:true,schedule:'fixed',select:'quantity',inventory:'per_slot',ticketTheme:'f1',
+   desc:'Race Week on the Strip. Verify your ticket to unlock trackside drops from the paddock’s partners — VIP tents, a grid-walk moment, and a Rolex draw. Enter while they last.',
+   slug:'f1lasvegas/RACEWK',
+   slots:[
+     {id:'s1',window:'5:00 PM',offers:[
+       {id:'o1',name:'Heineken VIP Tent Entry',price:0,left:50,desc:'Enter to win one of 50 passes into the Heineken paddock tent — elevated track views and hospitality. 21+.'},
+       {id:'o2',name:'Grid Walk: Start the Race',price:0,left:1,desc:'One fan, chosen at random, walks the grid and gives the signal to start the race. The rarest seat in the house isn’t a seat.'},
+       {id:'o3',name:'Rolex Timepiece Draw',price:0,left:1,desc:'A single Rolex, drawn from all verified attendees at the end of race week. One entry per fan.'},
+       {id:'o4',name:'Race Day Cap — 50% Off',price:20,left:120,desc:'Official Race Week cap, half off at trackside merch. Circuit-and-date stamped — a keepsake of the weekend.'}
+     ]}
+   ]},
+
+  {id:'BR03',title:'Buffalo Wild Wings — Slow-Night Drop',
+   host:{name:'Buffalo Wild Wings',handle:'@buffalowildwings',short:'BWW',addr:'2560 Arapahoe Ave, Boulder, CO'},
+   locationDetails:'Show your drop QR to your server to redeem. Offers only work in-store — you have to be here to claim.',
+   partners:[{handle:'@josecuervo',name:'Jose Cuervo'}],
+   status:'Live',timing:'Start Time',start:'8:00 PM',date:'Apr 22',
+   closesIn:'6h 20m',startsIn:'1h 30m',price:0,cap:120,spotsLeft:96,age21:true,
+   media:'video',maxPerUser:3,liked:false,likeCount:74,
+   geofenced:true,schedule:'fixed',select:'quantity',inventory:'per_slot',ticketTheme:'bww',
+   desc:'It’s a slow Tuesday — so we’re dropping. Claim tonight’s in-store offers from us and Jose Cuervo. Show up, show your QR, redeem at the table.',
+   slug:'buffalowildwings/SLOW',
+   slots:[
+     {id:'s1',window:'8:00 PM',offers:[
+       {id:'o1',name:'Jose Cuervo — Shot + Glass',price:0,left:10,desc:'First 10 to claim get a Jose Cuervo shot and a keepsake shot glass to take home. 21+, ID required.'},
+       {id:'o2',name:'50% Off Any One Item',price:0,left:10,desc:'Ten guests get half off any single menu item tonight. Claim it, show your server, done.'},
+       {id:'o3',name:'15% Off Any Appetizer',price:0,left:200,desc:'Every drop attendee gets 15% off an appetizer. Because nobody should watch the game hungry.'},
+       {id:'o4',name:'Last Call: Half-Price Wings',price:8,left:60,desc:'Traditional wings, half price, until we sell out of tonight’s prep. Last call only.'}
+     ]}
+   ]},
+
   {id:'M001',title:'Blue Sky Bakery — Weekend Pastry Drop',
    host:{name:'Blue Sky Bakery',handle:'@blueskybakery',short:'BSB',addr:'1155 Canyon Blvd, Boulder, CO'},
    locationDetails:'Order at the counter and give your name — grab-and-go from the pastry case by the window. Street parking on Canyon.',
@@ -859,6 +918,15 @@ const feedDrops=[
 })();
 
 const myTickets=[
+  // Seeded past branded ticket — shows the semi-custom "keepsake" state in the Past tab.
+  {id:'TKF1',dropId:'BR02P',title:'Las Vegas Grand Prix — Race Week',
+   host:'Las Vegas Grand Prix',hostHandle:'@f1lasvegas',ticketTheme:'f1',
+   date:'Mar 22, 2026',time:'5:00 PM',addr:'Las Vegas Strip Circuit, Las Vegas, NV',
+   price:0,qty:1,extras:[],age21:true,
+   desc:'Race Week on the Strip. Your verified-attendee drop entries for the weekend — Heineken tent, grid walk, and the Rolex draw.',
+   partners:[{handle:'@f1',name:'F1'},{handle:'@heineken',name:'Heineken'},{handle:'@rolex',name:'Rolex'}],
+   status:'Completed',orderId:'ORD-5150',orderDate:'Mar 20, 2026 · 6:02 PM',
+   terms:'One entry per QR. Verified attendees only.'},
   {id:'TK001',dropId:'D001',title:'Nike Air Max Day Access',
    host:'Nike Boulder',hostHandle:'@nikeboulder',
    date:'Apr 20, 2026',time:'2:00 PM',addr:'1800 29th St, Boulder, CO',
@@ -2683,7 +2751,7 @@ function viewNewTicket(){
       const wparts=(mo.window||'').split('–').map(function(s){return s.trim();});
       const wStart=windowed?(wparts[0]||mo.window):d.start;const wEnd=windowed?(wparts[1]||''):'';
       myTickets.unshift({
-        id:nid,dropId:d.id,title:d.title,
+        id:nid,dropId:d.id,ticketTheme:d.ticketTheme||null,title:d.title,
         host:d.host.name,hostHandle:d.host.handle,
         date:d.date,time:wStart,endTime:wEnd,timing:windowed?'Arrival Window':'Start Time',
         addr:d.host.addr,price:mo.subtotal||0,age21:d.age21||false,
@@ -2695,7 +2763,7 @@ function viewNewTicket(){
     }else{
       const qty=S.orderQty||1;
       myTickets.unshift({
-        id:nid,dropId:d.id,title:d.title,
+        id:nid,dropId:d.id,ticketTheme:d.ticketTheme||null,title:d.title,
         host:d.host.name,hostHandle:d.host.handle,
         date:d.date,time:d.start,endTime:d.endTime||'',timing:d.timing||'Start Time',
         addr:d.host.addr,price:d.price||0,age21:d.age21||false,
@@ -3276,6 +3344,42 @@ function updateDropScrollbar(){
   thumb.style.height=th+'px';
   thumb.style.top=top+'px';
 }
+// ── SEMI-CUSTOM TICKET THEMES ───────────────────────────
+// A reusable template: every branded drop supplies the SAME set of fields, only the
+// values change. That's the "semi-custom" idea — hosts theme a ticket by filling
+// parameters, not by designing a one-off. Keyed by drop.ticketTheme.
+const TICKET_THEMES={
+  ufc:{
+    grad:'linear-gradient(135deg,#E30613,#7A0000,#141414)',
+    shadow:'0 0 40px rgba(227,6,19,0.32),0 0 70px rgba(0,0,0,0.35)',
+    ink:'#0C0708', accent:'#E30613',
+    glow1:'rgba(227,6,19,0.22)', glow2:'rgba(0,0,0,0.5)',
+    eyebrow:'Fight Night', motif:'🥊', editionLabel:'Cageside Collectible',
+    keepsake:'YOU WERE THERE', editionCap:100,
+    sponsors:[{name:'UFC',color:'#fff',bg:'#000'},{name:'BUD LIGHT',color:'#12376B',bg:'#CFE4F5'}]
+  },
+  f1:{
+    grad:'linear-gradient(135deg,#E10600,#3A0B0B,#0A0A0B)',
+    shadow:'0 0 40px rgba(225,6,0,0.30),0 0 70px rgba(0,0,0,0.35)',
+    ink:'#0A0A0B', accent:'#E10600',
+    glow1:'rgba(225,6,0,0.20)', glow2:'rgba(0,0,0,0.5)',
+    eyebrow:'Race Week', motif:'🏁', editionLabel:'Paddock Keepsake',
+    keepsake:'LIGHTS OUT · YOU WERE THERE', editionCap:50,
+    sponsors:[{name:'F1',color:'#E10600',bg:'#fff'},{name:'HEINEKEN',color:'#0A5D2C',bg:'#D6F0DD'},{name:'ROLEX',color:'#0B3D2E',bg:'#E7D8A6'}]
+  },
+  bww:{
+    grad:'linear-gradient(135deg,#FFC72C,#E67E00,#1A1206)',
+    shadow:'0 0 40px rgba(255,199,44,0.26),0 0 70px rgba(230,126,0,0.15)',
+    ink:'#12100A', accent:'#E67E00',
+    glow1:'rgba(255,199,44,0.20)', glow2:'rgba(230,126,0,0.16)',
+    eyebrow:'Slow-Night Drop', motif:'🔥', editionLabel:'Blackout Collectible',
+    keepsake:'YOU SHOWED UP', editionCap:10,
+    sponsors:[{name:'BUFFALO WILD WINGS',color:'#111',bg:'#FFC72C'},{name:'JOSE CUERVO',color:'#7A2E12',bg:'#F2E2C4'}]
+  }
+};
+// Deterministic edition number from the order id so it's stable across renders.
+function ticketEdition(seed,cap){var h=0;seed=String(seed||'');for(var i=0;i<seed.length;i++){h=(h*31+seed.charCodeAt(i))>>>0;}return (h%cap)+1;}
+
 function fullTicketCard(tk){
   if(!S.checkedIn)S.checkedIn={};
   if(!S._ciSeed){S._ciSeed=1;S.checkedIn['TK002']=true;} // prototype: one past drop the host checked us in for
@@ -3332,6 +3436,33 @@ function fullTicketCard(tk){
   const _privTitle=_priv==='only_me'?'Only Me':_privGroup?_privGroup.name:'Friends';
   const privacyIcon=`<button onclick="event.stopPropagation();modal('ticketPrivacy_${tk.id}')" title="${_privTitle}" style="background:none;border:none;padding:2px;color:rgba(255,255,255,0.35);display:flex;align-items:center;cursor:pointer;flex-shrink:0">${_privIcon}</button>`;
   const flip=`if(S._swipeTs&&Date.now()-S._swipeTs<500)return;if(!S.collFlip)S.collFlip={};S.collFlip['${tk.id}']=!S.collFlip['${tk.id}'];render()`;
+
+  // ── Semi-custom theme: resolve from the ticket, or from its drop ──
+  const _themeKey=tk.ticketTheme||(feedDrops.find(function(d){return d.id===tk.dropId;})||{}).ticketTheme;
+  const theme=(typeof TICKET_THEMES!=='undefined')?(TICKET_THEMES[_themeKey]||null):null;
+  // Brand hero band (full-bleed inside the 20px-padded card): sponsor lockup + edition + serial.
+  let heroBand='';
+  if(theme){
+    const _cap=theme.editionCap||100;
+    const _edStr='#'+String(ticketEdition((tk.orderId||'ORD')+':'+subIdx,_cap)).padStart(3,'0')+' / '+_cap;
+    const _chips=theme.sponsors.map(function(s){return '<span style="font-size:10px;font-weight:900;letter-spacing:0.02em;color:'+s.color+';background:'+s.bg+';padding:2px 7px;border-radius:4px;white-space:nowrap">'+s.name+'</span>';}).join('');
+    heroBand=`<div style="margin:-20px -20px 14px;padding:13px 18px 12px;background:${theme.grad};position:relative;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${theme.motif}</span><span style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#fff;text-transform:uppercase">${theme.eyebrow}</span></div>
+        <span style="font-size:8px;font-weight:800;letter-spacing:0.1em;color:rgba(255,255,255,0.9);text-transform:uppercase">${theme.editionLabel}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap">${_chips}<span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.78);letter-spacing:0.1em">&times; NIGH</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:11px">
+        <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:0.06em">${_edStr}</span>
+        <span style="font-size:8.5px;color:rgba(255,255,255,0.82);letter-spacing:0.05em">${tkNum(tk.orderId,subIdx+1)}</span>
+      </div>
+    </div>`;
+  }
+  const _oGrad=theme?theme.grad:'linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9)';
+  const _oShadow=theme?theme.shadow:'0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)';
+  const _inkBg=theme?theme.ink:'#0B0B1A';
+  const _gA=theme?theme.glow1:'rgba(98,38,233,0.18)';
+  const _gB=theme?theme.glow2:'rgba(14,78,245,0.14)';
 
   // Fixed-height state block so every spot is identical regardless of status
   const STATE_H='height:122px;display:flex;flex-direction:column;justify-content:center;margin-bottom:14px';
@@ -3546,7 +3677,7 @@ function fullTicketCard(tk){
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
-  const frontFace=`<div style="display:flex;flex-direction:column;height:540px">${cardTop}${stateBlock}<div style="flex:1;min-height:6px"></div>${venueRow}${friendsRow}<div style="flex:1;min-height:6px"></div>${bottomRegion}</div>`;
+  const frontFace=`<div style="display:flex;flex-direction:column;height:${theme?'632px':'540px'}">${heroBand}${cardTop}${stateBlock}<div style="flex:1;min-height:6px"></div>${venueRow}${friendsRow}<div style="flex:1;min-height:6px"></div>${bottomRegion}</div>`;
 
   // Dots only (no arrows) — swipe to move between tickets
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;
@@ -3555,10 +3686,11 @@ function fullTicketCard(tk){
     <div id="tkcard_${tk.id}" class="tk-snap" onclick="${flip}"
       ontouchstart="S._cx=event.touches[0].clientX"
       ontouchend="var dx=event.changedTouches[0].clientX-(S._cx||0);if(Math.abs(dx)>40){S._swipeTs=Date.now();if(dx<0&&${subIdx}<${subCount-1}){S.collSubIdx['${tk.id}']=${subIdx+1};S.collFlip['${tk.id}']=false;render();}else if(dx>0&&${subIdx}>0){S.collSubIdx['${tk.id}']=${subIdx-1};S.collFlip['${tk.id}']=false;render();}}"
-      style="cursor:pointer;background:linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9);border-radius:24px;padding:2px;box-shadow:0 0 40px rgba(98,38,233,0.25),0 0 70px rgba(14,78,245,0.1)${noShow?';filter:saturate(0.8);opacity:0.88':''}">
-      <div style="background:#0B0B1A;border-radius:22px;padding:20px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(98,38,233,0.18),transparent 70%);pointer-events:none"></div>
-        <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(14,78,245,0.14),transparent 70%);pointer-events:none"></div>
+      style="cursor:pointer;background:${_oGrad};border-radius:24px;padding:2px;box-shadow:${_oShadow}${(noShow||(theme&&isPast))?';filter:saturate(0.85);opacity:0.9':''}">
+      <div style="background:${_inkBg};border-radius:22px;padding:20px;position:relative;overflow:hidden">
+        ${(theme&&isPast&&!flipped)?`<div style="position:absolute;top:78px;right:-42px;transform:rotate(35deg);background:${theme.accent};color:#fff;font-size:9px;font-weight:900;letter-spacing:0.12em;padding:5px 46px;box-shadow:0 2px 12px rgba(0,0,0,0.5);z-index:6;white-space:nowrap">${theme.keepsake}</div>`:''}
+        <div style="position:absolute;top:-60px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,${_gA},transparent 70%);pointer-events:none"></div>
+        <div style="position:absolute;bottom:-50px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,${_gB},transparent 70%);pointer-events:none"></div>
         <div style="position:relative"><div style="${flipped?'visibility:hidden':''}">${frontFace}</div>${flipped?`<div id="tkback_${tk.id}" class="noBar" onscroll="tkScroll(this,'${tk.id}')" style="position:absolute;inset:0;overflow-y:auto">${backFace}</div><div id="tkbar_${tk.id}" style="position:absolute;top:52px;right:-15px;bottom:44px;width:3px;border-radius:2px;background:rgba(255,255,255,0.07);pointer-events:none;display:none;z-index:4"><div style="position:absolute;left:0;width:100%;border-radius:2px;background:rgba(255,255,255,0.4);top:0;height:30%"></div></div><div id="tkfade_${tk.id}" style="position:absolute;left:0;right:0;bottom:0;height:42px;pointer-events:none;background:linear-gradient(to bottom,rgba(11,11,26,0) 0%,#0B0B1A 82%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;transition:opacity 0.25s"><div style="display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:0.03em;color:rgba(255,255,255,0.6)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>Scroll for details</div></div>`:''}</div>
       </div>
     </div>
