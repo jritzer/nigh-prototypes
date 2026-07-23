@@ -8707,6 +8707,8 @@ function render(){
   var _tcScroll=_tcStay?scrEl.scrollTop:0;
   var _ddStay=(S.scr==='dropDetail'&&S._lastScr==='dropDetail');
   var _ddScroll=_ddStay?scrEl.scrollTop:0;
+  var _poStay=(S.scr==='placeOrder'&&S._lastScr==='placeOrder'); // hold-timer re-renders must not snap Place Order to top
+  var _poScroll=_poStay?scrEl.scrollTop:0;
   const onFeed=S.scr==='feed';
   const onTickets=S.scr==='ticketCollection';
   scrEl.className=onFeed?'feed-mode':(onTickets?'tickets-mode':'');
@@ -8812,6 +8814,9 @@ function render(){
   } else if(_ddStay){
     // Preserve scroll position while staying on the Drop Detail screen (selecting offers, hold ticker)
     scrEl.scrollTop=_ddScroll;
+  } else if(_poStay){
+    // Preserve scroll while staying on Place Order (the hold-timer re-renders once a second)
+    scrEl.scrollTop=_poScroll;
   } else if(S.modal){
     // Preserve scroll when opening a modal overlay
   } else {
