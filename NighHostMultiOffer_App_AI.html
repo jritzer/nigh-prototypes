@@ -9035,7 +9035,7 @@ function keepsakePreview(k,d,stage){
   } else if(stage==='checkedin'){
     mid='<div style="background:linear-gradient(135deg,rgba(98,38,233,0.2),rgba(14,78,245,0.2));border:1px solid rgba(14,78,245,0.3);border-radius:10px;padding:15px;display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:50%;background:'+accent+';display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">'+ic('check',15)+'</div><div><div style="font-size:13px;font-weight:700;color:#fff">You Were Here</div><div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:1px">Checked in &middot; Today</div></div></div>';
   } else {
-    mid='<div style="position:relative;background:#151515;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 14px;text-align:center;overflow:hidden"><div style="position:absolute;top:12px;right:-34px;transform:rotate(35deg);background:'+accent+';color:#fff;font-size:8px;font-weight:900;letter-spacing:0.1em;padding:4px 40px;white-space:nowrap">'+(k.line||'YOU WERE THERE').toUpperCase()+'</div><div style="font-size:24px;margin-bottom:5px">'+(k.motif||'🎟️')+'</div><div style="font-size:12px;font-weight:700;color:#fff">A Nigh Memory</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px">Attended &middot; saved to your keepsakes</div></div>';
+    mid='<div style="position:relative;background:#151515;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 14px;text-align:center;overflow:hidden"><div style="position:absolute;top:12px;right:-34px;transform:rotate(35deg);background:'+accent+';color:#fff;font-size:8px;font-weight:900;letter-spacing:0.1em;padding:4px 40px;white-space:nowrap">'+(k.line||'YOU WERE THERE').toUpperCase()+'</div><div style="font-size:24px;margin-bottom:5px">'+(k.motif||'🎟️')+'</div><div style="font-size:12px;font-weight:700;color:#fff">A Nigh Memory</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px">Attended &middot; saved to your tickets</div></div>';
   }
   return '<div style="max-width:300px;margin:0 auto;background:'+grad+';border-radius:20px;padding:2px;box-shadow:0 8px 30px rgba(0,0,0,0.3)">'
     +'<div style="background:#0B0B1A;border-radius:18px;padding:14px">'+hero
@@ -9049,11 +9049,11 @@ function keepsakeEditor(k,ref){
   var swatch=function(c){var on=(k.accent||'').toLowerCase()===c.toLowerCase();return '<button onclick="'+ref+'.accent=\''+c+'\';render()" style="width:30px;height:30px;border-radius:50%;background:'+c+';border:'+(on?'3px solid #111827':'2px solid #E5E7EB')+';cursor:pointer;flex-shrink:0;padding:0"></button>';};
   var motifs=['🎟️','🥂','🎵','🍺','🏟️','🎬','🎨','⭐','🔥','🏁'];
   var mchip=function(m){var on=k.motif===m;return '<button onclick="'+ref+'.motif=\''+m+'\';render()" style="width:34px;height:34px;border-radius:9px;background:'+(on?'#EEF2FF':'#fff')+';border:1.5px solid '+(on?'#0E4EF5':'#E5E7EB')+';font-size:17px;cursor:pointer;flex-shrink:0;padding:0">'+m+'</button>';};
-  var out=moCard(moLabel('Keepsake tier')+'<div style="display:flex;gap:8px">'+tierBtn('standard','Standard','Clean &amp; included')+tierBtn('branded','Branded','Your colors &amp; logo')+tierBtn('signature','Signature','Animated + editions')+'</div>');
+  var out=moCard(moLabel('Ticket tier')+'<div style="display:flex;gap:8px">'+tierBtn('standard','Standard','Clean &amp; included')+tierBtn('branded','Branded','Your colors &amp; logo')+tierBtn('signature','Signature','Animated + editions')+'</div>');
   if(k.tier!=='standard'){
     out+=moCard(moLabel('Accent color')+'<div style="display:flex;gap:9px;flex-wrap:wrap">'+palette.map(swatch).join('')+'</div>'
       +'<div style="height:14px"></div>'+moLabel('Motif')+'<div style="display:flex;gap:7px;flex-wrap:wrap">'+motifs.map(mchip).join('')+'</div>'
-      +'<div style="height:14px"></div>'+moLabel('Keepsake line','Shown on the memory stamp')+moInput(k.line,'YOU WERE THERE',ref+'.line=this.value',';text-transform:uppercase')
+      +'<div style="height:14px"></div>'+moLabel('Memory stamp','Text shown on the after-event ticket')+moInput(k.line,'YOU WERE THERE',ref+'.line=this.value',';text-transform:uppercase')
       +'<div style="height:10px"></div>'+moLabel('Edition size','e.g. 100 shows as "#037 / 100"')+moInput(k.editionCap,'100',ref+'.editionCap=this.value'));
   }
   return out;
@@ -9134,7 +9134,7 @@ function moToggle(on,label,sub,onclick){return '<button onclick="'+onclick+'" st
 function renderCreate(){
   if(!canFull('drops'))return hdr('Create',null,"go('home')")+'<div style="padding:14px 16px">'+roleGate('Create Drop')+'</div>';
   const d=moDraft();const t=d.tpl?moTpl(d.tpl):null;
-  const steps=['Type','Basics','Offers','Rules','Keepsake','Review'];
+  const steps=['Type','Basics','Offers','Rules','Ticket','Review'];
   const bar=function(){var n=S.cStep;return '<div style="display:flex;gap:5px;padding:12px 16px 0">'+steps.map(function(x,i){return '<div style="flex:1;height:3px;border-radius:2px;background:'+(i+1<=n?'#0E4EF5':'#E5E7EB')+'"></div>';}).join('')+'</div>'
     +'<div style="padding:7px 16px 0;font-size:11px;font-weight:700;color:#6B7280">Step '+n+' of 6 · '+steps[n-1]+'</div>';};
   const nextBtn=function(label,onclick,enabled){return '<div style="padding:16px;position:sticky;bottom:0;background:#F9FAFB;border-top:1px solid #E5E7EB">'
@@ -9251,9 +9251,9 @@ function renderCreate(){
     var dk=moDraft();if(!dk.keepsake)dk.keepsake=kpDefault();
     var stg=S.kpStage||'upcoming';
     var stageSeg=function(id,label){return '<button onclick="S.kpStage=\''+id+'\';render()" style="flex:1;padding:7px 0;border-radius:8px;border:1.5px solid '+(stg===id?'#0E4EF5':'rgba(255,255,255,0.2)')+';background:'+(stg===id?'rgba(14,78,245,0.25)':'transparent')+';color:'+(stg===id?'#fff':'rgba(255,255,255,0.65)')+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">'+label+'</button>';};
-    return hdr('Keepsake',null,"S.cStep=4;render()")+bar()
+    return hdr('Ticket',null,"S.cStep=4;render()")+bar()
       +'<div style="padding:14px 16px 24px">'
-      +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:12px">Design the digital keepsake your guests keep. It evolves from anticipation before the drop to a lasting memory after.</div>'
+      +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:12px">Design the digital ticket your guests keep. It evolves from anticipation before the drop to a lasting memory after.</div>'
       +'<div style="background:#0B0B1A;border-radius:16px;padding:16px 12px;margin-bottom:14px">'+keepsakePreview(dk.keepsake,dk,stg)
         +'<div style="display:flex;gap:6px;margin-top:14px;max-width:300px;margin-left:auto;margin-right:auto">'+stageSeg('upcoming','Upcoming')+stageSeg('checkedin','Checked in')+stageSeg('memory','Memory')+'</div></div>'
       +keepsakeEditor(dk.keepsake,'moDraft().keepsake')
@@ -9277,7 +9277,7 @@ function renderCreate(){
       +((nzOn()&&d.nzApply!==false)?row('Nigh Zone',nzModeLabel()+' · '+nzGateLabel()):'')
       +(d.mobile?row('Location','Mobile stop (today only)'):'')
       +(d.age21?row('Age','21+'):'')
-      +row('Keepsake',kpTierLabel((d.keepsake||{}).tier))
+      +row('Ticket',kpTierLabel((d.keepsake||{}).tier))
       +row('Max per guest',d.maxPerUser||'4'))
     +'</div>'
     +nextBtn('Schedule drop','moPublish()',!!(d.title&&d.title.trim()));
@@ -9285,6 +9285,8 @@ function renderCreate(){
 
 // ── DROP DASHBOARD (manage a multi-offer drop) ─────────────────────
 function dstat(v,l,c){return '<div style="flex:1;text-align:center"><div style="font-size:16px;font-weight:800;color:'+(c||'#111827')+'">'+v+'</div><div style="font-size:10px;color:#9CA3AF;margin-top:2px">'+l+'</div></div>';}
+function fmtDropDate(s){if(!s)return '';var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);if(!m)return s;var d=new Date(+m[1],+m[2]-1,+m[3]);var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return days[d.getDay()]+', '+mon[d.getMonth()]+' '+d.getDate();}
+function secHead(t){return '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;margin:20px 0 9px">'+t+'</div>';}
 function renderDropNighZone(x){
   var nz=x.nighZone;if(!nz)return renderDropDash();
   return hdr('Nigh Zone',x.title,"S.dashSub=null;render()")
@@ -9300,9 +9302,9 @@ function renderDropNighZone(x){
 function renderDropKeepsake(x){
   if(!x.keepsake)x.keepsake=kpDefault();var stg=S.kpStage||'upcoming';
   var stageSeg=function(id,label){return '<button onclick="S.kpStage=\''+id+'\';render()" style="flex:1;padding:7px 0;border-radius:8px;border:1.5px solid '+(stg===id?'#0E4EF5':'rgba(255,255,255,0.2)')+';background:'+(stg===id?'rgba(14,78,245,0.25)':'transparent')+';color:'+(stg===id?'#fff':'rgba(255,255,255,0.65)')+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">'+label+'</button>';};
-  return hdr('Keepsake',x.title,"S.dashSub=null;render()")
+  return hdr('Ticket',x.title,"S.dashSub=null;render()")
     +'<div style="padding:14px 16px 24px">'
-    +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:12px">The digital keepsake your guests keep — evolving from anticipation to a lasting memory.</div>'
+    +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:12px">The digital ticket your guests keep — it evolves from anticipation before the drop to a lasting memory after.</div>'
     +'<div style="background:#0B0B1A;border-radius:16px;padding:16px 12px;margin-bottom:14px">'+keepsakePreview(x.keepsake,x,stg)
       +'<div style="display:flex;gap:6px;margin-top:14px;max-width:300px;margin-left:auto;margin-right:auto">'+stageSeg('upcoming','Upcoming')+stageSeg('checkedin','Checked in')+stageSeg('memory','Memory')+'</div></div>'
     +keepsakeEditor(x.keepsake,'drops[S.drop].keepsake')
@@ -9312,7 +9314,7 @@ function renderDropDash(){
   const i=S.drop;const x=drops[i];
   if(!x)return hdr('Drop',null,"go('home')")+'<div style="padding:20px 16px;color:#6B7280">Drop not found.</div>';
   if(S.dashSub==='nighzone')return renderDropNighZone(x);
-  if(S.dashSub==='keepsake')return renderDropKeepsake(x);
+  if(S.dashSub==='ticket')return renderDropKeepsake(x);
   if(!x.slots&&!x.sections)return hdr(x.title,null,"go('home')")+'<div style="padding:20px 16px"><div style="font-size:13px;color:#6B7280;line-height:1.5">This is a single-offer drop. Open it in the live view for check-in and guests.</div><button onclick="go(\'liveview\',{drop:'+i+'})" style="margin-top:12px;padding:11px 18px;border-radius:11px;border:none;background:#0E4EF5;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Open live view</button></div>';
   const t=moTpl(x.tpl);
   const sold=function(s){return s.offers.reduce(function(a,o){return a+(o.sold||0);},0);};
@@ -9355,33 +9357,46 @@ function renderDropDash(){
           +'</div>';}).join(''));
   });
   if(slotCards.length>1){
-    body+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9CA3AF;margin:2px 0 8px">Time slots · swipe &rarr;</div>'
-      +'<div style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin:0 -16px 4px;padding:0 16px 6px">'
+    body+='<div style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin:0 -16px 4px;padding:0 16px 6px">'
       +slotCards.map(function(c){return '<div style="flex:0 0 86%;max-width:340px;min-width:0;scroll-snap-align:start">'+c+'</div>';}).join('')
       +'</div>';
   } else {
     body+=slotCards.join('');
   }
-  return hdr(x.title,null,"go('home')")
+  var slotN=(x.slots||[]).length;
+  var availLabel=x.sections?'Sections':(slotN?('Time slot'+(slotN>1?'s · swipe →':'')):(x.pool?'Availability':'Offers'));
+  if(!x.keepsake)x.keepsake=kpDefault();
+  var live=x.status==='Live', ended=(x.status==='Ended'||x.status==='Completed');
+  var sc=live?{bg:'#ECFDF5',fg:'#065F46',dot:'#10B981'}:ended?{bg:'#F3F4F6',fg:'#6B7280',dot:'#9CA3AF'}:{bg:'#EFF6FF',fg:'#1E40AF',dot:'#3B82F6'};
+  var metaSub=fmtDropDate(x.date)+(x.start?' · '+x.start:'');
+  var rowBtn=function(icon,title,sub,onclick){return '<button onclick="'+onclick+'" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font-family:inherit"><div style="color:#0E4EF5">'+icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#111827">'+title+'</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">'+sub+'</div></div><span style="color:#D1D5DB;flex-shrink:0">'+ic('right',15)+'</span></button>';};
+  // check-in progress (live only)
+  var ci=x.ci||0; var ciPct=totalSold?Math.round(ci/totalSold*100):0;
+  var ciCard=live?('<div style="height:8px"></div>'+moCard('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px"><span style="font-size:12px;font-weight:700;color:#374151">Check-in progress</span><span style="font-size:12px;font-weight:800;color:#0E4EF5">'+ci+' of '+totalSold+'</span></div><div style="height:7px;border-radius:4px;background:#F3F4F6;overflow:hidden"><div style="height:100%;width:'+ciPct+'%;background:#10B981"></div></div>')):'';
+  // state-aware actions
+  var primaryLabel=live?'Check in guests':ended?'View results & guests':'Preview & manage';
+  var actions='<button onclick="go(\'liveview\',{drop:'+i+'})" style="width:100%;padding:14px;border-radius:12px;border:none;background:#0E4EF5;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(14,78,245,0.25)">'+primaryLabel+'</button>';
+  if(!ended){
+    actions+='<button onclick="alert(\'Offers can be edited before the drop goes live. Once live, close reservations first to make changes.\')" style="width:100%;margin-top:8px;padding:12px;border-radius:11px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">Edit offers</button>'
+      +'<div style="text-align:center;margin-top:8px"><button onclick="if(confirm(\'Close reservations for this drop?\')){drops['+i+'].status=\'Ended\';render();}" style="background:none;border:none;padding:8px 12px;font-size:12px;font-weight:600;color:#DC2626;cursor:pointer;font-family:inherit">Close reservations</button></div>';
+  }
+  return hdr(x.title,metaSub,"go('home')")
     +'<div style="padding:14px 16px 30px">'
-    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">'
-      +'<span style="display:inline-flex;align-items:center;gap:6px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">'+t.icon+' '+t.name+'</span>'
-      +'<span style="background:'+(x.status==='Live'?'#ECFDF5':'#F3F4F6')+';border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:'+(x.status==='Live'?'#065F46':'#6B7280')+'">'+x.status+'</span>'
-      +((x.nighZone||x.geofenced)?'<span style="display:inline-flex;align-items:center;gap:4px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">'+ic('map',11)+'Nigh Zone'+(x.nighZone?' · '+nzModeLabel(x.nighZone.mode):'')+'</span>':'')
-      +(x.mobile?'<span style="background:#EEF2FF;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">Mobile stop</span>':'')
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">'
+      +'<span style="display:inline-flex;align-items:center;gap:6px;background:'+sc.bg+';border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700;color:'+sc.fg+'"><span style="width:6px;height:6px;border-radius:50%;background:'+sc.dot+'"></span>'+x.status+'</span>'
+      +'<span style="font-size:12px;color:#9CA3AF">'+t.icon+' '+t.name+'</span>'
+      +(x.mobile?'<span style="font-size:11px;font-weight:700;color:#3730A3;background:#EEF2FF;border-radius:20px;padding:4px 9px">Mobile stop</span>':'')
     +'</div>'
+    +secHead('Performance')
     +moCard('<div style="display:flex">'+stat(totalSold,'Reserved','#0E4EF5')+stat(totalStock?(totalStock-totalSold):'—','Remaining')+stat('$'+revenue.toFixed(0),'Revenue','#059669')+stat(pct+'%','Sold')+'</div>')
-    +(function(){if(!x.keepsake)x.keepsake=kpDefault();
-      var rowBtn=function(icon,title,sub,onclick){return '<button onclick="'+onclick+'" style="width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font-family:inherit"><div style="color:#0E4EF5">'+icon+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#111827">'+title+'</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">'+sub+'</div></div><span style="color:#D1D5DB;flex-shrink:0">'+ic('right',15)+'</span></button>';};
-      return '<div style="height:4px"></div>'
-        +(x.nighZone?rowBtn(ic('map',17),'Nigh Zone',nzModeLabel(x.nighZone.mode)+' · '+(x.nighZone.gate==='visibility'?'Visibility gate':'Purchase gate'),"S.dashSub='nighzone';render()"):'')
-        +rowBtn(ic('ticket',17),'Keepsake ticket',kpTierLabel(x.keepsake.tier)+' · preview & edit',"S.dashSub='keepsake';render()");})()
+    +ciCard
+    +secHead(availLabel)
     +body
-    +'<div style="display:flex;gap:8px;margin-top:4px">'
-      +'<button onclick="go(\'liveview\',{drop:'+i+'})" style="flex:1;padding:12px;border-radius:11px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Guests & check-in</button>'
-      +'<button onclick="alert(\'Edit is available before the drop goes live.\')" style="flex:1;padding:12px;border-radius:11px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Edit offers</button>'
-    +'</div>'
-    +'<button onclick="if(confirm(\'Close reservations for this drop?\')){drops['+i+'].status=\'Ended\';render();}" style="width:100%;margin-top:8px;padding:12px;border-radius:11px;border:1px solid #FECACA;background:#fff;color:#DC2626;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Close reservations</button>'
+    +secHead('Setup')
+    +(x.nighZone?rowBtn(ic('map',17),'Nigh Zone',nzModeLabel(x.nighZone.mode)+' · '+(x.nighZone.gate==='visibility'?'Visibility gate':'Purchase gate'),"S.dashSub='nighzone';render()"):'')
+    +rowBtn(ic('ticket',17),'Ticket',kpTierLabel(x.keepsake.tier)+' · preview & edit',"S.dashSub='ticket';render()")
+    +'<div style="height:22px"></div>'
+    +actions
     +'</div>';
 }
 
