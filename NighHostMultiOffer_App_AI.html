@@ -9337,10 +9337,10 @@ function renderDropDash(){
           +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#111827">'+sec.name+'</div><div style="font-size:11px;color:#6B7280">$'+sec.price+' · '+seats+' seats</div></div>'
           +'<div style="text-align:right"><div style="font-size:13px;font-weight:800;color:#111827">'+taken+'/'+seats+'</div><div style="font-size:10px;color:#9CA3AF">taken</div></div></div>';}).join(''));
   }
-  // windows + offers
-  (x.slots||[]).forEach(function(s){
+  // windows + offers — horizontal scroll when a drop has more than one time slot
+  var slotCards=(x.slots||[]).map(function(s){
     var ws=sold(s);var wcap=s.cap;
-    body+=moCard('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">'
+    return moCard('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">'
       +'<div><div style="font-size:14px;font-weight:800;color:#111827">'+s.label+'</div>'
       +'<div style="font-size:11px;color:#6B7280;margin-top:1px">'+s.offers.length+' offer'+(s.offers.length!==1?'s':'')+(wcap?' · '+ws+' of '+wcap+' spots':'')+'</div></div>'
       +'<div style="text-align:right"><div style="font-size:16px;font-weight:800;color:#0E4EF5">'+ws+'</div><div style="font-size:10px;color:#9CA3AF">reserved</div></div></div>'
@@ -9354,6 +9354,14 @@ function renderDropDash(){
           +(cnt?'<div style="height:4px;border-radius:3px;background:#F3F4F6;margin-top:6px;overflow:hidden"><div style="height:100%;width:'+barPct+'%;background:'+(barPct>=100?'#EF4444':'#0E4EF5')+'"></div></div>':'')
           +'</div>';}).join(''));
   });
+  if(slotCards.length>1){
+    body+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9CA3AF;margin:2px 0 8px">Time slots · swipe &rarr;</div>'
+      +'<div style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;margin:0 -16px 4px;padding:0 16px 6px">'
+      +slotCards.map(function(c){return '<div style="flex:0 0 86%;max-width:340px;min-width:0;scroll-snap-align:start">'+c+'</div>';}).join('')
+      +'</div>';
+  } else {
+    body+=slotCards.join('');
+  }
   return hdr(x.title,null,"go('home')")
     +'<div style="padding:14px 16px 30px">'
     +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">'
