@@ -2408,11 +2408,11 @@ function renderDropDetail(){
       :windowed
       ?''
       :d.nighZone
-      ?`<div onclick="go('nighZone')" style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px;cursor:pointer">
-          <span style="display:flex;margin-right:5px;color:#0E4EF5">${ic('map',12,'#0E4EF5')}</span>
-          <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT IN NIGH ZONE</span>
-          ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
-          <span style="display:flex;margin-left:6px;color:rgba(255,255,255,0.5)">${ic('right',13,'rgba(255,255,255,0.5)')}</span>
+      ?`<div style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center">
+          <div onclick="go('nighZone')" style="display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.6);border-radius:12px;padding:5px 16px;cursor:pointer">
+            <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em">TIME LEFT IN NIGH ZONE</span>
+            ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
+          </div>
         </div>`
       :`<div style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px">
           <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT TO RESERVE</span>
