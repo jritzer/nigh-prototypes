@@ -617,6 +617,7 @@ const drops=[
   // ── MULTI-OFFER DROPS (reservation engine: schedule x selection x inventory) ──
   {id:'MH01',title:'Weekend Pastry Drop',timing:'Arrival Window',acctName:'Centro Boulder',
     nighZone:{mode:'radius',gate:'purchase',radius:0.9,venueName:'Centro Boulder',area:'Boulder'},
+    keepsake:{tier:'branded',accent:'#E67E00',motif:'🥐',line:'FRESH THAT MORNING',editionCap:'50'},
     start:'8:00 AM - 1:00 PM',bcastStart:'6:00 AM',bcastEnd:'7:45 AM',date:'2026-03-06',cap:36,res:19,ci:11,ns:1,
     price:5,status:'Live',venue:'Centro Boulder, 950 Pearl St, Boulder, CO 80302',
     ageRestriction:'everyone',taxOn:true,tax:8.5,dualPrice:false,audience:'public',
@@ -9010,12 +9011,60 @@ const MO_TEMPLATES=[
    blurb:'A truck or stall at today’s location', ex:'Food truck, pop-up, market stall', offerWord:'Item'},
 ];
 function moTpl(id){return MO_TEMPLATES.find(t=>t.id===id)||MO_TEMPLATES[0];}
+// ── LIVING DIGITAL KEEPSAKES (host-authored ticket theming + lifecycle preview) ──
+function kpDefault(){return {tier:'standard',accent:'#0E4EF5',motif:'🎟️',line:'YOU WERE THERE',editionCap:'100'};}
+function kpTierLabel(t){return t==='signature'?'Signature':t==='branded'?'Branded':'Standard';}
+function keepsakePreview(k,d,stage){
+  k=k||kpDefault();stage=stage||S.kpStage||'upcoming';
+  var branded=k.tier!=='standard';
+  var accent=k.accent||'#0E4EF5';
+  var grad=branded?('linear-gradient(135deg,'+accent+','+accent+'99,#141414)'):'linear-gradient(135deg,#6226E9,#0E4EF5,#41EFF9)';
+  var title=(d&&d.title)||'Your Drop';
+  var host=acct().brandName||acct().name;
+  var edStr='#037 / '+(k.editionCap||'100');
+  var hero=branded?('<div style="margin:-14px -14px 12px;padding:11px 14px;background:'+grad+'">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'
+      +'<div style="display:flex;align-items:center;gap:7px"><span style="font-size:16px">'+(k.motif||'🎟️')+'</span><span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:0.02em">'+host+'</span></div>'
+      +(k.tier==='signature'?'<span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:0.09em;text-transform:uppercase">Signature</span>':'')+'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px"><span style="font-size:11px;font-weight:900;color:#fff;letter-spacing:0.05em">'+edStr+'</span><span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.8);letter-spacing:0.09em">&times; NIGH</span></div>'
+    +'</div>'):'';
+  var mid;
+  if(stage==='upcoming'){
+    mid='<div style="background:#fff;border-radius:10px;padding:11px;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="color:#0B0B1A">'+ic('qr',52)+'</div><div style="font-size:8px;color:#9CA3AF;font-weight:600;letter-spacing:0.04em">TKT-037</div></div>'
+      +'<div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.55);margin-top:8px">Starts in 2h 00m &middot; Scan on arrival</div>';
+  } else if(stage==='checkedin'){
+    mid='<div style="background:linear-gradient(135deg,rgba(98,38,233,0.2),rgba(14,78,245,0.2));border:1px solid rgba(14,78,245,0.3);border-radius:10px;padding:15px;display:flex;align-items:center;gap:11px"><div style="width:28px;height:28px;border-radius:50%;background:'+accent+';display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0">'+ic('check',15)+'</div><div><div style="font-size:13px;font-weight:700;color:#fff">You Were Here</div><div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:1px">Checked in &middot; Today</div></div></div>';
+  } else {
+    mid='<div style="position:relative;background:#151515;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 14px;text-align:center;overflow:hidden"><div style="position:absolute;top:12px;right:-34px;transform:rotate(35deg);background:'+accent+';color:#fff;font-size:8px;font-weight:900;letter-spacing:0.1em;padding:4px 40px;white-space:nowrap">'+(k.line||'YOU WERE THERE').toUpperCase()+'</div><div style="font-size:24px;margin-bottom:5px">'+(k.motif||'🎟️')+'</div><div style="font-size:12px;font-weight:700;color:#fff">A Nigh Memory</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px">Attended &middot; saved to your keepsakes</div></div>';
+  }
+  return '<div style="max-width:300px;margin:0 auto;background:'+grad+';border-radius:20px;padding:2px;box-shadow:0 8px 30px rgba(0,0,0,0.3)">'
+    +'<div style="background:#0B0B1A;border-radius:18px;padding:14px">'+hero
+    +'<div style="font-size:16px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:3px">'+title+'</div>'
+    +'<div style="font-size:11px;color:rgba(255,255,255,0.55);margin-bottom:12px">Hosted by '+host+'</div>'+mid
+    +'</div></div>';
+}
+function keepsakeEditor(k,ref){
+  var tierBtn=function(id,label,sub){var on=k.tier===id;return '<button onclick="'+ref+'.tier=\''+id+'\';render()" style="flex:1;text-align:left;background:'+(on?'#EEF2FF':'#fff')+';border:1.5px solid '+(on?'#0E4EF5':'#E5E7EB')+';border-radius:12px;padding:10px 11px;cursor:pointer;font-family:inherit"><div style="font-size:12px;font-weight:700;color:'+(on?'#1E3A8A':'#374151')+'">'+label+'</div><div style="font-size:9.5px;color:#9CA3AF;margin-top:2px;line-height:1.3">'+sub+'</div></button>';};
+  var palette=['#0E4EF5','#E30613','#C9A227','#0A5D2C','#EC1977','#E67E00','#6226E9','#111827'];
+  var swatch=function(c){var on=(k.accent||'').toLowerCase()===c.toLowerCase();return '<button onclick="'+ref+'.accent=\''+c+'\';render()" style="width:30px;height:30px;border-radius:50%;background:'+c+';border:'+(on?'3px solid #111827':'2px solid #E5E7EB')+';cursor:pointer;flex-shrink:0;padding:0"></button>';};
+  var motifs=['🎟️','🥂','🎵','🍺','🏟️','🎬','🎨','⭐','🔥','🏁'];
+  var mchip=function(m){var on=k.motif===m;return '<button onclick="'+ref+'.motif=\''+m+'\';render()" style="width:34px;height:34px;border-radius:9px;background:'+(on?'#EEF2FF':'#fff')+';border:1.5px solid '+(on?'#0E4EF5':'#E5E7EB')+';font-size:17px;cursor:pointer;flex-shrink:0;padding:0">'+m+'</button>';};
+  var out=moCard(moLabel('Keepsake tier')+'<div style="display:flex;gap:8px">'+tierBtn('standard','Standard','Clean &amp; included')+tierBtn('branded','Branded','Your colors &amp; logo')+tierBtn('signature','Signature','Animated + editions')+'</div>');
+  if(k.tier!=='standard'){
+    out+=moCard(moLabel('Accent color')+'<div style="display:flex;gap:9px;flex-wrap:wrap">'+palette.map(swatch).join('')+'</div>'
+      +'<div style="height:14px"></div>'+moLabel('Motif')+'<div style="display:flex;gap:7px;flex-wrap:wrap">'+motifs.map(mchip).join('')+'</div>'
+      +'<div style="height:14px"></div>'+moLabel('Keepsake line','Shown on the memory stamp')+moInput(k.line,'YOU WERE THERE',ref+'.line=this.value',';text-transform:uppercase')
+      +'<div style="height:10px"></div>'+moLabel('Edition size','e.g. 100 shows as "#037 / 100"')+moInput(k.editionCap,'100',ref+'.editionCap=this.value'));
+  }
+  return out;
+}
+
 function moDraft(){
   if(!S.moDraft)S.moDraft={tpl:null,title:'',desc:'',date:'2026-03-20',start:'6:00 PM',
     windows:[{label:'',cap:''}],offers:[{name:'',price:'',count:''}],
     sections:[{name:'',price:'',rows:'2',seats:'8'}],
     inv:'per_item',poolName:'',poolTotal:'',capOn:false,
-    geofenced:false,mobile:false,age21:false,maxPerUser:'4',audience:'public',nzApply:true};
+    geofenced:false,mobile:false,age21:false,maxPerUser:'4',audience:'public',nzApply:true,keepsake:kpDefault()};
   return S.moDraft;
 }
 function moSet(k,v){moDraft()[k]=v;render();}
@@ -9064,7 +9113,7 @@ function moPublish(){
     venue:acct().name+', '+acct().addr+', '+acct().city+', '+acct().state,ageRestriction:d.age21?'21plus':'everyone',
     taxOn:true,tax:8.5,dualPrice:false,audience:d.audience,hosts:[acct().userDisplayName||acct().name],partners:[],media:'video',
     slug:'newdrop/'+Math.random().toString(36).slice(2,7).toUpperCase(),
-    tpl:d.tpl,inv:d.inv,geofenced:!!(_nz&&_nz.mode==='venue'),nighZone:_nz,mobile:d.mobile,maxPerUser:parseInt(d.maxPerUser)||4,
+    tpl:d.tpl,inv:d.inv,geofenced:!!(_nz&&_nz.mode==='venue'),nighZone:_nz,keepsake:d.keepsake||kpDefault(),mobile:d.mobile,maxPerUser:parseInt(d.maxPerUser)||4,
     pool:d.inv==='pooled'?{name:d.poolName||'Daily total',total:parseInt(d.poolTotal)||0,left:parseInt(d.poolTotal)||0}:null,
     slots:slots,sections:secs});
   S.moDraft=null;S.cStep=0;S.moPublished=true;S.scr='home';render();
@@ -9085,9 +9134,9 @@ function moToggle(on,label,sub,onclick){return '<button onclick="'+onclick+'" st
 function renderCreate(){
   if(!canFull('drops'))return hdr('Create',null,"go('home')")+'<div style="padding:14px 16px">'+roleGate('Create Drop')+'</div>';
   const d=moDraft();const t=d.tpl?moTpl(d.tpl):null;
-  const steps=['Type','Basics','Offers','Rules','Review'];
+  const steps=['Type','Basics','Offers','Rules','Keepsake','Review'];
   const bar=function(){var n=S.cStep;return '<div style="display:flex;gap:5px;padding:12px 16px 0">'+steps.map(function(x,i){return '<div style="flex:1;height:3px;border-radius:2px;background:'+(i+1<=n?'#0E4EF5':'#E5E7EB')+'"></div>';}).join('')+'</div>'
-    +'<div style="padding:7px 16px 0;font-size:11px;font-weight:700;color:#6B7280">Step '+n+' of 5 · '+steps[n-1]+'</div>';};
+    +'<div style="padding:7px 16px 0;font-size:11px;font-weight:700;color:#6B7280">Step '+n+' of 6 · '+steps[n-1]+'</div>';};
   const nextBtn=function(label,onclick,enabled){return '<div style="padding:16px;position:sticky;bottom:0;background:#F9FAFB;border-top:1px solid #E5E7EB">'
     +'<button '+(enabled?'':'disabled')+' onclick="'+(enabled?onclick:'void(0)')+'" style="width:100%;padding:13px;border-radius:12px;border:none;background:'+(enabled?'#0E4EF5':'#E5E7EB')+';color:'+(enabled?'#fff':'#9CA3AF')+';font-size:14px;font-weight:700;cursor:'+(enabled?'pointer':'default')+';font-family:inherit">'+label+'</button></div>';};
 
@@ -9194,15 +9243,29 @@ function renderCreate(){
         +moToggle(d.mobile,'Mobile stop','Location is only valid for today',"moSet('mobile',!moDraft().mobile)")
         +moToggle(d.age21,'21+ only','Valid ID required at check-in',"moSet('age21',!moDraft().age21)")
         +'<div style="height:4px"></div>'+moLabel('Max per guest')+moInput(d.maxPerUser,'4','moDraft().maxPerUser=this.value'))
-      +'</div>'+nextBtn('Review','S.cStep=5;render()',true);
+      +'</div>'+nextBtn('Continue','S.cStep=5;render()',true);
   }
 
-  // STEP 5 — review
+  // STEP 5 — Keepsake (Living Digital Keepsake theming + lifecycle preview)
+  if(S.cStep===5){
+    var dk=moDraft();if(!dk.keepsake)dk.keepsake=kpDefault();
+    var stg=S.kpStage||'upcoming';
+    var stageSeg=function(id,label){return '<button onclick="S.kpStage=\''+id+'\';render()" style="flex:1;padding:7px 0;border-radius:8px;border:1.5px solid '+(stg===id?'#0E4EF5':'rgba(255,255,255,0.2)')+';background:'+(stg===id?'rgba(14,78,245,0.25)':'transparent')+';color:'+(stg===id?'#fff':'rgba(255,255,255,0.65)')+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">'+label+'</button>';};
+    return hdr('Keepsake',null,"S.cStep=4;render()")+bar()
+      +'<div style="padding:14px 16px 24px">'
+      +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:12px">Design the digital keepsake your guests keep. It evolves from anticipation before the drop to a lasting memory after.</div>'
+      +'<div style="background:#0B0B1A;border-radius:16px;padding:16px 12px;margin-bottom:14px">'+keepsakePreview(dk.keepsake,dk,stg)
+        +'<div style="display:flex;gap:6px;margin-top:14px;max-width:300px;margin-left:auto;margin-right:auto">'+stageSeg('upcoming','Upcoming')+stageSeg('checkedin','Checked in')+stageSeg('memory','Memory')+'</div></div>'
+      +keepsakeEditor(dk.keepsake,'moDraft().keepsake')
+      +'</div>'+nextBtn('Review','S.cStep=6;render()',true);
+  }
+
+  // STEP 6 — review
   var totalOffers=t.sel==='seats'?d.sections.filter(x=>x.name).length:d.offers.filter(x=>x.name).length;
   var totalWins=t.sched==='windows'?d.windows.filter(w=>w.label).length:1;
   var seatTotal=0;if(t.sel==='seats')d.sections.filter(x=>x.name).forEach(function(x){seatTotal+=(parseInt(x.rows)||0)*(parseInt(x.seats)||0);});
   var row=function(k,v){return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F3F4F6"><span style="font-size:12px;color:#6B7280">'+k+'</span><span style="font-size:12px;font-weight:700;color:#111827;text-align:right;max-width:60%">'+v+'</span></div>';};
-  return hdr('Review',null,"S.cStep=4;render()")+bar()
+  return hdr('Review',null,"S.cStep=5;render()")+bar()
     +'<div style="padding:14px 16px 24px">'
     +moCard('<div style="font-size:16px;font-weight:800;color:#111827;margin-bottom:2px">'+(d.title||'Untitled drop')+'</div>'
       +'<div style="font-size:12px;color:#6B7280;line-height:1.45">'+(d.desc||'No description yet')+'</div>')
@@ -9214,6 +9277,7 @@ function renderCreate(){
       +((nzOn()&&d.nzApply!==false)?row('Nigh Zone',nzModeLabel()+' · '+nzGateLabel()):'')
       +(d.mobile?row('Location','Mobile stop (today only)'):'')
       +(d.age21?row('Age','21+'):'')
+      +row('Keepsake',kpTierLabel((d.keepsake||{}).tier))
       +row('Max per guest',d.maxPerUser||'4'))
     +'</div>'
     +nextBtn('Schedule drop','moPublish()',!!(d.title&&d.title.trim()));
@@ -9278,6 +9342,12 @@ function renderDropDash(){
       +'<div style="height:10px"></div>'
       +'<div style="display:flex">'+stat(nzModeLabel(x.nighZone.mode),'Mode','#0E4EF5')+stat(x.nighZone.gate==='visibility'?'Visibility':'Purchase','Gate')+stat(x.nighZone.mode==='radius'?x.nighZone.radius+' mi':'Venue','Zone')+'</div>'
       +'<div style="font-size:11px;color:#9CA3AF;margin-top:8px;line-height:1.5">'+(x.nighZone.mode==='radius'?'Guests must be within '+x.nighZone.radius+' mi to reserve. Radius can reduce as start approaches.':'Guests must be physically inside the venue to reserve.')+'</div>'):'')
+    +(function(){if(!x.keepsake)x.keepsake=kpDefault();var stg=S.kpStage||'upcoming';
+      var stageSeg=function(id,label){return '<button onclick="S.kpStage=\''+id+'\';render()" style="flex:1;padding:6px 0;border-radius:8px;border:1.5px solid '+(stg===id?'#0E4EF5':'rgba(255,255,255,0.2)')+';background:'+(stg===id?'rgba(14,78,245,0.25)':'transparent')+';color:'+(stg===id?'#fff':'rgba(255,255,255,0.65)')+';font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">'+label+'</button>';};
+      return '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9CA3AF;margin:16px 0 8px">Keepsake · '+kpTierLabel(x.keepsake.tier)+'</div>'
+        +'<div style="background:#0B0B1A;border-radius:14px;padding:14px 10px;margin-bottom:12px">'+keepsakePreview(x.keepsake,x,stg)
+          +'<div style="display:flex;gap:6px;margin-top:12px;max-width:300px;margin-left:auto;margin-right:auto">'+stageSeg('upcoming','Upcoming')+stageSeg('checkedin','Checked in')+stageSeg('memory','Memory')+'</div></div>'
+        +keepsakeEditor(x.keepsake,'drops[S.drop].keepsake');})()
     +body
     +'<div style="display:flex;gap:8px;margin-top:4px">'
       +'<button onclick="go(\'liveview\',{drop:'+i+'})" style="flex:1;padding:12px;border-radius:11px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Guests & check-in</button>'
