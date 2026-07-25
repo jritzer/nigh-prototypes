@@ -2047,7 +2047,7 @@ function renderFeed(){
           ?`<div style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15);padding:8px 22px;border-radius:14px">
               <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:0.06em">SOLD OUT</span>
             </div>`
-          :`<div ${d.nighZone?`onclick="event.stopPropagation();S.drop=${idx};go('nighZone')" `:''}style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid ${d.nighZone?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.1)'};padding:8px 18px;border-radius:14px;text-align:center${d.nighZone?';cursor:pointer':''}">
+          :`<div ${d.nighZone?`onclick="event.stopPropagation();S.drop=${idx};go('nighZone')" `:''}style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid ${d.nighZone?'rgba(255,255,255,0.28)':'rgba(255,255,255,0.1)'};padding:8px 18px;border-radius:14px;text-align:center${d.nighZone?';cursor:pointer':''}">
               <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:4px">${d.nighZone?'TIME LEFT IN NIGH ZONE':'TIME LEFT TO RESERVE'}</div>
               <div style="display:flex;align-items:baseline;gap:2px;justify-content:center">
                 ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
