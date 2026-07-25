@@ -367,6 +367,7 @@ const feedDrops=[
    closesIn:'1d 4h',startsIn:'2h 00m',price:0,cap:200,spotsLeft:184,age21:true,
    media:'video',maxPerUser:2,liked:false,likeCount:212,
    geofenced:true,schedule:'fixed',select:'quantity',inventory:'per_slot',ticketTheme:'ufc',
+   nighZone:{mode:'venue',venueName:'T-Mobile Arena',area:'The Strip',pin:'🥊'},
    desc:'Fight night is live. Claim in-arena drops from tonight’s sponsors — enter to win, or grab a limited discount before the main card. Offers unlock only once you’re inside.',
    slug:'tmobilearena/FIGHT',
    slots:[
@@ -413,6 +414,24 @@ const feedDrops=[
        {id:'o2',name:'50% Off Any One Item',price:0,left:10,desc:'Ten guests get half off any single menu item tonight. Claim it, show your server, done.'},
        {id:'o3',name:'15% Off Any Appetizer',price:0,left:200,desc:'Every drop attendee gets 15% off an appetizer. Because nobody should watch the game hungry.'},
        {id:'o4',name:'Last Call: Half-Price Wings',price:8,left:60,desc:'Traditional wings, half price, until we sell out of tonight’s prep. Last call only.'}
+     ]}
+   ]},
+
+  // ── NIGH ZONE example (radius, reducing) — matches the shared reference image ──
+  {id:'NZ01',title:'Two Beers at Upslope',
+   host:{name:'Upslope Brewing',handle:'@upslopebrewing',short:'UP',addr:'1898 S Flatiron Ct, Boulder, CO'},
+   locationDetails:'Head to the Flatiron taproom. Show your drop QR at the bar to redeem. Offers unlock only inside the Nigh Zone.',
+   partners:[],status:'Live',timing:'Start Time',start:'4:00 PM',date:'Apr 22',
+   closesIn:'3m 23s',startsIn:'30m',price:0,cap:60,spotsLeft:41,age21:true,
+   media:'video',maxPerUser:2,liked:false,likeCount:57,
+   geofenced:true,schedule:'fixed',select:'quantity',inventory:'per_slot',
+   nighZone:{mode:'radius',reducing:true,reduceIn:'03m 23s',venueName:'Upslope Brewing',area:'Valmont',radiusLabel:'0.9 mi',pin:'🍺'},
+   desc:'Slow afternoon at the taproom — so we’re dropping. Claim two beers on us, but only if you’re close. The Nigh Zone is shrinking, so move fast.',
+   slug:'upslopebrewing/2BEERS',
+   slots:[
+     {id:'s1',window:'4:00 PM',offers:[
+       {id:'o1',name:'Two Beers on Us',price:0,left:20,desc:'Two of any Upslope house pour, free, for the first 20 inside the Nigh Zone. 21+, ID required at the bar.'},
+       {id:'o2',name:'Taproom Flight — 50% Off',price:6,left:24,desc:'Four 4oz tasters across today’s lineup, half off. Redeem at the bar with your QR.'}
      ]}
    ]},
 
@@ -918,6 +937,31 @@ const feedDrops=[
 })();
 
 const myTickets=[
+  // Seeded branded tickets (Disney / Best Buy / MGM Grand) — showcase semi-custom tickets in the Tickets page.
+  {id:'TKDIS',dropId:'BRDIS',title:'Disneyland — A Day at the Park',
+   host:'Disneyland Resort',hostHandle:'@disneyland',ticketTheme:'disney',
+   date:'Apr 24, 2026',time:'9:00 AM',addr:'1313 Disneyland Dr, Anaheim, CA',
+   price:0,qty:1,extras:[],startsIn:'2h 00m',
+   desc:'Your in-park drops for the day — a souvenir Coca-Cola glass, a skip-the-line pass, and a VIP meet with Snow White. Verify your park ticket to claim inside the park.',
+   partners:[{handle:'@cocacola',name:'Coca-Cola'}],
+   status:'Active',orderId:'ORD-6001',orderDate:'Today · 8:14 AM',
+   terms:'Valid park admission required. Offers unlock inside the park.'},
+  {id:'TKBBY',dropId:'BRBBY',title:'Best Buy — Galaxy S25 Store Drop',
+   host:'Best Buy Boulder',hostHandle:'@bestbuyboulder',ticketTheme:'bestbuy',
+   date:'Apr 24, 2026',time:'11:00 AM',addr:'1855 29th St, Boulder, CO',
+   price:0,qty:1,extras:[],startsIn:'45m',
+   desc:'Launch-day in-store drops — enter to win a Galaxy S25, 25% off any one item, 3× My Best Buy points, and Sony PlayStation giveaways. Claim inside the store.',
+   partners:[{handle:'@samsung',name:'Samsung'},{handle:'@sony',name:'Sony'}],
+   status:'Active',orderId:'ORD-6002',orderDate:'Today · 9:02 AM',
+   terms:'Offers redeemable in-store only. One entry per guest.'},
+  {id:'TKMGM',dropId:'BRMGM',title:'MGM Grand — A Night at the Casino',
+   host:'MGM Grand Las Vegas',hostHandle:'@mgmgrand',ticketTheme:'mgm',
+   date:'Apr 25, 2026',time:'8:00 PM',addr:'3799 S Las Vegas Blvd, Las Vegas, NV',
+   price:0,qty:1,extras:[],age21:true,startsIn:'5h 00m',
+   desc:'Tonight only — VIP access to Cirque du Soleil, an MGM tee with 3× MGM Rewards, and restaurant offers around the property. Unlocks inside the casino. 21+.',
+   partners:[{handle:'@cirquedusoleil',name:'Cirque du Soleil'}],
+   status:'Active',orderId:'ORD-6003',orderDate:'Today · 2:30 PM',
+   terms:'Must be 21+. Offers unlock inside the casino.'},
   // Seeded past branded ticket — shows the semi-custom "keepsake" state in the Past tab.
   {id:'TKF1',dropId:'BR02P',title:'Las Vegas Grand Prix — Race Week',
    host:'Las Vegas Grand Prix',hostHandle:'@f1lasvegas',ticketTheme:'f1',
@@ -2004,7 +2048,7 @@ function renderFeed(){
               <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:0.06em">SOLD OUT</span>
             </div>`
           :`<div style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);padding:8px 18px;border-radius:14px;text-align:center">
-              <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;margin-bottom:4px">TIME LEFT TO RESERVE</div>
+              <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;margin-bottom:4px">${d.nighZone?'TIME LEFT IN NIGH ZONE':'TIME LEFT TO RESERVE'}</div>
               <div style="display:flex;align-items:baseline;gap:2px;justify-content:center">
                 ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
               </div>
@@ -2170,6 +2214,76 @@ function reservationsClosed(d){return !!(d&&d.reservationsClosed);}
 function reserveBlockReason(d){if(!d)return null;if(d.canceled)return 'canceled';if(isBlockedByHost(d))return 'blocked';if(underageForDrop(d))return 'age';if(notOnList(d))return 'notlisted';if(reservationsClosed(d))return 'closed';return null;}
 function cannotReserve(d){return !!reserveBlockReason(d);}
 
+// ── NIGH ZONE PAGE ──────────────────────────────────────
+// Self-contained stylized map (no external tiles). Radius mode shows a reducing
+// circle + shrink target; venue mode shows a fixed boundary polygon. User dot inside.
+function renderNighZone(){
+  const d=feedDrops[S.drop];
+  if(!d||!d.nighZone){go('feed');return '';}
+  const nz=d.nighZone;
+  const radius=nz.mode==='radius';
+  const cx=200,cy=296;
+  const sub=radius
+    ? `Nigh Zone will reduce in <span style="color:#EF4444;font-weight:800;letter-spacing:0.02em">${nz.reduceIn||d.closesIn}</span>`
+    : `You must be inside <span style="color:#fff;font-weight:700">${nz.venueName||d.host.name}</span>`;
+  const areaLabel=nz.area||'';
+  const pin=nz.pin||'📍';
+
+  // ── map base (roads / water / parks) — drawn behind the zone
+  const base=`
+    <rect x="0" y="0" width="400" height="600" fill="#E9EEE6"/>
+    <ellipse cx="60" cy="70" rx="120" ry="80" fill="#A9CCEA" opacity="0.55"/>
+    <ellipse cx="360" cy="120" rx="90" ry="70" fill="#A9CCEA" opacity="0.5"/>
+    <ellipse cx="330" cy="540" rx="130" ry="90" fill="#A9CCEA" opacity="0.5"/>
+    <ellipse cx="120" cy="470" rx="70" ry="55" fill="#C4E4B7" opacity="0.75"/>
+    <ellipse cx="300" cy="360" rx="60" ry="46" fill="#C4E4B7" opacity="0.7"/>
+    <path d="M -20 180 L 200 300 L 440 220" stroke="#F4C64E" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M -20 180 L 200 300 L 440 220" stroke="#FBE6A8" stroke-width="2" stroke-dasharray="8 8" fill="none"/>
+    <path d="M 60 -20 L 150 300 L 120 620" stroke="#FFFFFF" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 420 40 L 250 320 L 300 620" stroke="#FFFFFF" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M -20 420 L 200 360 L 440 430" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="70" y="140" font-size="15" font-weight="700" fill="#8A9A8A" opacity="0.8">Gunbarrel</text>
+    <text x="300" y="470" font-size="15" font-weight="700" fill="#8A9A8A" opacity="0.8">Niwot</text>
+    ${areaLabel?`<text x="${cx}" y="${cy+58}" font-size="15" font-weight="800" fill="#6B7B6B" text-anchor="middle">${areaLabel}</text>`:''}`;
+
+  const zone=radius
+    ? `<circle class="nzpulse" cx="${cx}" cy="${cy}" r="150" fill="rgba(14,78,245,0.10)" stroke="#0E4EF5" stroke-width="3"/>
+       <circle cx="${cx}" cy="${cy}" r="96" fill="none" stroke="rgba(17,24,39,0.55)" stroke-width="1.5" stroke-dasharray="5 6"/>`
+    : `<rect x="66" y="186" width="268" height="220" rx="54" fill="rgba(14,78,245,0.10)" stroke="#0E4EF5" stroke-width="3"/>`;
+
+  // venue pin (center) + user avatar dot (inside, lower-left)
+  const ux=radius?150:150, uy=radius?378:352;
+  const marker=`
+    <g>
+      <circle cx="${cx}" cy="${cy}" r="21" fill="#fff" stroke="rgba(0,0,0,0.12)" stroke-width="1"/>
+      <text x="${cx}" y="${cy+7}" font-size="20" text-anchor="middle">${pin}</text>
+    </g>
+    <g>
+      <circle cx="${ux}" cy="${uy}" r="17" fill="#0E4EF5" stroke="#fff" stroke-width="3"/>
+      <text x="${ux}" y="${uy+5}" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">${currentUser.av}</text>
+    </g>`;
+
+  return`<div style="height:100%;display:flex;flex-direction:column;background:#000">
+    ${hdr('Nigh Zone',null,"go('dropDetail',{drop:"+S.drop+"})")}
+    <div style="padding:22px 24px 14px;text-align:center;background:#000;flex-shrink:0">
+      <div style="font-size:26px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:8px">${d.title}</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.75);font-weight:500">${sub}</div>
+    </div>
+    <div style="flex:1;position:relative;overflow:hidden">
+      <style>@keyframes nzp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.03);opacity:0.9}}.nzpulse{transform-box:fill-box;transform-origin:center;animation:nzp 3.2s ease-in-out infinite}</style>
+      <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+        ${base}
+        ${zone}
+        ${marker}
+      </svg>
+    </div>
+    <div style="padding:16px 24px 26px;text-align:center;background:#000;flex-shrink:0">
+      <div style="font-size:14px;font-weight:700;color:#fff">Must be in the Nigh Zone to purchase</div>
+      ${radius?`<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:5px">Dashed ring shows where the zone is shrinking to · ~${nz.radiusLabel||''}</div>`:`<div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:5px">Offers unlock only inside ${nz.venueName||d.host.name}</div>`}
+    </div>
+  </div>`;
+}
+
 // ── DROP DETAIL ────────────────────────────────────────
 function renderDropDetail(){
   const d=feedDrops[S.drop];
@@ -2293,6 +2407,13 @@ function renderDropDetail(){
         </div>`
       :windowed
       ?''
+      :d.nighZone
+      ?`<div onclick="go('nighZone')" style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px;cursor:pointer">
+          <span style="display:flex;margin-right:5px;color:#0E4EF5">${ic('map',12,'#0E4EF5')}</span>
+          <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT IN NIGH ZONE</span>
+          ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
+          <span style="display:flex;margin-left:6px;color:rgba(255,255,255,0.5)">${ic('right',13,'rgba(255,255,255,0.5)')}</span>
+        </div>`
       :`<div style="background:#111;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:2px">
           <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.60);letter-spacing:0.08em;margin-right:6px">TIME LEFT TO RESERVE</span>
           ${cdu.map(function(u,i){return '<span style="font-size:18px;font-weight:400;color:#EC1977;line-height:1">'+u[0]+'</span><span style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.65)'+(i<cdu.length-1?';margin-right:5px':'')+'">'+u[1]+'</span>';}).join('')}
@@ -3375,6 +3496,36 @@ const TICKET_THEMES={
     eyebrow:'Slow-Night Drop', motif:'🔥', editionLabel:'Blackout Collectible',
     keepsake:'YOU SHOWED UP', editionCap:10,
     sponsors:[{name:'BUFFALO WILD WINGS',color:'#111',bg:'#FFC72C'},{name:'JOSE CUERVO',color:'#7A2E12',bg:'#F2E2C4'}]
+  },
+  disney:{
+    grad:'linear-gradient(135deg,#1F6FEB,#0B2E7A,#070E22)',
+    shadow:'0 0 40px rgba(31,111,235,0.30),0 0 70px rgba(11,46,122,0.25)',
+    ink:'#080F24', accent:'#1F6FEB',
+    glow1:'rgba(31,111,235,0.22)', glow2:'rgba(123,47,247,0.16)',
+    eyebrow:'A Day at the Park', motif:'🏰', editionLabel:'Park Keepsake',
+    keepsake:'A MAGICAL DAY', editionCap:200,
+    logo:'<div style="font-family:cursive;font-style:italic;font-weight:700;font-size:24px;color:#fff;letter-spacing:0.02em;text-shadow:0 1px 6px rgba(0,0,0,0.45)">Disney</div>',
+    sponsors:[{name:'DISNEY PARKS',color:'#fff',bg:'#1F6FEB'},{name:'COCA-COLA',color:'#fff',bg:'#E4002B'}]
+  },
+  bestbuy:{
+    grad:'linear-gradient(135deg,#0046BE,#00227A,#070A18)',
+    shadow:'0 0 40px rgba(0,70,190,0.30),0 0 70px rgba(0,0,0,0.30)',
+    ink:'#07091A', accent:'#0046BE',
+    glow1:'rgba(0,70,190,0.22)', glow2:'rgba(255,242,0,0.10)',
+    eyebrow:'Store Drop', motif:'📱', editionLabel:'Launch-Day Collectible',
+    keepsake:'FIRST IN LINE', editionCap:50,
+    logo:'<div style="display:inline-flex;align-items:center"><div style="background:#FFF200;color:#111;font-weight:900;font-size:13px;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.01em;padding:5px 16px 5px 10px;clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%)">BEST BUY</div></div>',
+    sponsors:[{name:'SAMSUNG',color:'#fff',bg:'#1428A0'},{name:'SONY',color:'#111',bg:'#fff'}]
+  },
+  mgm:{
+    grad:'linear-gradient(135deg,#C9A227,#6E5410,#0A0A0A)',
+    shadow:'0 0 40px rgba(201,162,39,0.28),0 0 70px rgba(0,0,0,0.35)',
+    ink:'#0C0A06', accent:'#8A6D1E',
+    glow1:'rgba(201,162,39,0.22)', glow2:'rgba(0,0,0,0.5)',
+    eyebrow:'A Night at the Casino', motif:'🎭', editionLabel:'High-Roller Keepsake',
+    keepsake:'A NIGHT TO REMEMBER', editionCap:100,
+    logo:'<div style="display:inline-flex;align-items:center;gap:7px"><span style="font-size:20px">🦁</span><span style="font-family:Georgia,serif;font-weight:700;letter-spacing:0.16em;font-size:14px;color:#E8C86A">MGM GRAND</span></div>',
+    sponsors:[{name:'CIRQUE DU SOLEIL',color:'#111',bg:'#E7C86A'},{name:'MGM REWARDS',color:'#E8C86A',bg:'#111'}]
   }
 };
 // Deterministic edition number from the order id so it's stable across renders.
@@ -3446,11 +3597,14 @@ function fullTicketCard(tk){
     const _cap=theme.editionCap||100;
     const _edStr='#'+String(ticketEdition((tk.orderId||'ORD')+':'+subIdx,_cap)).padStart(3,'0')+' / '+_cap;
     const _chips=theme.sponsors.map(function(s){return '<span style="font-size:10px;font-weight:900;letter-spacing:0.02em;color:'+s.color+';background:'+s.bg+';padding:2px 7px;border-radius:4px;white-space:nowrap">'+s.name+'</span>';}).join('');
+    const _brandMark=theme.logo||('<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">'+theme.motif+'</span><span style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#fff;text-transform:uppercase">'+theme.eyebrow+'</span></div>');
+    const _eyebrowSub=theme.logo?`<div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.82);text-transform:uppercase;margin-top:8px">${theme.motif} ${theme.eyebrow}</div>`:'';
     heroBand=`<div style="margin:-20px -20px 14px;padding:13px 18px 12px;background:${theme.grad};position:relative;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${theme.motif}</span><span style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#fff;text-transform:uppercase">${theme.eyebrow}</span></div>
-        <span style="font-size:8px;font-weight:800;letter-spacing:0.1em;color:rgba(255,255,255,0.9);text-transform:uppercase">${theme.editionLabel}</span>
+        ${_brandMark}
+        <span style="font-size:8px;font-weight:800;letter-spacing:0.1em;color:rgba(255,255,255,0.9);text-transform:uppercase;flex-shrink:0">${theme.editionLabel}</span>
       </div>
+      ${_eyebrowSub}
       <div style="display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap">${_chips}<span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.78);letter-spacing:0.1em">&times; NIGH</span></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:11px">
         <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:0.06em">${_edStr}</span>
@@ -6474,7 +6628,7 @@ function renderCreateGroup(){
 
 // ── TAB BAR ────────────────────────────────────────────
 function renderTB(){
-  if(S.scr==='onboarding'||S.scr==='chat'){document.getElementById('tb').innerHTML='';document.getElementById('tb').style.display='none';return;}
+  if(S.scr==='onboarding'||S.scr==='chat'||S.scr==='nighZone'){document.getElementById('tb').innerHTML='';document.getElementById('tb').style.display='none';return;}
   if(S.scr==='niya'&&S.niyaOnboarding){document.getElementById('tb').style.display='';}
   document.getElementById('tb').style.display='';
   const unreadCount=notifs.filter(n=>!n.read).length;
@@ -8719,6 +8873,7 @@ function render(){
     case 'onboarding': html=renderOnboarding();break;
     case 'feed': html=renderFeed();break;
     case 'dropDetail': html=renderDropDetail();break;
+    case 'nighZone': html=renderNighZone();break;
     case 'passwordDrop': html=renderPasswordDrop();break;
     case 'placeOrder': html=renderPlaceOrder();break;
     case 'orderConfirmation': html=renderOrderConfirmation();break;
