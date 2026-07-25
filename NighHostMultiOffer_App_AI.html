@@ -346,10 +346,10 @@ function reverifyAvailDate(){const dt=new Date(userVerifiedDate);dt.setDate(dt.g
 function canReverify(){return daysSinceVerified()>=REVERIFY_DAYS;}
 const accts=[
   {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'1234 Walnut St',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',email:'',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:''},
+  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:'',nz:{enabled:true,gate:'purchase',mode:'radius',radius:0.9,hype:'followers'}},
   {name:'Nike Boulder',short:'Nike',brandName:'Nike',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',email:'boulder@nike.com',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'nikeboulder',socTiktok:'nike',socX:'nikeboulder'},
   {name:'Avery Brewing Co',short:'Avery',brandName:'Avery Brewing Co',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',email:'hello@averybrewing.com',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',tags:['Craft Beer','Barrel-Aged','Brewery Tours','Taproom'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Avery Brewing, Inc.',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'averybrewingco',socTiktok:'',socX:'averybrewing'},
-  {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',email:'events@empowerfield.com',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'broncos',socTiktok:'broncos',socX:'broncos'},
+  {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',email:'events@empowerfield.com',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'broncos',socTiktok:'broncos',socX:'broncos',nz:{enabled:true,gate:'purchase',mode:'venue',radius:0.5,hype:'public'}},
   {name:'Sarah Chen',short:'Sarah',brandName:'',hostType:'personal',businessVerified:false,unverified:true,role:'Account Owner',userDisplayName:'Sarah Chen',cat:'Personal',subCat:'',addr:'742 Arapahoe Ave',city:'Boulder',state:'CO',zip:'80302',handle:'sarahc',phone:'(303) 555-0218',email:'',website:'',description:'Yoga teacher and plant-based cook. Hosting community gatherings and wellness experiences.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Sarah Chen',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',stripeConnected:false},
   // ── Unverified demo accounts (so the Host Account Verification flow is reachable) ──
   {name:'Roadhouse Coffee',short:'Roadhouse',brandName:'Roadhouse Coffee',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Cafe & Bakery',subCat:'Coffee Shop',addr:'2030 13th St',city:'Boulder',state:'CO',zip:'80302',handle:'roadhousecoffee',phone:'(303) 555-0240',email:'hello@roadhouse.coffee',website:'https://roadhouse.coffee',description:'Neighborhood coffee bar pulling shots and hosting open-mic nights.',tags:['Coffee','Open Mic','Pastries'],operationMode:'Fixed',plan:'Launch',maxPartners:5,parentOrg:'Roadhouse Coffee',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''},
@@ -359,6 +359,63 @@ const accts=[
   {name:'Pearl Street Tavern',short:'Pearl St Tavern',brandName:'Pearl Street Tavern',hostType:'place',entity:true,businessVerified:false,unverified:true,stripeConnected:false,role:'Manager',userDisplayName:'Josh R.',cat:'Bar & Nightlife',subCat:'Tavern',addr:'1102 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'pearlsttavern',phone:'(303) 555-0266',email:'',website:'',description:'Historic downtown tavern with local brews and live music.',tags:['Live Music','Local Brews','Patio'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Pearl Street Tavern',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'',socTiktok:'',socX:''}
 ];
 let acctIdx=1;const acct=()=>accts[acctIdx]; // multi-offer fork defaults to the business account so the seeded multi-offer drops are visible
+
+// ── NIGH ZONE (account-level location gating) ──
+function nzCfg(){var a=acct();if(!a.nz)a.nz={enabled:false,gate:'purchase',mode:'radius',radius:0.9,hype:'followers'};return a.nz;}
+function nzOn(){return !!nzCfg().enabled;}
+function nzGateLabel(g){g=g||nzCfg().gate;return g==='visibility'?'Visibility gate':'Purchase gate';}
+function nzModeLabel(m){m=m||nzCfg().mode;return m==='venue'?'Venue':'Radius';}
+function nzMiniMap(mode,h){h=h||150;mode=mode||nzCfg().mode;
+  var zone=mode==='venue'
+    ? '<rect x="120" y="52" width="160" height="96" rx="26" fill="rgba(14,78,245,0.10)" stroke="#0E4EF5" stroke-width="2.5"/>'
+    : '<circle cx="200" cy="100" r="78" fill="rgba(14,78,245,0.10)" stroke="#0E4EF5" stroke-width="2.5"/><circle cx="200" cy="100" r="50" fill="none" stroke="rgba(17,24,39,0.5)" stroke-width="1.3" stroke-dasharray="4 5"/>';
+  return '<svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" style="width:100%;height:'+h+'px;border-radius:12px;display:block">'
+    +'<rect x="0" y="0" width="400" height="200" fill="#E9EEE6"/>'
+    +'<ellipse cx="40" cy="26" rx="90" ry="52" fill="#A9CCEA" opacity="0.5"/>'
+    +'<ellipse cx="366" cy="184" rx="92" ry="60" fill="#A9CCEA" opacity="0.5"/>'
+    +'<ellipse cx="322" cy="58" rx="46" ry="34" fill="#C4E4B7" opacity="0.7"/>'
+    +'<path d="M -20 62 L 200 105 L 440 70" stroke="#F4C64E" stroke-width="6" fill="none"/>'
+    +'<path d="M 120 -10 L 200 105 L 168 220" stroke="#fff" stroke-width="4" fill="none"/>'
+    +zone
+    +'<circle cx="200" cy="100" r="15" fill="#fff" stroke="rgba(0,0,0,0.12)"/><text x="200" y="106" font-size="15" text-anchor="middle">📍</text>'
+    +'<circle cx="166" cy="140" r="12" fill="#0E4EF5" stroke="#fff" stroke-width="2.5"/><text x="166" y="144" font-size="8.5" font-weight="800" fill="#fff" text-anchor="middle">G</text>'
+    +'</svg>';
+}
+// Create-flow awareness card (not a config panel — config lives in Settings)
+function nzCreateCard(d){
+  var c=nzCfg();
+  if(nzOn()){
+    var apply=d.nzApply!==false;
+    return moCard(moLabel('Nigh Zone','Location gating')
+      +'<div style="font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:10px">On for this account — <b style="color:#374151">'+nzModeLabel()+' · '+nzGateLabel()+'</b>. '+(c.gate==='visibility'?'Guests outside the zone won’t see this drop.':'Guests outside the zone won’t be able to reserve.')+'</div>'
+      +(apply?nzMiniMap(c.mode,130)+'<div style="height:8px"></div>':'')
+      +moToggle(apply,'Apply Nigh Zone to this drop',(c.mode==='venue'?'Guests must be inside your venue':'Guests must be within '+c.radius+' mi'),"moSet('nzApply',!(moDraft().nzApply!==false))")
+      +'<div style="font-size:11px;color:#9CA3AF;margin-top:2px">Change the zone type in Settings → Nigh Zone.</div>');
+  }
+  return moCard(moLabel('Nigh Zone','Location gating')
+    +'<div style="font-size:12px;color:#6B7280;line-height:1.5">Off for this account. Turn on <button onclick="S.scr=\'menu\';S.menuSub=\'nighzone\';render()" style="background:none;border:none;padding:0;color:#0E4EF5;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px">Settings → Nigh Zone</button> to gate drops by proximity.</div>');
+}
+// Account-level Nigh Zone settings screen
+function renderNighZoneSettings(){
+  var c=nzCfg();
+  var seg=function(active,label,onclick){return '<button onclick="'+onclick+'" style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid '+(active?'#0E4EF5':'#E5E7EB')+';background:'+(active?'#EEF2FF':'#fff')+';color:'+(active?'#1E3A8A':'#6B7280')+';font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">'+label+'</button>';};
+  var sw=function(on,onclick){return '<div onclick="'+onclick+'" style="width:44px;height:26px;border-radius:13px;background:'+(on?'#0E4EF5':'#D1D5DB')+';cursor:pointer;position:relative;flex-shrink:0"><div style="position:absolute;top:3px;'+(on?'right:3px':'left:3px')+';width:20px;height:20px;border-radius:50%;background:#fff"></div></div>';};
+  return hdr('Nigh Zone','Location gating',"S.menuSub='settings';render()")
+    +'<div style="padding:14px 16px 30px">'
+    +moCard('<div style="display:flex;align-items:center;gap:12px"><div style="color:#0E4EF5">'+ic('map',18)+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#374151">Enable Nigh Zone</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Gate your drops by how close guests are</div></div>'+sw(c.enabled,"nzCfg().enabled=!nzCfg().enabled;render()")+'</div>')
+    +(c.enabled?(
+      moCard(moLabel('Gate','What happens outside the zone')
+        +'<div style="display:flex;gap:8px;margin-bottom:8px">'+seg(c.gate==='purchase','Purchase',"nzCfg().gate='purchase';render()")+seg(c.gate==='visibility','Visibility',"nzCfg().gate='visibility';render()")+'</div>'
+        +'<div style="font-size:11px;color:#9CA3AF;line-height:1.5">'+(c.gate==='visibility'?'Outside the zone, the drop is hidden entirely.':'Outside the zone, the drop is visible but can’t be reserved.')+'</div>')
+      +moCard(moLabel('Zone type')
+        +'<div style="display:flex;gap:8px;margin-bottom:10px">'+seg(c.mode==='radius','Radius',"nzCfg().mode='radius';render()")+seg(c.mode==='venue','Venue',"nzCfg().mode='venue';render()")+'</div>'
+        +(c.mode==='radius'?'<div style="margin-bottom:10px">'+moLabel('Radius (miles)')+moInput(c.radius,'0.9','nzCfg().radius=parseFloat(this.value)||0')+'</div>':'<div style="font-size:11px;color:#9CA3AF;line-height:1.5;margin-bottom:10px">Uses your venue boundary — guests must be physically inside.</div>')
+        +nzMiniMap(c.mode,150))
+      +moCard(moLabel('Hype visibility','Who can see pre-hype content')
+        +'<div style="display:flex;gap:8px">'+seg(c.hype==='public','Public',"nzCfg().hype='public';render()")+seg(c.hype==='followers','Followers',"nzCfg().hype='followers';render()")+seg(c.hype==='hype_radius','Wider area',"nzCfg().hype='hype_radius';render()")+'</div>')
+    ):'<div style="text-align:center;color:#9CA3AF;font-size:12px;padding:24px 0">Turn on Nigh Zone to configure gating.</div>')
+    +'</div>';
+}
 // Niya (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Niya surface (icon, tab, bar). Lets Niya roll out to a subset of accounts before going generally available.
 function niyaOn(){return acct().niyaEnabled!==false;}
 // Heads Up (daily announcements to followers) feature flag — per host account. Defaults ON; set acct().headsUpEnabled=false to hide every Heads Up surface (compose, home button, drop-detail button, management screen, Niya). Supports phased rollout / subscription gating.
@@ -559,6 +616,7 @@ const drops=[
 
   // ── MULTI-OFFER DROPS (reservation engine: schedule x selection x inventory) ──
   {id:'MH01',title:'Weekend Pastry Drop',timing:'Arrival Window',acctName:'Centro Boulder',
+    nighZone:{mode:'radius',gate:'purchase',radius:0.9,venueName:'Centro Boulder',area:'Boulder'},
     start:'8:00 AM - 1:00 PM',bcastStart:'6:00 AM',bcastEnd:'7:45 AM',date:'2026-03-06',cap:36,res:19,ci:11,ns:1,
     price:5,status:'Live',venue:'Centro Boulder, 950 Pearl St, Boulder, CO 80302',
     ageRestriction:'everyone',taxOn:true,tax:8.5,dualPrice:false,audience:'public',
@@ -2962,6 +3020,7 @@ function renderMenu(){
   if(S.menuSub==='customers')return isPersonal()?renderPersonalGuests():renderCustomers();
   if(S.menuSub==='blockedGuests')return renderBlockedGuests();
   if(S.menuSub==='settings')return renderSettings();
+  if(S.menuSub==='nighzone')return renderNighZoneSettings();
   if(S.menuSub==='notifications')return renderNotifications();
   if(S.menuSub==='userAccount')return renderUserAccount();
   if(S.menuSub==='feedback')return renderFeedback();
@@ -6728,6 +6787,11 @@ function renderSettings(){
         <div style="position:absolute;top:3px;${headsUpOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
       </div>
     </div>
+    <button onclick="S.menuSub='nighzone';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;font-family:inherit">
+      <div style="color:#0E4EF5">${ic('map',16)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:#374151">Nigh Zone</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">${nzOn()?nzModeLabel()+' · '+nzGateLabel():'Off'}</div></div>
+      <span style="color:#D1D5DB">${ic('right',14)}</span>
+    </button>
     <div style="text-align:center;margin-top:14px"><button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.otpError=false;S.otpResent=false;S.scr='login';S.menuSub=null;render()" style="padding:12px 28px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444;cursor:pointer">${t('account.logout')}</button></div>
     <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Host v1.0</div>
   </div>`;
@@ -8951,7 +9015,7 @@ function moDraft(){
     windows:[{label:'',cap:''}],offers:[{name:'',price:'',count:''}],
     sections:[{name:'',price:'',rows:'2',seats:'8'}],
     inv:'per_item',poolName:'',poolTotal:'',capOn:false,
-    geofenced:false,mobile:false,age21:false,maxPerUser:'4',audience:'public'};
+    geofenced:false,mobile:false,age21:false,maxPerUser:'4',audience:'public',nzApply:true};
   return S.moDraft;
 }
 function moSet(k,v){moDraft()[k]=v;render();}
@@ -8991,6 +9055,7 @@ function moPublish(){
   else if(d.inv==='pooled')totalCap=parseInt(d.poolTotal)||0;
   else slots.forEach(s=>s.offers.forEach(o=>totalCap+=(o.count||0)));
   var prices=[];if(secs)secs.forEach(s=>prices.push(s.price));else slots.forEach(s=>s.offers.forEach(o=>prices.push(o.price)));
+  var _nz=(nzOn()&&d.nzApply!==false)?{mode:nzCfg().mode,gate:nzCfg().gate,radius:nzCfg().radius,venueName:acct().brandName||acct().name,area:acct().city}:null;
   drops.unshift({id:'MH'+(Math.floor(Math.random()*900)+100),title:d.title,desc:d.desc,
     timing:t.sched==='windows'?'Arrival Window':'Start Time',acctName:acct().name,
     start:t.sched==='windows'?(d.windows[0].label||'—'):d.start,
@@ -8999,7 +9064,7 @@ function moPublish(){
     venue:acct().name+', '+acct().addr+', '+acct().city+', '+acct().state,ageRestriction:d.age21?'21plus':'everyone',
     taxOn:true,tax:8.5,dualPrice:false,audience:d.audience,hosts:[acct().userDisplayName||acct().name],partners:[],media:'video',
     slug:'newdrop/'+Math.random().toString(36).slice(2,7).toUpperCase(),
-    tpl:d.tpl,inv:d.inv,geofenced:d.geofenced,mobile:d.mobile,maxPerUser:parseInt(d.maxPerUser)||4,
+    tpl:d.tpl,inv:d.inv,geofenced:!!(_nz&&_nz.mode==='venue'),nighZone:_nz,mobile:d.mobile,maxPerUser:parseInt(d.maxPerUser)||4,
     pool:d.inv==='pooled'?{name:d.poolName||'Daily total',total:parseInt(d.poolTotal)||0,left:parseInt(d.poolTotal)||0}:null,
     slots:slots,sections:secs});
   S.moDraft=null;S.cStep=0;S.moPublished=true;S.scr='home';render();
@@ -9124,8 +9189,8 @@ function renderCreate(){
     }
     return hdr('Rules',null,"S.cStep=3;render()")+bar()
       +'<div style="padding:14px 16px 24px">'+invBlock
+      +nzCreateCard(d)
       +moCard(moLabel('Who can reserve')
-        +moToggle(d.geofenced,'In-venue only','Only visible to guests already at your venue',"moSet('geofenced',!moDraft().geofenced)")
         +moToggle(d.mobile,'Mobile stop','Location is only valid for today',"moSet('mobile',!moDraft().mobile)")
         +moToggle(d.age21,'21+ only','Valid ID required at check-in',"moSet('age21',!moDraft().age21)")
         +'<div style="height:4px"></div>'+moLabel('Max per guest')+moInput(d.maxPerUser,'4','moDraft().maxPerUser=this.value'))
@@ -9146,7 +9211,7 @@ function renderCreate(){
       +row(t.sched==='windows'?'Windows':'Start time',t.sched==='windows'?totalWins+' window'+(totalWins!==1?'s':''):d.start)
       +(t.sel==='seats'?row('Sections',totalOffers+' · '+seatTotal+' seats'):row(t.offerWord+'s',totalOffers))
       +(t.sel!=='seats'?row('Stock',d.inv==='pooled'?'Shared daily total'+(d.poolTotal?' ('+d.poolTotal+')':''):'Per '+t.offerWord.toLowerCase()):'')
-      +(d.geofenced?row('Visibility','In-venue only'):'')
+      +((nzOn()&&d.nzApply!==false)?row('Nigh Zone',nzModeLabel()+' · '+nzGateLabel()):'')
       +(d.mobile?row('Location','Mobile stop (today only)'):'')
       +(d.age21?row('Age','21+'):'')
       +row('Max per guest',d.maxPerUser||'4'))
@@ -9204,10 +9269,15 @@ function renderDropDash(){
     +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">'
       +'<span style="display:inline-flex;align-items:center;gap:6px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">'+t.icon+' '+t.name+'</span>'
       +'<span style="background:'+(x.status==='Live'?'#ECFDF5':'#F3F4F6')+';border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:'+(x.status==='Live'?'#065F46':'#6B7280')+'">'+x.status+'</span>'
-      +(x.geofenced?'<span style="background:#FEF3C7;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#92400E">In-venue only</span>':'')
+      +((x.nighZone||x.geofenced)?'<span style="display:inline-flex;align-items:center;gap:4px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">'+ic('map',11)+'Nigh Zone'+(x.nighZone?' · '+nzModeLabel(x.nighZone.mode):'')+'</span>':'')
       +(x.mobile?'<span style="background:#EEF2FF;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;color:#3730A3">Mobile stop</span>':'')
     +'</div>'
     +moCard('<div style="display:flex">'+stat(totalSold,'Reserved','#0E4EF5')+stat(totalStock?(totalStock-totalSold):'—','Remaining')+stat('$'+revenue.toFixed(0),'Revenue','#059669')+stat(pct+'%','Sold')+'</div>')
+    +(x.nighZone?moCard(moLabel('Nigh Zone','Location gating')
+      +nzMiniMap(x.nighZone.mode,140)
+      +'<div style="height:10px"></div>'
+      +'<div style="display:flex">'+stat(nzModeLabel(x.nighZone.mode),'Mode','#0E4EF5')+stat(x.nighZone.gate==='visibility'?'Visibility':'Purchase','Gate')+stat(x.nighZone.mode==='radius'?x.nighZone.radius+' mi':'Venue','Zone')+'</div>'
+      +'<div style="font-size:11px;color:#9CA3AF;margin-top:8px;line-height:1.5">'+(x.nighZone.mode==='radius'?'Guests must be within '+x.nighZone.radius+' mi to reserve. Radius can reduce as start approaches.':'Guests must be physically inside the venue to reserve.')+'</div>'):'')
     +body
     +'<div style="display:flex;gap:8px;margin-top:4px">'
       +'<button onclick="go(\'liveview\',{drop:'+i+'})" style="flex:1;padding:12px;border-radius:11px;border:1px solid #E5E7EB;background:#fff;color:#374151;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Guests & check-in</button>'
