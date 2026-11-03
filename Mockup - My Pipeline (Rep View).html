@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh Support — My Pipeline (Rep view)</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#111827}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#fff;border-right:1px solid #E2E8F0;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column}
+.sb-logo{padding:18px 20px;border-bottom:1px solid #E2E8F0;font-weight:800;font-size:15px;color:#1B2A4A}
+.sb-logo .bdg{font-size:9px;font-weight:700;color:#fff;background:#1B2A4A;padding:2px 6px;border-radius:4px;margin-left:6px}
+.sb-section{padding:14px 0 4px 20px;font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 20px;color:#4B5563;font-size:13px;font-weight:500;border-left:3px solid transparent}
+.sb-item.active{color:#1B2A4A;background:#EEF2FF;border-left-color:#0E4EF5;font-weight:600}
+.sb-foot{margin-top:auto;padding:14px 20px;border-top:1px solid #E2E8F0;display:flex;gap:10px;align-items:center}
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.main{margin-left:220px;flex:1;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700}.topbar-sub{font-size:11px;color:#6B7280}
+.content{padding:22px 24px}
+.hello{font-size:20px;font-weight:800;margin-bottom:3px}.sub{font-size:13px;color:#6B7280;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:13px 16px}
+.stat-val{font-size:22px;font-weight:800}.stat-lbl{font-size:11px;font-weight:600;color:#6B7280;margin-top:2px}
+.card{background:#fff;border-radius:12px;border:1px solid #E2E8F0}
+.sec-h{font-size:13px;font-weight:800;color:#111827;margin:4px 0 10px;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer}
+.btn-primary{background:#0E4EF5;color:#fff}.btn-green{background:#10B981;color:#fff}.btn-ghost{background:#fff;color:#374151;border:1px solid #E2E8F0}
+.btn-amber{background:#F59E0B;color:#fff}.btn-sm{padding:5px 9px;font-size:11px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
+.plat{width:16px;height:16px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff}
+.ig{background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)}.tt{background:#111}.yt{background:#FF0000}
+/* My Day */
+.day{display:flex;flex-direction:column}
+.day-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #F1F5F9;cursor:pointer}
+.day-item:hover{background:#F8FAFC}.day-item:last-child{border-bottom:none}
+.dicon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+/* board */
+.board{display:grid;grid-template-columns:repeat(6,minmax(170px,1fr));gap:12px;margin-top:4px;overflow-x:auto;padding-bottom:6px}
+.col{background:#F8FAFC;border:1px solid #EEF2F7;border-radius:12px;padding:10px;min-height:120px}
+.col-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:9px;display:flex;justify-content:space-between}
+.lcard{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:10px;margin-bottom:9px;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.lcard:hover{border-color:#C7D2FE}
+.lname{font-weight:700;font-size:12.5px}
+.lmeta{font-size:10.5px;color:#9CA3AF;margin-top:2px;display:flex;align-items:center;gap:4px}
+.flag{font-size:10px;font-weight:700;margin-top:7px;display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:6px}
+/* modal */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.mbg.show{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:820px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}
+.mhdr{padding:16px 20px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:flex-start}
+.mbody{display:flex;min-height:0;flex:1}
+.tl{flex:1;overflow-y:auto;padding:18px 20px;background:#FBFCFE}
+.rail{width:270px;border-left:1px solid #F1F5F9;padding:16px;overflow-y:auto;flex-shrink:0}
+.ev{margin-bottom:14px}
+.sysrow{font-size:11px;color:#94A3B8;text-align:center;margin:10px 0;display:flex;align-items:center;gap:8px;justify-content:center}
+.bub{max-width:82%;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.45}
+.bub-out{background:#0E4EF5;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.bub-in{background:#fff;border:1px solid #E2E8F0;color:#111827;border-bottom-left-radius:4px}
+.bub-meta{font-size:10px;color:#9CA3AF;margin-top:3px}
+.note{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;border-radius:10px;padding:9px 12px;font-size:12px}
+.inv{background:#EEF2FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:600}
+.draftc{background:#F5F3FF;border:1px dashed #C4B5FD;border-radius:12px;padding:12px}
+.drow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #F1F5F9;font-size:12.5px}
+.drow .k{color:#6B7280}.drow .v{color:#111827;font-weight:600;text-align:right}
+.rsec{font-size:10.5px;font-weight:700;color:#6B7280;letter-spacing:.4px;text-transform:uppercase;margin:14px 0 7px}
+.compose{border-top:1px solid #F1F5F9;padding:10px 20px;display:flex;gap:8px;align-items:center;background:#fff}
+.inp{flex:1;padding:9px 12px;border:1px solid #D1D5DB;border-radius:8px;font-size:12.5px;outline:none}
+.sel{padding:9px;border:1px solid #D1D5DB;border-radius:8px;font-size:12px;background:#fff}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;z-index:300;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+</style></head><body>
+<div class="layout">
+ <div class="sidebar">
+  <div class="sb-logo">Nigh<span class="bdg">SUPPORT</span></div>
+  <div class="sb-section">MY DESK</div>
+  <div class="sb-item" id="nav-inbox" onclick="showView('inbox')">✉ Inbox</div>
+  <div class="sb-item" id="nav-tasks" onclick="showView('tasks')">✓ Tasks</div>
+  <div class="sb-item" id="nav-invites" onclick="showView('invites')">✈ Invites</div>
+  <div class="sb-section">RELATIONSHIPS</div>
+  <div class="sb-item active" id="nav-pipe" onclick="showView('pipe')">◍ Pipeline</div>
+  <div class="sb-item" id="nav-accounts" onclick="showView('accounts')">▦ My Accounts</div>
+  <div class="sb-item" id="nav-earn" onclick="showView('earn')">$ Earnings</div>
+  <div class="sb-section">PLATFORM</div>
+  <div class="sb-item">◷ Drops</div>
+  <div class="sb-item">✦ Organizations</div>
+  <div class="sb-item">⚑ Trust &amp; Safety</div>
+  <div class="sb-item">▤ Billing</div>
+  <div class="sb-foot"><div class="av">SC</div><div><div style="font-size:12px;font-weight:700">Sarah Chen</div><div style="font-size:10px;color:#9CA3AF">Growth Rep · Neo assisting</div></div></div>
+ </div>
+ <div class="main">
+  <div class="topbar"><div><div class="topbar-title" id="tbtitle">My Pipeline</div><div class="topbar-sub" id="tbsub">Your leads, your day</div></div>
+   <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm">⬆ Import leads</button><button class="btn btn-primary btn-sm">＋ Add lead</button></div></div>
+  <div class="content">
+   <div id="view-pipe">
+   <div class="hello">Good morning, Sarah 👋</div>
+   <div class="sub">Here's what needs you today. Neo has queued drafts for your approval.</div>
+   <div class="stats" id="stats"></div>
+
+   <div class="card" style="margin-bottom:22px">
+     <div style="padding:14px 16px 2px"><div class="sec-h">⚡ My Day <span style="font-size:11px;font-weight:600;color:#9CA3AF">· prioritized worklist</span></div></div>
+     <div class="day" id="day"></div>
+   </div>
+
+   <div class="sec-h" style="margin-bottom:10px">◍ My Pipeline <span style="font-size:11px;font-weight:600;color:#9CA3AF" id="pipecount"></span></div>
+   <div class="board" id="board"></div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:12px">Rep workspace mockup · leads assigned to Sarah Chen · data sampled from partner research sheet</div>
+   </div>
+   <div id="view-earn" style="display:none"></div>
+   <div id="view-inbox" style="display:none"></div>
+   <div id="view-tasks" style="display:none"></div>
+   <div id="view-invites" style="display:none"></div>
+   <div id="view-accounts" style="display:none"></div>
+  </div>
+ </div>
+</div>
+<div class="mbg" id="mbg" onclick="if(event.target===this)closeM()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const D={"rep": {"name": "Sarah Chen", "initials": "SC", "bot": "Neo"}, "leads": [{"id": "L01", "name": "Denver Yoga Social", "ltype": "Creator", "handle": "@denveryogasocial", "platforms": [["ig", "@denveryogasocial"]], "followers": "~26K est.", "city": "Denver", "category": "Wellness \u2013 events", "fit": "Already runs ticketed social wellness events citywide", "email": "info@yogasocial.org", "phone": "(303) 555-0781", "booking": "https://linkin.bio/denveryogasocial/", "website": "", "conf": "Email/phone", "priority": "P1", "genZ": false, "stage": "Engaged", "nextTask": {"type": "Approve Neo draft", "due": "Today", "kind": "approve"}, "botDraft": {"channel": "Email", "text": "Hi! Following up \u2014 Nigh lets you open reservations for your pop-up events and only charges when people actually show. Could I send a quick 2-min overview and a sample event page?"}, "timeline": [{"k": "sys", "t": "Sourced from research list \u00b7 Wellness \u2013 events", "w": "Neo", "ts": "Oct 6"}, {"k": "msg", "ch": "Instagram DM", "dir": "out", "w": "Neo (approved by Sarah)", "ts": "Oct 8 \u00b7 10:12a", "st": "read", "t": "Hi Denver Yoga Social \u2014 love the sunrise rooftop sessions. I'm with Nigh; we help hosts run drops/reservations for exactly this. Open to a quick look?"}, {"k": "msg", "ch": "Instagram DM", "dir": "in", "w": "Denver Yoga Social", "ts": "Oct 9 \u00b7 4:40p", "t": "Oh interesting \u2014 yeah send me info. Best email is info@yogasocial.org"}, {"k": "sys", "t": "Stage \u2192 Engaged \u00b7 owner \u2192 Sarah (escalated by Neo on positive reply)", "w": "Neo", "ts": "Oct 9"}, {"k": "draft", "ch": "Email", "w": "Neo", "ts": "Today", "t": "Drafted follow-up email \u2014 awaiting your approval."}]}, {"id": "L03", "name": "Bryan Rowe", "ltype": "Creator", "handle": "@bryanrowephoto", "platforms": [["ig", "@bryanrowephoto"]], "followers": "35900", "city": "Boulder", "category": "Artist / Photographer / Maker", "fit": "Artist / Photographer / Maker with a plausible young-local audience and a natural path from content or scene credibility to an in-person Drop.", "email": "bryan@bryanrowephoto.com", "phone": "(720) 555-0144", "booking": "", "website": "bryanrowephoto.com", "conf": "Email/phone", "priority": "P1", "genZ": false, "stage": "Qualified", "nextTask": {"type": "Reply (awaiting you)", "due": "Overdue 1d", "kind": "reply"}, "awaiting": true, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Artist / Photographer / Maker \u00b7 35.9K followers", "w": "Neo", "ts": "Oct 2"}, {"k": "msg", "ch": "Email", "dir": "out", "w": "Neo (approved by Sarah)", "ts": "Oct 4", "st": "read", "t": "Intro to Nigh + sample drop page."}, {"k": "msg", "ch": "Email", "dir": "in", "w": "Bryan Rowe", "ts": "Oct 7", "t": "This could work for my print-release events. How does payout timing work, and what's the fee?"}, {"k": "note", "w": "Sarah", "ts": "Oct 7", "t": "High value (35K). Pricing question \u2014 I'll answer personally."}]}, {"id": "L06", "name": "Armando Silva", "ltype": "Creator", "handle": "@artmandosilva", "platforms": [["ig", "@artmandosilva"]], "followers": "", "city": "Greeley / N. Front Range", "category": "Art \u2013 live-painting muralist", "fit": "Performs live for crowds \u2014 natural event host", "email": "artmandosilva@yahoo.com", "phone": "(303) 555-0410", "booking": "", "website": "artmandosilva.com", "conf": "Email/phone", "priority": "P1", "genZ": false, "stage": "Meeting / Collab", "nextTask": {"type": "Send SMS invite", "due": "Today", "kind": "invite"}, "inviteReady": true, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Live-painting muralist", "w": "Neo", "ts": "Sep 28"}, {"k": "msg", "ch": "Email", "dir": "out", "w": "Sarah", "ts": "Oct 1", "st": "read", "t": "Intro + what live-painting drops could look like."}, {"k": "msg", "ch": "Phone", "dir": "out", "w": "Sarah", "ts": "Oct 10", "t": "Call \u2014 walked through the host app. He's in. Confirmed mobile for the invite."}, {"k": "sys", "t": "Stage \u2192 Meeting / Collab", "w": "Sarah", "ts": "Oct 10"}]}, {"id": "L02", "name": "Ashley Joon", "ltype": "Creator", "handle": "@ashleyjoonart", "platforms": [["ig", "@ashleyjoonart"]], "followers": "", "city": "Denver", "category": "Art \u2013 muralist", "fit": "IG-magnet murals; strong local recognition", "email": "Hello@AshleyJoon.com", "phone": "", "booking": "https://www.ashleyjoon.com/contact", "website": "https://www.ashleyjoon.com", "conf": "Email/phone", "priority": "P2", "genZ": false, "stage": "Contacted", "nextTask": {"type": "Collect phone number", "due": "Today", "kind": "phone"}, "noPhoneBlock": true, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Muralist \u00b7 contact: email/booking only", "w": "Neo", "ts": "Oct 5"}, {"k": "msg", "ch": "Email", "dir": "out", "w": "Neo (approved by Sarah)", "ts": "Oct 6", "st": "delivered", "t": "Intro to Nigh for mural events."}, {"k": "note", "w": "Neo", "ts": "Oct 6", "t": "No phone on file \u2014 SMS invite blocked until we collect a mobile number."}]}, {"id": "L05", "name": "Colorado Frontrunners", "ltype": "Creator", "handle": "@coloradofrontrunners", "platforms": [["ig", "@coloradofrontrunners"]], "followers": "~970 est.", "city": "Denver & Boulder", "category": "Fitness \u2013 LGBTQ+ run/social", "fit": "Inclusive; runs in BOTH target metros", "email": "contact@coloradofrontrunners.org", "phone": "(720) 555-0333", "booking": "", "website": "coloradofrontrunners.org", "conf": "Email/phone", "priority": "P1", "genZ": false, "stage": "Invite sent", "nextTask": {"type": "Nudge invite (sent 4d ago)", "due": "Today", "kind": "nudge"}, "inviteState": "Delivered", "timeline": [{"k": "sys", "t": "Sourced \u00b7 Fitness \u2013 LGBTQ+ run/social", "w": "Neo", "ts": "Sep 30"}, {"k": "msg", "ch": "Email", "dir": "out", "w": "Sarah", "ts": "Oct 3", "st": "read", "t": "Intro \u2014 recurring run/social reservations."}, {"k": "invite", "state": "Sent", "w": "Sarah", "ts": "Oct 15", "t": "SMS invite sent \u00b7 nigh.com/invite/7KQJ2M"}, {"k": "invite", "state": "Delivered", "w": "system", "ts": "Oct 15", "t": "Delivered \u2014 not yet clicked."}]}, {"id": "L09", "name": "Anthony Garcia Sr.", "ltype": "Creator", "handle": "@birdseedanthony", "platforms": [["ig", "@birdseedanthony"]], "followers": "", "city": "Denver (Globeville)", "category": "Art \u2013 community muralist", "fit": "Nonprofit + youth engagement = built-in audience", "email": "info@birdseedcollective.org", "phone": "", "booking": "", "website": "birdseedcollective.org", "conf": "Email/phone", "priority": "P1", "genZ": false, "stage": "Engaged", "nextTask": {"type": "Review Neo escalation", "due": "Today", "kind": "escalation"}, "escalated": true, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Community muralist", "w": "Neo", "ts": "Oct 11"}, {"k": "msg", "ch": "Instagram DM", "dir": "out", "w": "Neo (approved by Sarah)", "ts": "Oct 12", "st": "read", "t": "Intro to Nigh."}, {"k": "msg", "ch": "Instagram DM", "dir": "in", "w": "Anthony Garcia Sr.", "ts": "Oct 14", "t": "Yes! I do community mural days \u2014 this is perfect. Let's talk."}, {"k": "sys", "t": "Neo escalated \u2192 Sarah (positive reply, needs human)", "w": "Neo", "ts": "Oct 14"}]}, {"id": "L04", "name": "Chella", "ltype": "Creator", "handle": "@chellaandthecharm", "platforms": [["ig", "@chellaandthecharm"]], "followers": "", "city": "Denver", "category": "Musicians & Bands", "fit": "Musicians & Bands; documented local live/organizing signal. Age is an estimate and should be confirmed conversationally.", "email": "", "phone": "", "booking": "https://www.sonicbids.com/band/chella-the-charm", "website": "", "conf": "Booking link", "priority": "P1", "genZ": false, "stage": "Cold", "nextTask": {"type": "Approve Neo first-touch", "due": "Today", "kind": "approve"}, "botDraft": {"channel": "Instagram DM", "text": "Hey Chella \u2014 we're Nigh, a spot for intimate live-music drops around Denver. Would love to show how bands use it to sell out small rooms fast. Open to a quick look?"}, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Musicians & Bands \u00b7 contact: booking link", "w": "Neo", "ts": "Today"}, {"k": "draft", "ch": "Instagram DM", "w": "Neo", "ts": "Today", "t": "Drafted first-touch DM \u2014 awaiting your approval."}]}, {"id": "L10", "name": "Conner Jhoon Choi", "ltype": "Creator", "handle": "@connerjhoonchoi", "platforms": [["ig", "@connerjhoonchoi"]], "followers": "", "city": "Denver", "category": "Visual Art & Photography", "fit": "Visual Art & Photography; local cultural signal requiring event verification. Age is an estimate and should be confirmed conversationally.", "email": "connerchoi@gmail.com", "phone": "(720) 555-0512", "booking": "RiNo Art District artist page", "website": "https://connerchoi.com", "conf": "Email/phone", "priority": "P2", "genZ": false, "stage": "Contacted", "nextTask": {"type": "Reply (awaiting you)", "due": "Today", "kind": "reply"}, "awaiting": true, "timeline": [{"k": "sys", "t": "Sourced \u00b7 Visual Art & Photography", "w": "Neo", "ts": "Oct 9"}, {"k": "msg", "ch": "Email", "dir": "out", "w": "Neo (approved by Sarah)", "ts": "Oct 10", "st": "read", "t": "Intro to Nigh for gallery/photo events."}, {"k": "msg", "ch": "Email", "dir": "in", "w": "Conner Jhoon Choi", "ts": "Oct 13", "t": "This sounds great for my gallery photo nights \u2014 how do payouts work?"}]}]};let LEADS=D.leads;
+const STAGES=['Cold','Contacted','Engaged','Qualified','Meeting / Collab','Invite sent'];
+const SC={'Cold':'#64748B','Contacted':'#1D4ED8','Engaged':'#C2410C','Qualified':'#9333EA','Meeting / Collab':'#7C3AED','Invite sent':'#0369A1'};
+const PRIC={P1:{bg:'#FEE2E2',fg:'#991B1B'},P2:{bg:'#FEF3C7',fg:'#92400E'},P3:{bg:'#F3F4F6',fg:'#4B5563'}};
+const KICON={approve:['🤖','#F5F3FF'],reply:['💬','#FEF2F2'],invite:['✈','#ECFDF5'],phone:['📞','#FEF3C7'],nudge:['🔔','#EEF2FF'],escalation:['⚠','#FEF3C7'],followup:['↻','#F1F5F9'],ticket:['🎫','#FEF3C7'],billing:['💳','#FEE2E2'],health:['❤','#ECFDF5']};
+let CUR=null;
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1900);}
+function plats(l){return (l.platforms||[]).map(p=>`<span class="plat ${p[0]}">${p[0]=='ig'?'IG':p[0]=='tt'?'TT':'YT'}</span>`).join('');}
+function priPill(p){const c=PRIC[p]||PRIC.P3;return `<span class="pill" style="background:${c.bg};color:${c.fg}">${p}</span>`;}
+function flagFor(l){
+  if(l.botDraft) return `<span class="flag" style="background:#F5F3FF;color:#7C3AED">🤖 Draft to approve</span>`;
+  if(l.awaiting) return `<span class="flag" style="background:#FEF2F2;color:#B91C1C">💬 Awaiting your reply</span>`;
+  if(l.escalated) return `<span class="flag" style="background:#FEF3C7;color:#92400E">⚠ Escalated to you</span>`;
+  if(l.inviteReady) return `<span class="flag" style="background:#ECFDF5;color:#047857">✈ Invite ready</span>`;
+  if(l.noPhoneBlock) return `<span class="flag" style="background:#FEF3C7;color:#92400E">📞 Needs phone</span>`;
+  if(l.inviteState) return `<span class="flag" style="background:#EEF2FF;color:#1E40AF">✈ Invite ${l.inviteState.toLowerCase()}</span>`;
+  return '';
+}
+function render(){
+  const active=LEADS.length, awaiting=LEADS.filter(l=>l.awaiting).length;
+  const invPending=LEADS.filter(l=>l.inviteReady||l.inviteState).length;
+  document.getElementById('stats').innerHTML=[
+    ['My active leads',active,'#111827'],['Awaiting my reply',awaiting,awaiting?'#B91C1C':'#111827'],
+    ['Invites pending',invPending,'#0369A1'],['Joined this month',3,'#047857']
+  ].map(s=>`<div class="stat"><div class="stat-val" style="color:${s[2]}">${s[1]}</div><div class="stat-lbl">${s[0]}</div></div>`).join('');
+  // My Day
+  const order={approve:1,reply:0,escalation:2,invite:3,nudge:4,phone:5,followup:6};
+  const tasks=LEADS.filter(l=>l.nextTask).slice().sort((a,b)=>(order[a.nextTask.kind]??9)-(order[b.nextTask.kind]??9));
+  document.getElementById('day').innerHTML=tasks.map(l=>{
+    const t=l.nextTask,ic=KICON[t.kind]||['•','#F1F5F9'];
+    const due=t.due==='Today'?'#0E4EF5':t.due.startsWith('Overdue')?'#B91C1C':'#9CA3AF';
+    let act=`<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">Open</button>`;
+    if(t.kind==='approve')act=`<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">Review draft</button>`;
+    if(t.kind==='invite')act=`<button class="btn btn-green btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">Send invite</button>`;
+    if(t.kind==='phone')act=`<button class="btn btn-amber btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">Collect phone</button>`;
+    if(t.kind==='nudge')act=`<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">Nudge</button>`;
+    return `<div class="day-item" onclick="openLead('${l.id}')">
+      <div class="dicon" style="background:${ic[1]}">${ic[0]}</div>
+      <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${t.type} · ${l.name}</div>
+        <div style="font-size:11px;color:#9CA3AF">${l.category} · ${l.stage}</div></div>
+      <span class="pill" style="background:#fff;border:1px solid #E5E7EB;color:${due}">${t.due}</span>
+      ${act}</div>`;
+  }).join('');
+  // board
+  document.getElementById('pipecount').textContent='· '+LEADS.length+' leads';
+  document.getElementById('board').innerHTML=STAGES.map(st=>{
+    const col=LEADS.filter(l=>l.stage===st);
+    return `<div class="col"><div class="col-h" style="color:${SC[st]}"><span>${st}</span><span>${col.length}</span></div>
+      ${col.map(l=>`<div class="lcard" onclick="openLead('${l.id}')">
+        <div class="lname">${l.name}</div>
+        <div class="lmeta">${l.ltype==='Creator'?plats(l)+' '+(l.handle||''):l.city}</div>
+        <div style="margin-top:6px">${priPill(l.priority)}</div>
+        ${flagFor(l)}
+      </div>`).join('')||'<div style="font-size:11px;color:#CBD5E1;text-align:center;padding:8px">—</div>'}
+    </div>`;
+  }).join('');
+}
+function evHtml(e){
+  if(e.k==='sys')return `<div class="sysrow">— ${e.t} · ${e.ts} —</div>`;
+  if(e.k==='note')return `<div class="ev note">📝 ${e.t}<div class="bub-meta">${e.w} · ${e.ts}</div></div>`;
+  if(e.k==='invite')return `<div class="ev inv">✈ ${e.t}<div class="bub-meta" style="font-weight:400">${e.w} · ${e.ts}</div></div>`;
+  if(e.k==='draft')return '';
+  const out=e.dir==='out';
+  return `<div class="ev" style="display:flex"><div class="bub ${out?'bub-out':'bub-in'}">
+    <div style="font-size:10px;font-weight:700;opacity:.8;margin-bottom:3px">${e.ch}${out?' ›':' ‹'} ${e.w}</div>
+    ${e.t}<div class="bub-meta" style="${out?'color:rgba(255,255,255,.75)':''}">${e.ts}${e.st?' · '+e.st:''}</div></div></div>`;
+}
+function openLead(id){
+  document.getElementById('modal').style.maxWidth='820px';
+  const l=LEADS.find(x=>x.id===id);CUR=l;const isCr=l.ltype==='Creator';
+  const contact=[];if(l.email)contact.push(['Email',l.email]);if(l.phone)contact.push(['Phone',l.phone]);else contact.push(['Phone','— none on file —']);
+  if(l.booking)contact.push(['Booking',l.booking.replace(/^https?:\/\//,'')]);
+  const draft=l.botDraft;
+  const inviteBtn=l.phone
+    ? `<button class="btn btn-green" style="width:100%;justify-content:center" onclick="sendInvite('${l.id}')">✈ Invite to join (SMS)</button>`
+    : `<button class="btn btn-ghost" style="width:100%;justify-content:center;opacity:.6;cursor:not-allowed" disabled>✈ Invite to join (SMS)</button>
+       <div style="font-size:11px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px;margin-top:7px">📞 No phone on file — SMS invite blocked. Collect a mobile number first.</div>
+       <button class="btn btn-amber btn-sm" style="width:100%;justify-content:center;margin-top:7px" onclick="collectPhone('${l.id}')">＋ Add phone number</button>`;
+  document.getElementById('modal').innerHTML=`
+    <div class="mhdr">
+      <div><div style="font-size:16px;font-weight:800">${l.name}</div>
+        <div style="margin-top:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="pill" style="background:#F5F3FF;color:#7C3AED">${isCr?'👤 Creator':'📍 '+l.ltype}</span>
+          ${priPill(l.priority)}<span class="pill" style="background:#fff;border:1px solid ${SC[l.stage]}44;color:${SC[l.stage]}">${l.stage}</span>
+          <span style="font-size:11px;color:#9CA3AF">Owner: Sarah · Neo assisting</span></div></div>
+      <button class="btn btn-ghost btn-sm" onclick="closeM()">✕</button>
+    </div>
+    <div class="mbody">
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <div class="tl" id="tl">
+          ${l.timeline.map(evHtml).join('')}
+          ${draft?`<div class="ev draftc">
+            <div style="font-size:11px;font-weight:700;color:#7C3AED;margin-bottom:6px">🤖 Neo drafted — ${draft.channel} · awaiting your approval</div>
+            <div style="font-size:12.5px;color:#111827;line-height:1.5;background:#fff;border:1px solid #EDE9FE;border-radius:8px;padding:10px">${draft.text}</div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary btn-sm" onclick="approveDraft('${l.id}')">✓ Approve &amp; send</button>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Edit mode (mock)')">✎ Edit</button>
+              <button class="btn btn-ghost btn-sm" onclick="toast('Draft rejected')">✕ Reject</button>
+            </div></div>`:''}
+        </div>
+        <div class="compose">
+          <select class="sel">${(isCr?['Instagram DM','TikTok DM','Email','SMS']:['Email','Phone','SMS']).map(c=>`<option>${c}</option>`).join('')}</select>
+          <input class="inp" placeholder="Write a message…">
+          <button class="btn btn-primary btn-sm" onclick="toast('Sent (mock)')">Send</button>
+        </div>
+      </div>
+      <div class="rail">
+        <div class="rsec">Next action</div>
+        <div style="font-size:12.5px;font-weight:700;color:#111827">${l.nextTask?l.nextTask.type:'—'}</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-bottom:6px">${l.nextTask?l.nextTask.due:''}</div>
+        <div class="rsec">Join</div>
+        ${inviteBtn}
+        <div class="rsec">Why they fit</div>
+        <div style="font-size:12px;color:#374151;line-height:1.5">${l.fit||'—'}</div>
+        <div class="rsec">Contact</div>
+        ${contact.map(c=>`<div class="drow"><span class="k">${c[0]}</span><span class="v" style="color:${c[1].includes('none')?'#B91C1C':'#0E4EF5'}">${c[1]}</span></div>`).join('')}
+        <div class="drow"><span class="k">Confidence</span><span class="v">${l.conf}</span></div>
+        <div class="rsec">Audience</div>
+        <div class="drow"><span class="k">Followers</span><span class="v">${l.followers||'—'}</span></div>
+        <div class="drow"><span class="k">Category</span><span class="v" style="font-weight:500">${l.category}</span></div>
+      </div>
+    </div>`;
+  document.getElementById('mbg').classList.add('show');
+}
+function closeM(){document.getElementById('mbg').classList.remove('show');}
+function approveDraft(id){const l=LEADS.find(x=>x.id===id);if(!l.botDraft)return;
+  l.timeline.push({k:'msg',ch:l.botDraft.channel,dir:'out',w:'Neo (approved by Sarah)',ts:'Just now',st:'sent',t:l.botDraft.text});
+  l.botDraft=null;if(l.nextTask&&l.nextTask.kind==='approve')l.nextTask=null;
+  closeM();render();toast('Approved & sent ✓');setTimeout(()=>openLead(id),100);}
+function sendInvite(id){const l=LEADS.find(x=>x.id===id);
+  l.timeline.push({k:'invite',state:'Sent',w:'Sarah',ts:'Just now',t:'SMS invite sent · nigh.com/invite/'+Math.random().toString(36).slice(2,8).toUpperCase()});
+  l.stage='Invite sent';l.inviteReady=false;l.inviteState='Sent';l.nextTask={type:'Awaiting click',due:'Sent today',kind:'nudge'};
+  closeM();render();toast('SMS invite sent ✈');setTimeout(()=>openLead(id),100);}
+function collectPhone(id){const l=LEADS.find(x=>x.id===id);const p=prompt('Add mobile number for '+l.name+':','(720) 555-0000');
+  if(p){l.phone=p;l.noPhoneBlock=false;l.timeline.push({k:'sys',t:'Phone number added — SMS invite now available',w:'Sarah',ts:'Just now'});
+  if(l.nextTask&&l.nextTask.kind==='phone')l.nextTask={type:'Send SMS invite',due:'Today',kind:'invite'};l.inviteReady=true;
+  closeM();render();toast('Phone added — invite unblocked');setTimeout(()=>openLead(id),100);}}
+
+const EARN={period:'October 2026',
+ rates:'Signup $50 · Drop $10 · User (direct) $2 / (indirect) $0.50 · drop-credit window: configurable',
+ hosts:[
+  {name:'Spruce Confections',signup:'confirmed',drops:4,dropsStatus:'confirmed',users:14},
+  {name:'The Rayback Collective',signup:'confirmed',drops:2,dropsStatus:'pending',users:6},
+  {name:'Avanti Food & Beverage',signup:'confirmed',drops:3,dropsStatus:'confirmed',users:9},
+  {name:'Dzirae Gold',signup:'pending',drops:0,dropsStatus:'',users:0},
+  {name:'Flatirons Brewing Co',signup:'confirmed',drops:1,dropsStatus:'confirmed',users:3},
+ ],
+ ledger:[
+  {ev:'Host signup',who:'Spruce Confections',det:'joined + verified',st:'confirmed',amt:50,d:{invite:'nigh.com/invite/9F3KD2',channel:'SMS',sent:'Oct 2',rate:'$50 / verified host signup',trigger:'Platform: host account org_1182 completed business verification',evt:'evt_signup_88213',hist:[['Invite sent','Oct 2'],['Joined (self-serve)','Oct 4'],['Verification complete → confirmed','Oct 5']]}},
+  {ev:'Host signup',who:'The Rayback Collective',det:'joined + verified',st:'confirmed',amt:50,d:{invite:'nigh.com/invite/2JX7QP',channel:'SMS',sent:'Sep 29',rate:'$50 / verified host signup',trigger:'Platform: host account org_1174 completed business verification',evt:'evt_signup_87440',hist:[['Invite sent','Sep 29'],['Joined','Oct 1'],['Verified → confirmed','Oct 2']]}},
+  {ev:'Host signup',who:'Avanti Food & Beverage',det:'joined + verified',st:'confirmed',amt:50,d:{invite:'nigh.com/invite/7MP0RA',channel:'SMS',sent:'Sep 30',rate:'$50 / verified host signup',trigger:'Platform: host account org_1176 verified',evt:'evt_signup_87601',hist:[['Invite sent','Sep 30'],['Joined','Oct 2'],['Verified → confirmed','Oct 3']]}},
+  {ev:'Host signup',who:'Flatirons Brewing Co',det:'joined + verified',st:'confirmed',amt:50,d:{invite:'nigh.com/invite/4KD9ZT',channel:'SMS',sent:'Oct 5',rate:'$50 / verified host signup',trigger:'Platform: host account org_1190 verified',evt:'evt_signup_88950',hist:[['Invite sent','Oct 5'],['Joined','Oct 6'],['Verified → confirmed','Oct 7']]}},
+  {ev:'Host signup',who:'Dzirae Gold',det:'awaiting verification',st:'pending',amt:50,d:{invite:'nigh.com/invite/8QW2LN',channel:'SMS',sent:'Oct 12',rate:'$50 / verified host signup',trigger:'Platform: account created, verification NOT yet complete — credit holds until verified',evt:'evt_signup_90112',hist:[['Invite sent','Oct 12'],['Joined','Oct 13'],['Awaiting verification','pending']]}},
+  {ev:'Drop credit',who:'Spruce Confections ×4',det:'drops ran',st:'confirmed',amt:40,d:{invite:'via sourced host org_1182',channel:'—',sent:'—',rate:'$10 / completed drop · 4 drops',trigger:'Platform: drops D-1041, D-1047, D-1052, D-1060 went live with reservations',evt:'evt_drops_batch_4412',hist:[['Within attribution window','configurable'],['4 drops completed → confirmed','Oct 8–18']]}},
+  {ev:'Drop credit',who:'Avanti ×3',det:'drops ran',st:'confirmed',amt:30,d:{invite:'via sourced host org_1176',channel:'—',sent:'—',rate:'$10 / completed drop · 3 drops',trigger:'Platform: drops D-1055, D-1058, D-1066 completed',evt:'evt_drops_batch_4455',hist:[['3 drops completed → confirmed','Oct 9–17']]}},
+  {ev:'Drop credit',who:'The Rayback ×2',det:'awaiting drop completion',st:'pending',amt:20,d:{invite:'via sourced host org_1174',channel:'—',sent:'—',rate:'$10 / completed drop · 2 drops',trigger:'Platform: drops D-1071, D-1072 scheduled but not yet completed — credit pending completion',evt:'evt_drops_batch_4480',hist:[['2 drops scheduled','Oct 20'],['Awaiting completion','pending']]}},
+  {ev:'User credit · direct',who:'18 users',det:'your invite links',st:'confirmed',amt:36,d:{invite:'18 personal user-invite links',channel:'SMS / shareable',sent:'Oct 1–18',rate:'$2 / direct active user · 18 users',trigger:'Platform: 18 users signed up via your invite codes and became active',evt:'evt_users_direct_5521',hist:[['18 users joined + active → confirmed','Oct 1–18']]}},
+  {ev:'User credit · indirect',who:'82 users',det:'signed up at your hosts’ drops',st:'pending',amt:41,d:{invite:'downstream of sourced hosts',channel:'—',sent:'—',rate:'$0.50 / indirect user · 82 users (lower rate)',trigger:'Platform: 82 users first signed up at a drop hosted by a host you sourced — pending active-status confirmation',evt:'evt_users_indirect_5540',hist:[['82 downstream signups detected','rolling'],['Awaiting active confirmation','pending']]}},
+  {ev:'Clawback',who:'Avanti drop',det:'reversed — no-show heavy / refunded',st:'reversed',amt:-10,d:{invite:'reverses evt_drops_batch_4455 (1 drop)',channel:'—',sent:'—',rate:'-$10 reversal',trigger:'Platform: drop D-1058 refunded (no-show-heavy, reservations voided) — drop credit reversed',evt:'evt_reversal_6003',reason:'Refund / no-show threshold exceeded on drop D-1058',hist:[['Drop credited','Oct 12'],['Refund issued on platform','Oct 19'],['Credit reversed (clawback)','Oct 19']]}},
+ ]};
+const STC={confirmed:{bg:'#DCFCE7',fg:'#166534'},pending:{bg:'#FEF3C7',fg:'#92400E'},reversed:{bg:'#FEE2E2',fg:'#991B1B'}};
+function money(n){return (n<0?'-$':'$')+Math.abs(n).toFixed(0);}
+function renderEarnings(){
+  const L=EARN.ledger;
+  const conf=L.filter(x=>x.st==='confirmed').reduce((s,x)=>s+x.amt,0);
+  const pend=L.filter(x=>x.st==='pending').reduce((s,x)=>s+x.amt,0);
+  const rev=L.filter(x=>x.st==='reversed').reduce((s,x)=>s+x.amt,0);
+  const signups=EARN.hosts.filter(h=>h.signup==='confirmed').length, signPend=EARN.hosts.filter(h=>h.signup==='pending').length;
+  const drops=EARN.hosts.reduce((s,h)=>s+h.drops,0);
+  const direct=18, indirect=82;
+  const payable=conf+rev; // reversed is negative
+  const tiles=[
+    ['Host signups',signups+signPend,signups+' confirmed · '+signPend+' pending','#047857'],
+    ['Host drops credited',drops,'across '+EARN.hosts.filter(h=>h.drops>0).length+' hosts','#0369A1'],
+    ['New users credited',direct+indirect,direct+' direct · '+indirect+' indirect','#7C3AED'],
+    ['Earnings · '+EARN.period,money(payable+pend),money(payable)+' payable · '+money(pend)+' pending','#111827'],
+  ];
+  document.getElementById('view-earn').innerHTML=`
+   <div class="hello">My Earnings</div>
+   <div class="sub">What you've sourced this period. Credit confirms once hosts verify, drops run, and users stay active — reversals are clawed back.</div>
+   <div class="stats" style="margin-bottom:8px">${tiles.map(t=>`<div class="stat"><div class="stat-val" style="color:${t[3]}">${t[1]}</div><div class="stat-lbl">${t[0]}</div><div style="font-size:10px;color:#9CA3AF;margin-top:3px">${t[2]}</div></div>`).join('')}</div>
+   <div style="font-size:11px;color:#9CA3AF;margin-bottom:18px">Rates: ${EARN.rates}</div>
+
+   <div class="sec-h">💵 Earnings summary</div>
+   <div class="card" style="margin-bottom:22px;padding:14px 16px;display:flex;gap:28px;flex-wrap:wrap">
+     <div><div style="font-size:11px;color:#6B7280">Confirmed (payable)</div><div style="font-size:20px;font-weight:800;color:#047857">${money(payable)}</div></div>
+     <div><div style="font-size:11px;color:#6B7280">Pending</div><div style="font-size:20px;font-weight:800;color:#B45309">${money(pend)}</div></div>
+     <div><div style="font-size:11px;color:#6B7280">Clawed back</div><div style="font-size:20px;font-weight:800;color:#B91C1C">${money(rev)}</div></div>
+     <div style="margin-left:auto;text-align:right"><div style="font-size:11px;color:#6B7280">Projected total</div><div style="font-size:20px;font-weight:800">${money(payable+pend)}</div></div>
+   </div>
+
+   <div class="sec-h">📒 Attribution ledger <span style="font-size:11px;font-weight:600;color:#9CA3AF">· click any row to trace it to the platform event</span></div>
+   <div class="card" style="margin-bottom:22px;overflow:hidden">
+     <table style="width:100%;border-collapse:collapse">
+       <thead><tr>${['Event','Source','Detail','Status','Amount'].map(h=>`<th style="text-align:${h==='Amount'?'right':'left'};font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC">${h}</th>`).join('')}</tr></thead>
+       <tbody>${EARN.ledger.map((r,i)=>{const c=STC[r.st];return `<tr onclick="openLedger(${i})" style="cursor:pointer">
+         <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px;font-weight:600">${r.ev}</td>
+         <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px">${r.who}</td>
+         <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:11.5px;color:#6B7280">${r.det}</td>
+         <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><span class="pill" style="background:${c.bg};color:${c.fg}">${r.st}</span></td>
+         <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;text-align:right;font-weight:700;color:${r.amt<0?'#B91C1C':'#111827'}">${money(r.amt)}</td>
+       </tr>`;}).join('')}</tbody>
+     </table>
+   </div>
+
+   <div class="sec-h">🏛 Hosts you sourced</div>
+   <div class="card" style="overflow:hidden"><table style="width:100%;border-collapse:collapse">
+     <thead><tr>${['Host','Signup','Drops credited','Users credited'].map(h=>`<th style="text-align:left;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC">${h}</th>`).join('')}</tr></thead>
+     <tbody>${EARN.hosts.map(h=>{const c=STC[h.signup]||STC.pending;const dc=STC[h.dropsStatus]||{bg:'#F3F4F6',fg:'#6B7280'};return `<tr>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-weight:600;font-size:12.5px">${h.name}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><span class="pill" style="background:${c.bg};color:${c.fg}">${h.signup}</span></td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px">${h.drops?h.drops+' · <span class="pill" style="background:'+dc.bg+';color:'+dc.fg+'">'+h.dropsStatus+'</span>':'<span style=color:#CBD5E1>—</span>'}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px">${h.users||'—'}</td>
+     </tr>`;}).join('')}</tbody></table></div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:12px">Rep earnings mockup · attribution ledger is the source of truth; finance confirms before payout.</div>`;
+}
+
+function openLedger(i){
+  const r=EARN.ledger[i];const d=r.d||{};const c=STC[r.st]||STC.pending;
+  document.getElementById('modal').style.maxWidth='560px';
+  document.getElementById('modal').innerHTML=`
+    <div class="mhdr">
+      <div><div style="font-size:16px;font-weight:800">${r.ev} · ${r.who}</div>
+        <div style="margin-top:5px;display:flex;gap:8px;align-items:center">
+          <span class="pill" style="background:${c.bg};color:${c.fg}">${r.st}</span>
+          <span style="font-size:17px;font-weight:800;color:${r.amt<0?'#B91C1C':'#047857'}">${money(r.amt)}</span></div></div>
+      <button class="btn btn-ghost btn-sm" onclick="closeM()">✕</button>
+    </div>
+    <div style="padding:18px 20px;overflow-y:auto">
+      <div class="rsec">Why this credit (platform event)</div>
+      <div style="font-size:12.5px;color:#111827;line-height:1.5;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;padding:11px 13px">🛰 ${d.trigger||'—'}</div>
+      ${d.reason?`<div style="font-size:12px;color:#991B1B;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:10px 12px;margin-top:8px">⚠ Clawback reason: ${d.reason}</div>`:''}
+      <div class="rsec">Rate applied</div>
+      <div style="font-size:12.5px;font-weight:600">${d.rate||'—'}</div>
+      <div class="rsec">Attribution</div>
+      <div class="drow"><span class="k">Invite / path</span><span class="v" style="color:#0E4EF5">${d.invite||'—'}</span></div>
+      ${d.channel&&d.channel!=='—'?`<div class="drow"><span class="k">Channel</span><span class="v">${d.channel}</span></div>`:''}
+      ${d.sent&&d.sent!=='—'?`<div class="drow"><span class="k">Invite sent</span><span class="v">${d.sent}</span></div>`:''}
+      <div class="drow"><span class="k">Owner</span><span class="v">Sarah Chen</span></div>
+      <div class="rsec">Status history</div>
+      ${(d.hist||[]).map(h=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid #F1F5F9"><span style="color:#374151">${h[0]}</span><span style="color:#9CA3AF">${h[1]}</span></div>`).join('')}
+      <div style="display:flex;align-items:center;gap:7px;margin-top:14px;font-size:11px;color:#9CA3AF">🔗 Synced from Nigh platform · ${d.evt||'event id'} · reconciled nightly · finance confirms before payout</div>
+    </div>`;
+  document.getElementById('mbg').classList.add('show');
+}
+
+
+function renderInbox(){
+  const convos=LEADS.filter(l=>l.timeline.some(e=>e.k==='msg'&&e.dir==='in')).map(l=>{
+    const ins=l.timeline.filter(e=>e.k==='msg'&&e.dir==='in');const last=ins[ins.length-1];
+    return {l,last,unread:!!(l.awaiting||l.escalated)};});
+  convos.sort((a,b)=>(b.unread?1:0)-(a.unread?1:0));
+  const unread=convos.filter(c=>c.unread).length;
+  document.getElementById('view-inbox').innerHTML=`
+   <div class="hello">My Inbox</div>
+   <div class="sub">${unread+SUPPORT_MSGS.filter(m=>m.unread).length} awaiting you · prospects and active hosts, one queue</div>
+   <div class="card">${SUPPORT_MSGS.map(m=>{const ini=m.name.split(' ').map(x=>x[0]).slice(0,2).join('');
+     return `<div class="day-item" onclick="openAccount('${m.acctId}')">
+       <div class="av" style="background:linear-gradient(135deg,#059669,#0E4EF5)">${ini}</div>
+       <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:13px">${m.name}</span><span class="pill" style="background:#ECFDF5;color:#047857">Host · ${m.ch}</span>${m.unread?'<span style="width:7px;height:7px;border-radius:50%;background:#EC1977;display:inline-block"></span>':''}</div>
+         <div style="font-size:12px;color:#6B7280;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:560px">${m.text}</div></div>
+       <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#9CA3AF">${m.ts}</div><div style="margin-top:4px"><span class="pill" style="background:${m.unread?'#FEF2F2':'#DCFCE7'};color:${m.unread?'#B91C1C':'#166534'}">${m.unread?'Needs reply':'Resolved'}</span></div></div>
+     </div>`;}).join('')}${convos.map(c=>{const l=c.l,ini=l.name.split(' ').map(x=>x[0]).slice(0,2).join('');
+     return `<div class="day-item" onclick="openLead('${l.id}')">
+       <div class="av">${ini}</div>
+       <div style="flex:1;min-width:0">
+         <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:700;font-size:13px">${l.name}</span><span class="pill" style="background:#EEF2FF;color:#1E40AF">Prospect · ${c.last.ch}</span>${c.unread?'<span style="width:7px;height:7px;border-radius:50%;background:#EC1977;display:inline-block"></span>':''}</div>
+         <div style="font-size:12px;color:#6B7280;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:560px">${c.last.t}</div></div>
+       <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;color:#9CA3AF">${c.last.ts}</div>${c.unread?'<div style="margin-top:4px"><span class="pill" style="background:#FEF2F2;color:#B91C1C">Awaiting reply</span></div>':'<div style="margin-top:4px"><span class="pill" style="background:#DCFCE7;color:#166534">Replied</span></div>'}</div>
+     </div>`;}).join('')}</div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:12px">One queue for IG/TikTok DM, email, SMS and calls — scoped to your leads.</div>`;
+}
+function renderTasks(){
+  const order={reply:0,approve:1,escalation:2,invite:3,nudge:4,phone:5,followup:6};
+  const mine=LEADS.filter(l=>l.nextTask).map(l=>({l,t:l.nextTask,owner:'Me',cat:'Sales'}))
+    .concat(SUPPORT_TASKS.map(st=>({a:acct(st.acctId),t:st,owner:'Me',cat:'Support'})))
+    .sort((a,b)=>(order[a.t.kind]??9)-(order[b.t.kind]??9));
+  const neo=[{owner:'Neo',t:{type:'Running cold sequence · 6 new creator leads',due:'In progress',kind:'bot'}},
+             {owner:'Neo',t:{type:'Drafting follow-up · Dzirae Gold',due:'In progress',kind:'bot'}}];
+  const all=mine.concat(neo);
+  const dueTone=d=>(d==='Today'||d==='In progress')?'#0E4EF5':d.startsWith('Overdue')?'#B91C1C':'#9CA3AF';
+  document.getElementById('view-tasks').innerHTML=`
+   <div class="hello">My Tasks</div>
+   <div class="sub">${mine.length} need you across sales &amp; support · Neo is working ${neo.length} in the background.</div>
+   <div class="card">${all.map(x=>{const ic=KICON[x.t.kind]||['🤖','#F5F3FF'];
+     const click=x.l?`onclick="openLead('${x.l.id}')"`:(x.a?`onclick="openAccount('${x.a.id}')"`:'');
+     const sub=x.l?(x.l.category+' · '+x.l.stage):(x.a?(x.a.name+' · host'):'Neo · background automation');
+     const catPill=x.cat?`<span class="pill" style="background:${x.cat==='Support'?'#ECFDF5':'#FFF7ED'};color:${x.cat==='Support'?'#047857':'#C2410C'}">${x.cat}</span>`:'';
+     return `<div class="day-item" ${click} ${(x.l||x.a)?'':'style="cursor:default"'}>
+       <div class="dicon" style="background:${x.owner==='Neo'?'#F5F3FF':ic[1]}">${x.owner==='Neo'?'🤖':ic[0]}</div>
+       <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${x.t.type}${x.l?' · '+x.l.name:''}</div>
+         <div style="font-size:11px;color:#9CA3AF">${sub}</div></div>
+       ${catPill}
+       <span class="pill" style="background:${x.owner==='Neo'?'#F5F3FF':'#EEF2FF'};color:${x.owner==='Neo'?'#7C3AED':'#1E40AF'}">${x.owner}</span>
+       <span class="pill" style="background:#fff;border:1px solid #E5E7EB;color:${dueTone(x.t.due)}">${x.t.due}</span>
+     </div>`;}).join('')}</div>`;
+}
+const INV=[
+ {host:'Spruce Confections',code:'9F3KD2',sent:'Oct 2',state:'Joined',upd:'Oct 4'},
+ {host:'The Rayback Collective',code:'2JX7QP',sent:'Sep 29',state:'Joined',upd:'Oct 1'},
+ {host:'Avanti Food & Beverage',code:'7MP0RA',sent:'Sep 30',state:'Joined',upd:'Oct 2'},
+ {host:'Flatirons Brewing Co',code:'4KD9ZT',sent:'Oct 5',state:'Joined',upd:'Oct 6'},
+ {host:'Dzirae Gold',code:'8QW2LN',sent:'Oct 12',state:'Signup started',upd:'Oct 13'},
+ {host:'Sip & Paint Denver',code:'5RT3HB',sent:'Oct 14',state:'Clicked',upd:'Oct 16'},
+ {host:'Colorado Frontrunners',code:'7KQJ2M',sent:'Oct 15',state:'Delivered',upd:'Oct 15'},
+ {host:'Late Night Tacos',code:'1ZP8WC',sent:'Oct 1',state:'Expired',upd:'Oct 15'},
+];
+const INVC={'Joined':{bg:'#DCFCE7',fg:'#166534'},'Signup started':{bg:'#E0F2FE',fg:'#075985'},'Clicked':{bg:'#EDE9FE',fg:'#5B21B6'},'Delivered':{bg:'#FEF3C7',fg:'#92400E'},'Sent':{bg:'#F1F5F9',fg:'#475569'},'Expired':{bg:'#FEE2E2',fg:'#991B1B'}};
+function invAct(iv){
+  if(iv.state==='Delivered')return `<button class="btn btn-ghost btn-sm" onclick="toast('Nudge sent')">🔔 Nudge</button>`;
+  if(iv.state==='Expired')return `<button class="btn btn-ghost btn-sm" onclick="toast('Invite re-sent')">↻ Re-send</button>`;
+  if(iv.state==='Clicked')return `<button class="btn btn-ghost btn-sm" onclick="toast('Reminder sent')">🔔 Remind</button>`;
+  return '<span style="color:#CBD5E1;font-size:11px">—</span>';
+}
+function renderInvites(){
+  const steps=['Sent','Delivered','Clicked','Signup started','Joined','Expired'];
+  const counts=steps.map(s=>INV.filter(i=>i.state===s).length);
+  document.getElementById('view-invites').innerHTML=`
+   <div class="hello">My Invites</div>
+   <div class="sub">Every invite you've sent, by status. SMS-only · each link is unique and attributed to you.</div>
+   <div class="stats" style="grid-template-columns:repeat(6,1fr);margin-bottom:18px">${steps.map((s,i)=>`<div class="stat"><div class="stat-val" style="color:${(INVC[s]||{}).fg||'#111827'}">${counts[i]}</div><div class="stat-lbl">${s}</div></div>`).join('')}</div>
+   <div class="card" style="overflow:hidden"><table style="width:100%;border-collapse:collapse">
+     <thead><tr>${['Host','Channel','Invite link','Sent','State','Updated',''].map(h=>`<th style="text-align:left;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC">${h}</th>`).join('')}</tr></thead>
+     <tbody>${INV.map(iv=>{const c=INVC[iv.state]||INVC.Sent;return `<tr>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-weight:600;font-size:12.5px">${iv.host}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12px">📱 SMS</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;color:#0E4EF5">nigh.com/invite/${iv.code}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;color:#6B7280">${iv.sent}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><span class="pill" style="background:${c.bg};color:${c.fg}">${iv.state}</span></td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;color:#6B7280">${iv.upd}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9">${invAct(iv)}</td>
+     </tr>`;}).join('')}</tbody></table></div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:12px">States sync from the Nigh platform · a Joined invite feeds your attribution ledger in My Earnings.</div>`;
+}
+
+// ── Active hosts this rep owns (post-join) + support ──
+const HC={Healthy:{bg:'#DCFCE7',fg:'#166534'},'Needs attention':{bg:'#FEF3C7',fg:'#92400E'},'At risk':{bg:'#FEE2E2',fg:'#991B1B'},Onboarding:{bg:'#E0F2FE',fg:'#075985'}};
+const ACCOUNTS=[
+ {id:'A1',name:'Spruce Confections',cat:'Bakery / Café',health:'Healthy',since:'Oct 4',drops:4,revenue:2140,billing:'Current',tickets:0,
+  timeline:[['sys','Sourced by Sarah · cold email','Oct 1'],['out','SMS invite sent · nigh.com/invite/9F3KD2','Oct 2'],['sys','Joined + verified → became a host','Oct 4'],['sys','4 drops run · $2,140 revenue','Oct 8–18'],['note','Great fit — weekend pastry drops selling out.','Oct 12']]},
+ {id:'A2',name:'The Rayback Collective',cat:'Food Hall',health:'Healthy',since:'Oct 1',drops:2,revenue:3600,billing:'Current',tickets:0,
+  timeline:[['sys','Sourced by Sarah','Sep 28'],['out','SMS invite sent','Sep 29'],['sys','Joined + verified','Oct 1'],['sys','QBR/renewal check due','Oct 24']]},
+ {id:'A3',name:'Avanti Food & Beverage',cat:'Food Hall',health:'Needs attention',since:'Oct 2',drops:3,revenue:2880,billing:'Current',tickets:1,
+  timeline:[['sys','Joined + verified','Oct 2'],['sys','3 drops run','Oct 9–17'],['in','Support (Email): “Our last drop payout hasn’t landed — can you check?”','Oct 19'],['sys','Ticket opened · payout investigation','Oct 19']]},
+ {id:'A4',name:'Flatirons Brewing Co',cat:'Brewery / Taproom',health:'At risk',since:'Oct 6',drops:1,revenue:720,billing:'Past due',tickets:1,
+  timeline:[['sys','Joined + verified','Oct 6'],['sys','Billing status → Past due (card expiring)','Oct 16'],['in','Support (Email): “Got a notice our card is expiring — how do I update billing?”','Oct 17'],['sys','Ticket opened · billing update','Oct 17']]},
+ {id:'A5',name:'Dzirae Gold',cat:'Musicians & Bands',health:'Onboarding',since:'Oct 13',drops:0,revenue:0,billing:'—',tickets:0,
+  timeline:[['sys','Joined (self-serve)','Oct 13'],['sys','Awaiting identity verification','pending'],['note','Nudge to finish verification so first drop can go live.','Oct 18']]},
+];
+const SUPPORT_MSGS=[
+ {acctId:'A3',name:'Avanti Food & Beverage',ch:'Support · Email',ts:'Oct 19 · 9:10a',unread:true,text:"Our last drop payout hasn’t landed yet — can you check on it?"},
+ {acctId:'A4',name:'Flatirons Brewing Co',ch:'Support · Email',ts:'Oct 17 · 11:00a',unread:true,text:"Got a notice our card is expiring — how do I update billing?"},
+ {acctId:'A1',name:'Spruce Confections',ch:'Support · SMS',ts:'Oct 18 · 2:30p',unread:false,text:"Thanks for the help setting up our weekend drop!"},
+];
+const SUPPORT_TASKS=[
+ {acctId:'A3',type:'Resolve ticket · Avanti — payout not received',due:'Today',kind:'ticket'},
+ {acctId:'A4',type:'Billing follow-up · Flatirons — card expiring',due:'Overdue 2d',kind:'billing'},
+ {acctId:'A2',type:'QBR / renewal check · The Rayback',due:'Oct 24',kind:'health'},
+];
+function acct(id){return ACCOUNTS.find(a=>a.id===id);}
+function renderAccounts(){
+  const mine=ACCOUNTS.length, healthy=ACCOUNTS.filter(a=>a.health==='Healthy').length;
+  const attn=ACCOUNTS.filter(a=>a.health==='Needs attention'||a.health==='At risk').length;
+  const tix=ACCOUNTS.reduce((s,a)=>s+a.tickets,0);
+  const tiles=[['My hosts',mine,'#111827'],['Healthy',healthy,'#166534'],['Needs attention',attn,'#B45309'],['Open tickets',tix,tix?'#B91C1C':'#111827']];
+  document.getElementById('view-accounts').innerHTML=`
+   <div class="hello">My Accounts</div>
+   <div class="sub">Hosts you own — the same relationships, now live. Sales + support on one record.</div>
+   <div class="stats" style="margin-bottom:18px">${tiles.map(t=>`<div class="stat"><div class="stat-val" style="color:${t[2]}">${t[1]}</div><div class="stat-lbl">${t[0]}</div></div>`).join('')}</div>
+   <div class="card" style="overflow:hidden"><table style="width:100%;border-collapse:collapse">
+     <thead><tr>${['Host','Health','Drops','Revenue','Billing','Open tickets',''].map(h=>`<th style="text-align:left;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;padding:10px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC">${h}</th>`).join('')}</tr></thead>
+     <tbody>${ACCOUNTS.map(a=>{const c=HC[a.health]||HC.Healthy;const bc=a.billing==='Past due'?'#B91C1C':a.billing==='—'?'#9CA3AF':'#166534';return `<tr onclick="openAccount('${a.id}')" style="cursor:pointer">
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><div style="font-weight:600;font-size:12.5px">${a.name}</div><div style="font-size:11px;color:#9CA3AF">${a.cat} · host since ${a.since}</div></td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><span class="pill" style="background:${c.bg};color:${c.fg}">${a.health}</span></td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px">${a.drops}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12.5px">$${a.revenue.toLocaleString()}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;color:${bc};font-weight:600">${a.billing}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9">${a.tickets?`<span class="pill" style="background:#FEE2E2;color:#991B1B">${a.tickets} open</span>`:'<span style="color:#CBD5E1">—</span>'}</td>
+       <td style="padding:10px 14px;border-bottom:1px solid #F1F5F9"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openAccount('${a.id}')">View</button></td>
+     </tr>`;}).join('')}</tbody></table></div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:12px">Same record as the pipeline lead — the timeline continues from first touch through support.</div>`;
+}
+function openAccount(id){
+  const a=acct(id);const c=HC[a.health]||HC.Healthy;
+  document.getElementById('modal').style.maxWidth='620px';
+  const tl=a.timeline.map(e=>{
+    if(e[0]==='sys')return `<div class="sysrow">— ${e[1]} · ${e[2]} —</div>`;
+    if(e[0]==='note')return `<div class="ev note">📝 ${e[1]}<div class="bub-meta">Sarah · ${e[2]}</div></div>`;
+    const out=e[0]==='out';return `<div class="ev" style="display:flex"><div class="bub ${out?'bub-out':'bub-in'}">${e[1]}<div class="bub-meta" style="${out?'color:rgba(255,255,255,.75)':''}">${e[2]}</div></div></div>`;
+  }).join('');
+  document.getElementById('modal').innerHTML=`
+    <div class="mhdr"><div><div style="font-size:16px;font-weight:800">${a.name}</div>
+      <div style="margin-top:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <span class="pill" style="background:#F0F9FF;color:#374151">📍 Host · ${a.cat}</span>
+        <span class="pill" style="background:${c.bg};color:${c.fg}">${a.health}</span>
+        <span style="font-size:11px;color:#9CA3AF">Owner: Sarah · host since ${a.since}</span></div></div>
+      <button class="btn btn-ghost btn-sm" onclick="closeM()">✕</button></div>
+    <div class="mbody">
+      <div class="tl" style="flex:1">${tl}
+        <div class="compose" style="border:1px solid #F1F5F9;border-radius:10px;margin-top:12px">
+          <select class="sel"><option>Support · Email</option><option>Support · SMS</option><option>Call</option><option>Internal note</option></select>
+          <input class="inp" placeholder="Reply to host…"><button class="btn btn-primary btn-sm" onclick="toast('Sent (mock)')">Send</button></div>
+      </div>
+      <div class="rail">
+        <div class="rsec">Account health</div><div class="drow"><span class="k">Status</span><span class="v"><span class="pill" style="background:${c.bg};color:${c.fg}">${a.health}</span></span></div>
+        <div class="drow"><span class="k">Drops run</span><span class="v">${a.drops}</span></div>
+        <div class="drow"><span class="k">Revenue</span><span class="v">$${a.revenue.toLocaleString()}</span></div>
+        <div class="drow"><span class="k">Billing</span><span class="v" style="color:${a.billing==='Past due'?'#B91C1C':'#111827'}">${a.billing}</span></div>
+        <div class="rsec">Support</div>
+        ${a.tickets?`<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:10px;font-size:12px;color:#991B1B">${a.tickets} open ticket${a.tickets>1?'s':''} — see timeline</div>`:'<div style="font-size:12px;color:#6B7280">No open tickets.</div>'}
+        <div class="rsec">Earnings link</div>
+        <div style="font-size:12px;color:#6B7280">Drops &amp; users from this host feed your <b>attribution ledger</b>. Keeping them healthy protects that credit.</div>
+      </div>
+    </div>`;
+  document.getElementById('mbg').classList.add('show');
+}
+
+const VIEWS={pipe:['My Pipeline','Your leads, your day',null],
+ earn:['My Earnings','Your credited signups, drops & users',renderEarnings],
+ inbox:['My Inbox','Replies across every channel',renderInbox],
+ tasks:['My Tasks','Everything on your plate',renderTasks],
+ invites:['My Invites','Invites you’ve sent, by status',renderInvites],
+ accounts:['My Accounts','Hosts you own — health & support',renderAccounts]};
+function showView(v){
+  Object.keys(VIEWS).forEach(k=>{const el=document.getElementById('view-'+k);if(el)el.style.display=(k===v)?'':'none';
+    const nav=document.getElementById('nav-'+k);if(nav)nav.classList.toggle('active',k===v);});
+  const m=VIEWS[v]||VIEWS.pipe;
+  document.getElementById('tbtitle').textContent=m[0];document.getElementById('tbsub').textContent=m[1];
+  if(m[2])m[2]();
+}
+
+render();renderEarnings();
+</script></body></html>

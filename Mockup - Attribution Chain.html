@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attribution Chain — Example</title>
+<style>
+  :root{ --blue:#0E4EF5; --ink:#1a1a22; --muted:#747a86; --line:#E6E8EC; --bg:#F1F3F6;
+         --green:#11A36B; --amber:#C7851A; --pink:#EC1977; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);padding:26px 16px 40px;}
+  .wrap{max-width:460px;margin:0 auto;}
+  h1{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin:0 0 4px;}
+  .sub{font-size:13.5px;color:var(--muted);margin:0 0 20px;line-height:1.5;}
+
+  .rules{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:22px;box-shadow:0 4px 18px rgba(20,25,40,.06);}
+  .rule{display:flex;gap:10px;font-size:13px;line-height:1.5;padding:6px 0;border-top:1px solid #f0f1f4;}
+  .rule:first-child{border-top:none;}
+  .rule b{color:var(--ink);}
+  .rnum{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+
+  .chain{position:relative;}
+  .node{display:flex;align-items:center;gap:13px;background:#fff;border-radius:14px;padding:13px 15px;box-shadow:0 4px 16px rgba(20,25,40,.07);position:relative;z-index:2;}
+  .av{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;}
+  .ninfo{flex:1;min-width:0;}
+  .nname{font-size:15px;font-weight:700;}
+  .nrole{font-size:12px;color:var(--muted);font-weight:500;}
+  .nurl{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--blue);background:#F2F6FF;border:1px solid #DCE6FF;border-radius:7px;padding:3px 8px;margin-top:5px;display:inline-block;letter-spacing:.3px;}
+  .arrow{display:flex;align-items:center;gap:8px;padding:7px 0 7px 34px;color:var(--muted);font-size:12px;font-weight:600;position:relative;z-index:1;}
+  .arrow svg{color:#B4BAC4;}
+
+  .lens{margin-top:24px;}
+  .lenshd{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px;}
+  .lcard{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 4px 16px rgba(20,25,40,.06);margin-bottom:12px;}
+  .lcard .who{font-size:14px;font-weight:700;margin-bottom:10px;}
+  .crow{display:flex;align-items:center;gap:9px;font-size:13.5px;padding:4px 0;}
+  .tag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:5px;flex-shrink:0;}
+  .tag.direct{background:#E3F7EE;color:var(--green);}
+  .tag.ext{background:#FBF1DD;color:var(--amber);}
+  .tag.none{background:#F0F1F4;color:#9aa0aa;}
+  .crow .cp{font-weight:600;}
+  .crow .cnote{color:var(--muted);font-size:12px;}
+
+  .last{margin-top:24px;background:#0E0E14;border-radius:16px;padding:18px 18px 16px;color:#fff;}
+  .last h3{margin:0 0 4px;font-size:15px;font-weight:800;}
+  .last p{margin:0 0 12px;font-size:12.5px;color:#B9BDC6;line-height:1.5;}
+  .lex{background:rgba(255,255,255,.06);border-radius:11px;padding:12px 13px;font-size:13px;line-height:1.7;}
+  .lex .lk{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#8FB4FF;}
+  .lex .win{color:#5BE0A0;font-weight:700;}
+  .lex .lose{color:#8f95a0;text-decoration:line-through;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Attribution chain</h1>
+  <p class="sub">One live Drop. Each person who can view it gets their <b>own unique link</b> — a different URL, nothing to edit or fake.</p>
+
+  <div class="rules">
+    <div class="rule"><span class="rnum">1</span><div><b>Link on view.</b> You get your personal link the moment you can see the live Drop — before reserving.</div></div>
+    <div class="rule"><span class="rnum">2</span><div><b>2 degrees of credit.</b> You see who you brought (direct) and who <i>they</i> brought (extended). It stops there.</div></div>
+    <div class="rule"><span class="rnum">3</span><div><b>Last link clicked wins.</b> If someone gets several links, whoever's link they actually used to join gets the credit.</div></div>
+    <div class="rule"><span class="rnum">4</span><div><b>Unique URL per person.</b> Not a tracking tag on a shared link — a distinct, un-editable short link.</div></div>
+  </div>
+
+  <div class="chain">
+    <div class="node">
+      <div class="av" style="background:#0E0E14;">H</div>
+      <div class="ninfo"><div class="nname">Host</div><div class="nrole">Creates the Drop</div>
+        <span class="nurl">drop.nigh.com/<b>k7p2</b></span></div>
+    </div>
+    <div class="arrow"><svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v16M3 13l5 5 5-5"/></svg> shares the Drop link</div>
+
+    <div class="node">
+      <div class="av" style="background:var(--blue);">A</div>
+      <div class="ninfo"><div class="nname">Guest A</div><div class="nrole">Opens Host's link · can view the Drop</div>
+        <span class="nurl">drop.nigh.com/<b>a9f3</b></span></div>
+    </div>
+    <div class="arrow"><svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v16M3 13l5 5 5-5"/></svg> shares <i>their</i> link</div>
+
+    <div class="node">
+      <div class="av" style="background:#2E8BEF;">B</div>
+      <div class="ninfo"><div class="nname">Guest B</div><div class="nrole">Joined via A's link</div>
+        <span class="nurl">drop.nigh.com/<b>b3t8</b></span></div>
+    </div>
+    <div class="arrow"><svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v16M3 13l5 5 5-5"/></svg> shares <i>their</i> link</div>
+
+    <div class="node">
+      <div class="av" style="background:#5AA7F2;">C</div>
+      <div class="ninfo"><div class="nname">Guest C</div><div class="nrole">Joined via B's link</div>
+        <span class="nurl">drop.nigh.com/<b>c6m1</b></span></div>
+    </div>
+    <div class="arrow"><svg width="16" height="22" viewBox="0 0 16 22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v16M3 13l5 5 5-5"/></svg> shares <i>their</i> link</div>
+
+    <div class="node">
+      <div class="av" style="background:#86C0F6;">D</div>
+      <div class="ninfo"><div class="nname">Guest D</div><div class="nrole">Joined via C's link</div>
+        <span class="nurl">drop.nigh.com/<b>d2w5</b></span></div>
+    </div>
+  </div>
+
+  <div class="lens">
+    <p class="lenshd">Who sees what credit (2 degrees)</p>
+
+    <div class="lcard">
+      <div class="who">Guest A's Community Impact</div>
+      <div class="crow"><span class="tag direct">Direct</span><span class="cp">Guest B</span><span class="cnote">— joined on A's link</span></div>
+      <div class="crow"><span class="tag ext">Extended</span><span class="cp">Guest C</span><span class="cnote">— B brought them</span></div>
+      <div class="crow"><span class="tag none">Not shown</span><span class="cp" style="color:#9aa0aa;">Guest D</span><span class="cnote">— 3 degrees away</span></div>
+    </div>
+
+    <div class="lcard">
+      <div class="who">Guest B's Community Impact</div>
+      <div class="crow"><span class="tag direct">Direct</span><span class="cp">Guest C</span><span class="cnote">— joined on B's link</span></div>
+      <div class="crow"><span class="tag ext">Extended</span><span class="cp">Guest D</span><span class="cnote">— C brought them</span></div>
+    </div>
+  </div>
+
+  <div class="last">
+    <h3>Last link clicked wins</h3>
+    <p>Dana hears about the Drop from two people before joining. Both links are valid — the one she actually taps to reserve decides credit.</p>
+    <div class="lex">
+      Tues — gets A's link <span class="lk">/a9f3</span> &nbsp;<span class="lose">would credit A</span><br>
+      Fri — gets C's link <span class="lk">/c6m1</span>, taps it, reserves<br>
+      → <span class="win">Credit goes to C</span> &nbsp;<span style="color:#8f95a0;">(and B shows Dana as extended)</span>
+    </div>
+  </div>
+
+  <!-- ===== Link types ===== -->
+  <div style="margin-top:26px;">
+    <p class="lenshd">Three link types</p>
+
+    <div class="lcard" style="padding:16px;">
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:var(--blue);background:#F2F6FF;border:1px solid #DCE6FF;border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:12px;">drop.nigh.com/<b>&lt;code&gt;</b></div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">A specific Drop</div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">New</span><span class="cp" style="font-weight:400;">Onboard → join Nigh → land on the Drop (joining also credits the sharer)</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">Existing</span><span class="cp" style="font-weight:400;">Opens the Drop in the feed</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag none" style="margin-top:1px;">Gone</span><span class="cp" style="font-weight:400;color:#6b7280;">"This Drop is no longer available"</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;border-top:1px solid #f0f1f4;padding-top:10px;"><b style="color:var(--ink);">Lifespan:</b> time-bound — dies with the Drop. &nbsp;<b style="color:var(--ink);">Attribution:</b> yes, per sharer.</div>
+    </div>
+
+    <div class="lcard" style="padding:16px;">
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:var(--blue);background:#F2F6FF;border:1px solid #DCE6FF;border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:12px;">invite.nigh.com/<b>&lt;code&gt;</b></div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">An invite to join Nigh</div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">New</span><span class="cp" style="font-weight:400;">"You've been invited to Nigh" → install → onboard, connected to the inviter</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">Existing</span><span class="cp" style="font-weight:400;">Opens the app and connects them to the inviter</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag none" style="margin-top:1px;">Dead</span><span class="cp" style="font-weight:400;color:#6b7280;">"This invite was revoked or already used"</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;border-top:1px solid #f0f1f4;padding-top:10px;"><b style="color:var(--ink);">Lifespan:</b> person-bound — long-lived (optional cap / revoke). &nbsp;<b style="color:var(--ink);">Attribution:</b> top-of-funnel "joined from you" → feeds Community Impact.</div>
+    </div>
+
+    <div class="lcard" style="padding:16px;">
+      <div style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:var(--blue);background:#F2F6FF;border:1px solid #DCE6FF;border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:12px;">group.nigh.com/<b>&lt;code&gt;</b></div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px;">An invite to join a Group / List</div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">New</span><span class="cp" style="font-weight:400;">Onboard → join Nigh → join the group, connected to the inviter</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag direct" style="margin-top:1px;">Existing</span><span class="cp" style="font-weight:400;">"You've been invited to join <b>[Group]</b>" → accept to become a member</span></div>
+      <div class="crow" style="align-items:flex-start;"><span class="tag none" style="margin-top:1px;">Dead</span><span class="cp" style="font-weight:400;color:#6b7280;">"You're no longer able to join this group"</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;border-top:1px solid #f0f1f4;padding-top:10px;"><b style="color:var(--ink);">Lifespan:</b> group-bound — valid while the group exists. &nbsp;<b style="color:var(--ink);">Why it matters:</b> membership makes them eligible for that group's gated Drops.</div>
+    </div>
+
+    <div class="last" style="margin-top:14px;">
+      <h3>Groups are join-by-invite only (v1)</h3>
+      <p style="margin-bottom:0;">No one is ever added to a group automatically. Sharing a group-gated <span style="color:#8FB4FF;">drop.nigh.com</span> link lets someone <i>see</i> the Drop, but they stay blocked from reserving until they join the group via a <span style="color:#8FB4FF;">group.nigh.com</span> link. (Public, open-join groups may come later — not in v1.)</p>
+    </div>
+  </div>
+
+  <!-- ===== Code generator ===== -->
+  <div style="margin-top:26px;">
+    <p class="lenshd">Code generator · Crockford Base32</p>
+    <div class="lcard" style="padding:16px;">
+      <p style="font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 12px;">
+        Alphabet omits <b style="color:var(--ink);">I&nbsp;L&nbsp;O&nbsp;U</b> (lookalikes + obscenity guard).
+        Decoding also folds <code style="font-family:ui-monospace,monospace;">I L 1 → 1</code> and <code style="font-family:ui-monospace,monospace;">O → 0</code>, so a mistyped link still resolves.
+      </p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <button id="genBtn" style="background:var(--blue);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">Generate a code</button>
+        <span style="font-family:ui-monospace,Menlo,monospace;font-size:15px;color:var(--blue);background:#F2F6FF;border:1px solid #DCE6FF;border-radius:8px;padding:6px 12px;">drop.nigh.com/<b id="genOut">—</b></span>
+      </div>
+      <pre style="margin:0;background:#0E0E14;color:#E6E9F0;border-radius:12px;padding:14px 15px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.65;overflow-x:auto;"><span style="color:#6b7280;">// Crockford Base32 — no I, L, O, U</span>
+<span style="color:#C792EA;">const</span> ALPHABET = <span style="color:#A5D6A0;">"0123456789ABCDEFGHJKMNPQRSTVWXYZ"</span>;
+
+<span style="color:#6b7280;">// generate an n-char Drop code</span>
+<span style="color:#C792EA;">function</span> <span style="color:#82AAFF;">makeCode</span>(n = <span style="color:#F78C6C;">6</span>) {
+  <span style="color:#C792EA;">const</span> bytes = crypto.<span style="color:#82AAFF;">getRandomValues</span>(<span style="color:#C792EA;">new</span> <span style="color:#FFCB6B;">Uint8Array</span>(n));
+  <span style="color:#C792EA;">let</span> out = <span style="color:#A5D6A0;">""</span>;
+  <span style="color:#C792EA;">for</span> (<span style="color:#C792EA;">const</span> b <span style="color:#C792EA;">of</span> bytes) out += ALPHABET[b & <span style="color:#F78C6C;">31</span>]; <span style="color:#6b7280;">// 0–31</span>
+  <span style="color:#C792EA;">return</span> out;
+}
+
+<span style="color:#6b7280;">// normalize on the way back in (forgiving decode)</span>
+<span style="color:#C792EA;">function</span> <span style="color:#82AAFF;">normalize</span>(code) {
+  <span style="color:#C792EA;">return</span> code.<span style="color:#82AAFF;">toUpperCase</span>()
+    .<span style="color:#82AAFF;">replace</span>(<span style="color:#A5D6A0;">/[IL]/g</span>, <span style="color:#A5D6A0;">"1"</span>) <span style="color:#6b7280;">// I, L → 1</span>
+    .<span style="color:#82AAFF;">replace</span>(<span style="color:#A5D6A0;">/O/g</span>, <span style="color:#A5D6A0;">"0"</span>);  <span style="color:#6b7280;">// O → 0</span>
+}
+
+<span style="color:#6b7280;">// then: if (BLOCKLIST.has(code) || exists(code)) retry</span></pre>
+    </div>
+  </div>
+
+</div>
+<script>
+  (function(){
+    var AL = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+    function makeCode(n){ n = n||6; var out=""; var b=crypto.getRandomValues(new Uint8Array(n));
+      for(var i=0;i<n;i++) out+=AL[b[i]&31]; return out; }
+    var btn=document.getElementById('genBtn'), out=document.getElementById('genOut');
+    btn.addEventListener('click', function(){ out.textContent = makeCode(6); });
+    out.textContent = makeCode(6);
+  })();
+</script>
+</body>
+</html>

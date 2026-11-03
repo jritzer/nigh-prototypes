@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup — Create Drop · Step 3/4</title>
+<style>
+  :root{ --blue:#0E4EF5; --ink:#111827; --muted:#6B7280; --line:#E5E7EB; --bg:#EDEFF2;
+         --green:#11A36B; --amber:#C7851A; --pink:#EC1977; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);padding:26px 16px 48px;}
+  .wrap{max-width:460px;margin:0 auto;}
+  .lenshd{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:24px 0 10px;}
+
+  /* ===== Create Drop page card ===== */
+  .screen{background:#fff;border-radius:22px;box-shadow:0 10px 40px rgba(20,25,40,.12);overflow:hidden;}
+  .appbar{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:12px;}
+  .appbar svg{margin-top:3px;flex-shrink:0;}
+  .appbar h1{font-size:20px;font-weight:800;margin:0;letter-spacing:-0.02em;}
+  .appbar p{font-size:13px;color:var(--muted);margin:3px 0 0;font-weight:500;}
+  .prog{display:flex;gap:6px;padding:14px 20px 0;}
+  .prog span{height:5px;border-radius:3px;flex:1;background:#E5E7EB;}
+  .prog span.on{background:var(--blue);}
+  .form{padding:18px 20px 22px;}
+  .fl{font-size:12px;font-weight:600;color:#374151;margin:0 0 7px;display:block;}
+  .req{color:#EF4444;}
+  .fgrp{margin-bottom:22px;}
+  .inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);font-family:inherit;background:#fff;outline:none;}
+  .inp::placeholder{color:#9CA3AF;}
+  .selwrap{position:relative;}
+  .selwrap select{width:100%;padding:10px 32px 10px 12px;border-radius:10px;border:1px solid var(--line);font-size:13px;color:var(--ink);background:#fff;outline:none;font-family:inherit;appearance:none;cursor:pointer;}
+  .selwrap .chev{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF;}
+  .hintxt{font-size:10px;color:#9CA3AF;margin-top:6px;line-height:1.5;}
+
+  /* dropdown (Who Can Reserve) */
+  .dd{position:relative;}
+  .dd-head{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer;background:#fff;user-select:none;}
+  .dd-head .lbl{flex:1;font-size:13px;}
+  .dd-head .chev{color:#9CA3AF;transition:transform .2s;}
+  .dd.open .dd-head{border-color:var(--blue);}
+  .menu{display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:30;overflow:hidden;}
+  .dd.open .menu{display:block;}
+  .opt{display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;border-bottom:1px solid #F3F4F6;}
+  .opt:last-child{border-bottom:none;}
+  .opt:hover{background:#F7F9FF;}
+  .opt.sel{background:#F0F9FF;}
+  .opt .oi{display:flex;color:#6B7280;flex-shrink:0;}
+  .opt.sel .oi{color:var(--blue);}
+  .opt .otitle{font-size:13px;font-weight:400;flex:1;}
+  .opt.sel .otitle{font-weight:600;color:var(--blue);}
+  .opt .ochev{color:#9CA3AF;}
+  .sub{display:none;background:#FAFAFA;}
+  .opt.sel.hasSub + .sub{display:block;}
+  .srow{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 38px;border-bottom:1px solid #F3F4F6;cursor:pointer;}
+  .radio{width:16px;height:16px;border-radius:50%;border:2px solid #D1D5DB;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .srow.on .radio{border-color:var(--blue);}
+  .srow.on .radio::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--blue);}
+  .srow .sname{flex:1;font-size:12px;}
+  .srow.on .sname{color:var(--blue);font-weight:600;}
+  .srow .scount{font-size:10px;color:#9CA3AF;}
+
+  /* password flag */
+  .pw{margin-top:10px;border:1px solid var(--line);border-radius:10px;padding:0 12px;display:none;}
+  .pw.show{display:block;}
+  .pw-row{display:flex;align-items:center;gap:10px;padding:11px 0;cursor:pointer;}
+  .pw-row .ptxt{flex:1;}
+  .pw-row .ptitle{font-size:12px;font-weight:600;color:#374151;}
+  .pw-row .psub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .tg{width:42px;height:25px;border-radius:14px;background:#D1D5DB;position:relative;flex-shrink:0;transition:background .18s;}
+  .tg::after{content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .18s;}
+  .pw.on .tg{background:var(--blue);}
+  .pw.on .tg::after{left:19px;}
+  .pw-field{display:none;padding:0 0 12px;}
+  .pw.on .pw-field{display:block;}
+
+  /* Nigh Zone row */
+  .nz{border:1px solid var(--line);border-radius:10px;padding:0 12px;position:relative;}
+  .nz-row{display:flex;align-items:center;gap:10px;padding:13px 0;}
+  .nz-tt{flex:1;}
+  .nz-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+  .nz-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .infobtn{width:14px;height:14px;border-radius:50%;border:1.2px solid #9CA3AF;background:none;color:#6B7280;font-size:9px;font-weight:800;font-style:italic;font-family:Georgia,serif;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;flex-shrink:0;}
+  .infobtn:hover{border-color:var(--blue);color:var(--blue);}
+  .nz-pop{display:none;position:absolute;top:42px;left:12px;right:12px;z-index:40;background:#111827;color:#E5E7EB;font-size:11px;line-height:1.6;padding:11px 13px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.28);}
+  .nz-pop.show{display:block;}
+  .nz-pop b{color:#fff;}
+  .nz-pop::before{content:"";position:absolute;top:-6px;left:96px;width:12px;height:12px;background:#111827;transform:rotate(45deg);}
+  .statuson{flex-shrink:0;background:#E3F7EE;border:1px solid #B9E9D2;color:#0E8F5D;font-size:12px;font-weight:800;letter-spacing:.04em;padding:6px 13px;border-radius:99px;}
+  .nz-info{border-top:1px solid #F3F4F6;padding:11px 0 13px;font-size:11px;color:var(--muted);line-height:1.6;}
+  .nz-info b{color:var(--ink);}
+  .pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:99px;}
+
+  .continue{padding:16px 20px 22px;border-top:1px solid var(--line);}
+  .continue button{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
+
+  /* ===== zone demo ===== */
+  .mapcard{background:#0C0C14;border-radius:16px;padding:16px 16px 18px;box-shadow:0 8px 28px rgba(20,25,40,.14);}
+  .readout{display:flex;justify-content:space-between;gap:8px;margin-bottom:12px;}
+  .ro{flex:1;background:rgba(255,255,255,0.06);border-radius:10px;padding:9px 8px;text-align:center;}
+  .ro .k{font-size:9.5px;font-weight:700;letter-spacing:.06em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:3px;}
+  .ro .v{font-size:15px;font-weight:800;color:#fff;}
+  svg.map{display:block;width:100%;height:auto;border-radius:12px;background:radial-gradient(circle at 50% 46%,#16233f,#0a0f1c 70%);}
+  .statuspill{text-align:center;margin-top:12px;font-size:13px;font-weight:700;padding:9px;border-radius:10px;}
+  .sp-pre{background:rgba(255,255,255,.08);color:#C7CCd6;}
+  .sp-in{background:rgba(17,163,107,.18);color:#4ADE98;}
+  .sp-out{background:rgba(236,25,119,.16);color:#FF7BA8;}
+  .sliderwrap{margin-top:16px;}
+  .slabels{display:flex;justify-content:space-between;font-size:10.5px;color:rgba(255,255,255,.4);font-weight:600;margin-bottom:5px;}
+  input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:4px;background:linear-gradient(to right,#1F3A66,#0E4EF5);outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.5);cursor:pointer;border:3px solid #0E4EF5;}
+  .shint{text-align:center;font-size:11px;color:rgba(255,255,255,.5);margin-top:8px;}
+  .foot{font-size:12px;color:var(--muted);line-height:1.6;margin-top:12px;}
+  .foot b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== CREATE DROP PAGE ===================== -->
+  <div class="screen">
+    <div class="appbar">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      <div><h1>Create Drop</h1><p>Step 3/4 — Drop Guests &amp; Pricing</p></div>
+    </div>
+    <div class="prog"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+
+    <div class="form">
+      <!-- Drop Tickets -->
+      <div class="fgrp">
+        <label class="fl">Drop Tickets <span class="req">*</span></label>
+        <input class="inp" placeholder="Number of spots">
+      </div>
+
+      <!-- Max Tickets Per Guest -->
+      <div class="fgrp">
+        <label class="fl">Max Tickets Per Guest <span class="req">*</span></label>
+        <div class="selwrap" style="max-width:220px;">
+          <select>
+            <option>Max tickets per guest</option>
+            <option>1 ticket per guest</option>
+            <option>2 tickets per guest</option>
+            <option>3 tickets per guest</option>
+            <option>4 tickets per guest</option>
+          </select>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+      </div>
+
+      <!-- Who Can Reserve -->
+      <div class="fgrp">
+        <label class="fl">Who Can Reserve Tickets <span class="req">*</span></label>
+        <div class="dd" id="dd">
+          <div class="dd-head" onclick="toggleDD()">
+            <span id="headIcon"></span>
+            <span class="lbl" id="headLbl">Anyone on Nigh</span>
+            <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+          </div>
+          <div class="menu" id="menu"></div>
+        </div>
+        <!-- contextual password flag -->
+        <div class="pw" id="pw">
+          <div class="pw-row" onclick="togglePW()">
+            <div class="ptxt">
+              <div class="ptitle">Require a password</div>
+              <div class="psub">Guests enter password to view and reserve</div>
+            </div>
+            <div class="tg"></div>
+          </div>
+          <div class="pw-field"><input class="inp" placeholder="Set a password"></div>
+        </div>
+      </div>
+
+      <!-- Nigh Zone (part of Who Can Reserve) -->
+      <div class="fgrp" style="margin-top:-10px">
+        <div class="nz">
+          <div class="nz-row">
+            <div class="nz-tt">
+              <div class="nz-name"><span style="display:flex;color:var(--blue)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span> Nigh Zone <button class="infobtn" onclick="toggleZoneInfo(event)">i</button></div>
+              <div class="nz-sub">Only those nearby can reserve in final hours</div>
+            </div>
+            <div class="statuson">ON</div>
+          </div>
+          <div class="nz-pop" id="nzPop">
+            In the last <b>3 hours</b>, only people inside the Nigh Zone can reserve, so only guests with enough time to arrive safely can reserve a spot. The zone <b>shrinks toward your venue</b> as the time-to-reserve counts down.
+          </div>
+        </div>
+      </div>
+
+      <!-- Age Restriction -->
+      <div class="fgrp">
+        <label class="fl">Age Restriction <span class="req">*</span></label>
+        <div class="selwrap">
+          <select>
+            <option>Available to Everyone</option>
+            <option>18 years old and older</option>
+            <option>21 years old and older</option>
+          </select>
+          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="fgrp" style="margin-bottom:4px;">
+        <label class="fl">Price Per Ticket <span class="req">*</span></label>
+        <div style="position:relative;max-width:180px;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:#9CA3AF">$</span>
+          <input class="inp" placeholder="0.00" style="padding-left:24px;">
+        </div>
+        <div class="hintxt" style="margin-top:6px">$0.00 = FREE &nbsp;·&nbsp; $5.00 min for priced drops</div>
+      </div>
+    </div>
+
+    <div class="continue"><button>Continue</button></div>
+  </div>
+
+  <!-- ===================== ZONE DEMO ===================== -->
+  <p class="lenshd">How the Nigh Zone behaves</p>
+  <div class="mapcard">
+    <div class="readout">
+      <div class="ro"><div class="k">Reserve closes in</div><div class="v" id="roTime">2h 00m</div></div>
+      <div class="ro"><div class="k">Zone radius</div><div class="v" id="roRad">3.5 mi</div></div>
+      <div class="ro"><div class="k">You are</div><div class="v" id="roDist">2.0 mi</div></div>
+    </div>
+    <svg viewBox="0 0 320 240" class="map" id="map">
+      <g id="rings"></g>
+      <circle id="zone" cx="160" cy="120" r="98" fill="rgba(17,163,107,0.18)" stroke="#2BD58A" stroke-width="2"/>
+      <circle cx="160" cy="120" r="7" fill="#fff"/><circle cx="160" cy="120" r="3.3" fill="#0E4EF5"/>
+      <text x="160" y="146" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle" font-family="sans-serif" font-weight="700">VENUE</text>
+      <circle id="udot" cx="200" cy="81" r="7" fill="#4ADE98" stroke="#0C0C14" stroke-width="2.5"/>
+      <text id="ulabel" x="212" y="84" fill="rgba(255,255,255,0.8)" font-size="9" font-family="sans-serif" font-weight="700">YOU</text>
+    </svg>
+    <div class="statuspill sp-in" id="statusPill">✓ You're in the Nigh Zone</div>
+    <div class="sliderwrap">
+      <div class="slabels"><span>3h left</span><span>zone activates →</span><span>closing</span></div>
+      <input type="range" id="slider" min="0" max="4" step="0.05" value="2">
+      <div class="shint" id="shint">Drag right to run the countdown down</div>
+    </div>
+  </div>
+  <div class="foot">
+    <b>Future (premium / v2):</b> isochrone / isodistance zones instead of a straight-line radius — because density and traffic matter (2 miles downtown ≠ 2 miles on the highway).
+  </div>
+
+</div>
+
+<script>
+  // ===== icons =====
+  var I = {
+    globe:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg>',
+    users:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    list:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><rect x="15.5" y="8.5" width="7" height="6" rx="1.4"/><path d="M17 8.5V7a2 2 0 0 1 4 0v1.5"/></svg>',
+    link:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
+    linkLock:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><g transform="translate(-2.4,-2.6) scale(0.8)" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></g><circle cx="17.6" cy="17.8" r="6.3" fill="#fff"/><rect x="14.6" y="17.3" width="6" height="4.5" rx="1" fill="currentColor"/><path d="M15.9 17.3v-1.3a1.7 1.7 0 0 1 3.4 0v1.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+  };
+  var OPTS = [
+    {key:'anyone', icon:'globe', title:'Anyone on Nigh', pw:false},
+    {key:'followers', icon:'users', title:'Followers Only', pw:false},
+    {key:'link', icon:'link', title:'Anyone with the Link', pw:true},
+    {key:'list', icon:'list', title:'Select Specific List', pw:false, hasSub:true}
+  ];
+  var LISTS = [['Close Friends',8],['College Crew',7],['Boulder Squad',7],['Family',7],['Work Friends',5],['Neighbors',4],['Running Club',4]];
+  var sel='anyone', selList=null;
+
+  function buildMenu(){
+    document.getElementById('menu').innerHTML = OPTS.map(function(o){
+      var html='<div class="opt '+(o.key===sel?'sel':'')+' '+(o.hasSub?'hasSub':'')+'" onclick="pick(\''+o.key+'\')">'
+        +'<span class="oi">'+I[o.icon]+'</span><span class="otitle">'+o.title+'</span>'
+        +(o.hasSub?'<svg class="ochev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>':'')
+        +'</div>';
+      if(o.hasSub){
+        html+='<div class="sub">'+LISTS.map(function(l){
+          return '<div class="srow '+(selList===l[0]?'on':'')+'" onclick="event.stopPropagation();pickList(\''+l[0]+'\')"><span class="radio"></span><span class="sname">'+l[0]+'</span><span class="scount">'+l[1]+'</span></div>';
+        }).join('')+'</div>';
+      }
+      return html;
+    }).join('');
+  }
+  function toggleDD(){ document.getElementById('dd').classList.toggle('open'); }
+  function curIconHtml(){
+    if(sel==='link' && document.getElementById('pw').classList.contains('on')) return I.linkLock;
+    var o=OPTS.find(function(x){return x.key===sel;}); return I[o.icon];
+  }
+  function setHead(){ document.getElementById('headIcon').innerHTML='<span style="display:flex;color:#0E4EF5">'+curIconHtml()+'</span>'; }
+  function pick(k){
+    sel=k; var o=OPTS.find(function(x){return x.key===k;});
+    document.getElementById('headLbl').textContent=o.title;
+    if(k!=='list'){ selList=null; document.getElementById('dd').classList.remove('open'); }
+    buildMenu(); refreshPW(); setHead();
+  }
+  function pickList(name){ selList=name; document.getElementById('headLbl').textContent=name; document.getElementById('dd').classList.remove('open'); buildMenu(); refreshPW(); setHead(); }
+  function refreshPW(){
+    var o=OPTS.find(function(x){return x.key===sel;});
+    var pw=document.getElementById('pw');
+    if(o.pw){ pw.classList.add('show'); } else { pw.classList.remove('show'); pw.classList.remove('on'); }
+  }
+  function togglePW(){ document.getElementById('pw').classList.toggle('on'); setHead(); }
+  function toggleZoneInfo(e){ e.stopPropagation(); document.getElementById('nzPop').classList.toggle('show'); }
+  document.addEventListener('click', function(){ var p=document.getElementById('nzPop'); if(p) p.classList.remove('show'); });
+  pick('anyone'); buildMenu(); setHead();
+
+  // ===== zone demo =====
+  (function(){
+    var C={x:160,y:120}, PXPM=28, START=5.0, FLOOR=0.5, ACT=3.0, USER=2.0;
+    var ang=-37*Math.PI/180, ux=C.x+Math.cos(ang)*USER*PXPM, uy=C.y+Math.sin(ang)*USER*PXPM;
+    var ud=document.getElementById('udot'); ud.setAttribute('cx',ux); ud.setAttribute('cy',uy);
+    var ul=document.getElementById('ulabel'); ul.setAttribute('x',ux+12); ul.setAttribute('y',uy+3);
+    var s=''; for(var mi=1;mi<=5;mi++){ s+='<circle cx="160" cy="120" r="'+(mi*PXPM)+'" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="3 4"/>'; }
+    document.getElementById('rings').innerHTML=s;
+    function fmtH(h){var m=Math.round(h*60),hh=Math.floor(m/60),mm=m%60;return hh+'h '+(mm<10?'0':'')+mm+'m';}
+    var slider=document.getElementById('slider');
+    function update(){
+      var H=4-parseFloat(slider.value), active=H<=ACT;
+      var rad=active?(FLOOR+((START-FLOOR)*(H/ACT))):START, inZone=active&&USER<=rad+0.001;
+      document.getElementById('roTime').textContent=fmtH(H);
+      document.getElementById('roRad').textContent=active?(rad.toFixed(1)+' mi'):'—';
+      document.getElementById('roDist').textContent=USER.toFixed(1)+' mi';
+      var zc=document.getElementById('zone');
+      if(active){ zc.setAttribute('r',rad*PXPM); zc.setAttribute('fill',inZone?'rgba(17,163,107,0.18)':'rgba(236,25,119,0.15)'); zc.setAttribute('stroke',inZone?'#2BD58A':'#F0509A'); }
+      else { zc.setAttribute('r',START*PXPM); zc.setAttribute('fill','rgba(255,255,255,0.04)'); zc.setAttribute('stroke','rgba(255,255,255,0.2)'); }
+      ud.setAttribute('fill', !active?'#9CA3AF':(inZone?'#4ADE98':'#FF6FA3'));
+      var pill=document.getElementById('statusPill'), shint=document.getElementById('shint');
+      if(!active){ pill.className='statuspill sp-pre'; pill.textContent='Open to all eligible guests · zone starts in '+fmtH(H-ACT); shint.textContent='Before the final 3h — anyone eligible can reserve from anywhere'; }
+      else if(inZone){ pill.className='statuspill sp-in'; pill.textContent="✓ You're in the Nigh Zone"; shint.textContent='Zone radius '+rad.toFixed(1)+' mi · you\'re '+USER.toFixed(1)+' mi away'; }
+      else { pill.className='statuspill sp-out'; pill.textContent="You're outside — "+USER.toFixed(1)+' mi away, need '+rad.toFixed(1)+' mi'; shint.textContent='Zone tightened past you — too far to lock a spot now'; }
+    }
+    slider.addEventListener('input',update); update();
+  })();
+</script>
+</body>
+</html>

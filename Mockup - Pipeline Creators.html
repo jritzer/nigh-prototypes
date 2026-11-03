@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh Support — Pipeline (Creators)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#111827}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#fff;border-right:1px solid #E2E8F0;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column}
+.sb-logo{padding:18px 20px;border-bottom:1px solid #E2E8F0;font-weight:800;font-size:15px;color:#1B2A4A}
+.sb-logo .bdg{font-size:9px;font-weight:700;color:#fff;background:#1B2A4A;padding:2px 6px;border-radius:4px;margin-left:6px;letter-spacing:.5px}
+.sb-section{padding:14px 0 4px 20px;font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:#4B5563;font-size:13px;font-weight:500;border-left:3px solid transparent}
+.sb-item.active{color:#1B2A4A;background:#EEF2FF;border-left-color:#0E4EF5;font-weight:600}
+.main{margin-left:220px;flex:1;min-width:0}
+.topbar{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:700}.topbar-sub{font-size:11px;color:#6B7280;margin-top:1px}
+.content{padding:24px}
+.page-title{font-size:20px;font-weight:800;margin-bottom:3px}
+.page-sub{font-size:13px;color:#6B7280;margin-bottom:18px}
+.card{background:#fff;border-radius:12px;border:1px solid #E2E8F0;overflow:hidden}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.btn-primary{background:#0E4EF5;color:#fff}.btn-ghost{background:#fff;color:#374151;border:1px solid #E2E8F0}
+.btn-green{background:#10B981;color:#fff}.btn-sm{padding:5px 10px;font-size:12px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC}
+.tbl td{padding:11px 14px;font-size:13px;color:#374151;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+.tbl tr:hover td{background:#F8FAFC;cursor:pointer}
+.stat{background:#fff;border-radius:12px;border:1px solid #E2E8F0;padding:14px 16px}
+.stat-val{font-size:22px;font-weight:800;line-height:1}.stat-lbl{font-size:11px;font-weight:700;margin-top:3px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid transparent;background:none;cursor:pointer}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.plat{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff}
+.ig{background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)}.tt{background:#111}.yt{background:#FF0000}
+.gz{background:#EDE9FE;color:#5B21B6}.new{background:#DCFCE7;color:#166534;font-size:9px;padding:1px 5px;border-radius:4px;margin-left:5px;font-weight:800;letter-spacing:.3px}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto}
+.modal-hdr{padding:18px 22px;border-bottom:1px solid #F1F5F9;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-body{padding:18px 22px 22px}
+.drow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:13px}
+.drow .k{color:#6B7280}.drow .v{color:#111827;font-weight:600;text-align:right}
+.input,.select{padding:9px 12px;border-radius:8px;border:1px solid #D1D5DB;font-size:13px;background:#fff;outline:none}
+.sec{font-size:11px;font-weight:700;color:#6B7280;letter-spacing:.5px;text-transform:uppercase;margin:16px 0 8px}
+.alert-blue{background:#EEF2FF;border:1px solid #BFDBFE;color:#1E40AF;border-radius:10px;padding:12px 14px;font-size:12px;margin-bottom:18px;line-height:1.55}
+.ol{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.chbtn{font-size:12px;font-weight:600;padding:7px 11px;border-radius:8px;border:1px solid #D1D5DB;background:#fff;color:#374151;cursor:pointer}
+.chbtn:hover{border-color:#0E4EF5;color:#0E4EF5}
+</style></head><body>
+<div class="layout">
+ <div class="sidebar">
+  <div class="sb-logo">Nigh<span class="bdg">SUPPORT</span></div>
+  <div class="sb-section">GROWTH</div>
+  <div class="sb-item active">◍ Pipeline</div>
+  <div class="sb-item">▦ Host Accounts</div>
+  <div class="sb-item">✦ Organizations</div>
+  <div class="sb-section">OPERATIONS</div>
+  <div class="sb-item">◷ Drops</div>
+  <div class="sb-item">⚑ Trust &amp; Safety</div>
+  <div class="sb-item">▤ Billing</div>
+ </div>
+ <div class="main">
+  <div class="topbar"><div><div class="topbar-title">Pipeline</div><div class="topbar-sub">Lead generation &amp; outreach</div></div>
+   <div><button class="btn btn-ghost btn-sm">⬆ Import leads (CSV)</button> <button class="btn btn-primary btn-sm">＋ Add lead</button></div></div>
+  <div class="content">
+   <div class="page-title">Pipeline — Lead Generation</div>
+   <div class="page-sub">All lead types in one place, including creators sourced from research lists.</div>
+   <div class="alert-blue"><b>What's new for creators (proposed):</b> a first-class <b>Creator</b> lead type, social-first fields (handles, followers, Gen&nbsp;Z fit), online outreach channels (DM / email / booking inquiry), a <b>Lead Score</b> for prioritization, bulk CSV import from the partner research sheet, and a type-aware convert that creates a Personal/Creator host account.</div>
+
+   <div id="typebar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px"></div>
+   <div id="stats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px"></div>
+
+   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+     <input id="q" class="input" placeholder="Search name, handle, city, rep…" style="width:260px" oninput="render()">
+     <select id="fstage" class="select" onchange="render()"><option value="">All stages</option></select>
+     <select id="fpri" class="select" onchange="render()"><option value="">All priorities</option><option>P1</option><option>P2</option><option>P3</option></select>
+   </div>
+   <div class="card"><table class="tbl"><thead><tr>
+     <th>Lead</th><th>Type</th><th>Audience / Location</th><th>Fit &amp; Score</th><th>Stage</th><th>Rep</th><th>Last outreach</th><th></th>
+   </tr></thead><tbody id="tbody"></tbody></table></div>
+   <div style="font-size:11px;color:#9CA3AF;margin-top:10px">Standalone design mockup · data sampled from Nigh_Denver_Boulder_Partners_Master</div>
+  </div>
+ </div>
+</div>
+<div class="modal-bg" id="mbg" onclick="if(event.target===this)close_()"><div class="modal" id="mbox"></div></div>
+<script>
+const LEADS=[{"id": "L01", "ltype": "Creator", "name": "Denver Yoga Social", "handle": "@denveryogasocial", "platforms": [["ig", "@denveryogasocial"]], "followers": "~26K est.", "website": "", "booking": "https://linkin.bio/denveryogasocial/", "email": "info@yogasocial.org", "phone": "", "city": "Denver", "hood": "", "category": "Wellness \u2013 events", "does": "Donation yoga + brewery/rooftop flows, 'Singles Mingle'", "fit": "Already runs ticketed social wellness events citywide", "estAtt": "", "genZ": false, "priority": "P1", "stage": "Interested", "conf": "Email/phone", "rep": "Sarah Chen", "outreach": [["Instagram DM", "Replied \u2014 interested"], ["Email", "Sent one-pager"]], "source": "Creator Research", "notes": "Their 'Singles Mingle' + brewery/rooftop model = Drops | Deep-enriched 2026-10-20: Denver 501c3; bookings via Eventbrite/Sweatpals; no org email/site found. | Bio check 2026-10-20: linkin.bio has newsletter, full schedule, teacher/volunteer applications, brewery/tacos/soundbath yoga events; no direct email on hub. | Email info@yogasocial.org (email icon on linkin.bio, per founder).", "subtype": "Creator"}, {"id": "L02", "ltype": "Creator", "name": "Ashley Joon", "handle": "@ashleyjoonart", "platforms": [["ig", "@ashleyjoonart"]], "followers": "", "website": "https://www.ashleyjoon.com", "booking": "https://www.ashleyjoon.com/contact", "email": "Hello@AshleyJoon.com", "phone": "", "city": "Denver", "hood": "", "category": "Art \u2013 muralist", "does": "Behind the popular 'Talk Denver To Me' RiNo mural", "fit": "IG-magnet murals; strong local recognition", "estAtt": "", "genZ": false, "priority": "P2", "stage": "Contacted", "conf": "Email/phone", "rep": "Marcus Webb", "outreach": [["Instagram DM", "Sent intro"]], "source": "Creator Research", "notes": "The 'Talk Denver To Me' floral mural | Deep-enriched 2026-10-20: UNVERIFIED beyond IG; ashleyjoonart.com not confirmed. | Bio check 2026-10-20: email + contact form on ashleyjoon.com/contact.", "subtype": "Creator"}, {"id": "L03", "ltype": "Creator", "name": "Bryan Rowe", "handle": "@bryanrowephoto", "platforms": [["ig", "@bryanrowephoto"]], "followers": "35900", "website": "bryanrowephoto.com", "booking": "", "email": "bryan@bryanrowephoto.com", "phone": "", "city": "Boulder", "hood": "Metro-wide / verify", "category": "Artist / Photographer / Maker", "does": "Public local editorial/event source indicates active participation in the metro creative or IRL scene.", "fit": "Artist / Photographer / Maker with a plausible young-local audience and a natural path from content or scene credibility to an in-person Drop.", "estAtt": "15\u2013100 initial pilot", "genZ": false, "priority": "P1", "stage": "Prospect", "conf": "Email/phone", "rep": "Priya Okafor", "outreach": [], "source": "Creator Research", "notes": "Do not outreach until current activity, audience geography, and a recent IRL example are checked on-platform. | Deep-enriched 2026-10-20: Boulder photographer; email per blink.la profile (verify).", "subtype": "Creator"}, {"id": "L04", "ltype": "Creator", "name": "Chella", "handle": "@chellaandthecharm", "platforms": [["ig", "@chellaandthecharm"]], "followers": "", "website": "", "booking": "https://www.sonicbids.com/band/chella-the-charm", "email": "", "phone": "", "city": "Denver", "hood": "", "category": "Musicians & Bands", "does": "Leads Chella & the Charm at Denver release shows and Local 303 events.", "fit": "Musicians & Bands; documented local live/organizing signal. Age is an estimate and should be confirmed conversationally.", "estAtt": "", "genZ": false, "priority": "P1", "stage": "Meeting / Collab", "conf": "Booking link", "rep": "Ryan Torres", "outreach": [["Email", "Intro call booked"], ["Instagram DM", "Replied"]], "source": "Creator Research", "notes": "Specialty: Rock / Band Leader. | Deep-enriched 2026-10-20: booking likely via Sonicbids/Skylark; no direct email. | Deep-enriched 2026-10-20: Chella & the Charm. Sonicbids profile; no email.  Other: chellaandthecharm.bandcamp.com", "subtype": "Music/DJ"}, {"id": "L05", "ltype": "Creator", "name": "Colorado Frontrunners", "handle": "@coloradofrontrunners", "platforms": [["ig", "@coloradofrontrunners"]], "followers": "~970 est.", "website": "coloradofrontrunners.org", "booking": "", "email": "contact@coloradofrontrunners.org", "phone": "", "city": "Denver & Boulder", "hood": "", "category": "Fitness \u2013 LGBTQ+ run/social", "does": "Weekly runs/walks + social club", "fit": "Inclusive; runs in BOTH target metros", "estAtt": "", "genZ": false, "priority": "P1", "stage": "Contacted", "conf": "Email/phone", "rep": "Jordan Lee", "outreach": [["Email", "Sent intro"]], "source": "Creator Research", "notes": "LGBTQ+ running + social club spanning Denver & Boulder | Deep-enriched 2026-10-20: LGBTQ running club; email behind mailto.  Other: Meetup", "subtype": "Creator"}, {"id": "L06", "ltype": "Creator", "name": "Armando Silva", "handle": "@artmandosilva", "platforms": [["ig", "@artmandosilva"]], "followers": "", "website": "artmandosilva.com", "booking": "", "email": "artmandosilva@yahoo.com", "phone": "", "city": "Greeley / N. Front Range", "hood": "", "category": "Art \u2013 live-painting muralist", "does": "Performance/live-painting muralist", "fit": "Performs live for crowds \u2014 natural event host", "estAtt": "", "genZ": false, "priority": "P1", "stage": "Prospect", "conf": "Email/phone", "rep": "Sarah Chen", "outreach": [], "source": "Creator Research", "notes": "His live speed-painting performances | Deep-enriched 2026-10-20: Greeley muralist; email from site /contact mailto.", "subtype": "Creator"}, {"id": "L07", "ltype": "Creator", "name": "Dzirae Gold", "handle": "@dziraegold", "platforms": [["ig", "@dziraegold"]], "followers": "", "website": "", "booking": "Dazzle (booking) 303-839-5100", "email": "", "phone": "", "city": "Denver", "hood": "", "category": "Musicians & Bands", "does": "Denver jazz vocalist with intimate concert and storytelling experience.", "fit": "Musicians & Bands; local cultural signal requiring event verification. Age is an estimate and should be confirmed conversationally.", "estAtt": "", "genZ": false, "priority": "P2", "stage": "Interested", "conf": "Booking link", "rep": "Marcus Webb", "outreach": [["Instagram DM", "Replied \u2014 curious"]], "source": "Creator Research", "notes": "Specialty: Jazz / Vocalist. | Deep-enriched 2026-10-20: bookings appear routed via Dazzle; no personal email/site. | Deep-enriched 2026-10-20: Denver jazz/R&B. No email/site; reach via Dazzle.", "subtype": "Music/DJ"}, {"id": "L08", "ltype": "Creator", "name": "Anna Charney", "handle": "@annacharneyart", "platforms": [["ig", "@annacharneyart"]], "followers": "", "website": "https://annacharneyart.com", "booking": "", "email": "anna@annacharneyart.com", "phone": "303-957-7376", "city": "Denver", "hood": "", "category": "Art \u2013 abstract muralist", "does": "Flowing line-based murals; Crush regular", "fit": "Established RiNo presence", "estAtt": "", "genZ": false, "priority": "P2", "stage": "Prospect", "conf": "Email/phone", "rep": "Priya Okafor", "outreach": [], "source": "Creator Research", "notes": "Her continuous-line abstract style | Deep-enriched 2026-10-20: via City of Boulder artist page; site live.", "subtype": "Creator"}, {"id": "L09", "ltype": "Creator", "name": "Anthony Garcia Sr.", "handle": "@birdseedanthony", "platforms": [["ig", "@birdseedanthony"]], "followers": "", "website": "birdseedcollective.org", "booking": "", "email": "info@birdseedcollective.org", "phone": "", "city": "Denver (Globeville)", "hood": "Metro-wide / verify", "category": "Art \u2013 community muralist", "does": "Founder of BirdSeed Collective nonprofit; youth street art", "fit": "Nonprofit + youth engagement = built-in audience", "estAtt": "15\u2013100 initial pilot", "genZ": false, "priority": "P1", "stage": "Offer Sent", "conf": "Email/phone", "rep": "Ryan Torres", "outreach": [["Email", "Sent collab offer"], ["Phone", "Discussed terms"]], "source": "Creator Research", "notes": "BirdSeed Collective + his 6th & Federal redesign | Do not outreach until current activity, audience geography, and a recent IRL example are checked on-platform. | Deep-enriched 2026-10-20: Founder BirdSeed Collective; email behind mailto.", "subtype": "Creator"}, {"id": "L10", "ltype": "Creator", "name": "Conner Jhoon Choi", "handle": "@connerjhoonchoi", "platforms": [["ig", "@connerjhoonchoi"]], "followers": "", "website": "https://connerchoi.com", "booking": "RiNo Art District artist page", "email": "connerchoi@gmail.com", "phone": "510-363-2101", "city": "Denver", "hood": "", "category": "Visual Art & Photography", "does": "Denver muralist creating interactive public work and participating in mural projects.", "fit": "Visual Art & Photography; local cultural signal requiring event verification. Age is an estimate and should be confirmed conversationally.", "estAtt": "", "genZ": false, "priority": "P2", "stage": "Contacted", "conf": "Email/phone", "rep": "Jordan Lee", "outreach": [["Booking form", "Submitted inquiry"]], "source": "Creator Research", "notes": "Specialty: Muralist / Fine Artist. | Deep-enriched 2026-10-20: IG is @connerchoi; email/phone via City of Boulder artist page.", "subtype": "Creator"}, {"id": "L21", "ltype": "Place", "name": "Rayback Collective", "handle": "", "platforms": [], "followers": "", "website": "https://therayback.com", "booking": "", "email": "events@therayback.com", "phone": "(303) 835-1734", "city": "Boulder", "hood": "North Boulder", "category": "Food Hall / Beer Garden", "does": "Food-truck park + taproom with rotating events", "fit": "High foot traffic, loves local pop-ups", "estAtt": "300+", "genZ": true, "priority": "P1", "stage": "Meeting / Collab", "conf": "Email/phone", "rep": "Marcus Webb", "outreach": [["Door Visit", "Met GM \u2014 interested"], ["Phone", "Demo scheduled"]], "source": "Nigh Outreach", "notes": "", "subtype": "Venue/Business"}, {"id": "L22", "ltype": "Brand", "name": "Fj\u00e4llr\u00e4ven Boulder", "handle": "", "platforms": [], "followers": "", "website": "https://fjallraven.com", "booking": "", "email": "boulder@fjallraven.com", "phone": "(303) 555-0922", "city": "Boulder", "hood": "Pearl Street", "category": "Retail / Outdoor", "does": "Flagship outdoor retail store", "fit": "Brand drops + in-store events", "estAtt": "80", "genZ": false, "priority": "P2", "stage": "Contacted", "conf": "Email/phone", "rep": "Sarah Chen", "outreach": [["Phone", "Left message"]], "source": "Nigh Outreach", "notes": "Corporate approval likely needed", "subtype": "Venue/Business"}, {"id": "L23", "ltype": "Place", "name": "Avanti Food & Beverage", "handle": "", "platforms": [], "followers": "", "website": "https://avantifandb.com", "booking": "", "email": "boulder@avantifandb.com", "phone": "(720) 555-0611", "city": "Denver", "hood": "LoHi", "category": "Food Hall", "does": "Rooftop food hall, 7 rotating vendors", "fit": "Multi-vendor drops, young crowd", "estAtt": "250", "genZ": true, "priority": "P1", "stage": "Interested", "conf": "Email/phone", "rep": "Priya Okafor", "outreach": [["Door Visit", "Spoke with owner"]], "source": "Referral \u2014 Org", "notes": "", "subtype": "Venue/Business"}];
+const STAGES=['Prospect','Contacted','Interested','Meeting / Collab','Offer Sent'];
+const TYPES=[['All',''],['Creator','Creator'],['Place','Place'],['Brand','Brand'],['Mobile','Mobile'],['Enterprise','Org']];
+const TYPEMETA={Creator:{bg:'#F5F3FF',fg:'#7C3AED',ic:'👤'},Place:{bg:'#F0F9FF',fg:'#374151',ic:'📍'},Brand:{bg:'#E0F2FE',fg:'#0369A1',ic:'🏷️'},Mobile:{bg:'#FFF7ED',fg:'#C2410C',ic:'🚚'},Org:{bg:'#EEF2FF',fg:'#1E40AF',ic:'✦'}};
+const STAGEC={'Prospect':'#64748B','Contacted':'#1D4ED8','Interested':'#C2410C','Meeting / Collab':'#7C3AED','Offer Sent':'#B45309'};
+const PRIC={P1:{bg:'#FEE2E2',fg:'#991B1B'},P2:{bg:'#FEF3C7',fg:'#92400E'},P3:{bg:'#F3F4F6',fg:'#4B5563'}};
+let S={type:''};
+
+function score(l){let s=0;s+=l.priority==='P1'?3:l.priority==='P2'?2:1;if(l.genZ)s+=1;const f=follNum(l.followers);if(f>=20000)s+=3;else if(f>=5000)s+=2;else if(f>0)s+=1;return s;}
+function follNum(f){if(!f)return 0;f=(''+f).replace(/[,~\s]/g,'').toLowerCase();let m=f.match(/([\d.]+)k/);if(m)return Math.round(parseFloat(m[1])*1000);m=f.match(/([\d.]+)/);return m?parseInt(m[1]):0;}
+function follFmt(f){const n=follNum(f);if(!n)return '';return n>=1000?(n/1000).toFixed(n%1000?1:0)+'K':''+n;}
+function scoreBar(s){const pct=Math.round(s/7*100);const col=s>=6?'#10B981':s>=4?'#F59E0B':'#9CA3AF';return `<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:46px;height:6px;border-radius:3px;background:#E5E7EB;overflow:hidden;display:inline-block"><span style="display:block;height:100%;width:${pct}%;background:${col}"></span></span><span style="font-size:11px;font-weight:700;color:${col}">${s}</span></span>`;}
+function platChips(l){return (l.platforms||[]).map(p=>{const cl=p[0];return `<span class="plat ${cl}">${cl==='ig'?'IG':cl==='tt'?'TT':'YT'}</span>`;}).join(' ');}
+function priPill(p){const c=PRIC[p]||PRIC.P3;return `<span class="pill" style="background:${c.bg};color:${c.fg}">${p}</span>`;}
+
+function render(){
+  // type bar
+  document.getElementById('typebar').innerHTML=TYPES.map(([lbl,val])=>{
+    const n=val?LEADS.filter(l=>l.ltype===val).length:LEADS.length;
+    const act=S.type===val;const isNew=val==='Creator';
+    return `<button class="chip" onclick="S.type='${val}';render()" style="background:${act?'#0E4EF5':'#fff'};color:${act?'#fff':'#374151'};border-color:${act?'#0E4EF5':'#E2E8F0'}">${lbl} <span style="opacity:.7">${n}</span>${isNew?'<span class="new">NEW</span>':''}</button>`;
+  }).join('');
+  // stage select
+  const ss=document.getElementById('fstage');if(ss.options.length<=1){STAGES.forEach(s=>ss.add(new Option(s,s)));}
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  const fstage=document.getElementById('fstage').value;const fpri=document.getElementById('fpri').value;
+  let rows=LEADS.filter(l=>(!S.type||l.ltype===S.type));
+  rows=rows.filter(l=>!fstage||l.stage===fstage).filter(l=>!fpri||l.priority===fpri);
+  rows=rows.filter(l=>!q||(l.name+' '+l.handle+' '+l.city+' '+l.rep).toLowerCase().includes(q));
+  rows.sort((a,b)=>score(b)-score(a));
+  // stats
+  document.getElementById('stats').innerHTML=STAGES.map(st=>{const n=rows.filter(l=>l.stage===st).length;return `<div class="stat" style="border-top:3px solid ${STAGEC[st]}"><div class="stat-val">${n}</div><div class="stat-lbl" style="color:${STAGEC[st]}">${st}</div></div>`;}).join('');
+  // table
+  document.getElementById('tbody').innerHTML=rows.map(l=>{
+    const tm=TYPEMETA[l.ltype]||TYPEMETA.Place;
+    const isCr=l.ltype==='Creator';
+    const leadCell=isCr
+      ? `<div style="font-weight:600">${l.name}</div><div style="font-size:11px;color:#9CA3AF;display:flex;align-items:center;gap:5px;margin-top:2px">${platChips(l)} ${l.handle||''}</div>`
+      : `<div style="font-weight:600">${l.name}</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">${l.city}, CO</div>`;
+    const audCell=isCr
+      ? `<div style="font-size:12px;color:#374151">${follFmt(l.followers)?('👥 '+follFmt(l.followers)+' followers'):'<span style=color:#CBD5E1>followers TBD</span>'}</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">${l.category}${l.genZ?' · <span class="pill gz" style="padding:1px 6px">Gen Z</span>':''}</div>`
+      : `<div style="font-size:12px;color:#374151">${l.category}</div><div style="font-size:11px;color:#9CA3AF;margin-top:2px">${l.city}, CO · ~${l.estAtt} att.</div>`;
+    const lastO=(l.outreach&&l.outreach.length)?l.outreach[l.outreach.length-1]:null;
+    return `<tr onclick="openLead('${l.id}')">
+      <td>${leadCell}</td>
+      <td><span class="pill" style="background:${tm.bg};color:${tm.fg}">${tm.ic} ${l.ltype}</span></td>
+      <td>${audCell}</td>
+      <td>${priPill(l.priority)} &nbsp;${scoreBar(score(l))}</td>
+      <td><span class="pill" style="background:#fff;border:1px solid ${STAGEC[l.stage]}33;color:${STAGEC[l.stage]}">${l.stage}</span></td>
+      <td style="font-size:12px">${l.rep}</td>
+      <td style="font-size:11px;color:#6B7280">${lastO?lastO[0]:'<span style=color:#CBD5E1>No contact</span>'}</td>
+      <td><button class="btn btn-green btn-sm" onclick="event.stopPropagation();openLead('${l.id}')">⚡ Convert</button></td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:30px">No leads match.</td></tr>`;
+}
+
+function openLead(id){
+  const l=LEADS.find(x=>x.id===id);const isCr=l.ltype==='Creator';const tm=TYPEMETA[l.ltype];
+  const channels=isCr?['Instagram DM','TikTok DM','Email','Booking inquiry','Comment reply']:['Door visit','Phone call','Email'];
+  const contact=[];
+  if(l.email)contact.push(['Email',l.email]);
+  if(l.phone)contact.push(['Phone',l.phone]);
+  if(l.booking)contact.push(['Booking link',l.booking.replace(/^https?:\/\//,'')]);
+  if(l.website)contact.push(['Website',l.website.replace(/^https?:\/\//,'')]);
+  const social=(l.platforms||[]).map(p=>`<span class="pill" style="background:#F8FAFC;border:1px solid #E2E8F0">${p[0].toUpperCase()} ${p[1]}</span>`).join(' ');
+  document.getElementById('mbox').innerHTML=`
+   <div class="modal-hdr">
+     <div><div style="font-size:17px;font-weight:800">${l.name}</div>
+       <div style="margin-top:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+         <span class="pill" style="background:${tm.bg};color:${tm.fg}">${tm.ic} ${l.ltype}</span>
+         ${priPill(l.priority)} ${l.genZ?'<span class="pill gz">Gen Z fit</span>':''}
+         <span style="font-size:11px;color:#9CA3AF">Lead score ${score(l)}/7</span>
+       </div></div>
+     <button class="btn btn-ghost btn-sm" onclick="close_()">✕</button>
+   </div>
+   <div class="modal-body">
+     <div class="sec">${isCr?'Creator profile':'Business profile'}</div>
+     ${isCr&&social?`<div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap">${social}</div>`:''}
+     <div class="drow"><span class="k">${isCr?'What they do':'Category'}</span><span class="v" style="max-width:300px">${isCr?(l.does||l.category):l.category}</span></div>
+     ${isCr&&l.followers?`<div class="drow"><span class="k">Audience</span><span class="v">${follFmt(l.followers)} followers</span></div>`:''}
+     <div class="drow"><span class="k">${isCr?'Est. draw':'Est. attendance'}</span><span class="v">${l.estAtt||'—'}</span></div>
+     <div class="drow"><span class="k">Location</span><span class="v">${l.city}${l.hood?' · '+l.hood:''}</span></div>
+     <div class="drow"><span class="k">Why they fit Nigh</span><span class="v" style="max-width:300px;font-weight:500;color:#374151">${l.fit||'—'}</span></div>
+     <div class="drow"><span class="k">Source</span><span class="v">${l.source}</span></div>
+     <div class="drow"><span class="k">Contact confidence</span><span class="v">${l.conf}</span></div>
+
+     <div class="sec">Contact</div>
+     ${contact.map(c=>`<div class="drow"><span class="k">${c[0]}</span><span class="v" style="color:#0E4EF5">${c[1]}</span></div>`).join('')||'<div style="font-size:12px;color:#9CA3AF">Socials only — reach via DM.</div>'}
+
+     <div class="sec">Outreach log</div>
+     ${(l.outreach&&l.outreach.length)?l.outreach.map(o=>`<div class="ol"><span class="pill" style="background:#F1F5F9;color:#475569;flex-shrink:0">${o[0]}</span><span style="color:#374151">${o[1]}</span></div>`).join(''):'<div style="font-size:12px;color:#9CA3AF">No outreach logged yet.</div>'}
+     <div style="margin-top:10px"><div style="font-size:11px;color:#6B7280;margin-bottom:6px">Log outreach via ${isCr?'(online channels)':'(field channels)'}:</div>
+       <div style="display:flex;gap:7px;flex-wrap:wrap">${channels.map(c=>`<button class="chbtn">${c}</button>`).join('')}</div></div>
+
+     <div style="display:flex;gap:10px;margin-top:22px">
+       <button class="btn btn-green" style="flex:1;justify-content:center">⚡ Convert → ${isCr?'Creator (Personal) account':l.ltype+' account'}</button>
+       <button class="btn btn-ghost" onclick="close_()">Close</button>
+     </div>
+     <div style="font-size:11px;color:#9CA3AF;margin-top:8px;text-align:center">${isCr?'Creates a Personal/Creator host — handle verification, no storefront or Stripe-venue setup.':'Creates a Place/Brand host — business verification, address &amp; billing.'}</div>
+   </div>`;
+  document.getElementById('mbg').classList.add('show');
+}
+function close_(){document.getElementById('mbg').classList.remove('show');}
+render();
+</script></body></html>

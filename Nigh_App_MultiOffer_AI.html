@@ -3598,15 +3598,15 @@ function fullTicketCard(tk){
     const _edStr='#'+String(ticketEdition((tk.orderId||'ORD')+':'+subIdx,_cap)).padStart(3,'0')+' / '+_cap;
     const _chips=theme.sponsors.map(function(s){return '<span style="font-size:10px;font-weight:900;letter-spacing:0.02em;color:'+s.color+';background:'+s.bg+';padding:2px 7px;border-radius:4px;white-space:nowrap">'+s.name+'</span>';}).join('');
     const _brandMark=theme.logo||('<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">'+theme.motif+'</span><span style="font-size:10px;font-weight:800;letter-spacing:0.14em;color:#fff;text-transform:uppercase">'+theme.eyebrow+'</span></div>');
-    const _eyebrowSub=theme.logo?`<div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.82);text-transform:uppercase;margin-top:8px">${theme.motif} ${theme.eyebrow}</div>`:'';
-    heroBand=`<div style="margin:-20px -20px 14px;padding:13px 18px 12px;background:${theme.grad};position:relative;overflow:hidden">
+    const _eyebrowSub=theme.logo?`<div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(255,255,255,0.82);text-transform:uppercase;margin-top:6px">${theme.motif} ${theme.eyebrow}</div>`:'';
+    heroBand=`<div style="margin:-20px -20px 11px;padding:11px 18px 10px;background:${theme.grad};position:relative;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
         ${_brandMark}
         <span style="font-size:8px;font-weight:800;letter-spacing:0.1em;color:rgba(255,255,255,0.9);text-transform:uppercase;flex-shrink:0">${theme.editionLabel}</span>
       </div>
       ${_eyebrowSub}
-      <div style="display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap">${_chips}<span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.78);letter-spacing:0.1em">&times; NIGH</span></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:11px">
+      <div style="display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap">${_chips}<span style="font-size:8px;font-weight:800;color:rgba(255,255,255,0.78);letter-spacing:0.1em">&times; NIGH</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px">
         <span style="font-size:12px;font-weight:900;color:#fff;letter-spacing:0.06em">${_edStr}</span>
         <span style="font-size:8.5px;color:rgba(255,255,255,0.82);letter-spacing:0.05em">${tkNum(tk.orderId,subIdx+1)}</span>
       </div>
@@ -3619,7 +3619,7 @@ function fullTicketCard(tk){
   const _gB=theme?theme.glow2:'rgba(14,78,245,0.14)';
 
   // Fixed-height state block so every spot is identical regardless of status
-  const STATE_H='height:122px;display:flex;flex-direction:column;justify-content:center;margin-bottom:14px';
+  const STATE_H='height:108px;display:flex;flex-direction:column;justify-content:center;margin-bottom:12px';
   const qrTile=`
     <div style="${STATE_H}">
       <div style="display:flex;gap:10px;align-items:stretch">
@@ -3699,12 +3699,12 @@ function fullTicketCard(tk){
       <div style="flex:1;min-height:32px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;line-height:1.2">${stateIsQR?ctaMsg:''}</div></div>
       <div style="color:rgba(255,255,255,0.40);flex-shrink:0">${ic('flip',18)}</div>
     </div>
-    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${tk.title}</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:3px">Hosted by <button onclick="event.stopPropagation();openProfile('${tk.hostHandle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${tk.host}</button></div>
-    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Partnering with ${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:14px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:14px"></div>`)}
+    <div style="font-size:22px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${tk.title}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:2px">Hosted by <button onclick="event.stopPropagation();openProfile('${tk.hostHandle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${tk.host}</button></div>
+    ${tkPartners.length?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:10px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Partnering with ${tkPartners.map((p,i)=>`${i===0?'':(i===tkPartners.length-1?' <span style="color:rgba(255,255,255,0.40)">&</span> ':'<span style="color:rgba(255,255,255,0.40)">,</span> ')}<button onclick="event.stopPropagation();openProfile('${p.handle}')" style="background:none;border:none;padding:0;font-size:12px;font-style:italic;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit">${p.name}</button>`).join('')}</div>`:(tk.partner?`<div style="font-size:12px;color:rgba(255,255,255,0.60);margin-bottom:10px">Partnering with <em style="color:rgba(255,255,255,0.80)">${tk.partner}</em></div>`:`<div style="margin-bottom:10px"></div>`)}
     <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">${frontDate}</div>
-    <div style="margin-bottom:13px"><span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.6)">${isWindow?'Arrive between ':'Starts at '}</span><span style="font-size:${isWindow?'18':'22'}px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em">${timeDisplay}</span></div>
-    <div style="margin-bottom:14px">${tk.offers&&tk.offers.length?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${(tk.price||0).toFixed(2)}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">· ${tk.offers.reduce(function(t,o){return t+o.qty;},0)} ${tk.seated?'seat':'item'}${tk.offers.reduce(function(t,o){return t+o.qty;},0)>1?'s':''}</span>`:(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
+    <div style="margin-bottom:10px"><span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.6)">${isWindow?'Arrive between ':'Starts at '}</span><span style="font-size:${isWindow?'18':'22'}px;font-weight:700;color:#41EFF9;letter-spacing:-0.01em">${timeDisplay}</span></div>
+    <div style="margin-bottom:10px">${tk.offers&&tk.offers.length?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${(tk.price||0).toFixed(2)}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">· ${tk.offers.reduce(function(t,o){return t+o.qty;},0)} ${tk.seated?'seat':'item'}${tk.offers.reduce(function(t,o){return t+o.qty;},0)>1?'s':''}</span>`:(tk.price||0)>0?`<span style="font-size:21px;font-weight:700;color:#22C55E">$${tk.price}</span><span style="font-size:13px;color:rgba(255,255,255,0.60);margin-left:4px">/ ticket</span>`:`<span style="font-size:19px;font-weight:700;color:#22C55E">Free</span>`}</div>`;
 
   const venueRow=`
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
@@ -3745,7 +3745,7 @@ function fullTicketCard(tk){
     actionInner=`<button onclick="event.stopPropagation();S.checkedIn['${tk.id}']=true;render()" style="background:none;border:1px dashed rgba(255,255,255,0.2);border-radius:10px;padding:8px 16px;font-size:10px;color:rgba(255,255,255,0.45);cursor:pointer;font-family:inherit">Simulate host check-in (prototype)</button>`;
   }
   // Fixed-height bottom region: holder line centered, action pinned to bottom (keeps every spot the same size)
-  const bottomRegion=`<div style="height:60px;display:flex;flex-direction:column;margin-top:4px">
+  const bottomRegion=`<div style="height:52px;display:flex;flex-direction:column;margin-top:4px">
     <div style="flex:1;display:flex;align-items:center;justify-content:center"><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.55)">${holderLine}</div></div>
     ${actionInner?`<div style="height:50px;display:flex;align-items:flex-end;justify-content:center">${actionInner}</div>`:''}
   </div>`;
@@ -3831,7 +3831,7 @@ function fullTicketCard(tk){
     ${termsList.map(t=>`<div style="display:flex;gap:7px;align-items:flex-start;margin-bottom:7px"><div style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.5);margin-top:6px;flex-shrink:0"></div><span style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5">${t}</span></div>`).join('')}
     <div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;gap:4px;margin-top:18px">${ic('flip',10)} Tap to flip back</div>`;
 
-  const frontFace=`<div style="display:flex;flex-direction:column;height:${theme?'632px':'540px'}">${heroBand}${cardTop}${stateBlock}<div style="flex:1;min-height:6px"></div>${venueRow}${friendsRow}<div style="flex:1;min-height:6px"></div>${bottomRegion}</div>`;
+  const frontFace=`<div style="display:flex;flex-direction:column;height:${theme?'560px':'500px'}">${heroBand}${cardTop}${stateBlock}<div style="flex:1;min-height:6px"></div>${venueRow}${friendsRow}<div style="flex:1;min-height:6px"></div>${bottomRegion}</div>`;
 
   // Dots only (no arrows) — swipe to move between tickets
   const pager=`<div style="height:34px;display:flex;align-items:center;justify-content:center;gap:8px">${subCount>1?subs.map((_,i)=>`<div onclick="S.collSubIdx['${tk.id}']=${i};S.collFlip['${tk.id}']=false;render()" style="width:8px;height:8px;border-radius:50%;background:${i===subIdx?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.22)'};cursor:pointer"></div>`).join(''):''}</div>`;

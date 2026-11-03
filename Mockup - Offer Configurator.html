@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh — Offer & Drop Configurator</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F1F5F9;color:#111827}
+.wrap{max-width:720px;margin:0 auto;padding:22px 18px 120px}
+.top{margin-bottom:16px}
+h1{font-size:21px;font-weight:800;margin-bottom:2px}
+.sub{font-size:13px;color:#6B7280}
+
+/* stepper */
+.stepper{display:flex;gap:6px;margin:18px 0 20px}
+.step{flex:1;cursor:pointer;text-align:left}
+.step .bar{height:4px;border-radius:999px;background:#E2E8F0;margin-bottom:7px}
+.step.done .bar,.step.cur .bar{background:#0E4EF5}
+.step .lbl{font-size:11px;font-weight:600;color:#9CA3AF;display:flex;align-items:center;gap:5px}
+.step.cur .lbl{color:#0E4EF5}
+.step.done .lbl{color:#374151}
+.step .num{width:16px;height:16px;border-radius:999px;background:#E2E8F0;color:#6B7280;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.step.cur .num{background:#0E4EF5;color:#fff}
+.step.done .num{background:#DBEAFE;color:#0E4EF5}
+
+.card{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:16px 16px;margin-bottom:14px}
+.card.pad{padding:18px}
+h2{font-size:15px;font-weight:800;color:#111827;margin-bottom:3px}
+.h2sub{font-size:12px;color:#6B7280;margin-bottom:14px}
+.sec{font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:.6px;text-transform:uppercase;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.grid.one{grid-template-columns:1fr}
+.f label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:5px}
+.f select,.f input[type=number],.f input[type=text]{width:100%;padding:10px 11px;border:1px solid #E5E7EB;border-radius:10px;font-size:13px;background:#fff;color:#111827;outline:none}
+.f select:focus,.f input:focus{border-color:#0E4EF5;box-shadow:0 0 0 3px rgba(14,78,245,.1)}
+
+/* template chooser */
+.tpls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tpl{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #E5E7EB;border-radius:12px;background:#fff;cursor:pointer;text-align:left;transition:.12s}
+.tpl:hover{border-color:#0E4EF5;background:#F8FAFF}
+.tpl.on{border-color:#0E4EF5;background:#F8FAFF;box-shadow:0 0 0 3px rgba(14,78,245,.1)}
+.tile{width:42px;height:42px;border-radius:11px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.tpl.on .tile{background:#DBEAFE}
+.tpl .tt{font-size:13px;font-weight:700;color:#111827;line-height:1.2}
+.tpl .td{font-size:11px;color:#9CA3AF;margin-top:2px}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:12px;font-weight:600;padding:6px 11px;border-radius:999px;border:1px solid #E5E7EB;background:#fff;color:#374151;cursor:pointer;user-select:none}
+.chip.on{background:#0E4EF5;border-color:#0E4EF5;color:#fff}
+.tog{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#374151;cursor:pointer}
+.tog input{width:16px;height:16px;accent-color:#0E4EF5}
+
+/* offer */
+.offer{border:1px solid #E5E7EB;border-radius:14px;padding:15px;margin-bottom:12px;background:#fff}
+.offerhd{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.obadge{font-size:10px;font-weight:700;color:#0E4EF5;background:#EEF2FF;padding:3px 9px;border-radius:999px}
+.onum{font-size:11px;font-weight:700;color:#9CA3AF}
+.adv{margin-top:12px;border-top:1px solid #F1F5F9;padding-top:12px}
+.advtog{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#0E4EF5;cursor:pointer;user-select:none}
+.advtog .car{transition:.12s;font-size:10px}
+.advtog.open .car{transform:rotate(90deg)}
+
+.btn{border:none;border-radius:10px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer}
+.btn-primary{background:#0E4EF5;color:#fff}
+.btn-ghost{background:#fff;color:#374151;border:1px solid #E5E7EB}
+.btn-add{width:100%;background:#F8FAFF;color:#0E4EF5;border:1px dashed #BFD3FF;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-x{background:none;border:none;color:#C4C9D4;font-size:17px;cursor:pointer;margin-left:auto;line-height:1}
+.btn-x:hover{color:#EF4444}
+
+/* review */
+.rev{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;font-size:13px}
+.rev dt{color:#6B7280;font-weight:600}
+.rev dd{color:#111827;font-weight:600;text-align:right}
+.ro{border:1px solid #E5E7EB;border-radius:12px;padding:13px;margin-bottom:10px;background:#fff}
+.ro .roh{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.rtag{font-size:12px;color:#374151;background:#F3F4F6;border-radius:7px;padding:3px 8px;font-weight:600;display:inline-block;margin:3px 4px 0 0}
+details.json{margin-top:6px}
+details.json summary{cursor:pointer;font-size:12.5px;font-weight:700;color:#6B7280;padding:6px 0}
+pre{background:#0B1020;color:#C7D2FE;border-radius:12px;padding:14px;font-size:11px;line-height:1.5;overflow:auto;max-height:460px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-word;margin-top:8px}
+
+/* footer */
+.foot{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid #E5E7EB;padding:14px 18px}
+.footin{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.footin .spacer{flex:1}
+.ghosthint{font-size:11px;color:#9CA3AF}
+@media(max-width:640px){.grid,.tpls{grid-template-columns:1fr}.step .lbl span.txt{display:none}}
+</style></head>
+<body><div class="wrap">
+<div class="top">
+  <h1>Offer &amp; Drop Configurator</h1>
+  <div class="sub">Build a drop step by step — every archetype and configuration dimension, modeled live.</div>
+</div>
+<div id="stepper" class="stepper"></div>
+<div id="screen"></div>
+</div>
+<div class="foot"><div id="footin" class="footin"></div></div>
+
+<script>
+const ARCHETYPES=['RSVP / reservation','Ticketed admission','Tiered admission','Timed-entry slot','Table / seating','Appointment / service','Class / session seat','Product drop','Pre-order / pickup','Food & beverage order','Bundle / package / prix-fixe','Add-on / upsell','Deal / discount / coupon','Membership / pass / punch-card','Donation / pay-what-you-want','Guest pass / comp','Waitlist / standby','Gift card / store credit','Deposit / split payment','Auction / raffle'];
+const PRICING=['Free','Fixed','Variable / choose amount','Pay-what-you-want','Tiered by audience','Deposit + balance'];
+const INVENTORY=['Unlimited','Fixed cap','Per-slot cap','Per-window capacity','Seat inventory','Pooled daily supply','Shared with drop total'];
+const SELECTION=['Quantity (steppers)','Quantity (1 per slot)','Quantity (per group)','Tiers','Assigned seats (seat map)'];
+const TIMING=['Tied to drop time','Own time slots','Arrival window','Has duration','Recurring'];
+const FULFILL=['On-site check-in','Pickup','Delivery','Dine-in','Appointment','Digital / redeem later'];
+const REDEEM=['QR check-in','Code','Staff-marked','Auto'];
+const VERIFY=['None','ID / 21+','ID / 18+','Membership'];
+const ELIG=['Public','Followers','Members','Tier','Code / password','Age-gated','Geo-fenced','First-time only'];
+const DROP_FIELDS=[
+ ['schedule','Schedule',['One-off','Recurring (daily)','Recurring (weekly)','Multi-day','Series / season']],
+ ['timing','Timing mode',['Fixed start time','Arrival window','All-day / open hours','Rolling / evergreen']],
+ ['location','Location mode',['Fixed venue','Multi-location','Mobile / pop-up','Geofenced (Nigh Zone)','Online / virtual']],
+ ['access','Access & visibility',['Public','Followers only','Private / link','Password','Members only','Audience-tiered']],
+ ['privacy','Privacy / discoverability',['Social — discoverable','Private — link only','Confidential — no social layer']],
+ ['spontaneity','Timing pattern',['Live now','Same-day','Spontaneous (≤3 days)','Planned (within 3 days)','Weekend','Weekly recurring','Seasonal']],
+ ['exclusivity','Exclusivity level',['Low','Medium','High','Very High']],
+ ['capacity','Capacity model',['Drop total','Per offer','Per time-slot','Unlimited']],
+ ['verification','Verification',['None','ID / 21+','ID / 18+','Membership']],
+ ['proximity','Transaction gate',['Open — transact anywhere','View nearby, transact in geofence','Verified ticket to transact','Out of range outside geofence']],
+ ['viewRadius','Pre-hype view radius','TEXT'],
+];
+// group drop fields for the wizard
+const DROP_GROUPS=[
+ ['Basics',['schedule','timing','location']],
+ ['Visibility & access',['access','privacy','exclusivity']],
+ ['Capacity & rules',['capacity','spontaneity','verification']],
+ ['Proximity & transaction',['proximity','viewRadius']],
+];
+// defaults per archetype so the form reflects real usage
+const DEF={
+ 'RSVP / reservation':{pricing:'Free',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Ticketed admission':{pricing:'Fixed',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Tiered admission':{pricing:'Tiered by audience',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Timed-entry slot':{pricing:'Fixed',fulfillment:'On-site check-in',inventory:'Per-slot cap',timing:'Own time slots'},
+ 'Table / seating':{pricing:'Deposit + balance',fulfillment:'Dine-in',inventory:'Fixed cap',partySize:true},
+ 'Appointment / service':{pricing:'Fixed',fulfillment:'Appointment',inventory:'Per-slot cap',timing:'Has duration',partySize:true},
+ 'Class / session seat':{pricing:'Fixed',fulfillment:'On-site check-in',inventory:'Fixed cap',timing:'Recurring',partySize:true},
+ 'Product drop':{pricing:'Fixed',fulfillment:'Pickup',inventory:'Fixed cap',variants:true},
+ 'Pre-order / pickup':{pricing:'Fixed',fulfillment:'Pickup',inventory:'Fixed cap'},
+ 'Food & beverage order':{pricing:'Fixed',fulfillment:'Pickup',inventory:'Unlimited',modifiers:true},
+ 'Bundle / package / prix-fixe':{pricing:'Fixed',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Add-on / upsell':{pricing:'Fixed',fulfillment:'On-site check-in',inventory:'Shared with drop total'},
+ 'Deal / discount / coupon':{pricing:'Fixed',fulfillment:'Digital / redeem later',inventory:'Unlimited'},
+ 'Membership / pass / punch-card':{pricing:'Fixed',fulfillment:'Digital / redeem later',inventory:'Unlimited'},
+ 'Donation / pay-what-you-want':{pricing:'Pay-what-you-want',fulfillment:'Digital / redeem later',inventory:'Unlimited'},
+ 'Guest pass / comp':{pricing:'Free',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Waitlist / standby':{pricing:'Free',fulfillment:'On-site check-in',inventory:'Unlimited'},
+ 'Gift card / store credit':{pricing:'Variable / choose amount',fulfillment:'Digital / redeem later',inventory:'Unlimited'},
+ 'Deposit / split payment':{pricing:'Deposit + balance',fulfillment:'On-site check-in',inventory:'Fixed cap'},
+ 'Auction / raffle':{pricing:'Variable / choose amount',fulfillment:'Digital / redeem later',inventory:'Fixed cap'},
+};
+function newOffer(arch){arch=arch||'Ticketed admission';const d=DEF[arch]||{};
+ return {archetype:arch,name:'',pricing:d.pricing||'Fixed',price:'',minAmount:'',suggested:'',deposit:'',
+  inventory:d.inventory||'Fixed cap',cap:'',perGuestLimit:'',quantity:'Single',
+  variants:!!d.variants,variantList:'',modifiers:!!d.modifiers,addOns:false,
+  timing:d.timing||'Tied to drop time',duration:'',partyMin:'',partyMax:'',
+  eligibility:['Public'],fulfillment:d.fulfillment||'On-site check-in',
+  serviceFee:true,taxPct:'',gratuity:false,refund:'Flexible',transferable:true,
+  verification:'None',redemption:(d.fulfillment==='Pickup'||d.fulfillment==='Delivery')?'Code':'QR check-in',provider:'',visitType:'',clientStatus:'New or returning',intake:false,insurance:'Self-pay only',confidential:false,regulated:false,selection:({'Tiered admission':'Tiers','Timed-entry slot':'Quantity (1 per slot)','Table / seating':'Assigned seats (seat map)','Appointment / service':'Quantity (1 per slot)','Class / session seat':'Quantity (1 per slot)'}[arch])||'Quantity (steppers)',requiresPrereq:false,prereqName:'',sponsor:'',winner:'N/A',seated:false,seatMode:'Best available',perTicketFee:'',facilityFee:'',sections:[]};}
+function sectionsTotal(o){return (o.sections||[]).reduce((n,s)=>n+(Number(s.seats)||0),0);}
+function priceRange(o){const ps=(o.sections||[]).map(s=>Number(s.price)||0).filter(x=>x>0);if(!ps.length)return '';const mn=Math.min(...ps),mx=Math.max(...ps);return mn===mx?`$${mn}`:`$${mn}–$${mx}`;}
+let CFG={drop:{schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'None',privacy:'Social — discoverable',spontaneity:'Same-day',exclusivity:'Medium',proximity:'Open — transact anywhere',viewRadius:''},offers:[newOffer('Ticketed admission')]};
+let S={step:1,template:null,adv:{}};
+
+const TEMPLATES={
+ 'Restaurant / fine dining':{drop:{schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'None'},offers:['Table / seating','Bundle / package / prix-fixe','Add-on / upsell']},
+ 'Bar / brewery / taproom':{drop:{schedule:'One-off',timing:'Arrival window',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'ID / 21+'},offers:['Ticketed admission','Product drop','Food & beverage order']},
+ 'Food truck / pop-up':{drop:{schedule:'Recurring (weekly)',timing:'Rolling / evergreen',location:'Mobile / pop-up',access:'Public',capacity:'Per time-slot',verification:'None'},offers:['Food & beverage order','Pre-order / pickup']},
+ 'Retail / boutique':{drop:{schedule:'One-off',timing:'All-day / open hours',location:'Fixed venue',access:'Audience-tiered',capacity:'Per offer',verification:'None'},offers:['Product drop','Tiered admission','Deal / discount / coupon']},
+ 'Fitness / yoga / studio':{drop:{schedule:'Recurring (weekly)',timing:'Fixed start time',location:'Fixed venue',access:'Members only',capacity:'Per time-slot',verification:'None'},offers:['Class / session seat','Membership / pass / punch-card','Appointment / service']},
+ 'Salon / spa / barber':{drop:{schedule:'Rolling / evergreen',timing:'Has duration',location:'Fixed venue',access:'Public',capacity:'Per time-slot',verification:'None'},offers:['Appointment / service','Add-on / upsell','Membership / pass / punch-card']},
+ 'Music / comedy / venue':{drop:{schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'ID / 21+'},offers:['Tiered admission','Table / seating','Guest pass / comp']},
+ 'Market / festival':{drop:{schedule:'Multi-day',timing:'Arrival window',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'None'},offers:['RSVP / reservation','Ticketed admission','Add-on / upsell']},
+ 'Creator / artist':{drop:{schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Followers only',capacity:'Per offer',verification:'None'},offers:['Tiered admission','Product drop','Donation / pay-what-you-want']},
+ 'Doctor / medical clinic':{drop:{schedule:'Rolling / evergreen',timing:'All-day / open hours',location:'Fixed venue',access:'Private / link',capacity:'Per time-slot',verification:'ID / 18+',privacy:'Confidential — no social layer'},offers:[{a:'Appointment / service',set:{name:'New-patient visit',provider:'Dr. Lee',visitType:'New-patient exam',clientStatus:'New only',intake:true,insurance:'Insurance + self-pay',confidential:true,regulated:true,duration:'30',pricing:'Deposit + balance',deposit:'25'}},{a:'Appointment / service',set:{name:'Follow-up visit',visitType:'Follow-up',clientStatus:'Returning only',insurance:'Insurance + self-pay',confidential:true,regulated:true,duration:'15'}},{a:'Membership / pass / punch-card',set:{name:'Annual care plan',confidential:true}}]},
+ 'Dentist':{drop:{schedule:'Rolling / evergreen',timing:'All-day / open hours',location:'Fixed venue',access:'Private / link',capacity:'Per time-slot',verification:'ID / 18+',privacy:'Confidential — no social layer'},offers:[{a:'Appointment / service',set:{name:'Cleaning',visitType:'Routine cleaning',insurance:'Insurance + self-pay',confidential:true,regulated:true,duration:'45'}},{a:'Appointment / service',set:{name:'Consultation',confidential:true,regulated:true,duration:'30'}}]},
+ 'Therapist / mental health':{drop:{schedule:'Rolling / evergreen',timing:'Has duration',location:'Online / virtual',access:'Private / link',capacity:'Per time-slot',verification:'ID / 18+',privacy:'Confidential — no social layer'},offers:[{a:'Appointment / service',set:{name:'50-minute session',fulfillment:'Digital / redeem later',confidential:true,regulated:true,duration:'50',insurance:'Insurance + self-pay'}},{a:'Membership / pass / punch-card',set:{name:'Weekly plan',confidential:true}}]},
+ 'Veterinarian':{drop:{schedule:'Rolling / evergreen',timing:'All-day / open hours',location:'Fixed venue',access:'Private / link',capacity:'Per time-slot',verification:'None',privacy:'Confidential — no social layer'},offers:[{a:'Appointment / service',set:{name:'Wellness exam',clientStatus:'New or returning',intake:true,confidential:true,regulated:true,duration:'30'}},{a:'Product drop',set:{name:'Prescription refill',fulfillment:'Pickup'}}]},
+ 'Lawyer / professional':{drop:{schedule:'Rolling / evergreen',timing:'Has duration',location:'Fixed venue',access:'Private / link',capacity:'Per time-slot',verification:'None',privacy:'Confidential — no social layer'},offers:[{a:'Appointment / service',set:{name:'Consultation',visitType:'Initial consult',confidential:true,regulated:true,duration:'30',pricing:'Fixed',price:'150'}},{a:'Deposit / split payment',set:{name:'Retainer',confidential:true,deposit:'500'}}]},
+ 'Tutor / coach':{drop:{schedule:'Recurring (weekly)',timing:'Fixed start time',location:'Online / virtual',access:'Followers only',capacity:'Per time-slot',verification:'None',privacy:'Private — link only'},offers:[{a:'Appointment / service',set:{name:'1:1 session',duration:'60',pricing:'Fixed',price:'45'}},{a:'Membership / pass / punch-card',set:{name:'5-session pack'}},{a:'Donation / pay-what-you-want',set:{name:'Trial lesson',pricing:'Pay-what-you-want',minAmount:'10',suggested:'25'}}]},
+ 'Home / trade services':{drop:{schedule:'Rolling / evergreen',timing:'All-day / open hours',location:'Mobile / pop-up',access:'Private / link',capacity:'Per time-slot',verification:'None',privacy:'Private — link only'},offers:[{a:'Appointment / service',set:{name:'Service call',visitType:'Diagnostic visit',duration:'60',pricing:'Fixed',price:'89'}},{a:'Deposit / split payment',set:{name:'Job deposit',deposit:'200'}}]},
+};
+const TPL_META={
+ 'Restaurant / fine dining':['🍽️','Tables, prix-fixe, add-ons'],
+ 'Bar / brewery / taproom':['🍺','Admission, pours, 21+'],
+ 'Food truck / pop-up':['🚚','Mobile orders & pickup'],
+ 'Retail / boutique':['🛍️','Product drops & deals'],
+ 'Fitness / yoga / studio':['🧘','Classes & memberships'],
+ 'Salon / spa / barber':['💈','Appointments & add-ons'],
+ 'Music / comedy / venue':['🎤','Tiered tickets & tables'],
+ 'Market / festival':['🎪','Multi-day, zone-based'],
+ 'Creator / artist':['🎨','Followers, merch, tips'],
+ 'Doctor / medical clinic':['🩺','Confidential visits'],
+ 'Dentist':['🦷','Cleanings & consults'],
+ 'Therapist / mental health':['💬','Private virtual sessions'],
+ 'Veterinarian':['🐾','Exams & refills'],
+ 'Lawyer / professional':['⚖️','Consults & retainers'],
+ 'Tutor / coach':['📚','1:1 sessions & packs'],
+ 'Home / trade services':['🔧','Service calls & deposits'],
+};
+
+// Worked examples from the "Nigh — Elevating IRL" deck. Each is a full drop with its sponsored offers.
+const EXAMPLES={
+ 'Arena Concert — Reserved Seating':{icon:'🎟️',desc:'Full seated ticketing, by section',
+   drop:{schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'None',privacy:'Social — discoverable',spontaneity:'Planned (within 3 days)',exclusivity:'High',proximity:'Open — transact anywhere',viewRadius:''},
+   offers:[
+    {a:'Tiered admission',set:{name:'Concert ticket (reserved seat)',pricing:'Tiered by audience',inventory:'Seat inventory',selection:'Assigned seats (seat map)',seated:true,seatMode:'Pick your seat',perTicketFee:'18',facilityFee:'5',transferable:true,sections:[{name:'Floor',price:'295',seats:'1200'},{name:'Lower Bowl',price:'175',seats:'4000'},{name:'Club Level',price:'225',seats:'1500'},{name:'Upper Bowl',price:'89',seats:'8000'},{name:'Value (behind stage)',price:'59',seats:'1800'}]}},
+    {a:'Bundle / package / prix-fixe',set:{name:'VIP package + soundcheck',pricing:'Fixed',price:'650',inventory:'Fixed cap',cap:'100'}},
+    {a:'Add-on / upsell',set:{name:'Prepaid parking',pricing:'Fixed',price:'40',inventory:'Fixed cap',cap:'1500'}}]},
+ 'Boulder Store Drop — Best Buy':{icon:'🛍️',desc:'Retail store · brand co-drops',
+   drop:{schedule:'One-off',timing:'All-day / open hours',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per offer',verification:'None',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'High',proximity:'View nearby, transact in geofence',viewRadius:'10 mi'},
+   offers:[
+    {a:'Auction / raffle',set:{name:'Win a Samsung Galaxy',sponsor:'Samsung',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'1',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'25% off any one item',winner:'First-come',inventory:'Fixed cap',cap:'10',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'3× Best Buy rewards on any purchase',winner:'All attendees',inventory:'Unlimited',eligibility:['Geo-fenced']}},
+    {a:'Product drop',set:{name:'PlayStation merch giveaway',sponsor:'Sony',winner:'Random draw',pricing:'Free',fulfillment:'Pickup',eligibility:['Geo-fenced']}}]},
+ 'Fight Night — T-Mobile Arena':{icon:'🥊',desc:'UFC event · verified ticket',
+   drop:{schedule:'One-off',timing:'Fixed start time',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'ID / 21+',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'Very High',proximity:'Verified ticket to transact',viewRadius:'10 mi'},
+   offers:[
+    {a:'Guest pass / comp',set:{name:'Free Bud Light (21+)',sponsor:'Bud Light',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'100',verification:'ID / 21+',eligibility:['Geo-fenced','Age-gated']}},
+    {a:'Auction / raffle',set:{name:'Backstage fighter meet',sponsor:'UFC',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'4',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'50% off pizza (last call)',winner:'All attendees',inventory:'Pooled daily supply',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Fight Night tee — 25% off',sponsor:'UFC',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'Las Vegas Race Week — F1':{icon:'🏎️',desc:'Multi-day · verified ticket',
+   drop:{schedule:'Multi-day',timing:'Arrival window',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'ID / 18+',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'Very High',proximity:'Verified ticket to transact',viewRadius:'10 mi'},
+   offers:[
+    {a:'RSVP / reservation',set:{name:'Heineken VIP tent',sponsor:'Heineken',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'50',eligibility:['Geo-fenced']}},
+    {a:'Auction / raffle',set:{name:'Start the F1 race',sponsor:'F1',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'1',eligibility:['Geo-fenced']}},
+    {a:'Auction / raffle',set:{name:'Win a Rolex',sponsor:'Rolex',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'1',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Race Day hats — 50% off',sponsor:'F1',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'A Day at the Theme Park — Disney':{icon:'🎢',desc:'Park-wide · ticket verified',
+   drop:{schedule:'Recurring (daily)',timing:'All-day / open hours',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'Membership',privacy:'Social — discoverable',spontaneity:'Same-day',exclusivity:'High',proximity:'Verified ticket to transact',viewRadius:''},
+   offers:[
+    {a:'Product drop',set:{name:'Souvenir Disney Coke glass',sponsor:'Coca-Cola',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'200',fulfillment:'Pickup',eligibility:['Geo-fenced']}},
+    {a:'Timed-entry slot',set:{name:'Skip-the-line ride pass',pricing:'Variable / choose amount',inventory:'Per-slot cap',cap:'20',timing:'Own time slots',eligibility:['Geo-fenced']}},
+    {a:'RSVP / reservation',set:{name:'Meet Snow White (VIP)',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'10',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Food vendors 50% off (end of day)',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'Coachella Week':{icon:'🎪',desc:'Festival · verified ticket',
+   drop:{schedule:'Multi-day',timing:'Arrival window',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'ID / 21+',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'Very High',proximity:'Verified ticket to transact',viewRadius:'10 mi'},
+   offers:[
+    {a:'RSVP / reservation',set:{name:'Absolut VIP room + shot glass',sponsor:'Absolut',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'200',verification:'ID / 21+',eligibility:['Geo-fenced','Age-gated']}},
+    {a:'Auction / raffle',set:{name:'Meet the artists (VIP)',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'5',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Flash upgrades (demand-based)',winner:'All attendees',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Food & merch discounts (end of week)',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'A Night at the Casino — MGM':{icon:'🎰',desc:'Resort-wide · out of range gate',
+   drop:{schedule:'Rolling / evergreen',timing:'All-day / open hours',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per offer',verification:'ID / 21+',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'High',proximity:'Out of range outside geofence',viewRadius:''},
+   offers:[
+    {a:'Ticketed admission',set:{name:'Cirque du Soleil — tonight',pricing:'Fixed',inventory:'Fixed cap',cap:'30',eligibility:['Geo-fenced']}},
+    {a:'Product drop',set:{name:'MGM tee + 3× rewards',pricing:'Fixed',winner:'All attendees',fulfillment:'Pickup',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Dining deal (slow hours)',winner:'All attendees',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Last-minute floor offers',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'Minnesota Vikings Game':{icon:'🏈',desc:'Stadium · verified ticket',
+   drop:{schedule:'One-off',timing:'Fixed start time',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per time-slot',verification:'ID / 21+',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'Very High',proximity:'Verified ticket to transact',viewRadius:'10 mi'},
+   offers:[
+    {a:'Auction / raffle',set:{name:'Lead the Skol chant (Gjallarhorn)',sponsor:'Minnesota Vikings',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'1',eligibility:['Geo-fenced']}},
+    {a:'RSVP / reservation',set:{name:'Coors VIP access + game-day mug',sponsor:'Coors',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'50',verification:'ID / 21+',eligibility:['Geo-fenced','Age-gated']}},
+    {a:'Auction / raffle',set:{name:'Meet the players (half-time VIP)',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'4',eligibility:['Geo-fenced']}},
+    {a:'Auction / raffle',set:{name:'Win a Polaris UTV',sponsor:'Polaris',winner:'Random draw',pricing:'Free',inventory:'Fixed cap',cap:'1',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Vendor liquidation (end of game)',winner:'All attendees',eligibility:['Geo-fenced']}}]},
+ 'Slow Night Drop — Buffalo Wild Wings':{icon:'🍗',desc:'Restaurant · fill a slow night',
+   drop:{schedule:'One-off',timing:'Arrival window',location:'Geofenced (Nigh Zone)',access:'Public',capacity:'Per offer',verification:'None',privacy:'Social — discoverable',spontaneity:'Live now',exclusivity:'Medium',proximity:'View nearby, transact in geofence',viewRadius:'25 mi'},
+   offers:[
+    {a:'Guest pass / comp',set:{name:'Free Cuervo shot (21+)',sponsor:'Jose Cuervo',winner:'First-come',pricing:'Free',inventory:'Fixed cap',cap:'10',verification:'ID / 21+',eligibility:['Geo-fenced','Age-gated']}},
+    {a:'Deal / discount / coupon',set:{name:'50% off any one menu item',winner:'First-come',inventory:'Fixed cap',cap:'10',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'15% off any appetizer',winner:'All attendees',eligibility:['Geo-fenced']}},
+    {a:'Deal / discount / coupon',set:{name:'Last call: 50% off wings',winner:'All attendees',inventory:'Pooled daily supply',eligibility:['Geo-fenced']}}]},
+};
+
+function sel(val,opts,onchg){return `<select onchange="${onchg}">${opts.map(o=>`<option ${o===val?'selected':''}>${o}</option>`).join('')}</select>`;}
+function setDrop(k,v){CFG.drop[k]=v;render();}
+function setOffer(i,k,v){CFG.offers[i][k]=v;render();}
+function setBool(i,k,v){CFG.offers[i][k]=v;render();}
+function toggleElig(i,e){const a=CFG.offers[i].eligibility;const x=a.indexOf(e);if(x<0)a.push(e);else a.splice(x,1);render();}
+function changeArch(i,a){const keepName=CFG.offers[i].name;CFG.offers[i]=newOffer(a);CFG.offers[i].name=keepName;render();}
+function addOffer(){CFG.offers.push(newOffer('Ticketed admission'));S.adv[CFG.offers.length-1]=true;render();}
+function removeOffer(i){CFG.offers.splice(i,1);if(!CFG.offers.length)CFG.offers.push(newOffer('RSVP / reservation'));render();}
+function toggleAdv(i){S.adv[i]=!S.adv[i];render();}
+function addSection(i){CFG.offers[i].sections.push({name:'',price:'',seats:''});render();}
+function removeSection(i,j){CFG.offers[i].sections.splice(j,1);render();}
+function setSection(i,j,k,v){CFG.offers[i].sections[j][k]=v;render();}
+const DROP_DEFAULTS={schedule:'One-off',timing:'Fixed start time',location:'Fixed venue',access:'Public',capacity:'Per offer',verification:'None',privacy:'Social — discoverable',spontaneity:'Same-day',exclusivity:'Medium',proximity:'Open — transact anywhere',viewRadius:''};
+function loadTemplate(name){const t=TEMPLATES[name];if(!t)return;CFG={drop:Object.assign({},DROP_DEFAULTS,t.drop),offers:t.offers.map(x=>{if(typeof x==='string')return newOffer(x);const o=newOffer(x.a);Object.assign(o,x.set||{});return o;})};}
+function buildOffers(list){return list.map(x=>{if(typeof x==='string')return newOffer(x);const o=newOffer(x.a);Object.assign(o,x.set||{});if(o.sections)o.sections=o.sections.map(s=>({...s}));return o;});}
+function loadExample(name){const e=EXAMPLES[name];if(!e)return;CFG={drop:Object.assign({},DROP_DEFAULTS,e.drop),offers:buildOffers(e.offers)};}
+function pickTemplate(name){S.template=name;if(name==='__blank__'){CFG={drop:Object.assign({},DROP_DEFAULTS),offers:[newOffer('Ticketed admission')]};}else if(EXAMPLES[name]){loadExample(name);}else{loadTemplate(name);}S.step=2;render();}
+function goStep(n){if(n<1||n>4)return;S.step=n;render();}
+
+/* ---------- STEP 1: business template ---------- */
+function screenBusiness(){
+  const cards=Object.keys(TEMPLATES).map(name=>{const[ic,desc]=TPL_META[name]||['🏪',''];
+    return `<button class="tpl ${S.template===name?'on':''}" onclick="pickTemplate('${name}')">
+      <div class="tile">${ic}</div><div><div class="tt">${name}</div><div class="td">${desc}</div></div></button>`;}).join('');
+  const exCards=Object.keys(EXAMPLES).map(name=>{const e=EXAMPLES[name];
+    return `<button class="tpl ${S.template===name?'on':''}" onclick="pickTemplate('${name.replace(/'/g,"\\'")}')">
+      <div class="tile">${e.icon}</div><div><div class="tt">${name}</div><div class="td">${e.desc}</div></div></button>`;}).join('');
+  return `<div class="card pad">
+    <h2>What are you setting up?</h2>
+    <div class="h2sub">Pick a business type to start from a sensible template — or start blank. You can change anything after.</div>
+    <div class="tpls">${cards}</div>
+    <button class="tpl ${S.template==='__blank__'?'on':''}" style="width:100%;margin-top:10px" onclick="pickTemplate('__blank__')">
+      <div class="tile">＋</div><div><div class="tt">Start blank</div><div class="td">Build a drop from scratch</div></div></button>
+  </div>
+  <div class="card pad">
+    <h2>Elevate IRL examples</h2>
+    <div class="h2sub">Worked drops from the pitch deck — geofenced, sponsored, and time-sensitive. Load one to see every offer configured.</div>
+    <div class="tpls">${exCards}</div>
+  </div>`;
+}
+
+/* ---------- STEP 2: drop setup ---------- */
+function dropField(k){const[,label,opts]=DROP_FIELDS.find(f=>f[0]===k);
+  if(opts==='TEXT')return `<div class="f"><label>${label}</label><input type="text" value="${CFG.drop[k]||''}" placeholder="e.g. 10 mi — leave blank if none" onchange="setDrop('${k}',this.value)"></div>`;
+  return `<div class="f"><label>${label}</label>${sel(CFG.drop[k],opts,`setDrop('${k}',this.value)`)}</div>`;}
+function screenDrop(){
+  const groups=DROP_GROUPS.map(([title,keys])=>`<div class="card">
+    <div class="sec">${title}</div>
+    <div class="grid">${keys.map(dropField).join('')}</div>
+  </div>`).join('');
+  return `<div class="card pad" style="margin-bottom:14px"><h2>Drop setup</h2><div class="h2sub" style="margin:0">The drop is the container. These settings apply to every offer inside it.</div></div>${groups}`;
+}
+
+/* ---------- STEP 3: offers ---------- */
+function offerCard(o,i){
+  const open=!!S.adv[i];
+  const price = o.pricing==='Fixed'||o.pricing==='Variable / choose amount'?`<div class="f"><label>Price ($)</label><input type="number" value="${o.price}" placeholder="0" onchange="setOffer(${i},'price',this.value)"></div>`:'';
+  const pwyw = o.pricing==='Pay-what-you-want'?`<div class="f"><label>Minimum ($)</label><input type="number" value="${o.minAmount}" onchange="setOffer(${i},'minAmount',this.value)"></div><div class="f"><label>Suggested ($)</label><input type="number" value="${o.suggested}" onchange="setOffer(${i},'suggested',this.value)"></div>`:'';
+  const dep = o.pricing==='Deposit + balance'?`<div class="f"><label>Deposit ($)</label><input type="number" value="${o.deposit}" onchange="setOffer(${i},'deposit',this.value)"></div><div class="f"><label>Balance ($)</label><input type="number" value="${o.price}" onchange="setOffer(${i},'price',this.value)"></div>`:'';
+  const tier = o.pricing==='Tiered by audience'?`<div class="f" style="grid-column:1/-1"><label>Tiers (name:price, comma-separated)</label><input type="text" value="${o.variantList}" placeholder="GA:25, VIP:60, Early:20" onchange="setOffer(${i},'variantList',this.value)"></div>`:'';
+  const cap = (o.inventory==='Fixed cap'||o.inventory==='Per-slot cap')?`<div class="f"><label>Capacity</label><input type="number" value="${o.cap}" placeholder="e.g. 40" onchange="setOffer(${i},'cap',this.value)"></div>`:'';
+  const party = ['Table / seating','Appointment / service','Class / session seat'].includes(o.archetype)?`<div class="f"><label>Party size min</label><input type="number" value="${o.partyMin}" onchange="setOffer(${i},'partyMin',this.value)"></div><div class="f"><label>Party size max</label><input type="number" value="${o.partyMax}" onchange="setOffer(${i},'partyMax',this.value)"></div>`:'';
+  const dur = (o.timing==='Has duration'||o.archetype==='Appointment / service')?`<div class="f"><label>Duration (min)</label><input type="number" value="${o.duration}" onchange="setOffer(${i},'duration',this.value)"></div>`:'';
+  const prereq = o.requiresPrereq?`<div class="f" style="grid-column:1/-1"><label>Prerequisite (which offer / booking)</label><input type="text" value="${o.prereqName}" placeholder="e.g. active membership, prior visit" onchange="setOffer(${i},'prereqName',this.value)"></div>`:'';
+  const varList = o.variants?`<div class="f" style="grid-column:1/-1"><label>Variant options (comma-separated)</label><input type="text" value="${o.variantList}" placeholder="S, M, L / Black, White" onchange="setOffer(${i},'variantList',this.value)"></div>`:'';
+  const pro = o.archetype==='Appointment / service'?`<div class="sec" style="margin-top:14px">Professional / health</div><div class="grid"><div class="f"><label>Provider</label><input type="text" value="${o.provider}" placeholder="e.g. Dr. Lee" onchange="setOffer(${i},'provider',this.value)"></div><div class="f"><label>Visit / service type</label><input type="text" value="${o.visitType}" placeholder="e.g. New-patient exam" onchange="setOffer(${i},'visitType',this.value)"></div><div class="f"><label>Client status</label>${sel(o.clientStatus,['New or returning','New only','Returning only'],`setOffer(${i},'clientStatus',this.value)`)}</div><div class="f"><label>Insurance</label>${sel(o.insurance,['Self-pay only','Insurance accepted','Insurance + self-pay'],`setOffer(${i},'insurance',this.value)`)}</div></div><div class="chips" style="margin-top:10px"><label class="tog"><input type="checkbox" ${o.intake?'checked':''} onchange="setBool(${i},'intake',this.checked)">Intake / forms required</label><label class="tog"><input type="checkbox" ${o.confidential?'checked':''} onchange="setBool(${i},'confidential',this.checked)">Confidential (no social surfacing)</label><label class="tog"><input type="checkbox" ${o.regulated?'checked':''} onchange="setBool(${i},'regulated',this.checked)">Regulated / licensed</label></div>`:'';
+
+  return `<div class="offer">
+    <div class="offerhd">
+      <span class="onum">Offer ${i+1}</span>
+      <span class="obadge">${o.archetype}</span>
+      <button class="btn-x" onclick="removeOffer(${i})" title="Remove">✕</button>
+    </div>
+    <div class="grid">
+      <div class="f"><label>Archetype</label>${sel(o.archetype,ARCHETYPES,`changeArch(${i},this.value)`)}</div>
+      <div class="f"><label>Name</label><input type="text" value="${o.name}" placeholder="e.g. 5-Course Menu" onchange="setOffer(${i},'name',this.value)"></div>
+    </div>
+    <div class="sec" style="margin-top:14px">Pricing</div>
+    <div class="grid">
+      <div class="f"><label>Pricing model</label>${sel(o.pricing,PRICING,`setOffer(${i},'pricing',this.value)`)}</div>
+      ${o.seated?`<div class="f" style="grid-column:1/-1"><div style="font-size:11px;color:#9CA3AF;margin-top:2px">Prices are set per section under “Seating &amp; sections” below.</div></div>`:`${price}${pwyw}${dep}${tier}`}
+    </div>
+    <div class="sec" style="margin-top:14px">Inventory &amp; selection</div>
+    <div class="grid">
+      <div class="f"><label>Inventory</label>${sel(o.inventory,INVENTORY,`setOffer(${i},'inventory',this.value)`)}</div>
+      ${cap}
+      <div class="f"><label>Selection model</label>${sel(o.selection,SELECTION,`setOffer(${i},'selection',this.value)`)}</div>
+    </div>
+    <div class="adv">
+      <div class="advtog ${open?'open':''}" onclick="toggleAdv(${i})"><span class="car">▶</span>${open?'Hide advanced options':'Advanced options'}</div>
+      ${open?`
+      <div class="sec" style="margin-top:12px">Sponsorship &amp; selection</div>
+      <div class="grid">
+        <div class="f"><label>Sponsor / co-brand</label><input type="text" value="${o.sponsor}" placeholder="e.g. Samsung, Bud Light" onchange="setOffer(${i},'sponsor',this.value)"></div>
+        <div class="f"><label>Winner selection</label>${sel(o.winner,['N/A','First-come','Random draw','All attendees'],`setOffer(${i},'winner',this.value)`)}</div>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="f"><label>Per-guest limit</label><input type="number" value="${o.perGuestLimit}" placeholder="e.g. 2" onchange="setOffer(${i},'perGuestLimit',this.value)"></div>
+        <div class="f"><label>Quantity</label>${sel(o.quantity,['Single','Selectable qty'],`setOffer(${i},'quantity',this.value)`)}</div>
+      </div>
+      <div class="sec" style="margin-top:14px">Options</div>
+      <div class="chips">
+        <label class="tog"><input type="checkbox" ${o.variants?'checked':''} onchange="setBool(${i},'variants',this.checked)">Variants</label>
+        <label class="tog"><input type="checkbox" ${o.modifiers?'checked':''} onchange="setBool(${i},'modifiers',this.checked)">Modifiers</label>
+        <label class="tog"><input type="checkbox" ${o.addOns?'checked':''} onchange="setBool(${i},'addOns',this.checked)">Add-ons</label>
+        <label class="tog"><input type="checkbox" ${o.requiresPrereq?'checked':''} onchange="setBool(${i},'requiresPrereq',this.checked)">Requires prior booking</label>
+        <label class="tog"><input type="checkbox" ${o.seated?'checked':''} onchange="setBool(${i},'seated',this.checked)">Reserved seating</label>
+      </div>
+      <div class="grid" style="margin-top:12px">${varList}${prereq}</div>
+      ${o.seated?`
+      <div class="sec" style="margin-top:14px">Seating &amp; sections</div>
+      <div class="grid"><div class="f"><label>Seat selection</label>${sel(o.seatMode,['Best available','Pick your seat','General admission'],`setOffer(${i},'seatMode',this.value)`)}</div></div>
+      <div style="margin-top:10px">
+        <div style="display:grid;grid-template-columns:1fr 84px 84px 26px;gap:8px;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;padding:0 2px 4px"><span>Section</span><span>Price $</span><span>Seats</span><span></span></div>
+        ${(o.sections||[]).map((s,j)=>`<div style="display:grid;grid-template-columns:1fr 84px 84px 26px;gap:8px;margin-bottom:6px;align-items:center">
+          <input type="text" value="${s.name}" placeholder="e.g. Lower Bowl" onchange="setSection(${i},${j},'name',this.value)" style="padding:9px 10px;border:1px solid #E5E7EB;border-radius:9px;font-size:13px;outline:none">
+          <input type="number" value="${s.price}" placeholder="0" onchange="setSection(${i},${j},'price',this.value)" style="padding:9px 10px;border:1px solid #E5E7EB;border-radius:9px;font-size:13px;outline:none">
+          <input type="number" value="${s.seats}" placeholder="0" onchange="setSection(${i},${j},'seats',this.value)" style="padding:9px 10px;border:1px solid #E5E7EB;border-radius:9px;font-size:13px;outline:none">
+          <button class="btn-x" style="margin:0;font-size:15px" onclick="removeSection(${i},${j})" title="Remove">✕</button></div>`).join('')}
+        <button class="btn-add" style="padding:9px;margin-top:4px" onclick="addSection(${i})">＋ Add section</button>
+        <div style="font-size:12px;color:#374151;margin-top:9px;font-weight:700">Total: ${sectionsTotal(o).toLocaleString()} seats${(o.sections&&o.sections.length&&priceRange(o))?` · ${priceRange(o)}`:''}</div>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="f"><label>Service fee / ticket ($)</label><input type="number" value="${o.perTicketFee}" placeholder="0" onchange="setOffer(${i},'perTicketFee',this.value)"></div>
+        <div class="f"><label>Facility fee / ticket ($)</label><input type="number" value="${o.facilityFee}" placeholder="0" onchange="setOffer(${i},'facilityFee',this.value)"></div>
+      </div>`:''}
+      <div class="sec" style="margin-top:14px">Timing</div>
+      <div class="grid">
+        <div class="f"><label>Timing</label>${sel(o.timing,TIMING,`setOffer(${i},'timing',this.value)`)}</div>
+        ${dur}${party}
+      </div>
+      <div class="sec" style="margin-top:14px">Access / eligibility</div>
+      <div class="chips">${ELIG.map(e=>`<span class="chip ${o.eligibility.includes(e)?'on':''}" onclick="toggleElig(${i},'${e}')">${e}</span>`).join('')}</div>
+      <div class="sec" style="margin-top:14px">Fulfillment &amp; redemption</div>
+      <div class="grid">
+        <div class="f"><label>Fulfillment</label>${sel(o.fulfillment,FULFILL,`setOffer(${i},'fulfillment',this.value)`)}</div>
+        <div class="f"><label>Redemption</label>${sel(o.redemption,REDEEM,`setOffer(${i},'redemption',this.value)`)}</div>
+      </div>
+      <div class="sec" style="margin-top:14px">Fees, policy &amp; verification</div>
+      <div class="grid">
+        <div class="f"><label>Tax (%)</label><input type="number" value="${o.taxPct}" placeholder="0" onchange="setOffer(${i},'taxPct',this.value)"></div>
+        <div class="f"><label>Refund policy</label>${sel(o.refund,['Flexible','Moderate','Strict','Non-refundable'],`setOffer(${i},'refund',this.value)`)}</div>
+        <div class="f"><label>Verification</label>${sel(o.verification,VERIFY,`setOffer(${i},'verification',this.value)`)}</div>
+      </div>
+      <div class="chips" style="margin-top:12px">
+        <label class="tog"><input type="checkbox" ${o.serviceFee?'checked':''} onchange="setBool(${i},'serviceFee',this.checked)">Service fee</label>
+        <label class="tog"><input type="checkbox" ${o.gratuity?'checked':''} onchange="setBool(${i},'gratuity',this.checked)">Gratuity</label>
+        <label class="tog"><input type="checkbox" ${o.transferable?'checked':''} onchange="setBool(${i},'transferable',this.checked)">Transferable</label>
+      </div>
+      ${pro}
+      `:''}
+    </div>
+  </div>`;
+}
+function screenOffers(){
+  return `<div class="card pad" style="margin-bottom:14px"><h2>Offers</h2><div class="h2sub" style="margin:0">A drop can hold one or many offers. Each has a type; the essentials show by default and the rest tuck under “Advanced options.”</div></div>
+    <div>${CFG.offers.map(offerCard).join('')}</div>
+    <button class="btn-add" onclick="addOffer()">＋ Add another offer</button>`;
+}
+
+/* ---------- STEP 4: review ---------- */
+function clean(o){
+  const out={archetype:o.archetype,name:o.name||'(unnamed)',pricing:{model:o.pricing}};
+  if(o.pricing==='Fixed'||o.pricing==='Variable / choose amount')out.pricing.price=Number(o.price)||0;
+  if(o.pricing==='Pay-what-you-want'){out.pricing.min=Number(o.minAmount)||0;out.pricing.suggested=Number(o.suggested)||0;}
+  if(o.pricing==='Deposit + balance'){out.pricing.deposit=Number(o.deposit)||0;out.pricing.balance=Number(o.price)||0;}
+  if(o.pricing==='Tiered by audience')out.pricing.tiers=o.variantList||'';
+  out.inventory={type:o.inventory};if(o.cap&&(o.inventory==='Fixed cap'||o.inventory==='Per-slot cap'))out.inventory.cap=Number(o.cap);
+  if(o.perGuestLimit)out.perGuestLimit=Number(o.perGuestLimit);
+  out.quantity=o.quantity;
+  out.selection=o.selection;
+  if(o.requiresPrereq)out.prerequisite=o.prereqName||true;
+  if(o.sponsor)out.sponsor=o.sponsor;
+  if(o.winner&&o.winner!=='N/A')out.winnerSelection=o.winner;
+  if(o.variants)out.variants=o.variantList||true;
+  if(o.modifiers)out.modifiers=true; if(o.addOns)out.addOns=true;
+  out.timing={mode:o.timing}; if(o.duration)out.timing.durationMin=Number(o.duration);
+  if(o.partyMin||o.partyMax)out.partySize={min:Number(o.partyMin)||1,max:Number(o.partyMax)||null};
+  out.eligibility=o.eligibility.slice();
+  out.fulfillment=o.fulfillment; out.redemption=o.redemption;
+  out.fees={serviceFee:o.serviceFee,taxPct:Number(o.taxPct)||0,gratuity:o.gratuity};
+  out.policy={refund:o.refund,transferable:o.transferable};
+  if(o.seated){
+    out.seating={mode:o.seatMode,sections:(o.sections||[]).map(s=>({name:s.name||'(section)',price:Number(s.price)||0,seats:Number(s.seats)||0})),totalSeats:sectionsTotal(o),serviceFeePerTicket:Number(o.perTicketFee)||0,facilityFeePerTicket:Number(o.facilityFee)||0};
+    out.inventory={type:'Seat inventory',total:sectionsTotal(o)};
+    out.selection='Assigned seats (seat map)';
+  }
+  if(o.verification!=='None')out.verification=o.verification;
+  if(o.archetype==='Appointment / service')out.professional={provider:o.provider||'',visitType:o.visitType||'',clientStatus:o.clientStatus,insurance:o.insurance,intakeRequired:o.intake,confidential:o.confidential,regulated:o.regulated};
+  return out;
+}
+function priceLabel(o){
+  if(o.seated)return priceRange(o)||'Reserved seating';
+  if(o.pricing==='Free')return 'Free';
+  if(o.pricing==='Fixed'||o.pricing==='Variable / choose amount')return o.price?`$${o.price}`:o.pricing;
+  if(o.pricing==='Pay-what-you-want')return o.suggested?`PWYW · sugg. $${o.suggested}`:'Pay what you want';
+  if(o.pricing==='Deposit + balance')return `$${o.deposit||0} dep${o.price?` + $${o.price}`:''}`;
+  if(o.pricing==='Tiered by audience')return o.variantList||'Tiered';
+  return o.pricing;
+}
+function screenReview(){
+  const d=CFG.drop;
+  const dropRows=DROP_FIELDS.map(([k,label])=>`<dt>${label}</dt><dd>${d[k]}</dd>`).join('');
+  const offers=CFG.offers.map((o,i)=>{
+    const tags=[];
+    if(o.sponsor)tags.push(`Sponsored · ${o.sponsor}`);
+    tags.push(priceLabel(o));
+    if(o.winner&&o.winner!=='N/A')tags.push(o.winner);
+    if(o.seated){
+      tags.push(`${(o.sections||[]).length} sections`);
+      tags.push(`${sectionsTotal(o).toLocaleString()} seats`);
+      tags.push(o.seatMode);
+      if(Number(o.perTicketFee)||Number(o.facilityFee))tags.push(`+$${(Number(o.perTicketFee)||0)+(Number(o.facilityFee)||0)} fees/ticket`);
+    }else{
+      tags.push(o.inventory + (o.cap&&(o.inventory==='Fixed cap'||o.inventory==='Per-slot cap')?` (${o.cap})`:''));
+      tags.push(o.selection);
+    }
+    if(o.duration)tags.push(`${o.duration} min`);
+    if(o.verification!=='None')tags.push(o.verification);
+    if(o.eligibility.includes('Geo-fenced'))tags.push('Geo-fenced');
+    if(o.confidential)tags.push('Confidential');
+    if(o.requiresPrereq)tags.push('Prerequisite');
+    return `<div class="ro"><div class="roh"><span class="onum">Offer ${i+1}</span><span class="obadge">${o.archetype}</span><span style="font-weight:700;font-size:13px">${o.name||'(unnamed)'}</span></div>
+      <div>${tags.map(t=>`<span class="rtag">${t}</span>`).join('')}</div></div>`;
+  }).join('');
+  const model={drop:CFG.drop,offers:CFG.offers.map(clean)};
+  return `<div class="card pad" style="margin-bottom:14px"><h2>Review</h2><div class="h2sub" style="margin:0">Here's the full drop. The data model below is what Nigh stores.</div></div>
+    <div class="card"><div class="sec">Drop</div><dl class="rev">${dropRows}</dl></div>
+    <div class="card"><div class="sec">Offers (${CFG.offers.length})</div>${offers}</div>
+    <div class="card"><details class="json"><summary>🧩 View data model (JSON)</summary><pre>${JSON.stringify(model,null,2).replace(/</g,'&lt;')}</pre></details></div>`;
+}
+
+/* ---------- chrome ---------- */
+const STEP_LABELS=['Business','Drop','Offers','Review'];
+function renderStepper(){
+  document.getElementById('stepper').innerHTML=STEP_LABELS.map((lbl,idx)=>{const n=idx+1;const cls=n===S.step?'cur':(n<S.step?'done':'');
+    return `<div class="step ${cls}" onclick="goStep(${n})"><div class="bar"></div><div class="lbl"><span class="num">${n}</span><span class="txt">${lbl}</span></div></div>`;}).join('');
+}
+function renderFooter(){
+  const back=S.step>1?`<button class="btn btn-ghost" onclick="goStep(${S.step-1})">← Back</button>`:'<span></span>';
+  let next='';
+  if(S.step===1)next=`<span class="ghosthint">Pick a template to continue →</span>`;
+  else if(S.step<4)next=`<button class="btn btn-primary" onclick="goStep(${S.step+1})">${S.step===3?'Review':'Next'} →</button>`;
+  else next=`<button class="btn btn-ghost" onclick="goStep(1)">Start over</button>`;
+  document.getElementById('footin').innerHTML=`${back}<span class="spacer"></span>${next}`;
+}
+function render(){
+  renderStepper();renderFooter();
+  const s=document.getElementById('screen');
+  s.innerHTML=S.step===1?screenBusiness():S.step===2?screenDrop():S.step===3?screenOffers():screenReview();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+render();
+</script></body></html>

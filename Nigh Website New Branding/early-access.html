@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nigh — Early Access</title>
+
+  <!-- ─────────────────────────────────────────────────────────────────────
+       DISCOVERABILITY CONTROLS (first draft)
+       Link-accessible but NOT indexed/crawled. Meta below is all a static page
+       can set; the rest must be configured at the host (GitHub Pages can't send
+       headers — use a host that can for production):
+         • HTTP header:  X-Robots-Tag: noindex, nofollow, noarchive
+         • robots.txt:   Disallow: /early-access   (+ AI bots below)
+         • Exclude from XML sitemap and from any public internal links/nav.
+         • AI-training crawlers to disallow (voluntary): GPTBot, OAI-SearchBot,
+           ChatGPT-User, ClaudeBot, Claude-Web, Google-Extended, CCBot,
+           PerplexityBot, Bytespider, Amazonbot.
+       Keep compensation, roadmap, and internal strategy OFF this page.
+  ────────────────────────────────────────────────────────────────────── -->
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="googlebot" content="noindex, nofollow, noarchive">
+  <meta name="bingbot" content="noindex, nofollow, noarchive">
+
+  <style>
+    :root{
+      --blue:#0E4EF5; --blue-lt:#2563EB; --teal:#41EFF9;
+      --red:#EC1977; --red-dim:rgba(236,25,119,0.12); --red-bdr:rgba(236,25,119,0.30);
+      --blue-dim:rgba(14,78,245,0.14); --blue-bdr:rgba(14,78,245,0.30);
+      --bg:#080808; --surface:#111111; --surface2:#181818;
+      --border:#222222; --border2:#2A2A2A;
+      --text:#FFFFFF; --text-2:#A0A0A0; --text-3:#505050;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+    .shell{max-width:480px;margin:0 auto;padding:0 22px}
+
+    .logo svg{height:60px;width:auto;display:block;margin:0 auto}
+    header{padding:40px 0 4px;text-align:center}
+
+    /* hero */
+    .hero{text-align:center;padding:42px 0 6px;position:relative}
+    .hero::before{content:'';position:absolute;inset:-40px -40px auto -40px;height:340px;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(14,78,245,0.20),transparent 70%);pointer-events:none;z-index:0}
+    .hero>*{position:relative;z-index:1}
+    .badge{display:inline-flex;align-items:center;gap:6px;background:var(--red-dim);border:1px solid var(--red);border-radius:100px;font-size:11px;font-weight:700;color:var(--red);padding:6px 13px;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:24px}
+    .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;box-shadow:0 0 8px var(--red)}
+    .inv-headline{font-size:46px;font-weight:900;color:var(--text);line-height:1.02;letter-spacing:-1.6px;margin-bottom:18px}
+    .gradient-text{background:linear-gradient(135deg,#41EFF9,#0E4EF5);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .inv-tagline{font-size:17px;color:var(--text);line-height:1.4;font-weight:500;letter-spacing:-0.25px;margin:0 auto 14px;max-width:400px}
+    .inv-sub{font-size:14px;color:var(--text-2);line-height:1.6;max-width:360px;margin:0 auto 30px}
+
+    .btn{display:block;width:100%;max-width:280px;border:none;border-radius:14px;font-size:15px;font-weight:700;padding:17px 24px;cursor:pointer;text-align:center;transition:all .15s;letter-spacing:-0.1px;margin:0 auto;font-family:inherit;text-decoration:none}
+    .btn-fill{background:var(--blue);color:#fff}
+    .btn-fill:hover{background:var(--blue-lt)}
+
+    /* what / points */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 20px;margin-top:38px}
+    .card h2{font-size:15px;font-weight:800;margin-bottom:9px;letter-spacing:-0.2px}
+    .card p{font-size:14px;color:var(--text-2);line-height:1.6}
+    .card p .b{color:var(--text);font-weight:600}
+
+    .points{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+    .point{display:flex;gap:13px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px}
+    .point .ic{flex-shrink:0;width:32px;height:32px;border-radius:9px;background:var(--blue-dim);border:1px solid var(--blue-bdr);display:flex;align-items:center;justify-content:center;color:var(--teal)}
+    .point .ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .point p{font-size:13.5px;color:var(--text);line-height:1.5}
+    .point p span{color:var(--text-2)}
+
+    /* what drops look like */
+    .drops{margin-top:44px}
+    .drops .label{font-size:11px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.14em;text-align:center;margin-bottom:10px}
+    .drops h2{font-size:24px;font-weight:900;letter-spacing:-0.6px;line-height:1.1;text-align:center;margin-bottom:10px}
+    .drops .intro{font-size:14px;color:var(--text-2);line-height:1.6;text-align:center;max-width:380px;margin:0 auto 22px}
+    .use-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    @media(max-width:380px){ .use-grid{grid-template-columns:1fr} }
+    .use-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 16px;transition:border-color .25s,transform .25s}
+    .use-card:hover{border-color:var(--blue);transform:translateY(-3px)}
+    .use-card .emoji{font-size:1.7rem;margin-bottom:9px;display:block;line-height:1}
+    .use-card h3{font-size:14px;font-weight:800;margin-bottom:6px;letter-spacing:-0.1px}
+    .use-card p{color:var(--text-2);font-size:12.5px;line-height:1.5;font-weight:400}
+    .use-card .industry{display:inline-block;margin-top:12px;padding:3px 10px;background:rgba(65,239,249,0.10);border:1px solid rgba(65,239,249,0.22);color:var(--teal);border-radius:7px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em}
+
+    .founding{margin:32px auto 0;text-align:center;color:var(--text-2);font-size:14px;line-height:1.6;max-width:380px}
+    .founding b{color:var(--text);font-weight:600}
+
+    /* claim */
+    .claim{margin-top:36px;background:var(--surface2);border:1px solid var(--border2);border-radius:18px;padding:30px 22px;text-align:center;position:relative;overflow:hidden}
+    .claim::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,#41EFF9,#0E4EF5)}
+    .claim h2{font-size:22px;font-weight:900;letter-spacing:-0.6px;margin-bottom:6px}
+    .claim .meta{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:22px}
+    .form{max-width:300px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+    .form input{padding:16px 16px;border-radius:14px;border:1px solid var(--border2);background:var(--bg);color:var(--text);font-family:inherit;font-size:15px;text-align:center}
+    .form input::placeholder{color:var(--text-3)}
+    .form input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,78,245,0.25)}
+    .err{color:#FF6B8A;font-size:12.5px;margin-top:10px;min-height:1em}
+    .fine{font-size:11px;color:var(--text-3);text-align:center;line-height:1.7;margin-top:16px;max-width:300px;margin-left:auto;margin-right:auto}
+
+    .success{display:none;text-align:center}
+    .success .check{width:58px;height:58px;border-radius:50%;margin:0 auto 16px;background:var(--blue-dim);border:1px solid var(--blue-bdr);display:flex;align-items:center;justify-content:center;color:var(--teal)}
+    .success .check svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+    .success h2{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:10px}
+    .success p{color:var(--text-2);font-size:14px;line-height:1.6;max-width:320px;margin:0 auto}
+
+    footer{margin-top:48px;padding:28px 0 42px;border-top:1px solid var(--border);text-align:center}
+    footer .flogo svg{height:20px;width:auto;opacity:0.5}
+    footer .tag{margin-top:12px;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3)}
+    footer .legal{margin-top:9px;font-size:11px;color:var(--text-3)}
+
+    @media(max-width:420px){ .inv-headline{font-size:40px} }
+  </style>
+</head>
+<body>
+  <!-- Logo symbol (defined once, reused) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="nigh-logo" viewBox="0 0 1142 453"><path d="M543.175 352.256H491.558L374.688 175.674V352.256H323.071V94.5543H374.688L491.558 271.508V94.5543H543.175V352.244V352.256Z"/><path d="M597.551 115.014C591.53 109.245 588.52 102.05 588.52 93.4509C588.52 84.8521 591.53 77.6684 597.551 71.8878C603.571 66.1193 611.127 63.229 620.229 63.229C629.332 63.229 636.875 66.1193 642.896 71.8878C648.916 77.6684 651.926 84.8521 651.926 93.4509C651.926 102.05 648.916 109.245 642.896 115.014C636.875 120.795 629.32 123.673 620.229 123.673C611.139 123.673 603.571 120.783 597.551 115.014ZM645.654 148.018V352.256H594.049V148.018H645.654Z"/><path d="M816.72 153.727C828.269 159.747 837.359 167.555 844.003 177.137V148.006H895.98V353.719C895.98 372.644 892.167 389.542 884.551 404.413C876.924 419.284 865.507 431.085 850.264 439.804C835.021 448.523 816.588 452.888 794.965 452.888C765.954 452.888 742.184 446.124 723.632 432.608C705.067 419.092 694.561 400.659 692.114 377.309H743.36C746.058 386.652 751.899 394.087 760.869 399.616C769.84 405.145 780.717 407.915 793.49 407.915C808.481 407.915 820.641 403.43 829.984 394.459C839.314 385.488 843.992 371.912 843.992 353.719V322.022C837.36 331.605 828.197 339.592 816.528 345.984C804.847 352.376 791.511 355.566 776.532 355.566C759.322 355.566 743.6 351.141 729.34 342.302C715.081 333.451 703.843 320.979 695.604 304.885C687.365 288.79 683.252 270.297 683.252 249.394C683.252 228.49 687.365 210.441 695.604 194.467C703.831 178.492 715.009 166.212 729.148 157.601C743.276 149.002 759.07 144.696 776.52 144.696C791.751 144.696 805.147 147.707 816.708 153.727H816.72ZM836.616 217.877C831.699 208.906 825.067 202.022 816.708 197.237C808.349 192.44 799.378 190.053 789.796 190.053C780.214 190.053 771.363 192.392 763.256 197.057C755.149 201.734 748.565 208.546 743.528 217.517C738.491 226.487 735.972 237.125 735.972 249.406C735.972 261.686 738.491 272.444 743.528 281.666C748.565 290.877 755.197 297.953 763.436 302.858C771.675 307.775 780.454 310.233 789.796 310.233C799.138 310.233 808.349 307.835 816.708 303.05C825.055 298.253 831.699 291.381 836.616 282.41C841.533 273.439 843.992 262.682 843.992 250.149C843.992 237.617 841.533 226.859 836.616 217.889V217.877Z"/><path d="M1102.8 155.202C1114.84 161.966 1124.24 171.92 1131 185.064C1137.76 198.22 1141.14 214.003 1141.14 232.436V352.244H1089.52V239.44C1089.52 223.213 1085.47 210.753 1077.36 202.022C1069.25 193.303 1058.18 188.938 1044.18 188.938C1030.17 188.938 1018.68 193.303 1010.44 202.022C1002.2 210.753 998.087 223.213 998.087 239.44V352.244H946.482V79.4434H998.087V173.455C1004.72 164.604 1013.57 157.673 1024.63 152.624C1035.68 147.587 1047.98 145.068 1061.49 145.068C1076.98 145.068 1090.74 148.45 1102.78 155.202H1102.8Z"/><path d="M184.738 0H176.934C197.176 7.10759 208.438 24.8646 208.438 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.738 0Z"/><path d="M152.249 144.721L79.0001 50.4976H51.4102V191.617H80.717V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z"/><path d="M33.905 201.03C34.4693 215.569 37.1347 228.62 48.3964 243.735L57.3769 254.565C74.4975 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.646 232.978 196.671 232.978 181.7V157.592C226.23 172.887 215.173 185.626 203.947 196.635C200.933 199.685 197.74 202.554 194.354 205.196L116.483 274.183L34.3973 201.462L33.905 201.018V201.03Z"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z"/></symbol></svg>
+
+  <header><div class="logo"><svg fill="#0E4EF5"><use href="#nigh-logo"/></svg></div></header>
+
+  <main class="shell">
+    <section class="hero">
+      <span class="badge"><span class="badge-dot"></span> Private beta · Invitation only</span>
+      <h1 class="inv-headline">We're <span class="gradient-text">early.</span></h1>
+      <p class="inv-tagline">You've been invited to join Nigh's founding community — a small group helping create more opportunities for people to get out, show up, and connect IRL.</p>
+      <p class="inv-sub">Not VIPs. Not influencers. Just early members helping bring more people together in real life.</p>
+    </section>
+
+    <section class="card">
+      <h2>What is Nigh?</h2>
+      <p>Nigh is a proximity-based network for real life. <span class="b">IRL Drops</span> are spontaneous, in-person moments — a happy hour, a pop-up, a run club, a last-minute set — that you only get by showing up. No endless feed, no algorithm. Just real moments, from people and places you already follow.</p>
+    </section>
+
+    <section class="drops" aria-label="What Nigh Drops look like">
+      <div class="label">What Nigh Drops Look Like</div>
+      <h2>Every Drop is a "you had to be there" moment</h2>
+      <p class="intro">Anyone can host — artists, creators, venues, communities, friends, and places that bring people together. Here's what some Drops look like in the wild.</p>
+      <div class="use-grid">
+        <div class="use-card"><span class="emoji">&#x1F3A4;</span><h3>Pop-Up Show</h3><p>A surprise performance drops tonight. Limited spots. A 'you had to be there' moment — blink and you missed it.</p><span class="industry">Entertainment</span></div>
+        <div class="use-card"><span class="emoji">&#x1F3A8;</span><h3>Gallery Drop</h3><p>An artist drops a pop-up gallery show with new work you won't see anywhere else. RSVP for tonight — gone tomorrow.</p><span class="industry">Culture</span></div>
+        <div class="use-card"><span class="emoji">&#x2728;</span><h3>Creator Experience</h3><p>A creator drops a last-minute IRL hangout for their followers. Limited spots — only the first to RSVP get in.</p><span class="industry">Creator</span></div>
+        <div class="use-card"><span class="emoji">&#x1F389;</span><h3>Group Social</h3><p>A community drops a spontaneous meetup happening today. Reserve a spot and meet new people.</p><span class="industry">Community</span></div>
+        <div class="use-card"><span class="emoji">&#x1F35C;</span><h3>Surprise Drop</h3><p>A local spot offers an off-menu special drop. Grab a spot quick and taste it before it's gone.</p><span class="industry">Hospitality</span></div>
+        <div class="use-card"><span class="emoji">&#x1F6CD;</span><h3>Exclusive Launch</h3><p>This afternoon only, a brand drops a product before it's anywhere else. VIP experience for ticket holders.</p><span class="industry">Retail</span></div>
+        <div class="use-card"><span class="emoji">&#x23F0;</span><h3>Last-Minute Opening</h3><p>A place drops remaining spots last minute — a few people nearby grab them before it starts.</p><span class="industry">Services</span></div>
+        <div class="use-card"><span class="emoji">&#x1F31E;</span><h3>Sunrise Workout</h3><p>An instructor drops a sunrise workout in the park this weekend. Reserve, arrive on time, and don't forget your mat.</p><span class="industry">Wellness</span></div>
+      </div>
+    </section>
+
+    <section class="points" aria-label="What to know">
+      <div class="point"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><p>Every Drop happens <span>within 24 hours of going live — here, soon, or not at all.</span></p></div>
+      <div class="point"><span class="ic"><svg viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="3.5"/><path d="M22 20v-2a4 4 0 0 0-3-3.8"/></svg></span><p>Drops come to you <span>through the people, places, and communities you follow — not a public directory.</span></p></div>
+      <div class="point"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 20.5 5.8 14.5a3.3 3.3 0 0 1 4.7-4.6L12 11l1.5-1.1a3.3 3.3 0 0 1 4.7 4.6Z"/></svg></span><p>Early members shape it <span>— participate, share feedback, and help build the community from the start.</span></p></div>
+      <div class="point"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg></span><p>Built on trust <span>— Nigh is growing a trusted community and opening gradually, not all at once.</span></p></div>
+    </section>
+
+    <p class="founding">You're one of the first here. <b>Help us bring more people together IRL</b> — the best things happen when people actually show up.</p>
+
+    <section class="claim" id="claim">
+      <div id="claim-form-wrap">
+        <h2>Claim your early access</h2>
+        <div class="meta">Private beta · Invitation only</div>
+        <form class="form" id="claimForm" novalidate>
+          <input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Your mobile number" aria-label="Mobile number">
+          <button type="submit" class="btn btn-fill">Claim access</button>
+        </form>
+        <div class="err" id="err" role="alert"></div>
+        <p class="fine">We'll text you your invite as spots open. Standard message rates may apply.</p>
+      </div>
+      <div class="success" id="success">
+        <div class="check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2>You're on the list.</h2>
+        <p>Welcome to the founding community. We'll text your invite to <b id="confirmNum">your number</b> as early access opens up — keep an eye out.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="flogo"><svg fill="#FFFFFF" style="height:20px"><use href="#nigh-logo"/></svg></div>
+    <div class="tag">Private beta · Invitation only</div>
+    <div class="legal">In real life. On purpose.</div>
+  </footer>
+
+  <script>
+    // ── Campaign attribution (silent; does not change the visitor-facing page) ──
+    // QR / campaigns append ?src=<id> (e.g. ?src=qr-boulder-rino). A real build
+    // would POST {phone, src, ts} to the beta waitlist endpoint.
+    var params = new URLSearchParams(location.search);
+    var SRC = params.get('src') || params.get('utm_source') || 'direct';
+
+    var form = document.getElementById('claimForm');
+    var err  = document.getElementById('err');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var digits = document.getElementById('phone').value.trim().replace(/\D/g,'');
+      if (digits.length < 10) { err.textContent = 'Please enter a valid mobile number.'; return; }
+      err.textContent = '';
+      console.log('[early-access] claim', { phone: digits, src: SRC, ts: new Date().toISOString() });
+      document.getElementById('confirmNum').textContent =
+        '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6,10);
+      document.getElementById('claim-form-wrap').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+      document.getElementById('success').scrollIntoView({ behavior:'smooth', block:'center' });
+    });
+  </script>
+</body>
+</html>

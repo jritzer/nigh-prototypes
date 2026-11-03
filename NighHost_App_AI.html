@@ -28,11 +28,11 @@ button{cursor:pointer}
 .bg-sold{background:#FEF3C7;color:#92400E}.bg-sold .dt{background:#F59E0B}
 .bg-draft{background:#F3F4F6;color:#4B5563}.bg-draft .dt{background:#9CA3AF}
 .bg-ended{background:#F3F4F6;color:#6B7280}.bg-ended .dt{background:#9CA3AF}
-.bg-ci{background:#DCFCE7;color:#166534}.bg-ci .dt{display:none}
-.bg-res{background:#DBEAFE;color:#0E4EF5}.bg-res .dt{background:#0E4EF5}
-.bg-ns{background:#FFF7ED;color:#C2410C}.bg-ns .dt{display:none}
-.bg-sched{background:#EDE9FE;color:#5B21B6}.bg-sched .dt{background:#8B5CF6}
-.bg-paused{background:#FFFBEB;color:#92400E}.bg-paused .dt{background:#F59E0B}
+.bg-ci{background:#CCFBF1;color:#0F766E}.bg-ci .dt{display:none}
+.bg-res{background:#E0F2FE;color:#0369A1}.bg-res .dt{background:#0284C7}
+.bg-ns{background:#F3F4F6;color:#6B7280}.bg-ns .dt{display:none}
+.bg-sched{background:#FFEDD5;color:#9A3412}.bg-sched .dt{background:#EA580C}
+.bg-paused{background:#DBEAFE;color:#1E40AF}.bg-paused .dt{background:#0E4EF5}.bg-pending{background:#FEF9C3;color:#854D0E}.bg-pending .dt{background:#EAB308}.bg-canceled{background:#F3F4F6;color:#6B7280}.bg-canceled .dt{background:#6B7280}.bg-expired{background:#F3F4F6;color:#9CA3AF}.bg-expired .dt{background:#9CA3AF}
 .tb{display:flex;justify-content:space-evenly;align-items:center;background:#fff;border-top:1px solid #E5E7EB;padding:2px 0 8px;flex-shrink:0}
 .tt{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;padding:2px 10px;min-width:50px;color:#9CA3AF;transition:color 0.15s;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
 .tt.a{color:#0E4EF5;font-weight:700}
@@ -64,6 +64,10 @@ let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,loginS
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,venueEdit:null,selectedVenue:null,showNiyaBar:false,
   formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,dropPhoneRequest:'none',guestListTab:'guests',guestListDetail:null,guestListCreateName:'',guestListAddMode:false,addGuestModal:false,addGuestSearch:'',addGuestTab:'add',addGuestAdded:false,
   niyaMode:null,niyaStep:0,niyaListening:false,niyaOnboarding:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05',visibility:'public'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',handleModal:false,handleNew:'',handleAvail:null,handleConfirm:false,verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null,bizVerifyStep:'welcome',bizVerifyType:null,bizVerifyDoc:false,bizVerifyEin:false,bizVerifyDomain:false,bizVerifyResult:null,contactPicker:false,contactPickerSearch:'',contactPickerSelected:[],contactSynced:true,contactSyncCount:47};
+const STATUS_COLORS={Live:'#22C55E',SoldOut:'#15803D',Pending:'#EAB308',Scheduled:'#EA580C',Paused:'#0E4EF5',Draft:'#D1D5DB',Ended:'#6B7280',Canceled:'#6B7280',Expired:'#9CA3AF'};
+const STATUS_PRIO={Live:6,Pending:5,Scheduled:4,Paused:3,Ended:2,Canceled:2,Expired:1,Draft:0};
+function dropStatusColor(s){return STATUS_COLORS[s]||'#6B7280';}
+
 
 // ── i18n Framework ───────────────────────────────────
 // Locale state — default US English. Change to launch in other markets.
@@ -327,6 +331,7 @@ spotify:'<circle cx="12" cy="12" r="10"/><path d="M7 9.6c3-1 6.6-.7 9.2.9"/><pat
 mail:'<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/>',
 };
 function ic(n,s,c,vb){return`<svg width="${s||20}" height="${s||20}" viewBox="${vb||'0 0 24 24'}" stroke="${c||'currentColor'}" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`}
+function linkLockIcon(s){s=s||16;return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none"><g transform="translate(-2.4,-2.6) scale(0.8)" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></g><circle cx="17.6" cy="17.8" r="6.3" fill="#fff"/><rect x="14.6" y="17.3" width="6" height="4.5" rx="1" fill="currentColor"/><path d="M15.9 17.3v-1.3a1.7 1.7 0 0 1 3.4 0v1.3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`}
 function audIc(aud){if(aud==='public')return{icon:'globe',label:'Public — Anyone on Nigh'};if(aud==='followers')return{icon:'twoPeople',label:'Followers & Shared Link'};if(aud==='link')return{icon:'twoPeople',label:'Shared Link Only'};if(aud==='guests')return{icon:'personLock',label:'Private — Existing Guests Only'};if(aud==='groups')return{icon:'personLock',label:'Private — Specific Groups'};if(aud==='password')return{icon:'lock',label:'Password Protected'};return{icon:'globe',label:'Public'};}
 
 // Data
@@ -1377,7 +1382,7 @@ const orders=[
 function myOrders(){return orders.filter(o=>o.acctName===acct().name);}
 
 // Helpers
-function bg(st,sm){const m={'Live':'bg-live','Draft':'bg-draft','Ended':'bg-ended','Scheduled':'bg-sched','Paused':'bg-paused','Checked In':'bg-ci','Reserved':'bg-res','No-Show':'bg-ns'};
+function bg(st,sm){const m={'Live':'bg-live','Draft':'bg-draft','Ended':'bg-ended','Scheduled':'bg-sched','Paused':'bg-paused','Pending':'bg-pending','Canceled':'bg-canceled','Expired':'bg-expired','Checked In':'bg-ci','Reserved':'bg-res','No-Show':'bg-ns'};
   return `<span class="bg ${m[st]||'bg-draft'}${sm?' bg-s':''}""><span class="dt"></span>${st}</span>`;}
 function fmtD(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}
 function fmtP(p){return p===0||p===''||p==null?'Free':'$'+parseFloat(p).toFixed(2);}
@@ -1554,16 +1559,15 @@ function renderHome(){
       <button onclick="S.calDay.setDate(S.calDay.getDate()+7);render()" style="background:none;border:none;color:#374151;padding:4px">${ic('right',18)}</button>
     </div>
     <div style="display:flex;justify-content:space-around;padding:0 8px">
-      ${wd.map(d=>{const sel=sameD(d,today);const isTd=sameD(d,TODAY);const dayDr=md.filter(x=>x.date===dk(d)&&x.status!=='Draft');const hasDraft=md.some(x=>x.date===dk(d)&&x.status==='Draft');const hasLive=dayDr.some(x=>x.status==='Live');
+      ${wd.map(d=>{const sel=sameD(d,today);const isTd=sameD(d,TODAY);const dayAll=md.filter(x=>x.date===dk(d)&&x.status!=='Deleted');let topSt=null;dayAll.forEach(x=>{if(topSt===null||(STATUS_PRIO[x.status]??-1)>(STATUS_PRIO[topSt]??-1))topSt=x.status;});
         return `<button onclick="S.calDay=new Date('${d.toISOString()}');render()" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:12px;border:none;background:${sel?'#0E4EF5':'transparent'};min-width:40px">
           <span style="font-size:10px;font-weight:500;color:${sel?'rgba(255,255,255,0.7)':isTd?'#0E4EF5':'#9CA3AF'}">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</span>
           <span style="font-size:16px;font-weight:${sel||isTd?700:500};color:${sel?'#fff':isTd?'#0E4EF5':'#374151'}">${d.getDate()}</span>
-          ${dayDr.length?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'rgba(255,255,255,0.8)':hasLive?'#22C55E':'#0E4EF5'}"></span>`:hasDraft?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'rgba(255,255,255,0.5)':'#D1D5DB'}"></span>`:'<span style="width:5px;height:5px"></span>'}
+          ${topSt?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'#fff':dropStatusColor(topSt)}"></span>`:'<span style="width:5px;height:5px"></span>'}
         </button>`;}).join('')}
     </div>
   </div>
-
-  <div style="padding:14px 16px">
+<div style="padding:14px 16px">
   ${(()=>{
     const isPast=today<TODAY&&!sameD(today,TODAY);
     const isToday=sameD(today,TODAY);
@@ -1601,7 +1605,7 @@ function renderHome(){
             ${live.cap===1?(()=>{
   const sg=guests.find(g=>g.drop===live.id);
   const st=sg?sg.tickets[0].status:'Open';
-  const stCol=st==='Checked In'?'#16a34a':st==='Reserved'?'#0E4EF5':st==='No-Show'?'#F97316':'#9CA3AF';
+  const stCol=st==='Checked In'?'#0D9488':st==='Reserved'?'#0284C7':st==='No-Show'?'#6B7280':'#9CA3AF';
   if(!sg||st==='Open') return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:#D1D5DB"></div><span style="font-size:13px;color:#6B7280">No reservation yet — spot available</span></div>`;
   return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${sg.av}</div><div><div style="font-size:13px;font-weight:600;color:#111827">${sg.name}</div><div style="font-size:11px;color:#9CA3AF">${sg.uname}</div></div></div>${bg(st,true)}</div>`;
 })():`
@@ -1612,19 +1616,19 @@ function renderHome(){
   </div>
   <div style="display:flex;gap:1px;margin-bottom:6px">
     <div style="height:6px;flex:${live.ci};background:#0D9488;border-radius:3px 0 0 3px"></div>
-    <div style="height:6px;flex:${live.res-live.ci-(live.ns||0)};background:#0E4EF5"></div>
-    <div style="height:6px;flex:${live.ns||0.001};background:#F97316"></div>
+    <div style="height:6px;flex:${live.res-live.ci-(live.ns||0)};background:#0284C7"></div>
+    <div style="height:6px;flex:${live.ns||0.001};background:#6B7280"></div>
     <div style="height:6px;flex:${live.cap-live.res||0.001};background:#E5E7EB;border-radius:0 3px 3px 0"></div>
   </div>
-  ${(()=>{const _its=[live.ci>0?{v:live.ci,l:'Checked In',c:'#0D9488'}:null,(live.res-live.ci-(live.ns||0))>0?{v:live.res-live.ci-(live.ns||0),l:'Reserved',c:'#0E4EF5'}:null,(live.ns||0)>0?{v:live.ns,l:'No-Show',c:'#F97316'}:null,null].filter(Boolean);return`<div style="display:flex;font-size:11px;color:#6B7280;margin-top:2px">${_its.map((it,i)=>`<div style="flex:1;text-align:${i===0?'left':i===_its.length-1?'right':'center'};white-space:nowrap"><b style="color:${it.c}">${it.v}</b> ${it.l}</div>`).join('')}</div>`;})()}
+  ${(()=>{const _its=[live.ci>0?{v:live.ci,l:'Checked In',c:'#0D9488'}:null,(live.res-live.ci-(live.ns||0))>0?{v:live.res-live.ci-(live.ns||0),l:'Reserved',c:'#0284C7'}:null,(live.ns||0)>0?{v:live.ns,l:'No-Show',c:'#6B7280'}:null,null].filter(Boolean);return`<div style="display:flex;font-size:11px;color:#6B7280;margin-top:2px">${_its.map((it,i)=>`<div style="flex:1;text-align:${i===0?'left':i===_its.length-1?'right':'center'};white-space:nowrap"><b style="color:${it.c}">${it.v}</b> ${it.l}</div>`).join('')}</div>`;})()}
 </div>
 `}
           </div>
         </div>
         <div style="display:flex;border-top:1px solid #E5E7EB">
-          ${canFull('drops')?`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('edit',16)} Manage</button>
-          <button style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#F59E0B;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('pause',16)} Pause</button>`:`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('eye',16)} View</button>`}
-          <button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#059669;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>
+          ${canFull('drops')?`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('edit',16)} Manage</button>
+          <button style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('pause',16)} Pause</button>`:`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('eye',16)} View</button>`}
+          <button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0D9488;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>
         </div>
       </div>`;
     }
@@ -1632,7 +1636,7 @@ function renderHome(){
     /* Scheduled drops — same layout as live card */
     const scheduled=dd.filter(d=>d.status==='Scheduled'||d.status==='Paused');
     const schedHtml=scheduled.map(d=>`
-      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px;border:2px solid ${d.status==='Paused'?'#F59E0B':'#8B5CF6'};border-radius:14px;overflow:hidden;transform:translateZ(0)">
+      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px;border:2px solid ${dropStatusColor(d.status)};border-radius:14px;overflow:hidden;transform:translateZ(0)">
         <div style="clip-path:inset(0 round 12px 12px 0 0)">
         <div style="height:250px;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);display:flex;align-items:center;justify-content:center;position:relative">
           ${d.media==='video'?`<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',28)}</div>`
@@ -1640,7 +1644,7 @@ function renderHome(){
           <div style="position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,0.58);backdrop-filter:blur(8px);padding:8px 12px;display:flex;align-items:center;gap:7px">
             <svg width="15" height="15" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>
             <span style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.95);letter-spacing:0.05em;margin-left:-6px">DROP</span>
-            <span style="width:7px;height:7px;border-radius:50%;background:${d.status==='Paused'?'#F59E0B':'#8B5CF6'};flex-shrink:0;margin-left:8px"></span>
+            <span style="width:7px;height:7px;border-radius:50%;background:${dropStatusColor(d.status)};flex-shrink:0;margin-left:8px"></span>
             <span style="font-size:11px;font-weight:700;color:#fff;white-space:nowrap">${d.status.toUpperCase()}</span>
             <button onclick="event.stopPropagation();modal('audience-drop-${drops.indexOf(d)}')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.85);margin-left:6px;flex-shrink:0;cursor:pointer;padding:0" title="${audIc(d.audience).label}">${ic(audIc(d.audience).icon,15,'rgba(255,255,255,0.85)')}</button>
             <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.7);white-space:nowrap">${timeRem(d)}</span>
@@ -1661,8 +1665,8 @@ function renderHome(){
         </div>
         </div>
         <div style="display:flex;border-top:1px solid #E5E7EB">
-          ${canFull('drops')?`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('edit',16)} Edit</button>`:`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('eye',16)} View</button>`}
-          ${d.status==='Paused'?`<button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#059669;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>`:''}
+          ${canFull('drops')?`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('edit',16)} Edit</button>`:`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('eye',16)} View</button>`}
+          ${d.status==='Paused'?`<button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0D9488;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>`:''}
         </div>
       </div>
     `).join('');
@@ -2235,16 +2239,16 @@ function renderCreate(){
         const audOpts=[
           {v:'public',label:'Anyone on Nigh',icn:'globe',locked:!isVerified()},
           {v:'followers',label:'Followers Only',icn:'twoPeople'},
-          {v:'groups',label:'Select Specific List',icn:'personLock'},
           {v:'link',label:'Anyone with the Link',icn:'link'},
-          {v:'password',label:'Password Protected Link',icn:'lock'},
+          {v:'groups',label:'Select Specific List',icn:'personLock'},
         ];
         const curOpt=audOpts.find(o=>o.v===aud)||audOpts[0];
         const selGrpName=(aud==='groups'&&selGroups.length)?((grps.find(g=>g.id===selGroups[0])||{}).name||curOpt.label):curOpt.label;
         const showGrpSub=S.showAudDrop&&S.audGrpExpanded&&aud==='groups';
-        return `<div style="position:relative;margin-bottom:${aud==='password'?'8px':'0'}">
+        const showPw=(aud==='link');
+        return `<div style="position:relative;margin-bottom:0">
           <button onclick="S.showAudDrop=!S.showAudDrop;S.audGrpExpanded=false;render()" style="width:100%;padding:10px 32px 10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;background:#fff;outline:none;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;box-sizing:border-box">
-            <span style="display:flex;align-items:center;flex-shrink:0;color:#6B7280">${ic(curOpt.icn,16)}</span>
+            <span style="display:flex;align-items:center;flex-shrink:0;color:#6B7280">${(aud==='link'&&S.dropPasswordOn)?linkLockIcon(16):ic(curOpt.icn,16)}</span>
             <span style="flex:1">${selGrpName}</span>
             <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#9CA3AF">${ic(S.showAudDrop?'chevUp':'chevDown',14)}</span>
           </button>
@@ -2278,14 +2282,15 @@ function renderCreate(){
             }).join('')}
           </div>`:''}
         </div>
-        ${aud==='password'?`<div style="background:#EEF2FF;border-radius:8px;padding:10px 12px;font-size:11px;color:#1d4ed8;line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-          <span style="flex-shrink:0;margin-top:1px">${ic('lock',13,'#0E4EF5')}</span>
-          <span>Not discoverable, but shareable. Anyone with the link must enter the password to view and get tickets.</span>
-        </div>
-        <div style="margin-top:8px">
-          <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:6px;display:block">Set Password <span style="color:#EF4444">*</span></label>
-          <input type="text" value="${S.dropPassword||''}" oninput="S.dropPassword=this.value;document.getElementById('pw-count').textContent=this.value.length+'/20'" placeholder="Enter a password" maxlength="20" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/>
-          <div id="pw-count" style="font-size:10px;color:#9CA3AF;margin-top:4px;text-align:right">${(S.dropPassword||'').length}/20</div>
+        ${showPw?`<div style="margin-top:10px;border:1px solid #E5E7EB;border-radius:10px;padding:0 12px">
+          <button onclick="S.dropPasswordOn=!S.dropPasswordOn;render()" style="width:100%;background:none;border:none;padding:11px 0;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;font-family:inherit">
+            <span style="flex:1"><span style="font-size:12px;font-weight:600;color:#374151;display:block">Require a password</span><span style="font-size:11px;color:#9CA3AF">Password required to view and reserve</span></span>
+            <span style="width:42px;height:25px;border-radius:14px;background:${S.dropPasswordOn?'#0E4EF5':'#D1D5DB'};position:relative;flex-shrink:0;transition:background .18s"><span style="position:absolute;top:2px;left:${S.dropPasswordOn?'19px':'2px'};width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .18s"></span></span>
+          </button>
+          ${S.dropPasswordOn?`<div style="padding:0 0 12px">
+            <input type="text" value="${S.dropPassword||''}" oninput="S.dropPassword=this.value;document.getElementById('pw-count').textContent=this.value.length+'/20'" placeholder="Set a password" maxlength="20" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid #E5E7EB;font-size:13px;color:#111827;outline:none;font-family:inherit;box-sizing:border-box" onfocus="this.style.borderColor='#0E4EF5'" onblur="this.style.borderColor='#E5E7EB'"/>
+            <div id="pw-count" style="font-size:10px;color:#9CA3AF;margin-top:4px;text-align:right">${(S.dropPassword||'').length}/20</div>
+          </div>`:''}
         </div>`:''}`;
       })()}
     </div>
@@ -2494,7 +2499,7 @@ function renderCreate(){
     const partnerDisplay=partnerHandles.length
       ?partnerHandles.map(h=>{const p=partnersList.find(x=>'@'+x.handle===h||x.handle===h);if(!p)return h;return p.name+' <span style="color:#9CA3AF">'+p.handle+'</span>';}).join('<br>')
       :'None';
-    const audLabel=(()=>{const a=S.dropAudience||(isVerified()?'public':'followers');if(a==='public')return'Anyone on Nigh';if(a==='followers')return'Only Followers';if(a==='guests')return isPersonal()?'My Guest List':'All in Guest List';if(a==='link')return'Shared Link Only';if(a==='groups'){const sg=S.dropAudienceGroups||[];const grps=audienceGroups();return sg.map(id=>{const g=grps.find(x=>x.id===id);return g?g.name:id;}).join(', ')||'No groups selected';}return a;})();
+    const audLabel=(()=>{const a=S.dropAudience||(isVerified()?'public':'followers');let base;if(a==='public')base='Anyone on Nigh';else if(a==='followers')base='Only Followers';else if(a==='guests')base=isPersonal()?'My Guest List':'All in Guest List';else if(a==='link')base='Anyone with the Link';else if(a==='groups'){const sg=S.dropAudienceGroups||[];const grps=audienceGroups();base=sg.map(id=>{const g=grps.find(x=>x.id===id);return g?g.name:id;}).join(', ')||'No groups selected';}else base=a;if(a==='link'&&S.dropPasswordOn&&(S.dropPassword||'').length)base+=' · Password protected';return base;})();
     const rows=[
       ['cal','Date',dateDisplay],
       ['clock','Time',src.start],
@@ -2565,7 +2570,7 @@ function renderCreate(){
         return `<div style="display:flex;gap:8px;padding-top:10px;border-top:1px solid #F3F4F6;margin-top:10px">
           <button onclick="S.modal='discard-drop';render()" style="flex:1;padding:11px 0;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #9CA3AF;background:#fff;color:#9CA3AF;cursor:pointer;font-family:inherit">Discard</button>
           <button onclick="S.editDrop!=null?commitEditDrop(false):go('home')" style="flex:1;padding:11px 0;border-radius:10px;font-size:13px;font-weight:600;border:1px solid #0E4EF5;background:#fff;color:#0E4EF5;cursor:pointer;font-family:inherit">Save</button>
-          <button id="schedule-btn" data-active="${src.date===dk(TODAY)?'#16A34A':'#F97316'}" onclick="if(S.termsAccepted){S.editDrop!=null?commitEditDrop(true):go('home')}" ${!S.termsAccepted?'disabled':''} style="flex:1;padding:11px 0;border-radius:10px;font-size:13px;font-weight:700;border:none;background:${S.termsAccepted?(src.date===dk(TODAY)?'#16A34A':'#F97316'):'#D1D5DB'};color:#fff;cursor:${S.termsAccepted?'pointer':'default'};font-family:inherit">${src.date===dk(TODAY)?'Go Live':'Schedule'}</button>
+          <button id="schedule-btn" data-active="${src.date===dk(TODAY)?'#16A34A':'#EA580C'}" onclick="if(S.termsAccepted){S.editDrop!=null?commitEditDrop(true):go('home')}" ${!S.termsAccepted?'disabled':''} style="flex:1;padding:11px 0;border-radius:10px;font-size:13px;font-weight:700;border:none;background:${S.termsAccepted?(src.date===dk(TODAY)?'#16A34A':'#EA580C'):'#D1D5DB'};color:#fff;cursor:${S.termsAccepted?'pointer':'default'};font-family:inherit">${src.date===dk(TODAY)?'Go Live':'Schedule'}</button>
         </div>`;
       })()}
     </div>`;
@@ -2604,7 +2609,7 @@ function renderLive(){
   return `<div style="flex:1;overflow-y:auto">${hdr('Drop Details',null,"go('home')",`<button onclick="modal('dropmenu')" style="background:none;border:none;color:#4B5563;padding:4px">${ic('more',20)}</button>`)}
   <div style="padding:10px 16px">
     <!-- Compact identity strip -->
-    <div style="background:#fff;border-radius:14px;border:2px solid ${isLive?'#22C55E':isPaused?'#F59E0B':'#E5E7EB'};padding:10px 12px;display:flex;gap:10px;align-items:center;margin-bottom:8px">
+    <div style="background:#fff;border-radius:14px;border:2px solid ${isLive?'#22C55E':isPaused?'#0E4EF5':'#E5E7EB'};padding:10px 12px;display:flex;gap:10px;align-items:center;margin-bottom:8px">
       <div style="width:46px;height:46px;border-radius:8px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2)">${d.media==='video'?ic('play',20):ic('image',20)}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
@@ -2616,7 +2621,7 @@ function renderLive(){
           <span>${fmtD(d.date)} · ${d.start}</span>
           <span>${fmtP(d.price)}</span>
         </div>
-        ${isLive?`<div style="font-size:10px;color:#16A34A;margin-top:2px;display:flex;align-items:center;gap:3px">${ic('radio',10)} Broadcasting until ${d.bcastEnd} (${timeRem(d).replace(' remaining','')})</div>`:isPaused?`<div style="font-size:10px;color:#D97706;margin-top:2px;display:flex;align-items:center;gap:3px">${ic('alert',10)} Paused — spot holders only</div>`:''}
+        ${isLive?`<div style="font-size:10px;color:#16A34A;margin-top:2px;display:flex;align-items:center;gap:3px">${ic('radio',10)} Broadcasting until ${d.bcastEnd} (${timeRem(d).replace(' remaining','')})</div>`:isPaused?`<div style="font-size:10px;color:#0E4EF5;margin-top:2px;display:flex;align-items:center;gap:3px">${ic('alert',10)} Paused — spot holders only</div>`:''}
       </div>
     </div>
 
@@ -2632,7 +2637,7 @@ function renderLive(){
     ${activeTab==='guests'?`
     <div style="margin-bottom:8px">
       <!-- Stats bar — clickable filter for Live/Paused/Ended, display-only for Scheduled/Draft -->
-      ${(()=>{const canClick=isLive||isPaused||isEnded;const totalT=allTicketRows.length;const stats=[['Total',totalT,'#1F2937','All'],['Checked In',ciG,'#16a34a','Checked In'],['Reserved',resG,'#0E4EF5','Reserved'],['No-Show',nsG,'#F59E0B','No-Show']];return`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;display:flex;margin-bottom:8px;overflow:hidden">${stats.map(([lbl,val,color,fv],i)=>{const isAct=canClick&&f===fv;return`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div onclick="${canClick?`S.lvFilter='${fv}';render()`:''}" style="flex:1;text-align:center;padding:10px 4px;cursor:${canClick?'pointer':'default'};background:${isAct?'#EFF6FF':'transparent'};border-radius:${i===0?'12px 0 0 12px':i===3?'0 12px 12px 0':'0'}"><div style="font-size:18px;font-weight:700;color:${isAct?color:color}">${val}</div><div style="font-size:9px;color:${isAct?'#374151':'#6B7280'};font-weight:${isAct?700:500}">${lbl}</div>${isAct?`<div style="width:16px;height:2px;background:${color};border-radius:1px;margin:3px auto 0"></div>`:'<div style="height:5px"></div>'}</div>`;}).join('')}</div>`;})()}
+      ${(()=>{const canClick=isLive||isPaused||isEnded;const totalT=allTicketRows.length;const stats=[['Total',totalT,'#1F2937','All'],['Checked In',ciG,'#0D9488','Checked In'],['Reserved',resG,'#0284C7','Reserved'],['No-Show',nsG,'#6B7280','No-Show']];return`<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;display:flex;margin-bottom:8px;overflow:hidden">${stats.map(([lbl,val,color,fv],i)=>{const isAct=canClick&&f===fv;return`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div onclick="${canClick?`S.lvFilter='${fv}';render()`:''}" style="flex:1;text-align:center;padding:10px 4px;cursor:${canClick?'pointer':'default'};background:${isAct?'#EFF6FF':'transparent'};border-radius:${i===0?'12px 0 0 12px':i===3?'0 12px 12px 0':'0'}"><div style="font-size:18px;font-weight:700;color:${isAct?color:color}">${val}</div><div style="font-size:9px;color:${isAct?'#374151':'#6B7280'};font-weight:${isAct?700:500}">${lbl}</div>${isAct?`<div style="width:16px;height:2px;background:${color};border-radius:1px;margin:3px auto 0"></div>`:'<div style="height:5px"></div>'}</div>`;}).join('')}</div>`;})()}
       ${gpActiveList(d.id).length?`<div onclick="modal('guestpasses')" style="display:flex;align-items:center;gap:8px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:9px 11px;margin-bottom:8px;cursor:pointer">
         <div style="width:26px;height:26px;border-radius:7px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5;flex-shrink:0">${ic('ticket',14)}</div>
         <div style="flex:1;min-width:0;font-size:12px;color:#374151"><strong>${gpUsed(d.id)}</strong> guest pass${gpUsed(d.id)===1?'':'es'} · ${gpCheckedSpots(d.id)} checked in <span style="color:#9CA3AF">· separate from capacity</span></div>
@@ -2655,7 +2660,7 @@ function renderLive(){
               ${t.status!=='No-Show'?`<button onclick="S.cancelTid='${t.tid}';S.cancelGuestName='${g.name.replace(/'/g,"\\'")}';modal('cancelTicket')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#EF4444;cursor:pointer">Refund</button>`:''}
             </div>`
             :t.status==='Reserved'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
-              <button onclick="render()" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0E4EF5;color:#fff;flex-shrink:0;cursor:pointer">Check In</button>
+              <button onclick="render()" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0D9488;color:#fff;flex-shrink:0;cursor:pointer">Check In</button>
               <button onclick="S.cancelTid='${t.tid}';S.cancelGuestName='${g.name.replace(/'/g,"\\'")}';modal('cancelTicket')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#EF4444;cursor:pointer">Cancel</button>
             </div>`
             :t.status==='Checked In'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
@@ -2664,7 +2669,7 @@ function renderLive(){
             </div>`
             :t.status==='No-Show'?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
               ${bg(t.status,true)}
-              <button onclick="lvCheckIn('${t.tid}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0E4EF5;color:#fff;flex-shrink:0;cursor:pointer">Check In</button>
+              <button onclick="lvCheckIn('${t.tid}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0D9488;color:#fff;flex-shrink:0;cursor:pointer">Check In</button>
               <button onclick="S.cancelTid='${t.tid}';S.cancelGuestName='${g.name.replace(/'/g,"\\'")}';modal('cancelTicket')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #FCA5A5;background:#FEF2F2;color:#EF4444;cursor:pointer">Cancel</button>
             </div>`
             :bg(t.status,true)}
@@ -2684,7 +2689,7 @@ function renderLive(){
             :p.status==='CheckedIn'
               ?`<div style="display:flex;gap:4px;flex-shrink:0;align-items:center"><span style="font-size:10px;font-weight:700;color:#166534;background:#DCFCE7;padding:3px 8px;border-radius:7px">Checked In</span><button onclick="gpUndoCheckIn('${p.id}')" style="padding:5px 8px;border-radius:7px;font-size:10px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer">Uncheck</button></div>`
               :(isLive||isPaused||isEnded)
-                ?`<button onclick="gpCheckIn('${p.id}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0E4EF5;color:#fff;cursor:pointer;flex-shrink:0">Check In</button>`
+                ?`<button onclick="gpCheckIn('${p.id}')" style="padding:5px 10px;border-radius:7px;font-size:10px;font-weight:700;border:none;background:#0D9488;color:#fff;cursor:pointer;flex-shrink:0">Check In</button>`
                 :`<span style="font-size:10px;font-weight:700;color:#1d4ed8;background:#EFF6FF;padding:3px 8px;border-radius:7px;flex-shrink:0">Claimed</span>`}
         </div>`).join('')}
       </div>`:''}
@@ -2741,15 +2746,15 @@ function renderLive(){
     const bar=(btns)=>`<div style="flex-shrink:0;background:#fff;border-top:1px solid #E5E7EB;padding:10px 16px 4px;display:flex;gap:8px">${btns}</div>`;
     const btn=(onclick,style,label)=>`<button onclick="${onclick}" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px;${style}">${label}</button>`;
     if(activeTab==='guests'&&(isLive||isPaused)){
-      return `<div style="flex-shrink:0;background:#fff;border-top:1px solid #E5E7EB;padding:10px 16px 4px;display:flex;justify-content:center"><button onclick="go('checkin')" style="padding:10px 32px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#16A34A;color:#fff;display:flex;align-items:center;gap:5px">${ic('qr',13)} Check In Guests</button></div>`;
+      return `<div style="flex-shrink:0;background:#fff;border-top:1px solid #E5E7EB;padding:10px 16px 4px;display:flex;justify-content:center"><button onclick="go('checkin')" style="padding:10px 32px;border-radius:10px;font-size:12px;font-weight:600;border:none;background:#0D9488;color:#fff;display:flex;align-items:center;gap:5px">${ic('qr',13)} Check In Guests</button></div>`;
     }
     if(activeTab==='details'&&(isLive||isPaused)){
       if(!canFull('drops'))return '';
       return bar(
-        (isLive?btn(`startEditDrop(${S.drop})`,'border:1px solid #0E4EF5;background:#fff;color:#0E4EF5',ic('edit',13)+' Edit'):'')
-        +(isLive?btn(`togglePauseDrop(${S.drop})`,'border:1px solid #F59E0B;background:#FFFBEB;color:#F59E0B',ic('pause',13)+' Pause Drop')
-          :btn(`togglePauseDrop(${S.drop})`,'border:1px solid #bbf7d0;background:#dcfce7;color:#15803d',ic('play',13)+' Resume Drop'))
-        +btn(`S.cancelDropIdx=${S.drop};modal('cancelDrop')`,'border:1px solid #e5e7eb;background:#f1f5f9;color:#64748b',ic('x',13)+' Cancel')
+        (isLive?btn(`startEditDrop(${S.drop})`,'border:1px solid #6B7280;background:#fff;color:#6B7280',ic('edit',13)+' Edit'):'')
+        +(isLive?btn(`togglePauseDrop(${S.drop})`,'border:1px solid #0E4EF5;background:#EEF2FF;color:#0E4EF5',ic('pause',13)+' Pause Drop')
+          :btn(`togglePauseDrop(${S.drop})`,'border:1px solid #bbf7d0;background:#dcfce7;color:#16A34A',ic('play',13)+' Resume Drop'))
+        +btn(`S.cancelDropIdx=${S.drop};modal('cancelDrop')`,'border:1px solid #e5e7eb;background:#f1f5f9;color:#6B7280',ic('x',13)+' Cancel')
       );
     }
     if(isEnded){
@@ -2823,7 +2828,7 @@ function renderCIBody(){
     </select>
     <div style="display:flex;background:#F3F4F6;border-radius:10px;padding:3px;margin-bottom:14px">${modes.map(m=>{const act=S.ciMode===m.id||(m.id==='scan'&&S.ciMode==='ok');return`<button onclick="S.ciMode='${m.id}';render()" style="flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;border:none;display:flex;align-items:center;justify-content:center;gap:4px;background:${act?'#fff':'transparent'};color:${act?'#1F2937':'#6B7280'};box-shadow:${act?'0 1px 2px rgba(0,0,0,0.06)':'none'}">${ic(m.i,14)} ${m.l}</button>`;}).join('')}</div>
     ${c}
-    <div class="card" style="margin-top:12px"><div class="cb" style="display:flex;justify-content:space-around">${[[String(ciIn),'In','#16a34a'],[String(ciRes),'Reserved','#0E4EF5'],[String(ciNs),'No-Show','#F97316'],[String(ciTot),'Total','#1F2937']].map((s,i)=>`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`).join('')}</div></div>
+    <div class="card" style="margin-top:12px"><div class="cb" style="display:flex;justify-content:space-around">${[[String(ciIn),'In','#0D9488'],[String(ciRes),'Reserved','#0284C7'],[String(ciNs),'No-Show','#6B7280'],[String(ciTot),'Total','#1F2937']].map((s,i)=>`${i?'<div style="width:1px;background:#E5E7EB"></div>':''}<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:${s[2]}">${s[0]}</div><div style="font-size:9px;color:#6B7280">${s[1]}</div></div>`).join('')}</div></div>
     ${S.ciMode==='manual'?manualList:''}
   </div>`;
 }
@@ -2928,8 +2933,8 @@ function renderMenu(){
   ].filter(m=>m.show);
   return `${hdr('Menu',a.name)}
   <div style="padding:14px 16px">
-    ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${m.tilt?`<div style="transform:rotate(-45deg)">${ic(m.ic,18)}</div>`:ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">${m.l}${m.badge?`<span style="margin-left:6px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle">${m.badge}</span>`:''}</div><div style="font-size:11px;color:#6B7280">${m.d}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
-    <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#111827">Settings</div><div style="font-size:11px;color:#6B7280">User account &amp; preferences</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
+    ${items.map(m=>`<button onclick="${m.act}" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${m.tilt?`<div style="transform:rotate(-45deg)">${ic(m.ic,18)}</div>`:ic(m.ic,18)}</div><div style="flex:1"><div style="font-size:15px;font-weight:600;color:#111827">${m.l}${m.badge?`<span style="margin-left:6px;background:#EF4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle">${m.badge}</span>`:''}</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>`).join('')}
+    <button onclick="S.menuSub='settings';render()" style="width:100%;background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left"><div style="width:36px;height:36px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#0E4EF5">${ic('gear',18)}</div><div style="flex:1"><div style="font-size:15px;font-weight:600;color:#111827">Settings</div></div><span style="color:#9CA3AF">${ic('right',16)}</span></button>
 
     <!-- Build your community — host follow-link share card -->
     <div style="margin-top:16px">
@@ -8516,7 +8521,7 @@ function renderLogin(){
         <input id="loginCodeInput" type="tel" maxlength="6" autocomplete="one-time-code"
           value="${code}"
           oninput="let d=this.value.replace(/\\D/g,'').slice(0,6);this.value=d;S.loginCode=d;S.otpError=false;S.otpResent=false;for(let i=0;i<6;i++){const bx=document.getElementById('lBox'+i);if(bx){bx.textContent=d[i]||'·';bx.style.background=d[i]?'rgba(14,78,245,0.2)':'rgba(255,255,255,0.08)';bx.style.borderColor=i===d.length?'#0E4EF5':d[i]?'rgba(14,78,245,0.5)':'rgba(255,255,255,0.14)'}}const b=document.getElementById('loginVerifyBtn');if(b){b.disabled=d.length<6;b.style.opacity=d.length<6?'0.5':'1';b.style.cursor=d.length<6?'not-allowed':'pointer'};const ee=document.getElementById('lErrMsg');if(ee)ee.style.display='none'"
-          onkeydown="if(event.key==='Enter'&&!document.getElementById('loginVerifyBtn').disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=false;S.loginStep='profile';S.loginCode='';render()}"
+          onkeydown="if(event.key==='Enter'&&!document.getElementById('loginVerifyBtn').disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.niyaMode='onboarding';S.scr='niya';S.loginCode='';render()}"
           style="position:absolute;opacity:0;width:100%;height:52px;top:0;left:0;z-index:2;cursor:pointer;font-size:16px">
         <div style="display:flex;gap:10px;justify-content:center">
           ${[0,1,2,3,4,5].map(i=>`<div id="lBox${i}" style="width:44px;height:52px;border-radius:12px;background:${otpErr?'rgba(239,68,68,0.1)':code[i]?'rgba(14,78,245,0.2)':'rgba(255,255,255,0.08)'};border:2px solid ${otpErr?'#EF4444':i===code.length?'#0E4EF5':code[i]?'rgba(14,78,245,0.5)':'rgba(255,255,255,0.14)'};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff">${code[i]||'·'}</div>`).join('')}
@@ -8526,7 +8531,7 @@ function renderLogin(){
       ${otpResent?`<div style="text-align:center;font-size:12px;color:#22C55E;margin-bottom:12px;font-weight:600">New code sent!</div>`:''}
       <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:28px">Didn't get it? <span onclick="S.otpResent=true;S.otpError=false;render()" style="color:#0E4EF5;font-weight:600;cursor:pointer">Resend code</span></div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-        <button id="loginVerifyBtn" onclick="if(!this.disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=false;S.loginStep='profile';S.loginCode='';render()}"
+        <button id="loginVerifyBtn" onclick="if(!this.disabled){S.loginUserType='new';S.loginIsNew=true;S.loginObStep=0;S.loginFirstName='';S.loginLastName='';S.loginHandle='';S.loginDob='';S.loginDropIdea='';S.loginExChoice='';S.niyaOnboarding=true;S.niyaMode='onboarding';S.scr='niya';S.loginCode='';render()}"
           ${canVerify?'':'disabled'}
           style="width:72%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:${canVerify?'pointer':'not-allowed'};opacity:${canVerify?'1':'0.5'};transition:opacity 0.2s">Verify</button>
         <button onclick="S.otpError=true;S.otpResent=false;render()" style="width:72%;background:none;border:1px dashed rgba(255,255,255,0.15);border-radius:10px;padding:7px;font-family:inherit;font-size:10px;color:rgba(255,255,255,0.44);cursor:pointer">Simulate Error (prototype)</button>
@@ -8645,10 +8650,9 @@ function renderNiyaOnboarding(){
     // ── NEW USER PATH ──
     // Steps: 0=first name | 1=last name | 2=handle | 3=choose account |
     // personal→4=drop idea,5=done | newhandle→4=brand handle,5=category,6=sub-cat,7=drop idea,8=done
-    msgs.push(nMsg("Hey there! I'm Niya — welcome to Nigh Host. 👋"));
-    msgs.push(nMsg("I help hosts create amazing Drops that bring people together in real life."));
-    msgs.push(nMsg("Let's get you set up — it only takes a minute."));
-    msgs.push(nMsg("What's your first name?"));
+    msgs.push(nMsg("Hi, welcome to Nigh Host! I'm Niya, your in-app assistant."));
+    msgs.push(nMsg("Let's start with getting your user account set up."));
+    msgs.push(nMsg("Can you please provide your first name?"));
 
     if(obStep>=1){
       msgs.push(uMsg(fname));
@@ -8835,8 +8839,9 @@ function renderNiyaOnboarding(){
   setTimeout(()=>{const el=document.getElementById('loginChatScroll');if(el)el.scrollTop=el.scrollHeight;},30);
 
   const skipHome="S.niyaOnboarding=false;S.niyaMode=null;S.scr='home';render()";
+  const manualSetup="S.niyaOnboarding=false;S.niyaMode=null;S.scr='login';S.loginStep='profile';render()";
 
-  return hdr('Niya','')+
+  return hdr('Niya','','','<button onclick="'+manualSetup+'" style="background:none;border:none;color:#6B7280;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;padding:6px 4px">Set up manually'+ic('x',15)+'</button>',true)+
     '<div style="text-align:center;padding:14px 0 4px"><span style="font-size:11px;color:#9CA3AF;background:#F9FAFB;padding:3px 10px;border-radius:10px">Today</span></div>'+
     '<div id="loginChatScroll" style="flex:1;overflow-y:auto;padding:8px 0 6px">'+bubbles+'</div>'+
     inputArea;

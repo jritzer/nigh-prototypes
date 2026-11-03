@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigh — Early Access</title>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+    <meta name="bingbot" content="noindex, nofollow, noarchive">
+    <!-- Early-access: link-accessible but NOT indexed. Also set at host: X-Robots-Tag: noindex,nofollow,noarchive; robots.txt Disallow (incl. AI bots: GPTBot, ClaudeBot, Google-Extended, CCBot, PerplexityBot, Bytespider); keep out of sitemap + public nav. -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --purple: #6226E9; --purple-deep: #4A1BB5; --blue: #0E4EF5;
+            --teal: #41EFF9; --pink: #EC1977;
+            --bg: #0B0B1A; --surface: #12122A; --surface-2: #1A1A3A;
+            --border: rgba(255,255,255,0.08); --border-light: rgba(255,255,255,0.12);
+            --text: #F5F5F7; --text-secondary: #A8A8C0;
+            --radius: 20px; --radius-sm: 12px;
+            --gradient-brand: linear-gradient(135deg, var(--purple), var(--blue), var(--teal));
+            --gradient-warm: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
+        }
+
+        html { scroll-behavior: smooth; }
+        body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.07; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        body { font-family: 'Poppins', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* ===== NAV ===== */
+        nav { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(11,11,26,0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 72px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { display: flex; align-items: center; text-decoration: none; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-cta { background: var(--pink) !important; color: #fff !important; padding: 10px 24px !important; border-radius: var(--radius-sm) !important; font-weight: 700 !important; }
+        .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+        .mobile-toggle span { display: block; width: 22px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
+
+        /* ===== SECTION BASE ===== */
+        section { padding: 84px 24px; }
+        .section-label { font-size: 0.75rem; font-weight: 800; color: var(--teal); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; }
+        .section-header { text-align: center; max-width: 680px; margin: 0 auto 72px; }
+        .section-header h2 { font-size: clamp(2rem, 4.5vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.15; }
+        .section-header p { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ===== BUTTONS ===== */
+        .btn { padding: 16px 36px; border-radius: var(--radius-sm); font-size: 1rem; font-weight: 700; font-family: inherit; text-decoration: none; border: none; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-teal { background: var(--teal); color: var(--bg); }
+        .btn-teal:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(65,239,249,0.25); }
+        .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border-light); }
+        .btn-outline:hover { border-color: var(--text-secondary); transform: translateY(-2px); }
+        .btn-pink { background: var(--pink); color: #fff; }
+        .btn-pink:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(236,25,119,0.3); }
+
+        /* ===== HERO ===== */
+        .hero-section { padding: 60px 24px 56px; text-align: center; position: relative; overflow: hidden; margin-top: 72px; }
+        .hero-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(98,38,233,0.18), transparent 70%); pointer-events: none; }
+        .hero-section .container { position: relative; z-index: 2; }
+        .hero-section h1 { font-size: clamp(3rem, 7vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 28px; }
+        .gradient-text { background: linear-gradient(135deg, var(--teal), var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: 1.2rem; color: var(--text-secondary); max-width: 560px; margin: 0 auto 48px; line-height: 1.7; font-weight: 400; }
+        .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+        .hero-note { font-size: 0.8rem; color: var(--text-secondary); opacity: 0.6; }
+
+        /* ===== WHAT IS A DROP ===== */
+        .ingredients-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .ingredients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .ingredient-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; text-align: center; transition: all 0.3s; }
+        .ingredient-card:hover { border-color: var(--border-light); transform: translateY(-4px); }
+        .ingredient-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 20px; }
+        .icon-purple { background: rgba(98,38,233,0.15); }
+        .icon-teal { background: rgba(65,239,249,0.12); }
+        .icon-pink { background: rgba(236,25,119,0.12); }
+        .ingredient-card strong { display: block; font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+        .ingredient-card span { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-section { border-top: 1px solid var(--border); }
+        .how-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 28px; transition: all 0.3s; }
+        .step:hover { border-color: var(--teal); transform: translateY(-4px); }
+        .step-num { font-size: 2.2rem; font-weight: 900; color: var(--teal); opacity: 0.85; margin-bottom: 16px; letter-spacing: -0.04em; display: block; }
+        .step h3 { font-size: 1rem; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
+        .step p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; font-weight: 400; }
+
+        /* ===== USE CASES ===== */
+        .use-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .use-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; transition: all 0.35s; }
+        .use-card:hover { border-color: var(--purple); transform: translateY(-4px); }
+        .use-card .emoji { font-size: 2.2rem; margin-bottom: 18px; display: block; }
+        .use-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+        .use-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65; font-weight: 400; }
+        .use-card .industry { display: inline-block; margin-top: 18px; padding: 4px 12px; background: rgba(98,38,233,0.1); color: var(--purple); border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+
+        /* ===== BENEFITS ===== */
+        .benefits-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .benefits-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 860px; margin: 0 auto; }
+        .benefit-card { background: var(--bg); border: 1px solid var(--border); border-radius: 24px; padding: 48px; position: relative; overflow: hidden; display: grid; grid-template-rows: auto 1fr 1fr 1fr; }
+        .benefit-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .benefit-card.people::before { background: var(--gradient-brand); }
+        .benefit-card.business::before { background: var(--gradient-warm); }
+        .benefit-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; padding: 5px 14px; border-radius: 100px; display: inline-block; margin-bottom: 28px; width: fit-content; }
+        .benefit-card.people .benefit-label { background: rgba(65,239,249,0.1); color: var(--teal); }
+        .benefit-card.business .benefit-label { background: rgba(236,25,119,0.1); color: var(--pink); }
+        .benefit-item { display: flex; gap: 14px; margin-bottom: 0; align-items: flex-start; padding: 10px 0; }
+        .benefit-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+        .benefit-card.people .benefit-dot { background: var(--teal); }
+        .benefit-card.business .benefit-dot { background: var(--pink); }
+        .benefit-item p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; font-weight: 400; }
+        .benefit-item strong { color: var(--text); font-weight: 700; }
+        .benefit-card-cta { margin-top: 32px; }
+
+        /* ===== FAQ ===== */
+        .faq-list { max-width: 720px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-q { width: 100%; background: none; border: none; color: var(--text); font-family: inherit; font-size: 1rem; font-weight: 700; padding: 24px 0; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .arrow { font-size: 1.4rem; font-weight: 400; color: var(--text-secondary); transition: transform 0.3s; flex-shrink: 0; }
+        .faq-item.open .arrow { transform: rotate(45deg); }
+        .faq-a { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.75; padding-bottom: 24px; display: none; font-weight: 400; }
+        .faq-item.open .faq-a { display: block; }
+
+        /* ===== SPLIT CTA ===== */
+        .split-cta { border-top: 1px solid var(--border); }
+        .split-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .split-cta-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 56px 48px; text-align: center; position: relative; overflow: hidden; }
+        .split-cta-card.for-people::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-brand); }
+        .split-cta-card.for-business::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-warm); }
+        .split-cta-card .eyebrow { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 16px; }
+        .split-cta-card.for-people .eyebrow { color: var(--teal); }
+        .split-cta-card.for-business .eyebrow { color: var(--pink); }
+        .split-cta-card h3 { font-size: clamp(1.4rem, 2.5vw, 1.8rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 14px; line-height: 1.2; }
+        .split-cta-card p { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 32px; line-height: 1.7; }
+
+        /* ===== FOOTER ===== */
+        footer { padding: 64px 24px 40px; border-top: 1px solid var(--border); }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+        .footer-brand p { color: var(--text-secondary); font-size: 0.85rem; max-width: 280px; line-height: 1.65; margin-top: 14px; font-weight: 400; }
+        .footer-col h4 { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 18px; color: var(--text-secondary); }
+        .footer-col a { display: block; color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; padding: 5px 0; transition: color 0.2s; font-weight: 400; }
+        .footer-col a:hover { color: var(--text); }
+        .footer-app-links { display: flex; gap: 12px; margin-top: 16px; }
+        .footer-app-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; padding: 6px 12px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); transition: all 0.2s; }
+        .footer-app-link:hover { border-color: var(--teal); color: var(--teal); }
+        .footer-bottom { max-width: 1200px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: #555; }
+        .footer-bottom a { color: #555; text-decoration: none; }
+        .footer-bottom a:hover { color: var(--text-secondary); }
+
+        /* ===== APP DOWNLOAD MODAL ===== */
+        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; padding: 24px; }
+        .modal-backdrop.open { display: flex; }
+        .modal { background: var(--surface); border: 1px solid var(--border-light); border-radius: 24px; padding: 48px 40px; max-width: 400px; width: 100%; text-align: center; position: relative; overflow: hidden; }
+        .modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(135deg, var(--purple), var(--blue), var(--teal)); }
+        .modal-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.06); border: none; color: var(--text-secondary); font-size: 1.1rem; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+        .modal h3 { font-size: 1.3rem; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .modal p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; margin-bottom: 28px; }
+        .qr-wrap { background: #fff; border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 20px; }
+        .qr-wrap img { display: block; width: 180px; height: 180px; }
+        .modal-note { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.55; }
+        .modal-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+        .modal-divider span { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.4; white-space: nowrap; }
+        .modal-divider::before, .modal-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .modal-store-btns { display: flex; flex-direction: column; gap: 10px; }
+        .modal-store-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; font-family: inherit; text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); transition: all 0.2s; }
+        .modal-store-btn:hover { background: rgba(255,255,255,0.09); color: var(--text); border-color: var(--border-light); }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .ingredients-grid { grid-template-columns: repeat(3, 1fr); }
+            .how-steps { grid-template-columns: repeat(2, 1fr); }
+            .benefits-row { grid-template-columns: 1fr; }
+            .split-cta-grid { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            section { padding: 48px 20px; }
+            .hero-section { padding-bottom: 28px; }
+            .section-header { margin-bottom: 32px; }
+            .ingredients-grid { grid-template-columns: 1fr; }
+            .how-steps { grid-template-columns: 1fr; }
+            .hero-ctas { flex-direction: column; align-items: center; }
+            /* smaller header */
+            .nav-inner { height: 56px; }
+            .nav-logo img { height: 42px !important; }
+            /* smaller footer, single column so links don't wrap */
+            footer { padding: 44px 20px 32px; }
+            .footer-inner { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+            .footer-brand { grid-column: 1 / -1; }
+            .footer-brand img { height: 46px !important; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; margin-top: 32px; }
+        }
+        #dial { flex: 0 0 auto; padding: 16px 32px 16px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14); color: var(--text); font-family: inherit; font-size: 1rem; cursor: pointer; -webkit-appearance: none; appearance: none; background-color: rgba(0,0,0,0.3); background-repeat: no-repeat; background-position: right 12px center; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none' stroke='%23A0A0A0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E"); }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+    <div class="nav-inner">
+        <div class="nav-logo" aria-label="Nigh">
+            <img src="Nigh_Logo.svg" alt="Nigh" style="height: 56px; width: auto; display: block;">
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <div class="container">
+        <div class="fade-up" style="max-width:540px;margin:0 auto 26px;border-radius:18px;padding:1.5px;background:linear-gradient(135deg,#41EFF9,#0E4EF5,#EC1977);box-shadow:0 14px 44px rgba(14,78,245,0.28);">
+            <div style="background:#000;border-radius:16px;padding:24px 28px;">
+                <p style="font-size:1.05rem;color:var(--text);line-height:1.6;margin:0;">You've been invited to join Nigh's founding community &mdash; a group helping create more opportunities for people to get out, show up, and connect IRL.</p>
+            </div>
+        </div>
+        <div class="fade-up" style="display:inline-flex;align-items:center;gap:6px;background:rgba(236,25,119,0.12);border:1px solid rgba(236,25,119,0.3);border-radius:100px;padding:6px 14px;font-size:0.75rem;font-weight:800;color:#EC1977;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:24px;">
+            <span style="width:5px;height:5px;border-radius:50%;background:#EC1977;flex-shrink:0;display:inline-block"></span>
+            Private Beta · Invite Only
+        </div>
+        <h1 class="fade-up">In Real Life.<br><span class="gradient-text">On Purpose.</span></h1>
+        <p class="fade-up" style="font-size:1.5rem;font-weight:600;color:var(--text);letter-spacing:-0.01em;margin-bottom:18px;">Less scrolling. More showing up.</p>
+        <p class="hero-subtitle fade-up" style="margin-bottom:10px;">Secret sets, pop-ups, gatherings, and more nearby.<br>IRL Drops are Nigh.</p>
+        <p class="hero-note fade-up" style="margin-bottom:40px;color:rgba(245,245,247,0.55);opacity:1;">Real humans · Real places · Real moments</p>
+    </div>
+</section>
+
+<!-- ===== WHY NIGH ===== -->
+<section style="position: relative; overflow: hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 100%, rgba(65,239,249,0.06), transparent 70%);pointer-events:none;"></div>
+    <div class="container" style="max-width: 720px; text-align: center; position: relative; z-index: 2;">
+        <div class="fade-up">
+            <div class="section-label">Why Nigh</div>
+            <h2 style="font-size: clamp(2rem, 4.5vw, 2.8rem); line-height: 1.15; margin-bottom: 28px;">More connected than ever.<br>But less connected to<br><span class="gradient-text">each other.</span></h2>
+            <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.75; max-width: 540px; margin: 0 auto 32px;">We believe communities are strongest when people participate in them. We spend more time connected than ever before, yet many of us feel less connected to each other and the world around us.</p>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 36px 40px; max-width: 600px; margin: 0 auto;">
+                <p style="font-size: 1.08rem; color: var(--text); line-height: 1.75; font-weight: 500;">Nigh helps create moments worth showing up for in real life. Real people creating real reasons to get out and participate in the world around us.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== WHAT IS A DROP ===== -->
+<section class="ingredients-section" id="drops">
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">Introducing Nigh Drops</div>
+            <h2>Real moments, dropped without warning.</h2>
+            <p style="max-width:560px;margin-left:auto;margin-right:auto;">Nigh Drops are in real life moments — hosted by real people at real places to bring people together, soon.</p>
+        </div>
+        <div class="ingredients-grid">
+            <div class="ingredient-card fade-up">
+                <div class="ingredient-icon icon-purple">&#x23F1;</div>
+                <strong>Happening Soon</strong>
+                <span>Drops happen within 24 hours of going live — then they're gone.</span>
+            </div>
+            <div class="ingredient-card fade-up">
+                <div class="ingredient-icon icon-teal">&#x1F4CD;</div>
+                <strong>At a place nearby</strong>
+                <span>A real location — a business, a venue, or anywhere IRL.</span>
+            </div>
+            <div class="ingredient-card fade-up">
+                <div class="ingredient-icon icon-pink">&#x2728;</div>
+                <strong>When you show up</strong>
+                <span>An experience you only get by showing up on time.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how-section" id="how">
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">How Nigh Drops Work</div>
+            <h2>Easy to drop. Impossible to miss.</h2>
+            <p>Nigh gives hosts a simple way to bring people together in real life — without the noise, algorithms, or endless feeds.</p>
+        </div>
+        <div class="how-steps">
+            <div class="step fade-up">
+                <div class="step-num">01</div>
+                <h3>Create a Drop</h3>
+                <p>A host creates an exclusive experience when they want people to show up.</p>
+            </div>
+            <div class="step fade-up">
+                <div class="step-num">02</div>
+                <h3>Spread the Word</h3>
+                <p>They share it — via link, online, text, and directly to their followers.</p>
+            </div>
+            <div class="step fade-up">
+                <div class="step-num">03</div>
+                <h3>Secure a Spot</h3>
+                <p>Guests get a ticket to reserve their spot for the drop before it's too late.</p>
+            </div>
+            <div class="step fade-up">
+                <div class="step-num">04</div>
+                <h3>Show Up IRL</h3>
+                <p>Ticket holders arrive on time and experience the moment in person.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== USE CASES ===== -->
+<section>
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">What Nigh Drops Look Like</div>
+            <h2>Every Drop is a "you had to be there" moment</h2>
+            <p>Anyone can host — artists, creators, venues, communities, friends, and places that bring people together. Here's what some Drops look like in the wild.</p>
+        </div>
+        <div class="use-grid">
+            <!-- Row 1 — scene-forward -->
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F3A4;</span>
+                <h3>Pop-Up Show</h3>
+                <p>A surprise performance drops tonight. Limited spots. A 'you had to be there' moment — blink and you missed it.</p>
+                <span class="industry">Entertainment</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F3A8;</span>
+                <h3>Gallery Drop</h3>
+                <p>An artist drops a pop-up gallery show with new work you won't see anywhere else. RSVP for tonight — gone tomorrow.</p>
+                <span class="industry">Culture</span>
+            </div>
+            <!-- Row 2 — creators + mix -->
+            <div class="use-card fade-up">
+                <span class="emoji">&#x2728;</span>
+                <h3>Creator Experience</h3>
+                <p>A creator drops a last-minute IRL hangout for their followers. Limited spots — only the first to RSVP get in.</p>
+                <span class="industry">Creator</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F389;</span>
+                <h3>Group Social</h3>
+                <p>A community drops a spontaneous meetup happening today. Reserve a spot and meet new people.</p>
+                <span class="industry">Community</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F35C;</span>
+                <h3>Surprise Drop</h3>
+                <p>A local spot offers an off-menu special drop. Grab a spot quick and taste it before it's gone.</p>
+                <span class="industry">Hospitality</span>
+            </div>
+            <!-- Row 3 — community + business balance -->
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F6CD;</span>
+                <h3>Exclusive Launch</h3>
+                <p>This afternoon only, a brand drops a product before it's anywhere else. VIP experience for ticket holders.</p>
+                <span class="industry">Retail</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x23F0;</span>
+                <h3>Last-Minute Opening</h3>
+                <p>A place drops remaining spots last minute — a few people nearby grab them before it starts.</p>
+                <span class="industry">Services</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F31E;</span>
+                <h3>Sunrise Workout</h3>
+                <p>An instructor drops a sunrise workout in the park this weekend. Reserve, arrive on time, and don't forget your mat.</p>
+                <span class="industry">Wellness</span>
+            </div>
+            <div class="use-card fade-up">
+                <span class="emoji">&#x1F3B2;</span>
+                <h3>Game Night</h3>
+                <p>A friend drops a game night tonight just for the close crew. Need the link to reserve a spot at the table.</p>
+                <span class="industry">Friends</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== EVERYONE WINS ===== -->
+<section class="benefits-section">
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">Showing up IRL hits different</div>
+            <h2>For People. For Hosts.<br>For Real.</h2>
+            <p>People get spontaneous IRL experiences worth showing up for. Hosts get guests at times they want them soon.</p>
+        </div>
+        <div class="benefits-row">
+            <div class="benefit-card people fade-up">
+                <div class="benefit-label">For People</div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>Participate, don't just scroll</strong> — attend real moments worth showing up for</p></div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>No endless feed, no algorithm</strong> — intentional invitations from people, places, and brands you trust</p></div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>Belong to something real</strong> — presence, shared experiences, and memories</p></div>
+            </div>
+            <div class="benefit-card business fade-up">
+                <div class="benefit-label">For Hosts</div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>Control when people show up</strong> — on your schedule, on your terms</p></div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>Create a moment</strong> — turn any window of time into something people don't want to miss</p></div>
+                <div class="benefit-item"><div class="benefit-dot"></div><p><strong>Turn scarcity into demand</strong> — limited spots make showing up feel worth it</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CLAIM EARLY ACCESS ===== -->
+<section id="claim" style="border-top: 1px solid var(--border); text-align: center;">
+    <div class="container">
+        <div class="fade-up" id="claim-form-wrap">
+            <h2 style="font-size: clamp(2rem, 4.5vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.15;">Join the founding community</h2>
+            <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 460px; margin: 0 auto 12px; line-height: 1.7;">Nigh is invite-only while we build a trusted community of people who love showing up IRL. Drop your number and we'll text your invite.</p>
+            <form id="claimForm" novalidate style="display:flex;flex-direction:column;gap:12px;max-width:340px;margin:28px auto 0;">
+                <div style="display:flex;gap:8px;">
+                    <select id="dial" aria-label="Country code"></select>
+                    <input id="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(201) 555-0123" aria-label="Mobile number" style="flex:1;min-width:0;padding:16px 18px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:1rem;text-align:center;">
+                </div>
+                <button type="submit" class="btn btn-pink" style="justify-content:center;">Accept your invitation</button>
+            </form>
+            <div id="err" role="alert" style="color:#FF6B8A;font-size:0.85rem;margin-top:6px;min-height:0;"></div>
+            <p style="margin-top:8px;font-size:0.72rem;color:rgba(245,245,247,0.5);">Standard message rates may apply.</p>
+        </div>
+        <div class="fade-up" id="success" style="display:none;">
+            <h2 id="successHead" style="font-size: clamp(2rem, 4.5vw, 2.8rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.15;">You're on the list.</h2>
+            <p id="successMsg" style="font-size: 1.05rem; color: var(--text-secondary); max-width: 440px; margin: 0 auto; line-height: 1.7;">Welcome to the founding community. We'll text your invite as early access opens up &mdash; keep an eye out.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section>
+    <div class="container">
+        <div class="section-header fade-up">
+            <div class="section-label">FAQ</div>
+            <h2>Need to Knows</h2>
+        </div>
+        <div class="faq-list fade-up">
+            <div class="faq-item open">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What is a Nigh Drop?<span class="arrow">+</span></button>
+                <div class="faq-a">Nigh Drops are a spontaneous IRL moment — to bring people together at a specific place and time, within 24 hours of going live. Hosts set the time, the experience, number of spots, and how they want to share it — then track who showed up. No algorithm, no endless feed, just intentional IRL presence.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Who can host Nigh Drops?<span class="arrow">+</span></button>
+                <div class="faq-a">Anyone. Artists, creators, businesses, organizations, friends, and communities. If you've got a moment worth showing up for, Nigh is for you.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do invitations work?<span class="arrow">+</span></button>
+                <div class="faq-a">Nigh is invite-only while we build a trusted community of people who love showing up in real life. As members join, they can invite others, and access opens up gradually.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Where is Nigh available?<span class="arrow">+</span></button>
+                <div class="faq-a">Nigh is starting in the United States. We're gradually expanding to more places over time — join now and you'll be among the first when Nigh reaches your area.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Does Nigh cost anything?<span class="arrow">+</span></button>
+                <div class="faq-a">Joining Nigh is free. Hosting is free too — for priced Drops there's a 5% + $1 per-ticket processing fee, so hosts only pay when they earn. No credit card required to join.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">Do guests need the app?<span class="arrow">+</span></button>
+                <div class="faq-a">Yes. Guests view and reserve spots for Drops through the Nigh app. A link shared from a host or friend serves as an invitation and provides access to the app.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">What does Nigh mean?<span class="arrow">+</span></button>
+                <div class="faq-a">Nigh /n&#x12B;/ means near in place, in time, and in relationship. That's where the best things in life happen.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">How is my data handled?<span class="arrow">+</span></button>
+                <div class="faq-a">Privacy-first by design — no third-party ads, and we never sell your data. Your info is used to verify identity and shared only when needed, like when you reserve a spot or follow a host.</div>
+            </div>
+        </div>
+        <p style="text-align:center;margin:48px auto 0;font-size:0.9rem;color:var(--text-secondary);">Ready? <a href="#claim" style="color:var(--text);font-weight:400;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:1px;">Accept your invitation ↑</a></p>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<!-- Footer hidden for now: this is a link-only early-access page; off-ramps (incl. the public waitlist) are intentionally removed so visitors stay on the claim. Restore by uncommenting.
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="index.html" style="text-decoration:none;display:inline-block;margin-bottom:4px;"><img src="Nigh_Logo.svg" alt="Nigh" style="height: 60px; width: auto; display: block;"></a>
+            <p>Real life, worth showing up for.</p>
+        </div>
+        <div class="footer-col">
+            <a href="index.html">Home</a>
+            <a href="for-hosts.html">For Hosts</a>
+            <a href="waitlist.html">Join the list</a>
+        </div>
+        <div class="footer-col">
+            <a href="about.html">About</a>
+            <a href="../Nigh Foundation/index.html">Foundation</a>
+            <a href="#">Contact</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; 2026 Nigh. All rights reserved.</span>
+        <div style="display:flex;gap:24px;"><a href="#">Privacy</a><a href="#">Terms</a></div>
+    </div>
+</footer>
+-->
+
+<!-- App download modal removed for private beta — invite links handle app routing -->
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.getElementById('appModal').classList.remove('open');
+});
+
+</script>
+
+<script>
+  (function(){
+    var params=new URLSearchParams(location.search);
+    var SRC=params.get('src')||params.get('utm_source')||'direct';
+
+    // [ISO, name, dial, nationalDigits, example] — prototype set; real build: full list.
+    var DATA=[
+      ['US','United States','+1',10,'(201) 555-0123'],
+      ['CA','Canada','+1',10,'(204) 555-0123'],
+      ['GB','United Kingdom','+44',10,'7400 123456'],
+      ['IE','Ireland','+353',9,'85 123 4567'],
+      ['AU','Australia','+61',9,'412 345 678'],
+      ['NZ','New Zealand','+64',9,'21 123 4567'],
+      ['MX','Mexico','+52',10,'55 1234 5678'],
+      ['BR','Brazil','+55',11,'11 91234 5678'],
+      ['FR','France','+33',9,'6 12 34 56 78'],
+      ['DE','Germany','+49',11,'1512 3456789'],
+      ['ES','Spain','+34',9,'612 34 56 78'],
+      ['IT','Italy','+39',10,'312 345 6789'],
+      ['NL','Netherlands','+31',9,'6 12345678'],
+      ['PT','Portugal','+351',9,'91 234 5678'],
+      ['SE','Sweden','+46',9,'70 123 4567'],
+      ['CH','Switzerland','+41',9,'78 123 4567'],
+      ['IN','India','+91',10,'98765 43210'],
+      ['SG','Singapore','+65',8,'8123 4567'],
+      ['PH','Philippines','+63',10,'917 123 4567'],
+      ['ID','Indonesia','+62',11,'812 3456 7890'],
+      ['JP','Japan','+81',10,'90 1234 5678'],
+      ['KR','South Korea','+82',10,'10 1234 5678'],
+      ['AE','United Arab Emirates','+971',9,'50 123 4567'],
+      ['ZA','South Africa','+27',9,'71 234 5678'],
+      ['NG','Nigeria','+234',10,'802 123 4567']
+    ];
+    function flag(iso){ return iso.replace(/./g,function(c){return String.fromCodePoint(127397+c.charCodeAt(0));}); }
+    var byIso={}; DATA.forEach(function(d){ byIso[d[0]]=d; });
+
+    var dial=document.getElementById('dial');
+    var phone=document.getElementById('phone');
+    DATA.forEach(function(d){ var o=document.createElement('option'); o.value=d[0]; o.textContent=flag(d[0])+'  '+d[2]; dial.appendChild(o); });
+    dial.value='US';   // default to US per spec
+    function applyPlaceholder(clear){ var d=byIso[dial.value]||byIso['US']; phone.placeholder=d[4]; phone.maxLength=d[3]+6; if(clear){ phone.value=''; phone.focus(); } }
+    applyPlaceholder(false);
+    dial.addEventListener('change',function(){ applyPlaceholder(true); });
+
+    // Numbers only, capped at the country's length; 10-digit numbers format as (AAA) PPP-LLLL.
+    function formatPhone(){
+      var d=byIso[dial.value]||byIso['US'];
+      var v=phone.value.replace(/\D/g,'').slice(0,d[3]);
+      if(d[3]===10){
+        if(v.length>6)      v='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6);
+        else if(v.length>3) v='('+v.slice(0,3)+') '+v.slice(3);
+        else if(v.length>0) v='('+v;
+      }
+      phone.value=v;
+    }
+    phone.addEventListener('input',formatPhone);
+
+    var form=document.getElementById('claimForm'); if(!form) return;
+    var err=document.getElementById('err');
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      var d=byIso[dial.value]||byIso['US'];
+      var digits=phone.value.replace(/\D/g,'');
+      if(digits.length!==d[3]){ err.textContent='Please enter a valid '+d[1]+' mobile number ('+d[3]+' digits).'; return; }
+      err.textContent='';
+      var country=dial.value;
+      var countryName=d[1];
+      // Real build: POST {phone, country, src, ts} to the beta list; non-US rows feed the per-country demand/notify list.
+      console.log('[early-access] claim',{phone:d[2]+' '+digits,country:country,src:SRC,ts:new Date().toISOString()});
+
+      var head=document.getElementById('successHead');
+      var msg=document.getElementById('successMsg');
+      if(country==='US'){
+        head.textContent="You're on the list.";
+        msg.innerHTML=`Welcome to the founding community. We'll text your invite as early access opens up — keep an eye out.`;
+      } else {
+        head.textContent="You're on the early list.";
+        msg.innerHTML=`Nigh isn't live in <b style="color:var(--text)">${countryName}</b> yet — we'll text you the moment it reaches you. Thanks for helping us know where to open next.`;
+      }
+      document.getElementById('claim-form-wrap').style.display='none';
+      var s=document.getElementById('success'); s.style.display='block';
+      s.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  })();
+</script>
+</body>
+</html>

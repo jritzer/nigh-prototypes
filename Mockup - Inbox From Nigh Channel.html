@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh — Inbox + "From Nigh" Channel (Prototype)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1C1C24;color:#fff;display:flex;justify-content:center;min-height:100vh;padding:24px 12px}
+.phone{width:390px;max-width:100%;height:812px;background:#0B0B1A;border-radius:40px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column}
+.screen{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.scroll{overflow-y:auto;flex:1}
+.scroll::-webkit-scrollbar{width:0}
+.hdr{background:#0B0B1A;padding:16px 16px 0;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:9}
+.title{font-size:20px;font-weight:800}
+.tabs{display:flex;align-items:center;margin:8px -8px 0}
+.tab{flex:1;background:none;border:none;padding:14px 0 12px;font-size:15px;cursor:pointer;font-family:inherit;position:relative;color:rgba(255,255,255,0.45);font-weight:600}
+.tab.on{color:#fff;font-weight:800}
+.tab .bar{position:absolute;bottom:0;left:0;right:0;height:2.5px;border-radius:2px;background:transparent}
+.tab.on .bar{background:#fff}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:#0E4EF5;color:#fff;font-size:11px;font-weight:700;vertical-align:middle}
+.row{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:12px;align-items:center;cursor:pointer}
+.row:active{background:rgba(255,255,255,0.03)}
+.av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff}
+.av.circle{border-radius:50%}
+.nm{font-size:14px;font-weight:700}
+.sb{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:#0E4EF5;flex-shrink:0}
+.pin{background:linear-gradient(90deg,rgba(14,78,245,0.10),rgba(98,38,233,0.04))}
+.fab{position:absolute;right:18px;bottom:84px;width:56px;height:56px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(14,78,245,0.5);z-index:20}
+.nav{height:64px;background:#0B0B1A;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-around;flex-shrink:0}
+.nav svg{color:rgba(255,255,255,0.35)}
+.nav .act svg{color:#fff}
+.chBack{background:none;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;font-size:14px;padding:0}
+.verified{color:#0E4EF5}
+.note{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.55}
+.card{background:#12121F;border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;margin:0 0 14px}
+.toast{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);color:#fff;font-size:12px;padding:9px 16px;border-radius:20px;z-index:40;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.when{font-size:11px;color:rgba(255,255,255,0.4);text-align:center;margin:4px 0 12px}
+@keyframes prog{from{width:0}to{width:100%}}
+</style></head>
+<body>
+<div class="phone"><div id="app" class="screen"></div></div>
+
+<script>
+var ICON={
+ play:'<svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>',
+ pause:'<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+ heart:function(f){return '<svg width="17" height="17" viewBox="0 0 24 24" fill="'+(f?'#F0997B':'none')+'" stroke="'+(f?'#F0997B':'currentColor')+'" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg>';},
+ chat:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+ back:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>',
+ send:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
+ plus:'<svg width="22" height="22" viewBox="0 0 24 24" stroke="#fff" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+ bell:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>',
+ bellOff:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.73 21a2 2 0 01-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0118 8"/><path d="M6.26 6.26A5.86 5.86 0 006 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 00-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+ headset:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 14v-3a8 8 0 0116 0v3"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19a3 3 0 01-3 3h-3"/></svg>',
+ headsetSm:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 14v-3a8 8 0 0116 0v3"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19a3 3 0 01-3 3h-3"/></svg>',
+ lock:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+ clock:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+ pin:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+ link:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007 0l2-2a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-2 2a5 5 0 007 7l1-1"/></svg>',
+ grid:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+ tick:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>',
+ smile:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+ user:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>',
+ ai:'<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l1.7 4.9a3 3 0 001.9 1.9L20.5 10.5l-4.9 1.7a3 3 0 00-1.9 1.9L12 19l-1.7-4.9a3 3 0 00-1.9-1.9L3.5 10.5l4.9-1.7a3 3 0 001.9-1.9z"/></svg>',
+ broadcast:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="1.6" fill="currentColor" stroke="none"/><path d="M9.8 6.8a3.2 3.2 0 000 4.4"/><path d="M14.2 6.8a3.2 3.2 0 010 4.4"/><path d="M7.5 4.8a6 6 0 000 8.4"/><path d="M16.5 4.8a6 6 0 010 8.4"/><path d="M12 11v7"/></svg>',
+ people:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2.5 20c0-3 2.9-5 6.5-5s6.5 2 6.5 5"/><path d="M16.5 5.5a3 3 0 010 5.8"/><path d="M21.5 20c0-2.4-1.4-4-3.6-4.6"/></svg>',
+ check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="#0E4EF5"><path d="M12 2l2.4 1.8 3 .2.2 3L21 12l-2.4 2.8-.2 3-3 .2L12 22l-2.8-2.2-3-.2-.2-3L2 12l1.8-2.8.2-3 3-.2z"/><path d="M9.5 12.5l1.8 1.8 3.5-3.8" stroke="#0B0B1A" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+};
+function navIc(d){return '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+d+'</svg>';}
+
+var S={screen:'inbox',tab:'messages',liked:false,likeCount:42,playing:false,replies:[],muted:false,supportReplies:[],hostId:null,hostReplies:{},reactions:{},pickerFor:null,gReax:{},gPicker:null,gComments:{},replyOpen:false,feedbackSent:false,reax:{},reaxPicker:null,caseState:'none',escalated:false};
+var EMOJIS=['❤️','👍','😂','🔥','😮','👏'];
+
+var MESSAGES=[
+ {pin:true,nigh:true,nm:'Nigh Team',sb:'New video · Where Nigh goes next',av:'N',grad:'linear-gradient(135deg,#6226E9,#0E4EF5)',unread:true},
+ {pin:true,support:true,nm:'Nigh Support',sb:'Your $45 refund has been processed',icon:ICON.headset,grad:'linear-gradient(135deg,#0F766E,#0D9488)',unread:true},
+ {firstParty:true,hostId:'drops',nm:'Nigh Drops',sb:'Tonight: Rooftop Social at The Meridian',av:'N',grad:'linear-gradient(135deg,#0E4EF5,#41EFF9)',unread:true},
+ {firstParty:true,hostId:'den',nm:'Nigh Denver',sb:'Sunrise Run Club + Coffee this Saturday',av:'DEN',grad:'linear-gradient(135deg,#0E4EF5,#41EFF9)',unread:false},
+ {group:true,nm:'Nike Air Max Day Access',sb:'You, Sarah, James · "see you there!"',av:'NA',grad:'linear-gradient(135deg,#0E4EF5,#6226E9)',unread:true},
+ {nm:'Sarah Mitchell',sb:'Are you going tonight?',av:'SM',circle:true,grad:'rgba(65,239,249,0.18)',avColor:'#41EFF9',unread:false},
+ {group:true,nm:'Weekend Squad',sb:'Free at 4pm — anyone want to meet up?',av:'JR',grad:'linear-gradient(135deg,#22C55E,#10B981)',unread:false},
+ {gallery:true,nm:'All post types',sb:'Demo — one of every message/post type',icon:ICON.grid,grad:'#1f2430',unread:false}
+];
+var HOSTS={
+ drops:{nm:'Nigh Drops',handle:'@Nigh_Drops',av:'N',grad:'linear-gradient(135deg,#0E4EF5,#41EFF9)',
+   when:'Today',
+   msgs:[
+     {text:'Tonight: Rooftop Social at The Meridian — a Nigh drop with The Meridian. 20 spots, live now.',sub:'6:02 PM'},
+     {text:'Doors from 7. Tap the drop to grab your spot before it fills.',sub:'6:02 PM'}
+   ],
+   drop:{title:'Rooftop Social · The Meridian',when:'Tonight 7:00 PM · 20 spots'}},
+ den:{nm:'Nigh Denver',handle:'@Nigh_DEN',av:'DEN',grad:'linear-gradient(135deg,#0E4EF5,#41EFF9)',
+   when:'Thursday',
+   msgs:[
+     {text:'Denver — Sunrise Run Club + Coffee this Saturday at Wash Park. Free, 30 spots.',sub:'9:10 AM'},
+     {text:'Partnered with Huckleberry Roasters — first 30 get a free pour-over after the run.',sub:'9:10 AM'}
+   ],
+   drop:{title:'Sunrise Run Club + Coffee',when:'Sat 7:00 AM · Wash Park · Free'}}
+};
+
+var NOTIFS=[
+ {nm:'Sarah Mitchell got a ticket',sb:'Nike Air Max Day Access · 2 spots left',av:'SM',circle:true,grad:'rgba(65,239,249,0.18)',avColor:'#41EFF9'},
+ {nm:'Nike Air Max Day Access',sb:'Nike Boulder · Starts in 2h',av:'NA',grad:'linear-gradient(135deg,#F5A623,#EC1977)'},
+ {nm:'3 New Drops Near You',sb:'Pearl St & The Hill',av:'N',grad:'linear-gradient(135deg,#6226E9,#0E4EF5)'},
+ {nm:'Ticket refunded',sb:'Centro Jazz Night · processed',av:'N',grad:'linear-gradient(135deg,#6226E9,#0E4EF5)'}
+];
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+function rowHTML(m){
+ var avStyle='background:'+m.grad+(m.avColor?';color:'+m.avColor:'');
+ var click=m.nigh?'onclick="openChannel()"':m.support?'onclick="openSupport()"':m.hostId?'onclick="openHost(\''+m.hostId+'\')"':m.gallery?'onclick="openGallery()"':'';
+ return '<div class="row '+(m.pin?'pin':'')+'" '+click+'>'
+  +'<div class="av '+(m.circle?'circle':'')+'" style="'+avStyle+'">'+(m.icon||m.av)+'</div>'
+  +'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:5px">'
+  +'<span class="nm">'+esc(m.nm)+'</span>'
+  +((m.nigh||m.support||m.firstParty)?'<span class="verified" style="display:flex">'+ICON.check+'</span>':'')
+  +((m.nigh||m.firstParty)?'<span title="Nigh broadcast" style="display:flex;color:rgba(255,255,255,0.3);margin-left:1px">'+ICON.broadcast+'</span>':m.group?'<span title="Group chat" style="display:flex;color:rgba(255,255,255,0.3);margin-left:1px">'+ICON.people+'</span>':'')
+  +'</div><div class="sb">'+esc(m.sb)+'</div></div>'
+  +(m.muted?'<span style="color:rgba(255,255,255,0.3);display:flex" title="Muted">'+ICON.bellOff+'</span>':(m.unread?'<span class="dot"></span>':''))+'</div>';
+}
+
+function renderInbox(){
+ var list=(S.tab==='messages'?MESSAGES:NOTIFS).map(function(m){
+   if(m.nigh&&S.muted)return Object.assign({},m,{unread:false,muted:true});
+   if(m.support)return Object.assign({},m,{sb:supportSb(),unread:S.caseState!=='none'});
+   return m;
+ });
+ var msgN=MESSAGES.filter(function(m){return m.unread&&!(m.nigh&&S.muted);}).length;
+ var notN=3;
+ var body=list.map(function(m){return rowHTML(m);}).join('');
+ return '<div class="hdr">'
+  +'<div class="title">Inbox</div>'
+  +'<div class="tabs">'
+   +'<button class="tab '+(S.tab==='messages'?'on':'')+'" onclick="switchTab(\'messages\')">Messages'+(msgN?'<span class="badge">'+msgN+'</span>':'')+'<div class="bar"></div></button>'
+   +'<button class="tab '+(S.tab==='notifications'?'on':'')+'" onclick="switchTab(\'notifications\')">Notifications'+(notN?'<span class="badge">'+notN+'</span>':'')+'<div class="bar"></div></button>'
+  +'</div></div>'
+  +'<div class="scroll">'+body+'<div style="height:40px"></div></div>'
+  +(S.tab==='messages'?'<button class="fab" onclick="compose()">'+ICON.plus+'</button>':'')
+  +navBar();
+}
+
+function navBar(){
+ return '<div class="nav">'
+  +'<span>'+navIc('<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>')+'</span>'
+  +'<span>'+navIc('<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/>')+'</span>'
+  +'<span class="act">'+navIc('<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>')+'</span>'
+  +'<span>'+navIc('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>')+'</span>'
+  +'<span>'+navIc('<line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>')+'</span>'
+  +'</div>';
+}
+
+function sil(sz){return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>';}
+function byline(name,role){
+ return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
+  +'<div style="width:26px;height:26px;border-radius:50%;background:#1f2430;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.35)">'+sil(15)+'</div>'
+  +'<div style="font-size:12px;font-weight:700">'+name+(role?'<span style="color:rgba(255,255,255,0.4);font-weight:500"> · '+role+'</span>':'')+'</div></div>';
+}
+function inBubble(sender,text,sub){
+ var isAi=sender.kind==='ai';
+ var av=isAi
+  ? '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff">'+ICON.ai+'</div>'
+  : '<div style="width:28px;height:28px;border-radius:50%;background:#1f2430;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:rgba(255,255,255,0.35)">'+sil(16)+'</div>';
+ var tag=isAi?'<span style="font-size:9px;font-weight:700;color:#A78BFA;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.38);border-radius:5px;padding:0 5px">'+(sender.tag||'AI')+'</span>':(sender.role?'<span style="color:rgba(255,255,255,0.4);font-weight:500">'+sender.role+'</span>':'');
+ return '<div style="margin-bottom:12px">'
+  +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">'+av+'<span style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="font-weight:700;color:rgba(255,255,255,0.72)">'+sender.name+'</span>'+tag+'</span></div>'
+  +'<div style="margin-left:35px"><div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:14px;max-width:235px;line-height:1.5;display:inline-block">'+esc(text)+'</div>'
+  +(sub?'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:3px 0 0 2px">'+esc(sub)+'</div>':'')+'</div></div>';
+}
+var GP='linear-gradient(135deg,#6226E9,#0E4EF5)';
+function favi(g,c,first){return '<div style="width:28px;height:28px;border-radius:50%;background:'+g+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;border:2px solid #12121F;'+(first?'':'margin-left:-9px')+'">'+c+'</div>';}
+function foundersByline(){
+ return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+  +'<div style="display:flex">'+favi('linear-gradient(135deg,#6226E9,#0E4EF5)','K',true)+favi('linear-gradient(135deg,#0E4EF5,#41EFF9)','J')+favi('linear-gradient(135deg,#F5A623,#EC1977)','P')+favi('linear-gradient(135deg,#22C55E,#10B981)','S')+'</div>'
+  +'<div><div style="font-size:13px;font-weight:700">Kaden, Josh, Preston &amp; Sid</div><div style="font-size:11px;color:rgba(255,255,255,0.4)">Founders</div></div></div>';
+}
+function foundersPhotos(){
+ return '<div style="display:flex;justify-content:center;gap:10px;margin:16px 0 2px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07)">'+[0,1,2,3].map(function(){return '<div style="width:34px;height:34px;border-radius:50%;background:#1f2430;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.28)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div>';}).join('')+'</div>';
+}
+function channelUpdate_welcome(){
+ return '<div class="when">Last week</div>'
+  +'<div class="card" style="padding:14px">'
+  +'<div style="font-size:16px;font-weight:800;margin-bottom:12px">Welcome to Nigh</div>'
+  +'<div class="note" style="line-height:1.65">Hey Sarah —<br><br>You’re one of the first people invited into Nigh. We’re building a trusted network designed to help people get out, show up, and connect IRL—and we appreciate your help shaping it.<br><br>We’ll use this channel to share important updates and more about what we’re building.<br><br>Need help, have a suggestion, or notice something broken? Ask Niya anytime—or tap Send Feedback to send it directly to our team.<br><br>Glad you’re here.<br><br>— Josh, Kaden, Preston &amp; Sid</div>'+foundersPhotos()+'</div>';
+}
+function channelUpdate_image(){
+ return '<div class="when">3 days ago</div><div class="card"><div style="padding:12px 14px 0">'+byline('Josh','Founder','linear-gradient(135deg,#0E4EF5,#41EFF9)','J')+'</div><div style="height:140px;background:linear-gradient(135deg,#1a2744,#0d1326);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:12px">[ photo from the founder ]</div><div style="padding:12px 14px"><div class="note">1,000 of you in Boulder now. Still no ads, still invite-only. Keep it quiet. 🤫</div>'+reactionRow('team-image',{seed:true})+'</div></div>';
+}
+function channelUpdate_video(){
+ var playing=S.playing;
+ var player=playing
+  ? '<div style="position:relative;height:160px;background:#07070f;display:flex;align-items:center;justify-content:center">'
+     +'<button onclick="togglePlay(event)" style="background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.5);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer">'+ICON.pause+'</button>'
+     +'<div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.15)"><div style="height:100%;background:#0E4EF5;animation:prog 134s linear forwards"></div></div>'
+     +'<span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:6px">0:03 / 2:14</span></div>'
+  : '<div style="position:relative;height:160px;background:linear-gradient(135deg,#17153a,#0d0b26);display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="togglePlay(event)">'
+     +'<div style="width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center">'+ICON.play+'</div>'
+     +'<span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:6px">2:14</span></div>';
+ return '<div class="when">Today</div><div class="card">'+player
+  +'<div style="padding:12px 14px">'+byline('Josh','Founder','linear-gradient(135deg,#0E4EF5,#41EFF9)','J')+'<div style="font-size:15px;font-weight:700;margin-bottom:3px">Where Nigh goes next</div>'
+  +'<div class="note" style="color:rgba(255,255,255,0.6);margin-bottom:10px">A quick look at what we’re building this month — and why you’re the first to see it.</div>'
+  +'<div style="padding-top:4px;border-top:1px solid rgba(255,255,255,0.07)">'+reactionRow('team-video',{seed:true})+'</div></div></div>';
+}
+
+function toggleTeamReply(){S.replyOpen=!S.replyOpen;render();}
+function feedbackBlock(){
+ if(S.feedbackSent){
+  return '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.22);border-radius:14px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;color:#22C55E;font-size:12px"><span style="display:flex">'+ICON.tick+'</span>Thanks — your feedback was sent to the team via Niya.</div>';
+ }
+ var head='<div style="font-size:13px;font-weight:700;margin-bottom:3px">Have an idea or feedback?</div><div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:11px">Niya reads every note and routes it to the team.</div>';
+ var body=S.replyOpen
+  ? '<div style="display:flex;gap:8px;align-items:center"><input id="teamreply" placeholder="Share a thought or idea…" style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:20px;padding:10px 14px;font-size:13px;color:#fff;outline:none;font-family:inherit" onkeydown="if(event.key===\'Enter\')sendReply()"/><button onclick="sendReply()" style="width:34px;height:34px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">'+ICON.send+'</button></div>'
+  : '<button onclick="toggleTeamReply()" style="background:#0E4EF5;border:none;color:#fff;font-size:13px;font-weight:700;padding:9px 18px;border-radius:18px;cursor:pointer;font-family:inherit">Share feedback</button>';
+ return '<div style="background:#12121F;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:13px;margin-bottom:14px">'+head+body+'</div>';
+}
+function supportRedirect(){
+ return '<div onclick="demo()" style="text-align:center;margin:2px 0;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.4)">Need help? <span style="color:#41EFF9">Ask Niya</span></div>';
+}
+function renderChannel(){
+ return '<div class="hdr" style="padding-bottom:12px">'
+  +'<button class="chBack" onclick="back()">'+ICON.back+' Inbox</button>'
+  +'<div style="display:flex;align-items:center;gap:10px;margin-top:10px">'
+   +'<div class="av" style="width:38px;height:38px;background:linear-gradient(135deg,#6226E9,#0E4EF5)">N</div>'
+   +'<div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:16px;font-weight:800">Nigh Team</span><span class="verified" style="display:flex">'+ICON.check+'</span></div><div style="font-size:11px;color:rgba(255,255,255,0.4)">@Nigh</div></div>'
+   +'<button onclick="toggleMute()" aria-label="'+(S.muted?'Unmute':'Mute')+'" style="margin-left:auto;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:inherit;color:'+(S.muted?'#EAB308':'rgba(255,255,255,0.55)')+'">'+(S.muted?ICON.bellOff:ICON.bell)+'<span style="font-size:9px;font-weight:600">'+(S.muted?'Muted':'Mute')+'</span></button>'
+  +'</div></div>'
+  +'<div class="scroll" style="padding:14px 14px 0">'
+   +(S.muted?'<div style="background:rgba(234,179,8,0.10);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 12px;font-size:12px;color:#EAB308;margin-bottom:14px;display:flex;align-items:center;gap:8px"><span style="display:flex">'+ICON.bellOff+'</span>You’ve muted the Nigh Team. You won’t be notified of new posts, but you can still open them here.</div>':'')
+   +'<div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:14px;line-height:1.5">Updates from the Nigh team — react anytime, or share feedback below.</div>'
+   +channelUpdate_welcome()+channelUpdate_image()+channelUpdate_video()
+   +supportRedirect()
+   +'<div style="height:16px"></div></div>';
+}
+
+function supportBubble(side,text,sub){
+ if(side==='them'){
+  return '<div style="display:flex;gap:8px;margin-bottom:10px;align-items:flex-end">'
+   +'<div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#0F766E,#0D9488);display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ICON.headsetSm+'</div>'
+   +'<div><div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 16px 4px;max-width:250px;line-height:1.5">'+esc(text)+'</div>'
+   +(sub?'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:3px 0 0 4px">'+esc(sub)+'</div>':'')+'</div></div>';
+ }
+ return '<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="background:#0E4EF5;color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 4px 16px;max-width:75%">'+esc(text)+'</div></div>';
+}
+var SUPPORT_AI={kind:'ai',name:'Support Assistant',tag:'AI'};
+function setCase(s){S.caseState=s;if(s!=='active')S.supportReplies=[];if(s==='none')S.escalated=false;if(s==='resolved')S.escalated=true;render();}
+function escalateCase(){S.escalated=true;render();}
+function sysLine(t,c){return '<div style="text-align:center;margin:6px 0 14px"><div style="display:inline-block;max-width:290px;font-size:11px;line-height:1.5;color:'+(c||'rgba(255,255,255,0.5)')+';background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:8px 12px">'+t+'</div></div>';}
+function supportSb(){var c=S.caseState;if(c==='none')return 'No active case · Ask Niya for help';if(c==='resolved')return 'Case #1042 resolved';return S.escalated?'Case #1042 · With our team':'Case #1042 · Open';}
+function caseCard(){
+ var c=S.caseState;var chip=c==='resolved'?['Resolved','#22C55E','rgba(34,197,94,0.12)']:(S.escalated?['With our team','#EAB308','rgba(234,179,8,0.12)']:['Open','#60A5FA','rgba(14,78,245,0.15)']);
+ return '<div style="background:#12121F;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+  +'<div><div style="font-size:12px;font-weight:700">Case #1042 · Check-in &amp; charge issue</div><div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">Opened by Niya · Today 9:12 AM</div></div>'
+  +'<span style="font-size:10px;font-weight:700;color:'+chip[1]+';background:'+chip[2]+';border-radius:20px;padding:4px 9px;white-space:nowrap">'+chip[0]+'</span></div>';
+}
+function caseThread(){
+ var MAYA={kind:'human',name:'Maya',role:'Nigh Team'};
+ var h='<div class="when">Today</div>'
+  +inBubble(SUPPORT_AI,'Hi Sarah — Niya passed along your issue. Your check-in at Fate Brewing didn’t register last night. Your ticket was valid, so I’ve marked you as attended.','9:12 AM')
+  +youBubble('Thanks! I was also charged twice for it.')
+  +inBubble(SUPPORT_AI,'I see two $30 charges. I can’t reverse duplicate charges myself, so this needs our team.','9:14 AM');
+ if(!S.escalated){
+  h+='<div style="margin:-2px 0 14px 35px"><button onclick="escalateCase()" style="background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.4);color:#93C5FD;font-size:12px;font-weight:700;padding:8px 14px;border-radius:16px;cursor:pointer;font-family:inherit">Escalate to the Nigh team</button><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:5px">Our team replies asynchronously — usually within 1–2 business days.</div></div>';
+ } else {
+  h+=sysLine('Escalated to the Nigh team · We reply asynchronously, usually within 1–2 business days. You’ll get a notification here when we respond.','#EAB308');
+ }
+ if(S.caseState==='resolved'){
+  h+='<div class="when">Tomorrow</div>'
+   +inBubble(MAYA,'Hi Sarah — Maya from the Nigh team. I refunded the duplicate $30 to your Visa ···· 4242. Sorry about that!','10:41 AM')
+   +sysLine('Case resolved · Reply within 7 days to reopen it.','#22C55E');
+ }
+ return h;
+}
+function renderSupport(){
+ var c=S.caseState||'none';
+ var mine=S.supportReplies.map(function(r){return youBubble(r);}).join('');
+ var preview='<div style="display:flex;align-items:center;gap:6px;margin:10px 0 0;padding:7px 8px;border:1px dashed rgba(255,255,255,0.15);border-radius:10px"><span style="font-size:9px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-right:2px">Preview</span>'
+  +[['none','No case'],['active','Active case'],['resolved','Resolved']].map(function(p){var on=c===p[0];return '<button onclick="setCase(\''+p[0]+'\')" style="flex:1;font-size:11px;font-weight:700;padding:5px 0;border-radius:8px;border:none;cursor:pointer;font-family:inherit;background:'+(on?'#0E4EF5':'rgba(255,255,255,0.06)')+';color:'+(on?'#fff':'rgba(255,255,255,0.6)')+'">'+p[1]+'</button>';}).join('')+'</div>';
+ var body,footer;
+ if(c==='none'){
+  body='<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:9px 12px;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px;display:flex;align-items:center;gap:7px"><span style="display:flex">'+ICON.lock+'</span>Support messages can’t be muted — we only use this when something needs your attention.</div>'
+   +'<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:8px">Past cases</div>'
+   +'<div style="background:#12121F;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;opacity:0.8"><div><div style="font-size:12px;font-weight:700">Case #0987 · Refund, Centro Jazz Night</div><div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">Resolved Mar 2</div></div><span style="font-size:10px;font-weight:700;color:#22C55E;background:rgba(34,197,94,0.12);border-radius:20px;padding:4px 9px">Resolved</span></div>';
+  footer='<div style="padding:14px;border-top:1px solid rgba(255,255,255,0.08);background:#0B0B1A;text-align:center">'
+   +'<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5">Need help? Niya can answer most questions right away and will open a case with our team if needed.</div>'
+   +'<button onclick="toast(\'Opening Niya — (prototype)\')" style="width:100%;background:#0E4EF5;border:none;color:#fff;font-size:13px;font-weight:700;padding:11px;border-radius:20px;cursor:pointer;font-family:inherit">Ask Niya</button></div>';
+ } else if(c==='active'){
+  body=caseCard()+caseThread()+mine;
+  footer='<div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;background:#0B0B1A">'
+   +'<input id="sreply" placeholder="'+(S.escalated?'Add details for our team…':'Reply about this case…')+'" style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:20px;padding:11px 15px;font-size:13px;color:#fff;outline:none;font-family:inherit" onkeydown="if(event.key===\'Enter\')sendSupportReply()"/>'
+   +'<button onclick="sendSupportReply()" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">'+ICON.send+'</button></div>';
+ } else {
+  body=caseCard()+caseThread();
+  footer='<div style="padding:14px;border-top:1px solid rgba(255,255,255,0.08);background:#0B0B1A;text-align:center">'
+   +'<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px">This case is resolved. Still need help with it? You can reopen it for 7 days.</div>'
+   +'<div style="display:flex;gap:8px"><button onclick="setCase(\'active\')" style="flex:1;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:20px;cursor:pointer;font-family:inherit">Reopen case</button>'
+   +'<button onclick="toast(\'Opening Niya — (prototype)\')" style="flex:1;background:#0E4EF5;border:none;color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:20px;cursor:pointer;font-family:inherit">Ask Niya</button></div></div>';
+ }
+ return '<div class="hdr" style="padding-bottom:12px">'
+  +'<button class="chBack" onclick="back()">'+ICON.back+' Inbox</button>'
+  +'<div style="display:flex;align-items:center;gap:10px;margin-top:10px">'
+   +'<div class="av" style="width:38px;height:38px;background:linear-gradient(135deg,#0F766E,#0D9488)">'+ICON.headsetSm+'</div>'
+   +'<div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:16px;font-weight:800">Nigh Support</span><span class="verified" style="display:flex">'+ICON.check+'</span></div>'
+   +'<div style="font-size:11px;color:rgba(255,255,255,0.4)">@NighSupport</div></div>'
+  +'</div>'+preview+'</div>'
+  +'<div class="scroll" style="padding:14px 14px 0">'+body+'<div style="height:12px"></div></div>'
+  +footer;
+}
+function youBubble(text){return '<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="background:#0E4EF5;color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 4px 16px;max-width:75%">'+esc(text)+'</div></div>';}
+function themBubble(grad,avContent,text,sub){
+ return '<div style="display:flex;gap:8px;margin-bottom:10px;align-items:flex-end">'
+  +'<div style="width:26px;height:26px;border-radius:50%;background:'+grad+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff">'+avContent+'</div>'
+  +'<div><div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 16px 4px;max-width:250px;line-height:1.5">'+esc(text)+'</div>'
+  +(sub?'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:3px 0 0 4px">'+esc(sub)+'</div>':'')+'</div></div>';
+}
+function reactableBubble(id,grad,avC,text,sub){
+ return '<div style="margin-bottom:12px">'
+  +'<div style="display:flex;gap:8px;align-items:flex-end">'
+   +av26(grad,avC)
+   +'<div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 16px 4px;max-width:215px;line-height:1.5">'+esc(text)+'</div>'
+  +'</div>'
+  +(sub?'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:3px 0 0 34px">'+esc(sub)+'</div>':'')
+  +'<div style="margin-left:34px">'+reactionRow(id,{})+'</div>'
+ +'</div>';
+}
+function togglePicker(id){S.pickerFor=S.pickerFor===id?null:id;render();}
+function pick(i){if(S.pickerFor){S.reactions[S.pickerFor]=EMOJIS[i];S.pickerFor=null;render();}}
+function renderHost(){
+ var h=HOSTS[S.hostId];var mine=(S.hostReplies[S.hostId]||[]).map(youBubble).join('');
+ var dropCard=h.drop?'<div style="background:#12121F;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;margin:2px 0 12px;max-width:260px">'
+   +'<div style="height:90px;background:linear-gradient(135deg,#17153a,#0d0b26)"></div>'
+   +'<div style="padding:10px 12px"><div style="font-size:13px;font-weight:700">'+h.drop.title+'</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px">'+h.drop.when+'</div>'
+   +'<button onclick="toast(\'Opening drop — (prototype)\')" style="margin-top:9px;background:#0E4EF5;border:none;color:#fff;font-size:12px;font-weight:700;padding:7px 16px;border-radius:16px;cursor:pointer;font-family:inherit">View drop</button></div></div>':'';
+ return '<div class="hdr" style="padding-bottom:12px">'
+  +'<button class="chBack" onclick="back()">'+ICON.back+' Inbox</button>'
+  +'<div style="display:flex;align-items:center;gap:10px;margin-top:10px">'
+   +'<div class="av" style="width:38px;height:38px;background:'+h.grad+'">'+h.av+'</div>'
+   +'<div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:16px;font-weight:800">'+h.nm+'</span><span class="verified" style="display:flex">'+ICON.check+'</span></div>'
+   +'<div style="font-size:11px;color:rgba(255,255,255,0.4)">'+h.handle+'</div></div>'
+   +'<span style="margin-left:auto;font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border-radius:20px;padding:5px 12px">Following</span>'
+  +'</div></div>'
+  +'<div class="scroll" style="padding:14px 14px 0">'
+   +'<div class="when">'+h.when+'</div>'
+   +h.msgs.map(function(m,i){return reactableBubble(S.hostId+'-'+i,h.grad,h.av,m.text,m.sub);}).join('')
+   +dropCard
+   +mine
+   +'<div style="height:12px"></div></div>'
+  +'<div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;background:#0B0B1A">'
+   +'<input id="hreply" placeholder="Message '+h.nm+'…" style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:20px;padding:11px 15px;font-size:13px;color:#fff;outline:none;font-family:inherit" onkeydown="if(event.key===\'Enter\')sendHostReply()"/>'
+   +'<button onclick="sendHostReply()" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">'+ICON.send+'</button>'
+  +'</div>';
+}
+function demo(){toast('Demo action — (prototype)');}
+function av26(g,c){return '<div style="width:26px;height:26px;border-radius:50%;background:'+g+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;color:#fff">'+c+'</div>';}
+function av40(g,c){return '<div style="width:40px;height:40px;border-radius:12px;background:'+g+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#fff">'+c+'</div>';}
+function btnP(l,full){return '<button onclick="demo()" style="background:#0E4EF5;border:none;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:16px;cursor:pointer;font-family:inherit'+(full?';width:100%':'')+'">'+l+'</button>';}
+function btnG(l){return '<button onclick="demo()" style="background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:16px;cursor:pointer;font-family:inherit">'+l+'</button>';}
+function qr56(){return '<svg width="56" height="56" viewBox="0 0 56 56" style="border-radius:8px;flex-shrink:0"><rect width="56" height="56" fill="#fff"/><rect x="6" y="6" width="14" height="14" fill="#000"/><rect x="36" y="6" width="14" height="14" fill="#000"/><rect x="6" y="36" width="14" height="14" fill="#000"/><rect x="26" y="24" width="6" height="6" fill="#000"/><rect x="38" y="38" width="10" height="10" fill="#000"/><rect x="24" y="40" width="6" height="6" fill="#000"/></svg>';}
+function gCat(t){return '<div style="font-size:10px;font-weight:700;letter-spacing:0.06em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin:20px 0 10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">'+t+'</div>';}
+var SOCIAL={'Text':1,'Photo':1,'Video':1,'Voice note':1,'Link / article':1,'Location':1,'Drop card':1,'Heads Up (plan + RSVP)':1,'Collection':1,'Poll / question':1};
+function gItem(n,h){var eid='g_'+n.replace(/[^a-zA-Z0-9]/g,'');return '<div style="margin-bottom:16px"><div style="font-size:11px;color:#41EFF9;margin-bottom:7px">'+n+'</div>'+h+(SOCIAL[n]?engagementBar(eid):'')+'</div>';}
+function engagementBar(id){var h=0,k;for(k=0;k<id.length;k++)h+=id.charCodeAt(k);return reactionRow(id,{seed:true,comments:1+(h%6)});}
+function pollOpt(l,p){return '<div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>'+l+'</span><span style="color:rgba(255,255,255,0.5)">'+p+'%</span></div><div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+p+'%;background:#0E4EF5"></div></div></div>';}
+function reactSeed(id){if(S.reax[id])return;var h=0,k;for(k=0;k<id.length;k++)h+=id.charCodeAt(k);S.reax[id]={};S.reax[id][EMOJIS[0]]={count:6+(h%9),me:false};S.reax[id][EMOJIS[3]]={count:2+(h%5),me:false};}
+function reactionRow(id,opts){opts=opts||{};if(opts.seed)reactSeed(id);else if(!S.reax[id])S.reax[id]={};var rx=S.reax[id];
+ var pills=Object.keys(rx).map(function(e){var o=rx[e];return '<button onclick="reactToggle(\''+id+'\',\''+e+'\')" style="background:'+(o.me?'rgba(14,78,245,0.22)':'rgba(255,255,255,0.06)')+';border:1px solid '+(o.me?'#0E4EF5':'rgba(255,255,255,0.1)')+';border-radius:20px;padding:3px 9px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:#fff;font-family:inherit">'+e+'<span style="font-size:11px;color:rgba(255,255,255,0.6)">'+o.count+'</span></button>';}).join('');
+ var add='<button onclick="reactPickOpen(\''+id+'\')" aria-label="Add reaction" style="background:'+(S.reaxPicker===id?'rgba(65,239,249,0.15)':'rgba(255,255,255,0.06)')+';border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:4px 8px;cursor:pointer;color:'+(S.reaxPicker===id?'#41EFF9':'rgba(255,255,255,0.5)')+';display:inline-flex">'+ICON.smile+'</button>';
+ var comments=opts.comments!=null?'<span style="margin-left:auto;font-size:12px;color:rgba(255,255,255,0.4);display:inline-flex;align-items:center;gap:4px">'+ICON.chat+' '+opts.comments+'</span>':'';
+ var picker=S.reaxPicker===id?'<div style="margin-top:8px;display:inline-flex;gap:11px;background:#1c1c28;border:1px solid rgba(255,255,255,0.12);border-radius:22px;padding:7px 13px">'+EMOJIS.map(function(e,i){return '<span onclick="reactPick(\''+id+'\','+i+')" style="font-size:21px;cursor:pointer;line-height:1">'+e+'</span>';}).join('')+'</div>':'';
+ return '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px">'+pills+add+comments+'</div>'+picker;}
+function reactToggle(id,e){if(!S.reax[id])S.reax[id]={};var o=S.reax[id][e];if(!o){S.reax[id][e]={count:1,me:true};}else if(o.me){o.count--;o.me=false;if(o.count<=0)delete S.reax[id][e];}else{o.count++;o.me=true;}render();}
+function reactPickOpen(id){S.reaxPicker=S.reaxPicker===id?null:id;render();}
+function reactPick(id,i){var e=EMOJIS[i];if(!S.reax[id])S.reax[id]={};if(!S.reax[id][e])S.reax[id][e]={count:0,me:false};if(!S.reax[id][e].me){S.reax[id][e].count++;S.reax[id][e].me=true;}S.reaxPicker=null;render();}
+function renderGallery(){
+ var SG='linear-gradient(135deg,#0891b2,#22d3ee)';
+ var b=[];
+ b.push(gCat('Core content'));
+ b.push(gItem('Text', inBubble({kind:'human',name:'Alex'},'Running late — be there in 10!')));
+ b.push(gItem('Photo', '<div style="display:flex;gap:8px;align-items:flex-end">'+av26('#1f2430',sil(15))+'<div style="width:200px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.07)"><div style="height:130px;background:linear-gradient(135deg,#1a2744,#0d1326);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:11px">[ photo ]</div></div></div>'));
+ b.push(gItem('Video', '<div class="card" style="max-width:250px"><div style="position:relative;height:150px;background:linear-gradient(135deg,#17153a,#0d0b26);display:flex;align-items:center;justify-content:center"><div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center">'+ICON.play+'</div><span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);font-size:11px;padding:2px 7px;border-radius:6px">2:14</span></div><div style="padding:10px 12px;font-size:13px;font-weight:700">Where Nigh goes next</div></div>'));
+ b.push(gItem('Voice note', '<div style="display:flex;gap:8px;align-items:flex-end">'+av26('#1f2430',sil(15))+'<div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:10px 14px;display:flex;align-items:center;gap:10px"><span style="color:#fff;display:flex">'+ICON.play+'</span><div style="display:flex;align-items:center;gap:2px">'+[8,14,20,12,18,10,16,22,10,14,8,16].map(function(hh){return '<span style="width:2px;height:'+hh+'px;background:rgba(255,255,255,0.4);border-radius:1px"></span>';}).join('')+'</div><span style="font-size:11px;color:rgba(255,255,255,0.5)">0:14</span></div></div>'));
+ b.push(gItem('Link / article', '<div class="card" style="max-width:260px;padding:12px;display:flex;gap:10px;align-items:center"><div style="width:46px;height:46px;border-radius:8px;background:#1a2744;display:flex;align-items:center;justify-content:center;color:#93C5FD">'+ICON.link+'</div><div><div style="font-size:13px;font-weight:700">The story behind Nigh</div><div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">blog.nigh.com</div></div></div>'));
+ b.push(gItem('Location', '<div class="card" style="max-width:260px"><div style="height:100px;background:linear-gradient(135deg,#14321f,#0d1a12);display:flex;align-items:center;justify-content:center;color:#5DCAA5">'+ICON.pin+'</div><div style="padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px"><div><div style="font-size:13px;font-weight:700">The Meridian · Rooftop</div><div style="font-size:11px;color:rgba(255,255,255,0.45)">1200 Pearl St, Boulder</div></div>'+btnG('Directions')+'</div></div>'));
+ b.push(gCat('Sender attribution'));
+ b.push(gItem('Person (team member)', inBubble({kind:'human',name:'Maya',role:'Nigh Team'},'Hi Sarah, this is Maya — happy to help.')));
+ b.push(gItem('AI assistant', inBubble({kind:'ai',name:'Neo',tag:'AI Support'},'Hi — I’m Neo, Nigh’s support assistant. Want me to look into it?')));
+ b.push(gItem('Official / automated', '<div><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">N</div><span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.72)">Nigh Team</span></div><div style="margin-left:35px"><div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:14px;max-width:235px;line-height:1.5;display:inline-block">A new drop goes live tonight — keep an eye out.</div></div></div>'));
+ b.push(gCat('Nigh objects'));
+ b.push(gItem('Drop card', '<div class="card" style="max-width:260px"><div style="height:100px;background:linear-gradient(135deg,#17153a,#0d0b26)"></div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:700">Rooftop Social · The Meridian</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin:2px 0 9px">Tonight 7:00 PM · 20 spots</div>'+btnP('Reserve')+'</div></div>'));
+ b.push(gItem('Ticket / order', '<div class="card" style="max-width:260px;padding:12px;display:flex;gap:12px;align-items:center">'+qr56()+'<div><div style="font-size:13px;font-weight:700">Your ticket</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">Nike Air Max Day Access</div><div style="font-size:11px;color:#22C55E;margin-top:3px">Reserved · Today 2:00 PM</div></div></div>'));
+ b.push(gItem('Ticket transfer', '<div class="card" style="max-width:260px;padding:12px"><div style="font-size:13px;font-weight:700">Sarah sent you a ticket</div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin:2px 0 10px">REI Gear Demo Day · Apr 3</div><div style="display:flex;gap:8px">'+btnP('Accept')+btnG('Decline')+'</div></div>'));
+ b.push(gItem('Heads Up (plan + RSVP)', '<div class="card" style="max-width:260px;padding:12px"><div style="font-size:11px;color:#22C55E;font-weight:700;margin-bottom:5px">Heads Up</div><div style="font-size:13px;font-weight:700">Weekend Squad</div><div style="font-size:12px;color:rgba(255,255,255,0.6);margin:3px 0 10px">Free at 4pm — anyone want to meet up?</div><div style="display:flex;gap:8px">'+btnP("I’m in")+btnG('Maybe')+'</div></div>'));
+ b.push(gItem('Host / profile', '<div class="card" style="max-width:260px;padding:12px;display:flex;align-items:center;gap:10px">'+av40('linear-gradient(135deg,#F5A623,#EC1977)','AB')+'<div style="flex:1"><div style="font-size:13px;font-weight:700">Avery Brewing</div><div style="font-size:11px;color:rgba(255,255,255,0.45)">@averybrewing · Brewery</div></div>'+btnP('Follow')+'</div>'));
+ b.push(gItem('Guest pass / QR', '<div class="card" style="max-width:260px;padding:12px;display:flex;gap:12px;align-items:center">'+qr56()+'<div><div style="font-size:13px;font-weight:700">Guest pass</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">Fate Brewing · 1 entry</div><div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px">Show at the door</div></div></div>'));
+ b.push(gItem('Collection', '<div class="card" style="max-width:260px"><div style="height:80px;display:flex;gap:2px">'+['#17153a','#1a2744','#14321f'].map(function(c){return '<div style="flex:1;background:'+c+'"></div>';}).join('')+'</div><div style="padding:10px 12px"><div style="font-size:13px;font-weight:700">Boulder Nightlife</div><div style="font-size:11px;color:rgba(255,255,255,0.5)">6 drops · curated by Nigh</div></div></div>'));
+ b.push(gCat('Interactive'));
+ b.push(gItem('Poll / question', '<div class="card" style="max-width:260px;padding:12px"><div style="font-size:13px;font-weight:700;margin-bottom:10px">What time works best?</div>'+pollOpt('6 PM',60)+pollOpt('7 PM',30)+pollOpt('8 PM',10)+'<div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:5px">24 votes</div></div>'));
+ b.push(gItem('Call to action', '<div class="card" style="max-width:260px;padding:12px"><div style="font-size:13px;font-weight:700">How are we doing?</div><div style="font-size:12px;color:rgba(255,255,255,0.6);margin:3px 0 10px">Take our 1-minute survey.</div>'+btnP('Give feedback',true)+'</div>'));
+ b.push(gItem('Reminder / countdown', '<div class="card" style="max-width:260px;padding:12px;display:flex;align-items:center;gap:10px"><span style="color:#EAB308;display:flex">'+ICON.clock+'</span><div><div style="font-size:13px;font-weight:700">Rooftop Social</div><div style="font-size:12px;color:#EAB308">Starts in 2h 15m</div></div></div>'));
+ b.push(gItem('Payment / split', '<div class="card" style="max-width:260px;padding:12px"><div style="font-size:13px;font-weight:700">Split the deposit</div><div style="font-size:12px;color:rgba(255,255,255,0.6);margin:3px 0 10px">$80 total · your share $20</div>'+btnP('Pay $20',true)+'</div>'));
+ b.push(gCat('System / transactional'));
+ b.push(gItem('Receipt', '<div style="text-align:center"><div style="display:inline-flex;align-items:center;gap:7px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:7px 14px;font-size:12px;color:#22C55E"><span style="display:flex">'+ICON.tick+'</span>Reservation confirmed · REI Gear Demo Day</div></div>'));
+ b.push(gItem('Account action (required)', '<div class="card" style="max-width:270px;padding:12px;border-color:rgba(234,179,8,0.3);background:rgba(234,179,8,0.06)"><div style="display:flex;align-items:center;gap:7px;color:#EAB308;margin-bottom:5px"><span style="display:flex">'+ICON.lock+'</span><span style="font-size:13px;font-weight:700">Action needed</span></div><div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:10px">Verify your ID to keep reserving drops.</div>'+btnP('Verify now',true)+'</div>'));
+ b.push(gCat('Thread mechanics'));
+ b.push(gItem('Reactions', inBubble({kind:'human',name:'Alex'},"Can’t wait for this!")+'<div style="margin-left:35px">'+reactionRow('g_react_demo',{seed:true})+'</div>'));
+ b.push(gItem('Reply / quote', '<div style="display:flex;justify-content:flex-end"><div style="max-width:78%"><div style="border-left:2px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.05);padding:5px 9px;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px">Sarah · Are you going tonight?</div><div style="background:#0E4EF5;color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 4px 16px">Yes! Grabbing tickets now.</div></div></div>'));
+ b.push(gItem('Read receipt + typing', '<div style="text-align:right;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:8px">Seen 2:40 PM</div><div style="display:flex;gap:8px;align-items:flex-end">'+av26('#1f2430',sil(15))+'<div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:12px 14px;display:flex;gap:4px">'+[0,1,2].map(function(){return '<span style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4)"></span>';}).join('')+'</div></div>'));
+ b.push(gItem('Pinned post', '<div style="background:rgba(14,78,245,0.08);border:1px solid rgba(14,78,245,0.2);border-radius:10px;padding:9px 12px;font-size:12px;color:#93C5FD;display:flex;align-items:center;gap:7px">'+ICON.pin+' Pinned · Welcome to the inside</div>'));
+ b.push(gItem('Group event', '<div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.4)">Maya joined the group</div>'));
+ return '<div class="hdr" style="padding-bottom:12px"><button class="chBack" onclick="back()">'+ICON.back+' Inbox</button><div style="margin-top:10px"><div style="font-size:18px;font-weight:800">Post types</div><div style="font-size:11px;color:rgba(255,255,255,0.4)">One example of every message / post type</div></div></div>'
+  +'<div class="scroll" style="padding:4px 14px 0">'+b.join('')+'<div style="height:24px"></div></div>';
+}
+function render(){
+ var v=S.screen==='channel'?renderChannel():S.screen==='support'?renderSupport():S.screen==='host'?renderHost():S.screen==='gallery'?renderGallery():renderInbox();
+ document.getElementById('app').innerHTML = v;
+}
+function switchTab(t){S.tab=t;render();}
+function openChannel(){S.screen='channel';render();}
+function openSupport(){S.screen='support';render();}
+function openHost(id){S.hostId=id;S.screen='host';render();}
+function openGallery(){S.screen='gallery';render();}
+function sendHostReply(){var i=document.getElementById('hreply');if(!i)return;var v=i.value.trim();if(!v)return;if(!S.hostReplies[S.hostId])S.hostReplies[S.hostId]=[];S.hostReplies[S.hostId].push(v);render();var sc=document.querySelector('.scroll');if(sc)sc.scrollTop=sc.scrollHeight;}
+function sendSupportReply(){var i=document.getElementById('sreply');if(!i)return;var v=i.value.trim();if(!v)return;S.supportReplies.push(v);render();var sc=document.querySelector('.scroll');if(sc)sc.scrollTop=sc.scrollHeight;}
+function back(){S.screen='inbox';S.playing=false;S.pickerFor=null;S.gPicker=null;S.replyOpen=false;S.feedbackSent=false;render();}
+function togglePlay(e){if(e)e.stopPropagation();S.playing=!S.playing;render();}
+function toggleLike(e){if(e)e.stopPropagation();S.liked=!S.liked;S.likeCount+=S.liked?1:-1;render();}
+function sendReply(){var i=document.getElementById('teamreply');if(!i)return;var v=i.value.trim();if(!v)return;S.feedbackSent=true;S.replyOpen=false;render();}
+function toggleMute(){S.muted=!S.muted;render();toast(S.muted?'Muted Nigh Team':'Unmuted Nigh Team');}
+function compose(){toast('New message — (prototype)');}
+function toast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('app').appendChild(t);requestAnimationFrame(function(){t.classList.add('show');});setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},250);},1600);}
+render();
+</script></body></html>
