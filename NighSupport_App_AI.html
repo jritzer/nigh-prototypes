@@ -1872,8 +1872,8 @@ function go(page,extra){
   const navKey=page==='caseDetail'?'support':page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='orgOrgDetail'?'organizations':page==='dropDetail'?'drops':page==='orderDetail'?'orders':page;
   const nav=document.getElementById('nav-'+navKey);
   if(nav)nav.classList.add('active');
-  const titles={caseDetail:'Support Case',feedback:'Feedback',channel:'Channels',mytasks:'My Tasks',dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Neo Configuration',promos:'Subscription Promos',stickers:'Sticker Program'};
-  const subs={caseDetail:'Conversation, internal notes & Neo draft',feedback:'One-way feedback from users and hosts — no reply expected',channel:'Post to Nigh Team and Nigh-owned accounts · automated messages',mytasks:'Your follow-ups, support cases, and account check-ins',dashboard:'Welcome back, Josh',inbox:'Escalated cases, feedback, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Cases from users and hosts — opened by Niya, Nico, or an agent',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Neo\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts',stickers:'Configure free sticker allowance and pricing (platform-wide)'};
+  const titles={review:'Trust & Review',earlyaccess:'Early Access',knowledge:'Help Articles & AI',caseDetail:'Support Case',feedback:'Feedback',channel:'Channels',mytasks:'My Tasks',dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Neo Configuration',promos:'Subscription Promos',stickers:'Sticker Program'};
+  const subs={review:'Drop reports, business verification and handle claims',earlyaccess:'Sign-ups from the website early-access pages',knowledge:'What the AI answers from, what it can’t answer yet, and how well it’s doing',caseDetail:'Parties, private threads, internal notes & Neo draft',feedback:'One-way feedback from users and hosts — no reply expected',channel:'Post to Nigh Team and Nigh-owned accounts · automated messages',mytasks:'Your follow-ups, support cases, and account check-ins',dashboard:'Welcome back, Josh',inbox:'Escalated cases, feedback, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Cases from users and hosts — opened by Niya, Nico, or an agent',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Neo\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts',stickers:'Configure free sticker allowance and pricing (platform-wide)'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   document.getElementById('topbar-sub').textContent=subs[page]||'';
   document.getElementById('content').innerHTML=renderPage(page);
@@ -1968,7 +1968,7 @@ function renderPage(p){
   if(p==='pipeline')return rPipeline();
   if(p==='orgDetail'){logView('Host',S.orgId);return rOrgDetail(S.orgId);}
   if(p==='drops')return rDrops();
-  if(p==='dropDetail')return rDropDetail(S.dropId);
+  if(p==='dropDetail')return rDropDetail(S.dropId)+dropLifecycleHTML(S.dropId);
   if(p==='reservations')return rReservations();
   if(p==='orders')return rOrders();
   if(p==='orderDetail')return rOrderDetail(S.orderId);
@@ -1982,11 +1982,14 @@ function renderPage(p){
   if(p==='sessions')return rSessions();
   if(p==='flags')return rFlags();
   if(p==='videos')return rVideos();
-  if(p==='niyaconfig')return aiAssistantsConfigHTML()+rNeoConfig();
+  if(p==='niyaconfig')return aiAssistantsConfigHTML()+aiPolicyHTML()+rNeoConfig();
   if(p==='inbox')return rInbox();
   if(p==='caseDetail'){logView('Case',S.caseId);return rCaseDetail(S.caseId);}
   if(p==='feedback')return rFeedback();
   if(p==='channel')return rChannel();
+  if(p==='review')return rReview();
+  if(p==='earlyaccess')return rEarlyAccess();
+  if(p==='knowledge')return rKnowledge();
   return '<p>Page not found</p>';
 }
 
@@ -2116,7 +2119,7 @@ ${niyaFeedHTML()}
     ${drops.filter(d=>d.status!=='Ended'&&d.status!=='Draft').map(d=>`<tr>
       <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.title}</td>
       <td style="color:#6B7280;font-size:12px">${d.org}</td>
-      <td>${bg(statusBg(d.status),'',d.status)}</td>
+      <td>${dropStatusPill(d)}</td>
       <td style="font-size:12px">${d.res}/${d.cap}</td>
     </tr>`).join('')}
     </tbody></table>
@@ -2226,7 +2229,7 @@ ${dropR.length?`
 <div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Drops (${dropR.length})</div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Title</th><th>Org</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
-${dropR.map(d=>`<tr><td style="font-weight:600">${d.title}</td><td style="color:#6B7280">${d.org}</td><td>${bg(statusBg(d.status),'',d.status)}</td><td>${d.date}</td><td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">${svgI('eye',11)} View</button></td></tr>`).join('')}
+${dropR.map(d=>`<tr><td style="font-weight:600">${d.title}</td><td style="color:#6B7280">${d.org}</td><td>${dropStatusPill(d)}</td><td>${d.date}</td><td><button class="btn btn-ghost btn-sm" onclick="go('dropDetail',{dropId:'${d.id}'})">${svgI('eye',11)} View</button></td></tr>`).join('')}
 </tbody></table></div></div>`:''}
 ${!orgOrgR.length&&!orgR.length&&!conR.length&&!dropR.length?`<div class="card card-p" style="text-align:center;color:#9CA3AF;padding:40px">No results for "${S.searchQ}"</div>`:''}
 `}`;}
@@ -4041,7 +4044,7 @@ ${(()=>{
             <div style="height:8px;background:#F1F5F9;border-radius:4px;overflow:hidden">
               <div style="height:100%;width:${pct}%;background:${color};border-radius:4px;transition:width 0.3s"></div>
             </div>
-            <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${d.res}/${d.cap} · ${bg(statusBg(d.status),'',d.status)}</div>
+            <div style="font-size:11px;color:#9CA3AF;margin-top:2px">${d.res}/${d.cap} · ${dropStatusPill(d)}</div>
           </div>`;
         }).join(''):`<div style="color:#9CA3AF;font-size:13px">No drops yet.</div>`}
       </div>
@@ -4146,7 +4149,7 @@ ${(()=>{
     return `<tr>
     <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.title}</td>
     <td>${dropTimeBadge(d.timeType)}</td>
-    <td>${bg(statusBg(d.status),'',d.status)}</td>
+    <td>${dropStatusPill(d)}</td>
     <td style="font-size:12px;color:#6B7280">${d.date}</td>
     <td>${d.res}/${d.cap}</td>
     <td>$${d.revenue}</td>
@@ -4449,7 +4452,7 @@ ${(()=>{
   (accountActivity[o.id]||[]).forEach(a=>{ev.push({d:pTs(a.ts),ch:a.ch,dir:a.dir||'in',who:a.who||'',title:a.title||'',body:a.body||''});});
   unifiedAcctEvents('host',o.id).forEach(e=>ev.push(e));
   ev.sort((a,b)=>b.d-a.d);
-  const chips=['all','ai','case','support','feedback','broadcast','app','website','email','sms','call','inperson','system','note'];
+  const chips=['all','ai','case','support','feedback','broadcast','refund','verify','access','app','website','email','sms','call','inperson','system','note'];
   const chipLabel=c=>c==='all'?'All':(TLMETA[c]?TLMETA[c][2]:c);
   const dirTag=d=>d==='in'?'<span style="font-size:9px;font-weight:600;color:#15803D;background:#DCFCE7;padding:1px 6px;border-radius:8px">Inbound</span>':d==='out'?'<span style="font-size:9px;font-weight:600;color:#1E40AF;background:#EEF2FF;padding:1px 6px;border-radius:8px">Outbound</span>':'';
   const fmt=dt=>isNaN(dt)?'':dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
@@ -4556,14 +4559,14 @@ function rDrops(){
   const _dFill=drops.length?Math.round(drops.reduce((s,d)=>s+(d.res/d.cap*100),0)/drops.length):0;
   return `
 <div class="grid grid-4" style="margin-bottom:20px">
-  <div class="stat"><div class="stat-label">Total Drops</div><div class="stat-val">${drops.length}</div><div class="stat-sub">${_dLive} live · ${_dSched} scheduled</div></div>
+  <div class="stat"><div class="stat-label">Total Drops</div><div class="stat-val">${drops.length}</div><div class="stat-sub">${_dLive} broadcast live · ${_dSched} scheduled</div></div>
   <div class="stat"><div class="stat-label">Avg Fill Rate</div><div class="stat-val">${_dFill}%</div><div class="stat-sub">Across all drops</div></div>
   <div class="stat"><div class="stat-label">Total Revenue</div><div class="stat-val">$${_dRev.toLocaleString()}</div><div class="stat-sub">From ticket sales</div></div>
   <div class="stat"><div class="stat-label">Ended</div><div class="stat-val">${_dEnded}</div><div class="stat-sub">${drops.filter(d=>d.status==='Draft').length} drafts</div></div>
 </div>
 <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
   <div class="search-wrap"><span class="search-icon">${svgI('search',14)}</span><input class="input" placeholder="Search drops…" style="width:280px"/></div>
-  <select class="select" style="width:160px"><option>All Statuses</option><option>Live</option><option>Sold Out</option><option>Scheduled</option><option>Pending</option><option>Paused</option><option>Draft</option><option>Ended</option><option>Canceled</option><option>Expired</option></select>
+  <select class="select" style="width:160px"><option>All Statuses</option><option>Draft</option><option>Scheduled</option><option>Broadcast Pending</option><option>Broadcast Live</option><option>Broadcast Live · Sold Out</option><option>Broadcast Paused</option><option>Broadcast Ended</option><option>Cancelled</option></select>
 </div>
 <div class="card">
 <table class="tbl"><thead><tr><th>Drop</th><th>Host Account</th><th>Drop Time Type</th><th>Status</th><th>Date</th><th>Spots</th><th>Price</th><th>Revenue</th><th>Phone</th><th></th></tr></thead><tbody>
@@ -4571,7 +4574,7 @@ ${drops.map(d=>`<tr>
   <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.title}</td>
   <td style="color:#6B7280;font-size:12px">${d.org}</td>
   <td>${dropTimeBadge(d.timeType)}</td>
-  <td>${bg(statusBg(d.status),'',d.status)}</td>
+  <td>${dropStatusPill(d)}</td>
   <td style="color:#6B7280;font-size:12px">${d.date}</td>
   <td>${d.res}/${d.cap} <span style="color:#9CA3AF;font-size:11px">(${Math.round(d.res/d.cap*100)}%)</span></td>
   <td>${d.segmentPricing?'$'+d.price+' <span style="color:#9CA3AF;font-size:10px" title="'+d.segmentPricing.map(t=>t.segment+': $'+t.price).join(', ')+'">(tiered)</span>':(d.price===0?'Free':'$'+d.price)}</td>
@@ -4594,7 +4597,7 @@ function rDropDetail(id){
   <button class="btn btn-ghost btn-sm" onclick="go('drops')">${svgI('arrowLeft',14)} Back to Drops</button>
   <div style="font-size:16px;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.title}</div>
   <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-    ${bg(statusBg(d.status),'',d.status)}
+    ${dropStatusPill(d)}
     ${dropTimeBadge(d.timeType)}
     <button onclick="openModal('drop-link-${d.id}')" style="background:none;border:1px solid #E5E7EB;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#6B7280;padding:4px 10px;border-radius:6px">
       ${svgI('link',11)} Link & QR
@@ -6100,7 +6103,7 @@ function renderModal(id){
     body=`
     <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
       <div style="font-size:14px;font-weight:700;color:#1B2A4A;flex:1">${d?.title||'Drop'}</div>
-      ${d?bg(statusBg(d.status),'',d.status):''}
+      ${d?dropStatusPill(d):''}
     </div>
     <div style="font-size:12px;color:#9CA3AF;margin-bottom:16px">${d?.date||''} · ${d?.res||0}/${d?.cap||0} spots</div>
 
@@ -6875,11 +6878,13 @@ function renderSidebar(){
     <button class="sb-item" id="nav-onboarding" onclick="go('onboarding')">${svgI('zap')} Onboarding Queue <span class="badge" id="badge-onboarding">3</span></button>
     <button class="sb-item" id="nav-support" onclick="go('support')">${svgI('alert')} Support Cases <span class="badge" style="background:#EF4444">${supportCases.filter(c=>c.status==='Escalated').length}</span></button>
     <button class="sb-item" id="nav-feedback" onclick="go('feedback')">${svgI('edit')} Feedback <span class="badge" style="background:#DB2777">${(typeof FEEDBACK!=='undefined'?FEEDBACK.filter(f=>f.status==='New').length:0)}</span></button>
+    <button class="sb-item" id="nav-review" onclick="go('review')">${svgI('shield')} Trust &amp; Review <span class="badge" style="background:#EF4444">${(typeof DROP_REPORTS!=='undefined'?DROP_REPORTS.filter(r=>r.status==='New').length+BIZ_VERIF.filter(b=>b.status==='Pending').length+HANDLE_CLAIMS.filter(h=>h.status==='Open').length:0)}</span></button>
     <button class="sb-item" id="nav-users" onclick="go('users')">${svgI('users')} User Accounts</button>
     <button class="sb-item" id="nav-orgs" onclick="go('orgs')">${svgI('store')} Host Accounts</button>
     <button class="sb-item" id="nav-organizations" onclick="go('organizations')">${svgI('shield')} Organizations <span class="badge" style="background:#1E40AF">${organizations.length}</span></button>
     <div class="sb-section">GROWTH</div>
     <button class="sb-item" id="nav-pipeline" onclick="go('pipeline')">${svgI('chart')} Pipeline <span class="badge" style="background:#7C3AED">${orgs.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length+organizations.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length}</span></button>
+    <button class="sb-item" id="nav-earlyaccess" onclick="go('earlyaccess')">${svgI('star')} Early Access</button>
     <button class="sb-item" id="nav-drops" onclick="go('drops')"><svg width="13" height="20" viewBox="82 36 196 292" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg> Drops</button>
     <button class="sb-item" id="nav-reservations" onclick="go('reservations')">${svgI('ticket')} Tickets</button>
     <button class="sb-item" id="nav-orders" onclick="go('orders')">${svgI('shoppingBag')} Orders</button>
@@ -6894,6 +6899,7 @@ function renderSidebar(){
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       AI & Escalation
     </button>
+    <button class="sb-item" id="nav-knowledge" onclick="go('knowledge')">${svgI('book')} Help Articles &amp; AI</button>
     <button class="sb-item" id="nav-stickers" onclick="go('stickers')">${svgI('tag')} Sticker Program</button>
     <div class="sb-section">CONTENT</div>
     <button class="sb-item" id="nav-channel" onclick="go('channel')">${svgI('send')} Channels</button>
@@ -7047,17 +7053,18 @@ function rSupport(){
     ${stat('AI handling',n('AI handling'),'#6D28D9','No action needed','AI handling')}
     ${stat('Resolved',n('Resolved'),'#065F46','Reopenable '+COMMS_CFG.reopenDays+' days','Resolved')}
   </div>
+  ${(()=>{const soon=supportCases.filter(c=>c.status==='Escalated'&&c.dueHrs!=null&&c.dueHrs>=0&&c.dueHrs<=4);return `<div style="display:flex;gap:10px;flex-wrap:wrap;margin:-6px 0 16px;font-size:12px">${soon.length?`<div style="flex:1;min-width:260px;background:#FFF7ED;border:1px solid #FED7AA;color:#9A3412;border-radius:8px;padding:8px 12px"><b>${soon.length} case${soon.length>1?'s':''} due within 4h</b> — ${soon.map(c=>`<span style="cursor:pointer;text-decoration:underline" onclick="go('caseDetail',{caseId:'${c.id}'})">${c.id}</span>`).join(', ')}</div>`:''}<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;color:#374151">Rated helpful (30d): <b>${AI_NAMES.support} ${Math.round(AI_METRICS.support.helpful*100)}%</b> · <b>Team ${Math.round(AI_METRICS.team.helpful*100)}%</b> · reply promise met ${Math.round(AI_METRICS.team.promiseMet*100)}%</div></div>`;})()}
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     ${sel('cf-s','status',CASE_STATUSES.map(s=>[s,s]),'All statuses')}
     ${sel('cf-r','req',[['user','Users (Nigh)'],['host','Hosts (Nigh Host)'],['internal','Internal']],'All accounts')}
-    ${sel('cf-o','src',[[AI_NAMES.consumer,'Opened by '+AI_NAMES.consumer],[AI_NAMES.host,'Opened by '+AI_NAMES.host],['Agent','Opened by agent']],'Any source')}
+    ${sel('cf-o','src',[[AI_NAMES.consumer,'Opened by '+AI_NAMES.consumer],[AI_NAMES.host,'Opened by '+AI_NAMES.host],['Email','From email'],['Report Drop','From Report Drop'],['Agent','Opened by agent']],'Any source')}
     ${sel('cf-p','pri',[['Urgent','Urgent'],['High','High'],['Medium','Medium'],['Low','Low']],'Any priority')}
     ${(f.status||f.req||f.src||f.pri)?`<button class="btn btn-ghost btn-sm" onclick="S.cf={status:'',req:'',src:'',pri:''};reRender()">Clear</button>`:''}
   </div>
   <div class="card" style="overflow:hidden"><table class="tbl">
     <thead><tr><th>Case</th><th>Account</th><th>Source</th><th>Priority</th><th>Status</th><th>Reply due</th><th>Assigned</th></tr></thead>
     <tbody>${list.map(c=>{const a=caseAcct(c);const rep=nighTeam.find(m=>m.id===c.assignedTo);const due=caseDue(c);return `<tr style="cursor:pointer;opacity:${c.status==='Resolved'?0.55:1}" onclick="go('caseDetail',{caseId:'${c.id}'})">
-      <td style="max-width:290px"><div style="font-size:13px;font-weight:600;color:#1B2A4A">${c.title}${c.urgentLive?` <span style="font-size:9px;font-weight:800;color:#fff;background:#DC2626;padding:1px 6px;border-radius:6px;vertical-align:middle">LIVE DROP</span>`:''}</div><div style="font-size:11px;color:#9CA3AF">${c.id} · ${c.category} · opened ${c.opened}</div></td>
+      <td style="max-width:290px"><div style="font-size:13px;font-weight:600;color:#1B2A4A">${c.title}${(c.involved||[]).length?` <span style="font-size:9px;font-weight:700;color:#C2410C;background:#FFF7ED;padding:1px 6px;border-radius:6px;vertical-align:middle">+${c.involved.length} PARTY</span>`:''}${c.mergedInto?` <span style="font-size:9px;font-weight:700;color:#6B7280;background:#F3F4F6;padding:1px 6px;border-radius:6px;vertical-align:middle">MERGED → ${c.mergedInto}</span>`:''}${c.urgentLive?` <span style="font-size:9px;font-weight:800;color:#fff;background:#DC2626;padding:1px 6px;border-radius:6px;vertical-align:middle">LIVE DROP</span>`:''}</div><div style="font-size:11px;color:#9CA3AF">${c.id} · ${c.category} · opened ${c.opened}</div></td>
       <td><div style="font-size:13px;font-weight:600;color:#1B2A4A">${a.name}</div><div style="font-size:10px;font-weight:700;color:${a.type==='Host'?'#0D9488':a.type==='User'?'#0E4EF5':'#6B7280'}">${a.type}</div></td>
       <td style="font-size:12px;color:#374151">${c.source==='Agent'?'Agent':c.source}</td>
       <td>${chip(c.priority,casePriColor(c.priority))}</td>
@@ -7069,90 +7076,6 @@ function rSupport(){
 function filterSupport(){reRender();}
 
 // ── CASE DETAIL — the conversation exactly as the user/host sees it ──
-function rCaseDetail(id){
-  const c=supportCases.find(x=>x.id===id);if(!c)return '<p>Case not found</p>';
-  const a=caseAcct(c);const me=sessionUser();
-  const rep=nighTeam.find(m=>m.id===c.assignedTo);const due=caseDue(c);const mode=S.caseMode||'reply';
-  const sideName=a.name.split(' ')[0];
-  const th=caseThread(c).map(m=>{
-    if(m.from==='system')return `<div style="text-align:center;margin:10px 0"><span style="display:inline-block;font-size:11px;color:#6B7280;background:#F3F4F6;border-radius:12px;padding:5px 11px">${m.text}${m.ts?' · '+m.ts:''}</span></div>`;
-    if(m.from==='note'){const w=nighTeam.find(x=>x.id===m.agentId);return `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:10px 12px;margin:10px 0"><div style="font-size:10px;font-weight:700;color:#92400E;margin-bottom:3px">INTERNAL NOTE · ${w?w.firstName:'Team'} · only visible to the Nigh team${m.ts?' · '+m.ts:''}</div><div style="font-size:13px;color:#78350F;line-height:1.5">${m.text}</div></div>`;}
-    if(m.from==='requester')return `<div style="margin:10px 0;max-width:72%"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${photoAv(24)}<span style="font-size:11px;font-weight:700;color:#374151">${sideName}</span><span style="font-size:10px;color:#9CA3AF">${a.type}${m.ts?' · '+m.ts:''}</span></div><div style="margin-left:31px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:9px 12px;font-size:13px;color:#111827;line-height:1.5">${m.text}</div></div>`;
-    if(m.from==='ai')return `<div style="margin:10px 0;max-width:72%"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${aiAv(24)}<span style="font-size:11px;font-weight:700;color:#374151">${AI_NAMES.support}</span><span style="font-size:9px;font-weight:700;color:#6D28D9;background:#EDE9FE;border-radius:5px;padding:0 5px">AI</span><span style="font-size:10px;color:#9CA3AF">${m.ts||''}</span></div><div style="margin-left:31px;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:9px 12px;font-size:13px;color:#1F1147;line-height:1.5">${m.text}</div></div>`;
-    const w=nighTeam.find(x=>x.id===m.agentId)||me;
-    return `<div style="margin:10px 0 10px auto;max-width:72%"><div style="display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-bottom:4px"><span style="font-size:10px;color:#9CA3AF">${m.ts||''}</span><span style="font-size:11px;font-weight:700;color:#374151">${w.firstName}</span><span style="font-size:10px;color:#6B7280">${teamLabel(w)}</span>${photoAv(24)}</div><div style="margin-right:31px;background:#0E4EF5;border-radius:12px;padding:9px 12px;font-size:13px;color:#fff;line-height:1.5">${m.text}</div></div>`;
-  }).join('');
-  const closed=c.status==='Resolved';
-  const actions=[];
-  if(c.status==='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Take over from AI</button>`);
-  if(!closed&&c.status!=='Waiting on user'&&c.status!=='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Waiting on user')">Mark waiting on ${a.type==='Host'?'host':'user'}</button>`);
-  if(!closed)actions.push(`<button class="btn btn-green btn-sm" onclick="setCaseStatus('${c.id}','Resolved')">Resolve case</button>`);
-  if(closed)actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Reopen case</button>`);
-  if(c.assignedTo!==me.id)actions.push(`<button class="btn btn-ghost btn-sm" onclick="assignCaseToMe('${c.id}')">Assign to me</button>`);
-  const draft=neoDraftFor(c);
-  const convos=AI_CONVOS.filter(x=>x.acct===(c.userId||c.orgId));
-  const openForAcct=supportCases.filter(x=>(x.userId||x.orgId)===(c.userId||c.orgId)&&x.status!=='Resolved').length;
-  const muted=TEAM_MUTED[c.userId||c.orgId];
-  return `<div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start">
-  <div>
-    <button class="btn btn-ghost btn-sm" onclick="go('support')" style="margin-bottom:12px">← All cases</button>
-    <div class="card card-p" style="margin-bottom:14px">
-      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
-        <div style="flex:1;min-width:240px">
-          <div style="font-size:11px;color:#9CA3AF;font-weight:600">${c.id} · ${c.category} · opened ${c.opened} by ${c.source==='Agent'?'agent':c.source}</div>
-          <div style="font-size:18px;font-weight:700;color:#1B2A4A;margin:3px 0 8px">${c.title}</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${chip(c.status,caseStatusColor(c.status))}${chip(c.priority,casePriColor(c.priority))}${c.urgentLive?chip('LIVE DROP',{bg:'#DC2626',fg:'#fff'}):''}
-            ${due?`<span style="font-size:11px;font-weight:700;color:${due.col}">${due.txt}</span>`:''}
-            <span style="font-size:11px;color:#6B7280">Assigned: ${rep?rep.name:(c.status==='AI handling'?AI_NAMES.support:'Unassigned')}</span></div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">${actions.join('')}</div>
-      </div>
-    </div>
-    <div class="card" style="overflow:hidden">
-      <div style="padding:10px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:13px;font-weight:700;color:#1B2A4A">Conversation <span style="font-weight:500;color:#9CA3AF">· as ${sideName} sees it in Nigh Support</span></div>
-        <div style="font-size:11px;color:#6B7280">${closed?`${a.type==='Host'?'Host':'User'} can reopen for ${COMMS_CFG.reopenDays} days`:`${a.type==='Host'?'Host':'User'} can reply while case is active`}</div>
-      </div>
-      <div style="padding:6px 16px 12px;background:#FAFBFC;max-height:520px;overflow-y:auto">${th}</div>
-      ${closed?`<div style="padding:14px 16px;border-top:1px solid #F1F5F9;font-size:12px;color:#6B7280;text-align:center">Case resolved — reopen it to reply.</div>`:`
-      <div style="border-top:1px solid #F1F5F9;padding:12px 16px">
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-          <button onclick="S.caseMode='reply';reRender()" style="font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid ${mode==='reply'?'#0E4EF5':'#E5E7EB'};background:${mode==='reply'?'#EEF2FF':'#fff'};color:${mode==='reply'?'#0E4EF5':'#6B7280'};cursor:pointer">Reply to ${a.type==='Host'?'host':'user'}</button>
-          <button onclick="S.caseMode='note';reRender()" style="font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid ${mode==='note'?'#CA8A04':'#E5E7EB'};background:${mode==='note'?'#FFFBEB':'#fff'};color:${mode==='note'?'#92400E':'#6B7280'};cursor:pointer">Internal note</button>
-        </div>
-        <textarea id="case-input" rows="3" placeholder="${mode==='reply'?'Write a reply…':'Add a note for the team…'}" style="width:100%;border:1px solid ${mode==='reply'?'#C7D2FE':'#FDE68A'};background:${mode==='reply'?'#fff':'#FFFDF5'};border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box">${S.caseDraft&&S.caseDraftFor===c.id?S.caseDraft:''}</textarea>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:10px;flex-wrap:wrap">
-          ${mode==='reply'?`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#6B7280">${photoAv(22)}<span>Sends as <b style="color:#111827">${me.firstName} · ${teamLabel(me)}</b> — exactly how it appears to ${sideName}</span></div>`:`<div style="font-size:11px;color:#92400E">Only visible to the Nigh team</div>`}
-          <button class="btn ${mode==='reply'?'btn-primary':'btn-ghost'} btn-sm" onclick="sendCaseMsg('${c.id}')">${mode==='reply'?'Send reply':'Add note'}</button>
-        </div>
-      </div>`}
-    </div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:14px">
-    <div class="card card-p" style="border-color:#DDD6FE;background:#FCFBFF">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="niya-avatar-sm niya-live"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div style="font-size:13px;font-weight:700">${AI_NAMES.internal}</div><div style="font-size:10px;color:#7C3AED">Internal AI · never messages users</div></div></div>
-      <div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Summary</div>
-      <div style="font-size:12px;color:#374151;line-height:1.55;margin-bottom:12px">${c.notes||'—'}</div>
-      ${closed?'':`<div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Draft reply</div>
-      <div style="font-size:12px;color:#1F1147;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:9px 10px;line-height:1.55;margin-bottom:8px">${draft}</div>
-      <button class="btn btn-ghost btn-sm" style="width:100%" onclick="neoUseDraft('${c.id}')">Use draft — review & send as ${me.firstName}</button>`}
-    </div>
-    <div class="card card-p">
-      <div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Account</div>
-      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">${photoAv(32)}<div><div style="font-size:13px;font-weight:700;color:#1B2A4A;cursor:pointer" onclick="${a.go}">${a.name}</div><div style="font-size:11px;color:#6B7280">${a.type==='Host'?'Host · Nigh Host app':a.type==='User'?'User · Nigh app':'Internal'}</div></div></div>
-      <div style="font-size:12px;color:#374151;line-height:1.9">
-        <div>Open cases: <b>${openForAcct}</b></div>
-        <div>Nigh Team channel: <b style="color:${muted?'#B45309':'#065F46'}">${muted?'Muted':'Subscribed'}</b></div>
-        <div>Recent ${a.type==='Host'?AI_NAMES.host:AI_NAMES.consumer} chats: <b>${convos.length}</b></div>
-      </div>
-      ${a.go?`<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="openAcctTimeline('${c.id}')">View full timeline →</button>`:''}
-    </div>
-    <div class="card card-p">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Audit trail</div><span style="font-size:11px;color:#0E4EF5;cursor:pointer" onclick="S.af={kind:'',actor:'',q:'Case ${c.id}'};go('audit')">All →</span></div>
-      ${auditLog.filter(l=>l.object==='Case '+c.id).slice(0,7).map(l=>`<div style="padding:6px 0;border-bottom:1px solid #F3F4F6"><div style="display:flex;gap:6px;align-items:center">${actorChip(l.actorKind)}<span style="font-size:11px;font-weight:700;color:#111827">${l.type}</span></div><div style="font-size:11px;color:#6B7280;margin-top:2px">${l.actor} · ${l.ts.slice(11,16)}</div></div>`).join('')||'<div style="font-size:12px;color:#9CA3AF">No actions yet.</div>'}
-    </div>
-  </div></div>`;
-}
 function neoDraftFor(c){
   const first=caseAcctName(c).split(' ')[0];
   if(c.id==='SC021')return 'Hi Sarah — I refunded the duplicate $30 charge to your card. It should show up in 3–5 business days. Sorry about that!';
@@ -7161,26 +7084,6 @@ function neoDraftFor(c){
   return `Hi ${first} — thanks for your patience. We’ve looked into this and ${c.status==='Waiting on user'?'just need a bit more detail from you':'here’s where things stand'}. We’ll keep you posted right here.`;
 }
 function neoUseDraft(id){const c=supportCases.find(x=>x.id===id);S.caseMode='reply';S.caseDraft=neoDraftFor(c);S.caseDraftFor=id;S._draftUsed=S.caseDraft;logTeam('Draft Loaded','Case '+id,'Loaded Neo draft into reply','info',"go('caseDetail',{caseId:'"+id+"'})");reRender();}
-function sendCaseMsg(id){
-  const c=supportCases.find(x=>x.id===id);const el=document.getElementById('case-input');const v=el?el.value.trim():'';if(!v)return;
-  caseThread(c).push({from:S.caseMode==='note'?'note':'agent',agentId:SESSION_USER_ID,text:v,ts:'Just now'});
-  const lk="go('caseDetail',{caseId:'"+c.id+"'})";
-  const neo=S._draftUsed&&S.caseMode!=='note'?(v===S._draftUsed?' · Neo draft sent unedited':' · Neo draft edited before sending'):'';
-  logTeam(S.caseMode==='note'?'Internal Note':'Reply Sent','Case '+c.id,(S.caseMode==='note'?'Note: ':'To '+caseAcctName(c)+': ')+v.slice(0,90)+neo,'info',lk);
-  S._draftUsed=null;
-  if(S.caseMode!=='note'&&c.status==='Escalated'){c.status='Waiting on user';c.dueHrs=null;logTeam('Case Status Changed','Case '+c.id,'Escalated → Waiting on user (reply sent)','info',lk);}
-  if(!c.assignedTo)c.assignedTo=SESSION_USER_ID;
-  S.caseDraft='';reRender();
-}
-function setCaseStatus(id,s){
-  const c=supportCases.find(x=>x.id===id);const prev=c.status;c.status=s;
-  logTeam(prev==='AI handling'&&s==='Escalated'?'Took Over From AI':'Case Status Changed','Case '+id,prev+' → '+s,'info',"go('caseDetail',{caseId:'"+id+"'})");
-  const msg=s==='Resolved'?'Case resolved · can be reopened for '+COMMS_CFG.reopenDays+' days':s==='Escalated'&&prev==='Resolved'?'Case reopened':s==='Escalated'&&prev==='AI handling'?'Team took over from the '+AI_NAMES.support:s==='Waiting on user'?'Waiting on '+(c.requester==='host'?'host':'user'):'Status: '+s;
-  caseThread(c).push({from:'system',text:msg,ts:'Just now'});
-  if(s==='Resolved')c.resolved='Nov 3, 2026';
-  if(s==='Escalated'){c.dueHrs=c.dueHrs??32;if(!c.assignedTo)c.assignedTo=SESSION_USER_ID;}
-  reRender();
-}
 function assignCaseToMe(id){const c=supportCases.find(x=>x.id===id);c.assignedTo=SESSION_USER_ID;logTeam('Case Assigned','Case '+id,'Assigned to '+sessionUser().name,'info',"go('caseDetail',{caseId:'"+id+"'})");reRender();}
 
 // ── AI assistant conversations, feedback, Nigh Team channel data ──
@@ -7227,9 +7130,9 @@ function rInbox(){
   const filter=S.inboxFilter||'all';
   const filtered=filter==='all'?supportInbox:supportInbox.filter(m=>m.type===filter);
   const unread=supportInbox.filter(m=>m.unread).length;
-  const meta={case:['#B45309','#FFFBEB','alert','Escalated case'],escalation:['#EF4444','#FEF2F2','alert','Team escalation'],feedback:['#DB2777','#FDF2F8','edit','Feedback'],flag:['#F59E0B','#FFFBEB','zap','AI flag'],internal:['#7C3AED','#F5F3FF','users','Internal']};
+  const meta={case:['#B45309','#FFFBEB','alert','Escalated case'],escalation:['#EF4444','#FEF2F2','alert','Team escalation'],feedback:['#DB2777','#FDF2F8','edit','Feedback'],flag:['#F59E0B','#FFFBEB','zap','AI flag'],review:['#DC2626','#FEF2F2','shield','Trust & Review'],internal:['#7C3AED','#F5F3FF','users','Internal']};
   const pb=p=>p==='urgent'?`<span style="font-size:10px;font-weight:700;color:#EF4444;background:#FEF2F2;padding:1px 7px;border-radius:8px;border:1px solid #FCA5A5">URGENT</span>`:p==='high'?`<span style="font-size:10px;font-weight:600;color:#F59E0B;background:#FFFBEB;padding:1px 7px;border-radius:8px;border:1px solid #FDE68A">High</span>`:'';
-  const filters=[['all','All'],['case','Escalated cases'],['escalation','Team escalations'],['feedback','Feedback'],['flag','AI flags'],['internal','Internal']];
+  const filters=[['all','All'],['case','Escalated cases'],['review','Trust & Review'],['escalation','Team escalations'],['feedback','Feedback'],['flag','AI flags'],['internal','Internal']];
   return `<div style="max-width:860px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div style="font-size:13px;color:#6B7280">${unread} unread · ${supportInbox.length} total</div>
@@ -7399,6 +7302,7 @@ function rAudit(){
     <select class="select" style="width:auto;min-width:200px" onchange="S.af.actor=this.value;reRender()"><option value="">All actors</option>${actors.filter(a=>!f.kind||auditLog.find(l=>l.actor===a&&l.actorKind===f.kind)).map(a=>`<option ${a===f.actor?'selected':''}>${a}</option>`).join('')}</select>
     <input class="input" value="${f.q}" placeholder="Search action, object, detail…" onchange="S.af.q=this.value;reRender()" style="width:240px"/>
     ${(f.kind||f.actor||f.q)?`<button class="btn btn-ghost btn-sm" onclick="S.af={kind:'',actor:'',q:''};reRender()">Clear</button>`:''}
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="auditExport()">${svgI('download',12)} Export CSV</button>
   </div>
   <div class="card" style="overflow:hidden"><table class="tbl"><thead><tr><th>Timestamp</th><th>Actor</th><th>Action</th><th>Object</th><th>Detail</th><th>Severity</th></tr></thead><tbody>
     ${list.map(l=>`<tr>
@@ -7416,8 +7320,10 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 
 function cfgSet(k,v){let label,prev;
   if(k.startsWith('name:')){const key=k.slice(5);prev=AI_NAMES[key];AI_NAMES[key]=v;label='Assistant name ('+key+')';}
+  else if(k.startsWith('handoff:')){const i=+k.slice(8);prev=COMMS_CFG.handoff[i][1];COMMS_CFG.handoff[i][1]=v;label='Hand off when: '+COMMS_CFG.handoff[i][0];}
+  else if(k==='hostCaseRoles'){prev=COMMS_CFG.hostCaseRolesLabel;COMMS_CFG.hostCaseRolesLabel=v;COMMS_CFG.hostCaseRoles=CASE_ROLE_SETS[v];label='Host cases visible to';}
   else if(k.startsWith('auto:')){const i=+k.slice(5);prev=COMMS_CFG.autoCase[i][1];COMMS_CFG.autoCase[i][1]=v;label='Auto-open case: '+COMMS_CFG.autoCase[i][0];}
-  else{prev=COMMS_CFG[k];COMMS_CFG[k]=v;label={replyWindow:'Reply promise',reopenDays:'Reopen window (days)',hostUrgent:'Host live-drop urgent path'}[k]||k;}
+  else{prev=COMMS_CFG[k];COMMS_CFG[k]=v;label={replyWindow:'Reply promise',reopenDays:'Reopen window (days)',hostUrgent:'Host live-drop urgent path',confMin:'AI hand-off confidence threshold',csat:'One-tap rating on resolve'}[k]||k;}
   logTeam('Config Changed','AI & Escalation',label+': '+prev+' → '+v,'warn',"go('niyaconfig')");reRender();}
 // ── AI & ESCALATION CONFIG (rendered above the existing Neo Config) ──
 function aiAssistantsConfigHTML(){
@@ -7470,6 +7376,7 @@ function unifiedAcctEvents(kind,id){
   });
   AI_CONVOS.filter(x=>x.acct===id).forEach(x=>ev.push({d:pTs(x.ts),ch:'ai',dir:'in',who:x.assistant,title:x.assistant+' conversation — '+x.outcome,body:x.summary}));
   FEEDBACK.filter(x=>x.acct===id).forEach(x=>ev.push({d:pTs(x.ts),ch:'feedback',dir:'in',who:x.app,title:'Feedback · '+x.cluster,body:x.text}));
+  ACCT_EVENTS.filter(x=>x.kind===kind&&x.id===id).forEach(x=>ev.push({d:pTs(x.ts),ch:x.ch,dir:x.dir,who:x.who,title:x.title,body:x.body,link:x.link}));
   TEAM_POSTS.filter(p=>p.status==='Sent'&&(p.channel||'team')==='team'&&(p.app==='Both'||(kind==='user'?p.app==='Nigh':p.app==='Nigh Host'))).forEach(p=>ev.push({d:pTs(p.when),ch:'broadcast',dir:'out',who:p.author,title:'Nigh Team post · '+p.title,body:'Audience: '+p.audience}));
   return ev;
 }
@@ -7478,7 +7385,7 @@ function userTimelineHTML(u){
   const ev=unifiedAcctEvents('user',u.id);
   ev.push({d:new Date('Jan 20, 2026'),ch:'broadcast',dir:'out',who:TEAM_TEMPLATES[0].author,title:'Automated · '+TEAM_TEMPLATES[0].title,body:'Sent on account creation'});
   ev.sort((a,b)=>b.d-a.d);
-  const chips=['all','ai','case','support','feedback','broadcast'];
+  const chips=['all','ai','case','support','feedback','broadcast','transfer','refund','report','signup','access'];
   const fmt=dt=>isNaN(dt)?'':dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+dt.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   const dirTag=d=>d==='in'?'<span style="font-size:9px;font-weight:600;color:#15803D;background:#DCFCE7;padding:1px 6px;border-radius:8px">Inbound</span>':d==='out'?'<span style="font-size:9px;font-weight:600;color:#1E40AF;background:#EEF2FF;padding:1px 6px;border-radius:8px">Outbound</span>':'';
   const muted=TEAM_MUTED[u.id];
@@ -7495,6 +7402,585 @@ function userTimelineHTML(u){
       ${e.body?`<div style="font-size:12px;color:#374151;margin-top:3px;line-height:1.5">${e.body}</div>`:''}
       <div style="font-size:11px;color:#9CA3AF;margin-top:3px">${e.who?e.who+' · ':''}${fmt(e.d)}</div></div></div>`;}).join('')||'<div style="text-align:center;color:#9CA3AF;padding:40px;font-size:13px">No communications yet.</div>'}
   </div>`;
+}
+
+// ── SUPPORT v2 ──
+// ══ SUPPORT v2 — case parties & access · intake queues · drop lifecycle · AI quality · service & privacy ══
+// A case can be discussed from the Nigh app and the Nigh Host app — but only by its PARTIES.
+// Every party (requester, involved host, involved user) has its own private thread with Nigh.
+// Parties never see each other's threads. Every inbound message is access-checked and logged.
+Object.assign(COMMS_CFG,{
+  confMin:0.7,hostCaseRoles:['Account Owner','Account Admin','Manager'],hostCaseRolesLabel:'Owner, Admins & Managers',csat:true,
+  handoff:[['Money involved (refunds, charges, payouts)',true],['Safety or harassment',true],['Frustration detected',true],['Repeat contact — 3+ in 7 days',true],['AI confidence below threshold',true]]
+});
+const L2=t=>"go('caseDetail',{caseId:'"+t+"'})";
+function v2lbl(t){return `<div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">${t}</div>`;}
+function uiModal(title,body,foot){closeUiModal();const o=document.createElement('div');o.id='ui-modal';o.style.cssText='position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  o.innerHTML=`<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.25)"><div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #F1F5F9"><div style="font-size:15px;font-weight:700;color:#1B2A4A">${title}</div><button onclick="closeUiModal()" style="border:none;background:none;font-size:20px;color:#9CA3AF;cursor:pointer">×</button></div><div style="padding:16px 18px">${body}</div>${foot?`<div style="padding:12px 18px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px">${foot}</div>`:''}</div>`;
+  o.addEventListener('click',e=>{if(e.target===o)closeUiModal();});document.body.appendChild(o);}
+function closeUiModal(){const m=document.getElementById('ui-modal');if(m)m.remove();}
+function pill2(t,c,solid){const fg=solid?'#fff':(c==='#D1D5DB'?'#4B5563':c==='#EAB308'?'#854D0E':c);return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;background:${solid?c:c+'1F'};color:${fg};white-space:nowrap">${solid?'':`<span style="width:6px;height:6px;border-radius:50%;background:${c}"></span>`}${t}</span>`;}
+
+// ── Venue used in SC021 (Fate Brewing) ──
+(function(){if(!orgs.find(o=>o.id==='O035')){const b=orgs.find(o=>o.id==='O007')||orgs[0];orgs.push(Object.assign({},b,{id:'O035',globalId:'org_fate035',name:'Fate Brewing Co',handle:'fatebrewing',address:'1600 38th St',city:'Boulder',contactName:'Lena Ortiz',email:'hello@fatebrewing.com',phone:'(303) 555-0177',businessVerified:true,drops:5,revenue:1210,flags:[],internalNotes:[],changeLog:[],outreachLog:[],assignedTo:'NT003'}));}})();
+
+// ── HOST TEAM (orgTeams, canonical Nigh Host roles) — who on a host account can see/message about the host's cases ──
+if(!orgTeams['O035'])orgTeams['O035']=[
+  {id:'TM350',name:'Lena Ortiz',email:'lena@fatebrewing.com',phone:'(303) 555-0178',access:'Account Owner',status:'Active',since:'Feb 2, 2026',left:null},
+  {id:'TM351',name:'Cam Hughes',email:'cam@fatebrewing.com',phone:'(303) 555-0179',access:'Manager',status:'Active',since:'Feb 9, 2026',left:null},
+  {id:'TM352',name:'Tess Byrne',email:'tess@fatebrewing.com',phone:'(303) 555-0180',access:'Check-In Only',status:'Active',since:'Mar 3, 2026',left:null}];
+const CASE_ROLE_SETS={'Owner only':['Account Owner'],'Owner & Admins':['Account Owner','Account Admin'],'Owner, Admins & Managers':['Account Owner','Account Admin','Manager']};
+function hostTeam(orgId){
+  const t=(orgTeams[orgId]||[]).filter(m=>m.status==='Active');
+  if(t.length)return t.map(m=>({key:'hm:'+orgId+':'+m.id,userId:m.id,name:m.name,role:m.access}));
+  const o=orgs.find(x=>x.id===orgId)||{};return [{key:'hm:'+orgId+':owner',userId:null,name:o.contactName||'Owner',role:'Account Owner'}];
+}
+function caseSides(c){
+  const s=[];
+  if(c.requester==='user')s.push({key:'u:'+c.userId,kind:'user',acct:c.userId,label:caseAcctName(c),role:'Requester',app:'Nigh'});
+  if(c.requester==='host')s.push({key:'h:'+c.orgId,kind:'host',acct:c.orgId,label:caseAcctName(c),role:'Requester',app:'Nigh Host'});
+  (c.involved||[]).forEach(v=>s.push(v));
+  return s;
+}
+function sideMembers(c,s){
+  const ov=c.memberAccess||{};
+  if(s.kind==='user')return [{key:s.key,userId:s.acct,name:s.label,role:'Account holder',access:ov[s.key]||'message'}];
+  return hostTeam(s.acct).map(m=>Object.assign({},m,{access:ov[m.key]||(COMMS_CFG.hostCaseRoles.includes(m.role)?'message':'none')}));
+}
+function sideThread(c,key){const s=caseSides(c);if(!s.length||key===s[0].key)return caseThread(c);c.sideThreads=c.sideThreads||{};return c.sideThreads[key]||(c.sideThreads[key]=[]);}
+function curSide(c){const s=caseSides(c);const k=S.caseSide&&S.caseSide[c.id];return s.find(x=>x.key===k)||s[0]||null;}
+function caseAccessCheck(c,userId){
+  if(c.status==='Resolved'&&c.mergedInto)return {ok:false,reason:'Case merged into '+c.mergedInto};
+  for(const s of caseSides(c))for(const m of sideMembers(c,s))if(m.userId===userId)return m.access==='message'?{ok:true,side:s,member:m}:{ok:false,reason:m.role+' at '+s.label+' — not given access to this case'};
+  return {ok:false,reason:'Not a party to this case'};
+}
+
+// ── Seed: parties, side threads, AI hand-off reasons, sources, delivery ──
+(function(){
+  const g=id=>supportCases.find(c=>c.id===id);
+  const c21=g('SC021');
+  if(c21){
+    c21.ai={confidence:0.41,reasons:['Money: duplicate charge','Refund needs the team'],sentiment:'Calm',channels:['Niya chat','Nigh Support','Email']};
+    const t=c21.thread;t.forEach(m=>{if(m.from==='requester')m.app='Nigh';});
+    if(t[2]){t[2].src='KB07';t[2].dlv={ch:'Nigh Inbox',st:'Read',at:'9:13 AM'};}
+    if(t[4]){t[4].src='KB09';t[4].dlv={ch:'Nigh Inbox',st:'Read',at:'9:14 AM'};}
+    c21.involved=[{key:'h:O035',kind:'host',acct:'O035',label:'Fate Brewing Co',role:'Involved · venue check-in records',app:'Nigh Host',anon:true}];
+    c21.sideThreads={'h:O035':[
+      {from:'system',text:'Nigh Support added Fate Brewing Co to case SC021 · venue check-in records',ts:'9:42 AM'},
+      {from:'agent',agentId:'NT004',text:'Hi Lena — one guest’s check-in didn’t register at your Nov 2 drop around 8 PM. Was your door scanner online then? We’ve already confirmed their ticket was valid.',ts:'9:44 AM',dlv:{ch:'Push + Nigh Host Inbox',st:'Read',at:'10:02 AM'}},
+      {from:'requester',by:'Lena Ortiz',role:'Account Owner',app:'Nigh Host',text:'Yes — our wifi dropped from about 8:05 to 8:20. We checked a few people in by name during that window.',ts:'10:05 AM'},
+      {from:'note',agentId:'NT004',text:'Host confirms outage — matches the scanner miss. Nothing needed from the host.',ts:'10:07 AM'}]};
+  }
+  const c23=g('SC023');
+  if(c23){
+    c23.ai={confidence:0.55,reasons:['Live-drop issue','Urgent'],sentiment:'Stressed',channels:['Nico chat','Nigh Support']};
+    c23.thread.forEach(m=>{if(m.from==='requester'){m.by='Lucia Herrera';m.role='Manager';m.app='Nigh Host';}if(m.from==='ai'){m.src='KB12';m.dlv={ch:'Push + Nigh Host Inbox',st:'Delivered'};}});
+    c23.thread.push({from:'ai',text:'Our team has this as urgent — you’ll get a reply here within the hour.',ts:'6:59 PM',dlv:{ch:'SMS fallback',st:'Failed',at:'· carrier rejected'}});
+  }
+  const c22=g('SC022');
+  if(c22){c22.ai={confidence:0.93,reasons:[],sentiment:'Positive',channels:['Niya chat']};c22.thread.forEach(m=>{if(m.from==='requester')m.app='Nigh';if(m.from==='ai'){m.src='KB03';m.dlv={ch:'Nigh Inbox',st:'Read'};}});}
+  supportCases.unshift({id:'SC024',userId:'U001',requester:'user',source:'Email',dupOf:'SC021',title:'Charged twice at Fate Brewing',category:'Billing',priority:'Medium',status:'AI handling',assignedTo:null,opened:'Nov 3, 2026 · 9:31 AM',resolved:null,
+    notes:'Same issue as SC021, sent by email. Neo flagged it as a likely duplicate.',ai:{confidence:0.88,reasons:[],sentiment:'Annoyed',channels:['Email']},
+    thread:[{from:'system',text:'Case opened from email to support@nigh.com',ts:'9:31 AM'},
+      {from:'requester',app:'Email',text:'Hi, I was charged $30 twice for Fate Brewing last night. Please fix.',ts:'9:30 AM'},
+      {from:'ai',src:'KB09',dlv:{ch:'Email',st:'Delivered'},text:'Thanks Sarah — this is already being handled in your Nigh Support thread (case SC021). We’ll reply there so everything stays in one place.',ts:'9:31 AM'}]});
+  [['SC006','up','team'],['SC007','down','team'],['SC008','up','team'],['SC013','up','team']].forEach(([id,r,by])=>{const c=g(id);if(c)c.csat={r,by};});
+  const A=(k,a,t,o,d,s,l,ts)=>logAudit(k,a,t,o,d,s,l,AUDIT_DAY+' '+ts);
+  A('ai','Neo · AI','Duplicate Flagged','Case SC024','Likely duplicate of SC021 — same account, same charge','info',L2('SC024'),'09:31:20');
+  A('ai','Support Assistant · AI','Reply Sent','Case SC024','Email reply → pointed Sarah Mitchell to SC021','info',L2('SC024'),'09:31:22');
+  A('team','Jordan Lee (NT004)','Party Added','Case SC021','Fate Brewing Co (O035) · venue check-in records · requester identity hidden','warn',L2('SC021'),'09:42:10');
+  A('team','Jordan Lee (NT004)','Reply Sent','Case SC021','To Fate Brewing Co: Hi Lena — one guest’s check-in didn’t register…','info',L2('SC021'),'09:44:03');
+  A('host','Host · O035 Lena Ortiz (Account Owner)','Message Received','Case SC021','Via Nigh Host · access check passed (Account Owner)','info',L2('SC021'),'10:05:12');
+  A('system','Access Guard · System','Access Denied','Case SC021','Sam Ortiz (U007) asked Niya about this case — not a party. Niya gave no case details.','warn',L2('SC021'),'10:20:44');
+  A('system','Access Guard · System','Access Denied','Case SC023','Mateo Reyes (TM003B) · Check-In Only at Centro Mexican Kitchen — role can’t see support cases','warn',L2('SC023'),'19:02:31');
+  A('team','Jordan Lee (NT004)','Contact Revealed','Case SC021','Email & phone · reason: Payment dispute','warn',L2('SC021'),'09:39:02');
+  A('ai','Neo · AI','Report Triaged','Report RP204','3 similar reports on this drop in 24h — price mismatch at the door','info',"go('review',{reviewTab:'reports'})",'10:43:00');
+  A('ai','Neo · AI','Verification Checked','Verification BV41','All checks passed · 94% · recommend approve','info',"go('review',{reviewTab:'verify'})",'08:03:00');
+  A('ai','Neo · AI','Handle Conflict','Handle @fatebrewing','Held by an early-access sign-up · claimed by verified brand','warn',"go('review',{reviewTab:'handles'})",'07:41:00');
+  auditLog.sort((a,b)=>b.ts.localeCompare(a.ts));
+  supportInbox.unshift(
+    {id:'RV1',type:'review',unread:true,priority:'high',time:'10:43 AM',from:'Report Drop',fromRole:'Triaged by '+AI_NAMES.internal,subject:'3 reports — Bluebird Theater: Last-Minute Ticket Drop',body:'Price at the door didn’t match the listing. Reporter identities stay hidden from the host.',action:'Review',actionFn:"go('review',{reviewTab:'reports'})"},
+    {id:'RV2',type:'review',unread:true,priority:'normal',time:'8:03 AM',from:'Business verification',fromRole:'Checked by '+AI_NAMES.internal,subject:'2 hosts waiting on verification',body:'Boxcar Coffee Roasters passed every check. Movement Boulder needs proof of authority.',action:'Review',actionFn:"go('review',{reviewTab:'verify'})"},
+    {id:'RV3',type:'review',unread:true,priority:'normal',time:'7:41 AM',from:'Handle claims',fromRole:'Flagged by '+AI_NAMES.internal,subject:'@fatebrewing claimed by the verified brand',body:'Currently held by an early-access sign-up with no activity.',action:'Review',actionFn:"go('review',{reviewTab:'handles'})"}
+  );
+})();
+
+// ── Account timeline extras: transfers, host refunds, reports, early access, verification, access checks ──
+Object.assign(TL_EXTRA_META,{transfer:['#0891B2','send','Transfer'],refund:['#16A34A','undo','Refund'],report:['#DC2626','flag','Report'],signup:['#0E4EF5','star','Early access'],verify:['#0D9488','shield','Verification'],access:['#6B7280','lock','Access check']});
+const ACCT_EVENTS=[
+  {kind:'user',id:'U001',ts:'Nov 2, 2026 · 6:10 PM',ch:'transfer',dir:'out',who:'Nigh app',title:'Ticket transferred to James Kim',body:'Fate Brewing — Fall Release Night · 1 ticket · accepted'},
+  {kind:'user',id:'U001',ts:'Oct 18, 2026 · 2:00 PM',ch:'refund',dir:'in',who:'Host · Fate Brewing Co',title:'Host refund — $15',body:'Refunded by host (event moved)'},
+  {kind:'user',id:'U001',ts:'Nov 3, 2026 · 9:39 AM',ch:'access',dir:'system',who:'Jordan (NT004)',title:'Contact details revealed',body:'Reason: Payment dispute · case SC021'},
+  {kind:'user',id:'U007',ts:'Nov 3, 2026 · 10:20 AM',ch:'access',dir:'system',who:'Access Guard',title:'Asked Niya about a case they aren’t part of — blocked',body:'Case SC021 · no details shared'},
+  {kind:'user',id:'U008',ts:'Nov 3, 2026 · 10:42 AM',ch:'report',dir:'in',who:'Report Drop',title:'Reported a drop — Misleading listing',body:'Bluebird Theater: Last-Minute Ticket Drop · RP204',link:"go('review',{reviewTab:'reports'})"},
+  {kind:'user',id:'U011',ts:'Nov 2, 2026 · 9:15 PM',ch:'report',dir:'in',who:'Report Drop',title:'Reported a drop — Safety concern',body:'CU Buffs: Unsold Student Section Seats · RP203',link:"go('review',{reviewTab:'reports'})"},
+  {kind:'user',id:'U014',ts:'Oct 12, 2026 · 6:00 PM',ch:'signup',dir:'in',who:'Gen Z website',title:'Early-access sign-up',body:'Requested @priyad · Boulder · joined Oct 20',link:"go('earlyaccess')"},
+  {kind:'host',id:'O021',ts:'Nov 3, 2026 · 8:02 AM',ch:'verify',dir:'in',who:'Nigh Host',title:'Business verification submitted',body:'BV41 · Colorado business license.pdf',link:"go('review',{reviewTab:'verify'})"},
+  {kind:'host',id:'O024',ts:'Nov 2, 2026 · 4:30 PM',ch:'verify',dir:'in',who:'Nigh Host',title:'Business verification submitted',body:'BV40 · W-9.pdf',link:"go('review',{reviewTab:'verify'})"},
+  {kind:'host',id:'O001',ts:'Oct 25, 2026 · 9:30 PM',ch:'refund',dir:'out',who:'Host · Marco Reyes',title:'Host refunded 2 guests — $60',body:'Friday Night Jazz & Tapas · kitchen closed early'},
+  {kind:'host',id:'O001',ts:'Nov 3, 2026 · 7:02 PM',ch:'access',dir:'system',who:'Access Guard',title:'Team member blocked from case SC023',body:'Mateo Reyes (Check-In Only) — host cases visible to Owner, Admins & Managers'},
+  {kind:'host',id:'O035',ts:'Nov 3, 2026 · 9:42 AM',ch:'case',dir:'in',who:'Jordan (NT004)',title:'Added to case SC021 as involved party',body:'Venue check-in records · guest identity hidden',link:L2('SC021')}
+];
+
+// ── DROP LIFECYCLE — same labels as Nigh Host. Sold Out is a secondary status on Broadcast Live. ──
+const DROP_LC={Draft:['Draft','#D1D5DB'],Scheduled:['Scheduled','#EA580C'],Pending:['Broadcast Pending','#EAB308'],Live:['Broadcast Live','#22C55E'],Paused:['Broadcast Paused','#0E4EF5'],Ended:['Broadcast Ended','#6B7280'],Expired:['Broadcast Ended','#6B7280'],Canceled:['Cancelled','#6B7280'],Cancelled:['Cancelled','#6B7280'],Deleted:['Deleted','#9CA3AF'],'Sold Out':['Broadcast Live','#22C55E',true]};
+function dropLC(d){const e=DROP_LC[d.status]||[d.status,'#6B7280'];const live=e[0]==='Broadcast Live';
+  const sold=!!e[2]||(live&&(d.offers&&d.offers.length?d.offers.every(o=>o.sold>=o.cap):(d.cap&&d.res>=d.cap)));return {label:e[0],col:e[1],sold};}
+function dropStatusPill(d){const l=dropLC(d);return pill2(l.label,l.col)+(l.sold?' '+pill2('Sold Out','#15803D',true):'');}
+function dropLifecycleHTML(id){
+  const d=drops.find(x=>x.id===id);if(!d)return '';
+  const l=dropLC(d);const host=(d.hosts&&d.hosts[0])||'Host';const steps=[];
+  steps.push(['Draft','Created',host+' · Host','host']);
+  if(d.status!=='Draft'){steps.push(['Scheduled','Scheduled to broadcast '+(d.bcastStart||d.date),host+' · Host','host']);}
+  if(['Pending','Live','Paused','Ended','Expired','Sold Out','Canceled','Cancelled'].includes(d.status))steps.push(['Broadcast Pending','Waiting for broadcast start','System','system']);
+  if(['Live','Paused','Ended','Expired','Sold Out'].includes(d.status))steps.push(['Broadcast Live','Broadcast started'+(d.bcastStart?' · '+d.bcastStart:''),'System','system']);
+  if(l.sold||(d.status==='Ended'&&d.cap&&d.res>=d.cap))steps.push(['Sold Out','Every offer sold out · '+d.res+'/'+d.cap,'System','system']);
+  if(d.status==='Paused')steps.push(['Broadcast Paused','Paused by host',host+' · Host','host']);
+  if(d.status==='Ended'||d.status==='Expired')steps.push(['Broadcast Ended','Broadcast window closed'+(d.bcastEnd?' · '+d.bcastEnd:''),'System','system']);
+  if(d.status==='Canceled'||d.status==='Cancelled')steps.push(['Cancelled','Cancelled — guests refunded',host+' · Host','host']);
+  const col={Draft:'#D1D5DB',Scheduled:'#EA580C','Broadcast Pending':'#EAB308','Broadcast Live':'#22C55E','Sold Out':'#15803D','Broadcast Paused':'#0E4EF5','Broadcast Ended':'#6B7280',Cancelled:'#6B7280'};
+  return `<div class="card card-p" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px"><div><div style="font-size:14px;font-weight:700;color:#1B2A4A">Status history</div><div style="font-size:11px;color:#6B7280">Same labels hosts see in Nigh Host. Every change records who made it.</div></div><div>${dropStatusPill(d)}</div></div>
+    ${steps.map(s=>`<div style="display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #F3F4F6"><span style="width:9px;height:9px;border-radius:50%;background:${col[s[0]]||'#6B7280'};margin-top:4px;flex-shrink:0"></span><div style="flex:1"><div style="font-size:12px;font-weight:700;color:#111827">${s[0]}</div><div style="font-size:11px;color:#6B7280">${s[1]}</div></div>${actorChip(s[3])}<span style="font-size:11px;color:#6B7280;white-space:nowrap">${s[2]}</span></div>`).join('')}
+    <div style="font-size:11px;color:#6B7280;margin-top:8px;line-height:1.5">Hosts can delete a drop while it’s Draft, Scheduled or Broadcast Pending. Once it’s Broadcast Live they can only cancel. Buying is open only while Broadcast Live and not Sold Out.</div>
+  </div>`;
+}
+
+// ── INTAKE QUEUES — Report Drop · Business verification · Handle claims ──
+const DROP_REPORTS=[
+  {id:'RP204',dropId:'D023',reporter:'U008',reason:'Misleading listing',text:'Listed at $15 but it was $25 plus a fee at the door.',ts:'Nov 3, 2026 · 10:42 AM',status:'New',sev:'Medium',count:3,ai:'3 similar reports on this drop in 24h. Checkout price matched the listing — likely a door upsell. Suggest asking the host.'},
+  {id:'RP203',dropId:'D026',reporter:'U011',reason:'Safety concern',text:'Way over capacity in the student section, people were getting pushed.',ts:'Nov 2, 2026 · 9:15 PM',status:'New',sev:'High',count:1,ai:'Safety keyword → high priority. Host check-ins show 412 against a 400 cap.'},
+  {id:'RP202',dropId:'D024',reporter:'U017',reason:'Fake or no-show drop',text:'The food truck wasn’t there at all.',ts:'Nov 1, 2026 · 1:05 PM',status:'Actioned',sev:'Medium',count:5,ai:'Host changed the location 20 min before start; 14 guests were notified late.',outcome:'Host warned · guests offered credit',by:'NT002'},
+  {id:'RP201',dropId:'D010',reporter:'U020',reason:'Other',text:'Instructor was rude.',ts:'Oct 30, 2026 · 8:40 AM',status:'Dismissed',sev:'Low',count:1,ai:'Service quality, not a policy issue. Routed to host feedback.',outcome:'Not a policy violation',by:'NT005'}
+];
+const BIZ_VERIF=[
+  {id:'BV41',orgId:'O021',type:'Business',submitted:'Nov 3, 2026 · 8:02 AM',checks:{domain:true,presence:true,doc:true,auth:true},doc:'Colorado business license.pdf',status:'Pending',conf:0.94,ai:'Domain boxcarcoffee.com matches the login email. License name matches. Recommend approve.'},
+  {id:'BV40',orgId:'O024',type:'Business',submitted:'Nov 2, 2026 · 4:30 PM',checks:{domain:false,presence:true,doc:true,auth:false},doc:'W-9.pdf',status:'Pending',conf:0.48,ai:'Login email is gmail.com — no domain match. Signer isn’t listed as an owner. Request proof of authority.'},
+  {id:'BV39',orgId:'O019',type:'Group / Club',submitted:'Nov 1, 2026 · 11:12 AM',checks:{domain:null,presence:true,doc:null,auth:true},doc:'—',status:'Info requested',conf:0.6,ai:'Community group — no license expected. Waiting on a league or chapter link.',by:'NT003'},
+  {id:'BV38',orgId:'O023',type:'Business',submitted:'Oct 29, 2026 · 2:00 PM',checks:{domain:true,presence:true,doc:true,auth:true},doc:'Business license.pdf',status:'Approved',conf:0.91,ai:'All checks passed.',by:'NT003'}
+];
+const HANDLE_CLAIMS=[
+  {id:'HC12',handle:'@fatebrewing',type:'Brand claim',claimant:'Fate Brewing Co (verified host)',holder:'Early-access sign-up EA118 · no activity',ts:'Nov 3, 2026 · 7:40 AM',status:'Open',rec:'Release to claimant',ai:'Holder signed up on the Gen Z early-access page 6 days ago and never joined. Verified businesses get their exact name.'},
+  {id:'HC11',handle:'@nike_boulder_official',type:'Impersonation',claimant:'Nike Boulder (verified host)',holder:'New user · created Nov 2',ts:'Nov 2, 2026 · 6:15 PM',status:'Open',rec:'Suspend handle',ai:'Display name and photo copy Nike Boulder. No drops, 40 follow requests in a day.'},
+  {id:'HC10',handle:'@thesink',type:'Protected name',claimant:'The Sink (pipeline prospect)',holder:'Reserved by Handle Protection',ts:'Oct 30, 2026',status:'Reserved',rec:'Keep reserved',ai:'On the protected list. Release when the business signs up.'}
+];
+let NEXT_CASE=25;
+function reportAct(id,act){
+  const r=DROP_REPORTS.find(x=>x.id===id);const d=drops.find(x=>x.id===r.dropId)||{title:r.dropId,org:''};
+  if(act==='case'){
+    const o=orgs.find(x=>x.name===d.org);const cid='SC0'+(NEXT_CASE++);const u=userAccounts.find(x=>x.id===r.reporter)||{name:'User'};
+    supportCases.unshift({id:cid,userId:r.reporter,requester:'user',source:'Report Drop',reportId:r.id,title:'Report: '+r.reason+' — '+d.title,category:'Trust & Safety',priority:r.sev==='High'?'High':'Medium',status:'Escalated',dueHrs:r.sev==='High'?8:24,assignedTo:SESSION_USER_ID,opened:'Nov 3, 2026 · Just now',resolved:null,
+      notes:'From '+r.id+'. '+r.ai,ai:{confidence:0.5,reasons:[r.sev==='High'?'Safety or harassment':'Report Drop'],sentiment:'Concerned',channels:['Report Drop']},
+      involved:o?[{key:'h:'+o.id,kind:'host',acct:o.id,label:o.name,role:'Involved · reported drop',app:'Nigh Host',anon:true}]:[],
+      thread:[{from:'system',text:'Case opened from Report Drop '+r.id,ts:'Just now'},{from:'requester',app:'Nigh',text:r.text,ts:r.ts.split(' · ')[1]},
+        {from:'ai',src:'KB21',dlv:{ch:'Nigh Inbox',st:'Delivered'},text:'Thanks for reporting this, '+u.name.split(' ')[0]+'. Our team is reviewing it — we never share who reported a drop.',ts:'Just now'}]});
+    r.caseId=cid;r.status='Under review';
+    logTeam('Case Opened','Case '+cid,'From report '+r.id+' · '+d.title+' · reporter hidden from host','info',L2(cid));
+    go('caseDetail',{caseId:cid});return;
+  }
+  const prev=r.status;r.status=act==='dismiss'?'Dismissed':'Actioned';r.by=SESSION_USER_ID;r.outcome=act==='dismiss'?'Not a policy violation':'Host contacted · listing corrected';
+  logTeam('Report '+r.status,'Report '+r.id,prev+' → '+r.status+' · '+d.title,'info',"go('review',{reviewTab:'reports'})");reRender();
+}
+function bvAct(id,act){
+  const b=BIZ_VERIF.find(x=>x.id===id);const o=orgs.find(x=>x.id===b.orgId)||{name:b.orgId};const prev=b.status;
+  b.status=act==='approve'?'Approved':act==='reject'?'Rejected':'Info requested';b.by=SESSION_USER_ID;
+  if(act==='approve')o.businessVerified=true;
+  logTeam('Verification '+b.status,'Verification '+b.id,o.name+' · '+prev+' → '+b.status,act==='info'?'info':'warn',"go('review',{reviewTab:'verify'})");
+  logAI(AI_NAMES.host,'Host Notified','Verification '+b.id,'Told '+o.name+' in Nigh Host: '+(act==='approve'?'you’re verified':act==='reject'?'verification not approved':'we need a bit more info'),'info',"go('review',{reviewTab:'verify'})");
+  reRender();
+}
+function hcAct(id,act){const h=HANDLE_CLAIMS.find(x=>x.id===id);const prev=h.status;h.status={release:'Released to claimant',keep:'Kept with holder',suspend:'Handle suspended',reserve:'Reserved'}[act];h.by=SESSION_USER_ID;
+  logTeam('Handle Decision','Handle '+h.handle,prev+' → '+h.status+' · '+h.type,'warn',"go('review',{reviewTab:'handles'})");reRender();}
+function neoBox(t,conf){return `<div style="display:flex;gap:8px;align-items:flex-start;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:8px 10px;margin-top:8px"><span style="flex-shrink:0;margin-top:1px">${svgI('zap',12,'#7C3AED')}</span><div style="font-size:12px;color:#4C1D95;line-height:1.5"><b>${AI_NAMES.internal}:</b> ${t}${conf!=null?` <span style="color:#7C3AED;font-weight:700">· ${Math.round(conf*100)}%</span>`:''}</div></div>`;}
+function rReview(){
+  const tab=S.reviewTab||'reports';
+  const cnt={reports:DROP_REPORTS.filter(r=>r.status==='New').length,verify:BIZ_VERIF.filter(b=>b.status==='Pending').length,handles:HANDLE_CLAIMS.filter(h=>h.status==='Open').length};
+  const tabs=[['reports','Drop reports'],['verify','Business verification'],['handles','Handle claims']];
+  const stc=s=>/New|Pending|Open/.test(s)?{bg:'#FEF3C7',fg:'#B45309'}:/Under review|Info/.test(s)?{bg:'#EEF2FF',fg:'#1D4ED8'}:/Approved|Actioned|Released|Reserved|suspended/.test(s)?{bg:'#ECFDF5',fg:'#065F46'}:{bg:'#F3F4F6',fg:'#6B7280'};
+  const by=id=>{const m=nighTeam.find(x=>x.id===id);return m?' · by '+m.firstName:'';};
+  let body='';
+  if(tab==='reports')body=DROP_REPORTS.map(r=>{const d=drops.find(x=>x.id===r.dropId)||{title:r.dropId,org:''};const u=userAccounts.find(x=>x.id===r.reporter)||{name:r.reporter};const open=r.status==='New'||r.status==='Under review';
+    return `<div class="card card-p" style="margin-bottom:10px;opacity:${open?1:.7}">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:14px;font-weight:700;color:#1B2A4A;cursor:pointer" onclick="go('dropDetail',{dropId:'${r.dropId}'})">${d.title}</span><span style="font-size:12px;color:#6B7280">${d.org}</span><span style="margin-left:auto;display:flex;gap:6px">${chip(r.reason,{bg:'#FEF2F2',fg:'#B91C1C'})}${chip(r.sev,casePriColor(r.sev==='Medium'?'Medium':r.sev))}${chip(r.status,stc(r.status))}</span></div>
+      <div style="font-size:13px;color:#111827;margin-top:6px">“${r.text}”</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:4px">Reported by <span style="color:#0E4EF5;cursor:pointer" onclick="go('userDetail',{userId:'${r.reporter}'})">${u.name}</span> · hidden from host · ${r.ts} · ${r.count} report${r.count>1?'s':''} on this drop</div>
+      ${neoBox(r.ai)}
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">${r.caseId?`<button class="btn btn-ghost btn-sm" onclick="go('caseDetail',{caseId:'${r.caseId}'})">Case ${r.caseId} →</button>`:''}${open&&!r.caseId?`<button class="btn btn-primary btn-sm" onclick="reportAct('${r.id}','case')">Open case</button>`:''}${open?`<button class="btn btn-ghost btn-sm" onclick="reportAct('${r.id}','actioned')">Mark actioned</button><button class="btn btn-ghost btn-sm" onclick="reportAct('${r.id}','dismiss')">Dismiss</button>`:`<span style="font-size:12px;color:#6B7280">${r.outcome||''}${by(r.by)}</span>`}</div></div>`;}).join('');
+  if(tab==='verify')body=BIZ_VERIF.map(b=>{const o=orgs.find(x=>x.id===b.orgId)||{name:b.orgId,email:''};const ck=(v,t)=>`<span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;background:${v===true?'#ECFDF5':v===false?'#FEF2F2':'#F3F4F6'};color:${v===true?'#065F46':v===false?'#B91C1C':'#6B7280'}">${v===true?'✓':v===false?'✕':'—'} ${t}</span>`;const open=b.status==='Pending'||b.status==='Info requested';
+    return `<div class="card card-p" style="margin-bottom:10px;opacity:${open?1:.7}">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:14px;font-weight:700;color:#1B2A4A;cursor:pointer" onclick="go('orgDetail',{orgId:'${b.orgId}'})">${o.name}</span><span style="font-size:12px;color:#6B7280">${b.type} · submitted ${b.submitted}</span><span style="margin-left:auto">${chip(b.status,stc(b.status))}</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${ck(b.checks.domain,'Domain matches email')}${ck(b.checks.presence,'Online presence')}${ck(b.checks.doc,'Document')}${ck(b.checks.auth,'Signer authority')}<span style="font-size:11px;color:#6B7280;align-self:center">${svgI('file',11)} ${b.doc}</span></div>
+      ${neoBox(b.ai,b.conf)}
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">${open?`<button class="btn btn-green btn-sm" onclick="bvAct('${b.id}','approve')">Approve</button><button class="btn btn-ghost btn-sm" onclick="bvAct('${b.id}','info')">Request info</button><button class="btn btn-ghost btn-sm" style="color:#B91C1C" onclick="bvAct('${b.id}','reject')">Reject</button>`:`<span style="font-size:12px;color:#6B7280">${b.status}${by(b.by)}</span>`}<span style="font-size:11px;color:#9CA3AF;align-self:center;margin-left:auto">${AI_NAMES.host} tells the host the outcome in Nigh Host</span></div></div>`;}).join('');
+  if(tab==='handles')body=HANDLE_CLAIMS.map(h=>{const open=h.status==='Open';return `<div class="card card-p" style="margin-bottom:10px;opacity:${open?1:.7}">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="font-size:15px;font-weight:800;color:#1B2A4A">${h.handle}</span>${chip(h.type,{bg:'#EEF2FF',fg:'#1D4ED8'})}<span style="font-size:12px;color:#6B7280">${h.ts}</span><span style="margin-left:auto">${chip(h.status,stc(h.status))}</span></div>
+      <div style="font-size:12px;color:#374151;margin-top:6px;line-height:1.7"><div>Claimed by: <b>${h.claimant}</b></div><div>Currently: <b>${h.holder}</b></div></div>
+      ${neoBox(h.ai+' Recommends: <b>'+h.rec+'</b>.')}
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">${open?`<button class="btn btn-primary btn-sm" onclick="hcAct('${h.id}','release')">Release to claimant</button><button class="btn btn-ghost btn-sm" onclick="hcAct('${h.id}','keep')">Keep with holder</button><button class="btn btn-ghost btn-sm" style="color:#B91C1C" onclick="hcAct('${h.id}','suspend')">Suspend handle</button>`:`<span style="font-size:12px;color:#6B7280">${h.status}${by(h.by)}</span>`}</div></div>`;}).join('');
+  return `<div style="max-width:900px">
+    <div style="font-size:12px;color:#4C1D95;background:#F8F5FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 14px;margin-bottom:14px;line-height:1.55">Everything here gets a first pass from ${AI_NAMES.internal}. A team member makes the call, and every decision is logged. Reporters are never identified to the host.</div>
+    <div style="display:flex;gap:6px;margin-bottom:14px">${tabs.map(([k,l])=>`<button onclick="S.reviewTab='${k}';reRender()" style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid ${tab===k?'#1B2A4A':'#E5E7EB'};background:${tab===k?'#1B2A4A':'#fff'};color:${tab===k?'#fff':'#374151'};cursor:pointer">${l}${cnt[k]?` <span style="background:#EF4444;color:#fff;border-radius:9px;padding:0 6px;font-size:10px;margin-left:3px">${cnt[k]}</span>`:''}</button>`).join('')}</div>
+    ${body}</div>`;
+}
+
+// ── EARLY ACCESS — sign-ups from the website early-access pages ──
+const EARLY_ACCESS=[
+  {id:'EA121',name:'Ava Thompson',email:'ava.t@gmail.com',handle:'@avat',city:'Boulder',source:'Gen Z site',ts:'Nov 3, 2026 · 9:48 AM',status:'Waitlisted',ref:'Instagram'},
+  {id:'EA120',name:'Leo Martinez',email:'leo.m@colorado.edu',handle:'@leom',city:'Boulder',source:'New Branding site',ts:'Nov 3, 2026 · 8:30 AM',status:'Invited',ref:'Friend invite'},
+  {id:'EA119',name:'Grace Kim',email:'gracek@icloud.com',handle:'@gracek',city:'Denver',source:'Gen Z site',ts:'Nov 2, 2026 · 7:12 PM',status:'Waitlisted',ref:'TikTok'},
+  {id:'EA118',name:'—',email:'fate.fan@gmail.com',handle:'@fatebrewing',city:'Boulder',source:'Gen Z site',ts:'Oct 28, 2026 · 10:02 PM',status:'Waitlisted',ref:'—',flag:'Handle claimed by a verified brand · HC12'},
+  {id:'EA117',name:'Marcus Lee',email:'mlee@outlook.com',handle:'@marcusl',city:'Boulder',source:'New Branding site',ts:'Oct 27, 2026 · 1:15 PM',status:'Waitlisted',ref:'Poster QR'},
+  {id:'EA102',name:'Priya Desai',email:'priya.d@gmail.com',handle:'@priyad',city:'Boulder',source:'Gen Z site',ts:'Oct 12, 2026 · 6:00 PM',status:'Joined',ref:'Friend invite',userId:'U014'}
+];
+function eaInvite(ids){const list=ids?ids.split(','):EARLY_ACCESS.filter(e=>e.status==='Waitlisted'&&!e.flag).slice(0,2).map(e=>e.id);
+  list.forEach(id=>{const e=EARLY_ACCESS.find(x=>x.id===id);if(e&&e.status==='Waitlisted'){e.status='Invited';logTeam('Early Access Invite','Sign-up '+e.id,e.handle+' · '+e.city+' · invite sent by text','info',"go('earlyaccess')");}});
+  uiToast(list.length+' invite'+(list.length===1?'':'s')+' sent');reRender();}
+function rEarlyAccess(){
+  S.pii=S.pii||{};const n=s=>EARLY_ACCESS.filter(e=>e.status===s).length;
+  const stc=s=>s==='Joined'?{bg:'#ECFDF5',fg:'#065F46'}:s==='Invited'?{bg:'#EEF2FF',fg:'#1D4ED8'}:{bg:'#F3F4F6',fg:'#374151'};
+  return `<div>
+    <div style="font-size:12px;color:#6B7280;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:9px 12px;margin-bottom:14px;line-height:1.5">Sign-ups from the early-access pages on the Gen Z and New Branding sites. Requested handles are held until the person joins or the hold is released. When someone joins, their sign-up links to their account timeline.</div>
+    <div class="grid grid-4" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-label">Sign-ups</div><div class="stat-val">${EARLY_ACCESS.length}</div><div class="stat-sub">Last 30 days</div></div>
+      <div class="stat"><div class="stat-label">Waitlisted</div><div class="stat-val">${n('Waitlisted')}</div></div>
+      <div class="stat"><div class="stat-label">Invited</div><div class="stat-val" style="color:#1D4ED8">${n('Invited')}</div></div>
+      <div class="stat"><div class="stat-label">Handle conflicts</div><div class="stat-val" style="color:#B45309">${EARLY_ACCESS.filter(e=>e.flag).length}</div><div class="stat-sub" style="cursor:pointer;color:#0E4EF5" onclick="go('review',{reviewTab:'handles'})">Review →</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary btn-sm" onclick="eaInvite()">Invite next batch</button></div>
+    <div class="card" style="overflow:hidden"><table class="tbl"><thead><tr><th>Person</th><th>Contact</th><th>Handle</th><th>Source</th><th>Status</th><th></th></tr></thead><tbody>
+      ${EARLY_ACCESS.map(e=>`<tr><td><div style="font-size:13px;font-weight:600;color:#1B2A4A;${e.userId?'cursor:pointer':''}" ${e.userId?`onclick="go('userDetail',{userId:'${e.userId}'})"`:''}>${e.name}</div><div style="font-size:11px;color:#9CA3AF">${e.city} · ${e.ts}</div></td>
+        <td style="font-size:12px;color:#374151">${S.pii['ea:'+e.id]?e.email:maskEmail(e.email)} ${S.pii['ea:'+e.id]?'':`<span style="font-size:11px;color:#0E4EF5;cursor:pointer" onclick="revealModal('ea:${e.id}','Sign-up ${e.id}')">Reveal</span>`}</td>
+        <td><div style="font-size:12px;font-weight:700;color:#111827">${e.handle}</div>${e.flag?`<div style="font-size:10px;color:#B45309">${e.flag}</div>`:''}</td>
+        <td style="font-size:12px;color:#374151">${e.source}<div style="font-size:10px;color:#9CA3AF">via ${e.ref}</div></td>
+        <td>${chip(e.status,stc(e.status))}</td>
+        <td>${e.status==='Waitlisted'&&!e.flag?`<button class="btn btn-ghost btn-sm" onclick="eaInvite('${e.id}')">Invite</button>`:''}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+}
+
+// ── PRIVACY — contact details masked by default; reveal requires a reason and is logged ──
+function maskEmail(e){if(!e)return '—';const p=e.split('@');return p[0].charAt(0)+'•••••@'+(p[1]||'');}
+function maskPhone(p){if(!p)return '—';const d=String(p).replace(/\D/g,'');return '••• ••• '+d.slice(-4);}
+function revealModal(key,label){
+  uiModal('Reveal contact details',`<div style="font-size:13px;color:#374151;line-height:1.5;margin-bottom:10px">Contact details are hidden by default. Revealing them is recorded in the audit log under your name.</div>
+    <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Reason</div>
+    <select id="rv-why" class="select" style="width:100%"><option>Verify identity</option><option>Payment dispute</option><option>Safety concern</option><option>Legal or privacy request</option><option>Account recovery</option></select>`,
+    `<button class="btn btn-ghost btn-sm" onclick="closeUiModal()">Cancel</button><button class="btn btn-primary btn-sm" onclick="confirmReveal('${key}','${label}')">Reveal</button>`);
+}
+function confirmReveal(key,label){const why=(document.getElementById('rv-why')||{}).value||'—';S.pii=S.pii||{};S.pii[key]=true;
+  const cid=key.startsWith('case:')?key.slice(5):null;logTeam('Contact Revealed',label,'Email & phone · reason: '+why,'warn',cid?L2(cid):"go('earlyaccess')");closeUiModal();reRender();}
+function acctContact(c){if(c.requester==='user'){const u=userAccounts.find(x=>x.id===c.userId)||{};return {email:u.email,phone:u.mobile};}if(c.requester==='host'){const o=orgs.find(x=>x.id===c.orgId)||{};return {email:o.email,phone:o.phone};}return {};}
+
+// ── VIEW AS — read-only, logged, shows exactly what one party sees ──
+function viewAsModal(cid){
+  const c=supportCases.find(x=>x.id===cid);const s=curSide(c);if(!s)return;
+  const t=sideThread(c,s.key).filter(m=>m.from!=='note');
+  logTeam('Viewed As','Case '+cid,'Read-only view as '+s.label+' ('+s.app+')','warn',L2(cid));
+  const msgs=t.map(m=>{
+    if(m.from==='system')return `<div style="text-align:center;margin:8px 0"><span style="font-size:10px;color:#6B7280;background:#F3F4F6;border-radius:10px;padding:3px 9px">${m.text}</span></div>`;
+    if(m.from==='requester')return `<div style="margin:8px 0 8px auto;max-width:80%;background:#0E4EF5;color:#fff;border-radius:12px;padding:7px 10px;font-size:12px;line-height:1.45">${m.text}</div>`;
+    const ai=m.from==='ai';const w=nighTeam.find(x=>x.id===m.agentId)||{firstName:'Nigh'};
+    return `<div style="margin:8px 0;max-width:84%"><div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">${ai?aiAv(18):photoAv(18)}<span style="font-size:10px;font-weight:700;color:#374151">${ai?AI_NAMES.support:w.firstName}</span>${ai?`<span style="font-size:8px;font-weight:700;color:#6D28D9;background:#EDE9FE;border-radius:4px;padding:0 4px">AI</span>`:`<span style="font-size:9px;color:#6B7280">${teamLabel(w)}</span>`}</div><div style="margin-left:23px;background:${ai?'#F5F3FF':'#fff'};border:1px solid ${ai?'#DDD6FE':'#E5E7EB'};border-radius:12px;padding:7px 10px;font-size:12px;color:#111827;line-height:1.45">${m.text}</div></div>`;
+  }).join('');
+  uiModal('View as '+s.label,`<div style="font-size:11px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:7px 10px;margin-bottom:12px">Read-only · what ${s.label} sees in ${s.app} → Inbox → Nigh Support. Other parties’ threads and internal notes aren’t visible to them. This view is logged.</div>
+    <div style="width:300px;margin:0 auto;border:8px solid #111827;border-radius:28px;overflow:hidden;background:#fff">
+      <div style="padding:10px 12px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;border-radius:50%;background:#0E4EF5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">N</div><div><div style="font-size:12px;font-weight:700;color:#111827">Nigh Support</div><div style="font-size:10px;color:#6B7280">Case ${cid} · ${c.status}</div></div></div>
+      <div style="padding:6px 10px;height:330px;overflow:auto;background:#FAFBFC">${msgs}</div>
+      <div style="padding:9px 12px;border-top:1px solid #F1F5F9;font-size:11px;color:#9CA3AF">${c.status==='Resolved'?'Case resolved · Reopen within '+COMMS_CFG.reopenDays+' days':'Message Nigh Support…'}</div></div>`);
+}
+
+// ── HELP ARTICLES, GAPS, SAVED REPLIES, AI PERFORMANCE ──
+const HELP_ARTICLES=[
+  {id:'KB03',title:'Transfer a ticket to a friend',app:'Nigh',status:'Published',owner:'NT004',updated:'Oct 20, 2026',uses:212,resolved:0.88},
+  {id:'KB07',title:'My check-in didn’t work',app:'Nigh',status:'Published',owner:'NT002',updated:'Oct 14, 2026',uses:96,resolved:0.71},
+  {id:'KB09',title:'Refunds & duplicate charges',app:'Both',status:'Published',owner:'NT004',updated:'Sep 30, 2026',uses:74,resolved:0.34,note:'AI explains the policy — refunds above its limit go to the team'},
+  {id:'KB12',title:'Scanner troubleshooting & manual check-in',app:'Nigh Host',status:'Published',owner:'NT001',updated:'Oct 2, 2026',uses:41,resolved:0.66},
+  {id:'KB15',title:'Drop statuses — Broadcast Live, Paused, Sold Out…',app:'Nigh Host',status:'Needs review',owner:'NT003',updated:'Aug 12, 2026',uses:38,resolved:0.52,note:'Out of date — lifecycle labels changed'},
+  {id:'KB18',title:'Business verification — what we need',app:'Nigh Host',status:'Published',owner:'NT003',updated:'Oct 28, 2026',uses:27,resolved:0.81},
+  {id:'KB21',title:'Reporting a drop or a person',app:'Nigh',status:'Draft',owner:'NT005',updated:'Nov 1, 2026',uses:0,resolved:null}
+];
+const AI_GAPS=[
+  {id:'G1',q:'Can I get a refund if I’m sick?',n:14,app:'Nigh',suggest:'Add an illness section to KB09'},
+  {id:'G2',q:'Why does my drop say Broadcast Pending?',n:9,app:'Nigh Host',suggest:'Update KB15 for the new lifecycle'},
+  {id:'G3',q:'Can I hold spots for my regulars?',n:6,app:'Nigh Host',suggest:'Not supported yet — linked to feedback theme “Group booking”'}
+];
+const SAVED_REPLIES=[
+  {id:'SR1',title:'Refund issued',body:'Hi {first_name} — I refunded the charge to your card. It should show up in 3–5 business days. Sorry about that!',uses:58},
+  {id:'SR2',title:'Need more detail',body:'Hi {first_name} — thanks for flagging this. Could you send a screenshot or the time it happened? That will help us look into it.',uses:41},
+  {id:'SR3',title:'Fixed — please retry',body:'Thanks for your patience, {first_name}. We pushed a fix — please close and reopen the app and try again.',uses:22},
+  {id:'SR4',title:'Report received',body:'Thanks for letting us know, {first_name}. We’re reviewing this drop. We never share who reported it.',uses:17}
+];
+const AI_METRICS={support:{handled:412,noTeam:0.71,helpful:0.91,handoff:0.29},neo:{drafts:138,asIs:0.58,edited:0.33,discarded:0.09},niya:{chats:1840,deflected:0.82},nico:{chats:356,deflected:0.74},team:{helpful:0.86,promiseMet:0.94}};
+const NEO_SESSION={asIs:0,edited:0,discarded:0};
+function kbSet(id,st){const a=HELP_ARTICLES.find(x=>x.id===id);const p=a.status;a.status=st;a.updated='Nov 3, 2026';logTeam('Article '+(st==='Published'?'Published':'Updated'),'Article '+id,a.title+' · '+p+' → '+st,'info',"go('knowledge')");reRender();}
+function gapDraft(id){const g=AI_GAPS.find(x=>x.id===id);const nid='KB'+(30+HELP_ARTICLES.length);HELP_ARTICLES.push({id:nid,title:g.q,app:g.app,status:'Draft',owner:SESSION_USER_ID,updated:'Nov 3, 2026',uses:0,resolved:null});g.done=nid;
+  logTeam('Article Drafted','Article '+nid,'From AI gap: “'+g.q+'” ('+g.n+' unanswered)','info',"go('knowledge')");S.kbTab='articles';reRender();}
+function useSavedReply(cid,rid){if(!rid)return;const c=supportCases.find(x=>x.id===cid);const r=SAVED_REPLIES.find(x=>x.id===rid);const s=curSide(c);const first=(s?s.label:caseAcctName(c)).split(' ')[0];
+  S.caseMode='reply';S.caseDraft=r.body.replace(/\{first_name\}/g,first);S.caseDraftFor=cid;r.uses++;logTeam('Saved Reply Used','Case '+cid,r.title,'info',L2(cid));reRender();}
+function neoDiscard(id){(S.neoGone=S.neoGone||{})[id]=true;NEO_SESSION.discarded++;logTeam('Draft Discarded','Case '+id,'Neo draft discarded','info',L2(id));reRender();}
+function rKnowledge(){
+  const tab=S.kbTab||'articles';const stc=s=>s==='Published'?{bg:'#ECFDF5',fg:'#065F46'}:s==='Needs review'?{bg:'#FEF3C7',fg:'#B45309'}:{bg:'#F3F4F6',fg:'#6B7280'};
+  const tabs=[['articles','Help articles'],['gaps','Unanswered questions'],['replies','Saved replies'],['perf','AI performance']];
+  const pct=v=>v==null?'—':Math.round(v*100)+'%';
+  let body='';
+  if(tab==='articles')body=`<div class="card" style="overflow:hidden"><table class="tbl"><thead><tr><th>Article</th><th>App</th><th>Status</th><th>Owner</th><th>AI uses (30d)</th><th>Solved by AI</th><th></th></tr></thead><tbody>
+    ${HELP_ARTICLES.map(a=>{const o=nighTeam.find(m=>m.id===a.owner);return `<tr><td><div style="font-size:13px;font-weight:600;color:#1B2A4A">${a.title}</div><div style="font-size:11px;color:#9CA3AF">${a.id} · updated ${a.updated}${a.note?' · '+a.note:''}</div></td><td style="font-size:12px">${a.app}</td><td>${chip(a.status,stc(a.status))}</td><td style="font-size:12px">${o?o.firstName:'—'}</td><td style="font-size:12px">${a.uses}</td><td style="font-size:12px;font-weight:700;color:${a.resolved!=null&&a.resolved<0.5?'#B45309':'#065F46'}">${pct(a.resolved)}</td>
+      <td>${a.status==='Draft'?`<button class="btn btn-ghost btn-sm" onclick="kbSet('${a.id}','Published')">Publish</button>`:a.status==='Needs review'?`<button class="btn btn-ghost btn-sm" onclick="kbSet('${a.id}','Published')">Mark reviewed</button>`:''}</td></tr>`;}).join('')}</tbody></table></div>`;
+  if(tab==='gaps')body=AI_GAPS.map(g=>`<div class="card card-p" style="margin-bottom:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:14px;font-weight:700;color:#1B2A4A">“${g.q}”</div><div style="font-size:12px;color:#6B7280;margin-top:2px">${g.n} times in 7 days · ${g.app} · ${g.suggest}</div></div>${g.done?`<span style="font-size:12px;color:#065F46;font-weight:600">Drafted as ${g.done}</span>`:`<button class="btn btn-primary btn-sm" onclick="gapDraft('${g.id}')">Draft article</button>`}</div>`).join('');
+  if(tab==='replies')body=SAVED_REPLIES.map(r=>`<div class="card card-p" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between"><div style="font-size:13px;font-weight:700;color:#1B2A4A">${r.title}</div><span style="font-size:11px;color:#6B7280">Used ${r.uses} times</span></div><div style="font-size:13px;color:#374151;margin-top:4px;line-height:1.5">${r.body.replace(/\{(\w+)\}/g,'<span style="background:#EEF2FF;color:#1D4ED8;border-radius:4px;padding:0 4px;font-size:11px">{$1}</span>')}</div></div>`).join('')+`<div style="font-size:11px;color:#9CA3AF">Available in every case reply box. ${AI_NAMES.internal} fills in the variables.</div>`;
+  if(tab==='perf'){const m=AI_METRICS;const box=(t,rows)=>`<div class="card card-p"><div style="font-size:13px;font-weight:700;color:#1B2A4A;margin-bottom:8px">${t}</div>${rows.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F3F4F6"><span style="color:#6B7280">${r[0]}</span><b style="color:#111827">${r[1]}</b></div>`).join('')}</div>`;
+    body=`<div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+      ${box(AI_NAMES.support+' (cases)',[['Cases handled · 30d',m.support.handled],['Solved without the team',pct(m.support.noTeam)],['Rated helpful',pct(m.support.helpful)],['Handed off to the team',pct(m.support.handoff)]])}
+      ${box(AI_NAMES.internal+' drafts',[['Drafts · 30d',m.neo.drafts],['Sent as written',pct(m.neo.asIs)],['Edited before sending',pct(m.neo.edited)],['Discarded',pct(m.neo.discarded)],['This session',NEO_SESSION.asIs+' as written · '+NEO_SESSION.edited+' edited · '+NEO_SESSION.discarded+' discarded']])}
+      ${box(AI_NAMES.consumer+' & '+AI_NAMES.host,[[AI_NAMES.consumer+' chats · 30d',m.niya.chats.toLocaleString()],[AI_NAMES.consumer+' answered without a case',pct(m.niya.deflected)],[AI_NAMES.host+' chats · 30d',m.nico.chats],[AI_NAMES.host+' answered without a case',pct(m.nico.deflected)]])}
+      ${box('Nigh team',[['Rated helpful',pct(m.team.helpful)],['Reply promise met ('+COMMS_CFG.replyWindow+')',pct(m.team.promiseMet)],['Escalated now',supportCases.filter(c=>c.status==='Escalated').length],['Due within 4h',supportCases.filter(c=>c.status==='Escalated'&&c.dueHrs!=null&&c.dueHrs>=0&&c.dueHrs<=4).length]])}
+    </div>`;}
+  return `<div style="max-width:960px">
+    <div style="font-size:12px;color:#4C1D95;background:#F8F5FF;border:1px solid #DDD6FE;border-radius:10px;padding:10px 14px;margin-bottom:14px;line-height:1.55">${AI_NAMES.consumer}, ${AI_NAMES.host} and the ${AI_NAMES.support} answer only from <b>Published</b> articles and show the source on each reply. Questions they couldn’t answer show up under Unanswered questions.</div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">${tabs.map(([k,l])=>`<button onclick="S.kbTab='${k}';reRender()" style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid ${tab===k?'#1B2A4A':'#E5E7EB'};background:${tab===k?'#1B2A4A':'#fff'};color:${tab===k?'#fff':'#374151'};cursor:pointer">${l}</button>`).join('')}</div>
+    ${body}</div>`;
+}
+
+// ── AI & ESCALATION — hand-off, case access, ratings, privacy ──
+function aiPolicyHTML(){
+  const lock=t=>`<div style="font-size:12px;color:#374151;padding:4px 0;display:flex;gap:8px;align-items:flex-start">${svgI('lock',13,'#6B7280')}<span>${t}</span></div>`;
+  return `<div class="card card-p" style="margin-bottom:20px">
+    <div style="font-size:15px;font-weight:700;color:#1B2A4A">Hand-off, case access & privacy</div>
+    <div style="font-size:12px;color:#6B7280;margin:2px 0 12px">Every change here is logged.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1B2A4A;margin-bottom:6px">Hand off to the team when</div>
+        ${COMMS_CFG.handoff.map((r,i)=>`<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;padding:4px 0;cursor:pointer"><input type="checkbox" ${r[1]?'checked':''} onchange="cfgSet('handoff:${i}',this.checked)"/> ${r[0]}</label>`).join('')}
+        <div style="font-size:11px;color:#6B7280;margin:8px 0 3px">Confidence threshold (%)</div>
+        <input type="number" min="0" max="100" value="${Math.round(COMMS_CFG.confMin*100)}" onchange="cfgSet('confMin',(+this.value)/100)" style="padding:7px 10px;border:1px solid #E5E7EB;border-radius:8px;font-size:13px;width:90px"/>
+        <div style="font-size:13px;font-weight:700;color:#1B2A4A;margin:14px 0 6px">Ratings</div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#374151;cursor:pointer"><input type="checkbox" ${COMMS_CFG.csat?'checked':''} onchange="cfgSet('csat',this.checked)"/> Ask for a one-tap rating when a case is resolved</label>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1B2A4A;margin-bottom:6px">Who can talk about a case</div>
+        <div style="font-size:11px;color:#6B7280;margin-bottom:3px">Host cases are visible in Nigh Host to</div>
+        <select class="select" style="width:auto;margin-bottom:8px" onchange="cfgSet('hostCaseRoles',this.value)">${Object.keys(CASE_ROLE_SETS).map(o=>`<option ${COMMS_CFG.hostCaseRolesLabel===o?'selected':''}>${o}</option>`).join('')}</select>
+        ${lock('Only parties to a case can message about it — in Nigh, Nigh Host, or by email')}
+        ${lock('Each party sees only their own thread with Nigh — never another party’s')}
+        ${lock(AI_NAMES.consumer+' and '+AI_NAMES.host+' check the signed-in account is a party before discussing a case')}
+        ${lock('Reporters are never identified to the host')}
+        <div style="font-size:13px;font-weight:700;color:#1B2A4A;margin:14px 0 6px">Privacy</div>
+        ${lock('Contact details are hidden by default — revealing them needs a reason and is logged')}
+        ${lock('View as is read-only and logged')}
+        ${lock('Audit log exports are logged')}
+      </div>
+    </div></div>`;
+}
+
+// ── CASE DETAIL (v2) — parties, private threads, hand-off, duplicates, delivery, privacy ──
+function partiesCardHTML(c){
+  const sides=caseSides(c);const rep=nighTeam.find(m=>m.id===c.assignedTo);
+  const acc=a=>a==='message'?chip('Can message',{bg:'#ECFDF5',fg:'#065F46'}):chip('No access',{bg:'#F3F4F6',fg:'#6B7280'});
+  return `<div class="card card-p">
+    <div style="display:flex;justify-content:space-between;align-items:center">${v2lbl('Who’s on this case')}<span style="font-size:11px;color:#0E4EF5;cursor:pointer;font-weight:600;margin-bottom:6px" onclick="addPartyModal('${c.id}')">+ Add party</span></div>
+    ${sides.length?sides.map((s,i)=>`<div style="border:1px solid #E5E7EB;border-radius:10px;padding:9px 10px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:#1B2A4A">${s.label}</span>${chip(i===0?'Requester':'Involved',i===0?{bg:'#EEF2FF',fg:'#1D4ED8'}:{bg:'#FFF7ED',fg:'#C2410C'})}<span style="font-size:10px;color:#9CA3AF;margin-left:auto">${s.app}</span></div>
+      ${i>0?`<div style="font-size:10px;color:#6B7280;margin-top:2px">${s.role.replace('Involved · ','')}</div>`:''}
+      ${s.anon?`<div style="font-size:10px;color:#B45309;margin-top:2px">Requester’s identity hidden from this party</div>`:''}
+      <div style="margin-top:6px">${sideMembers(c,s).map(m=>`<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px;color:#374151"><span style="flex:1;min-width:0">${m.name} <span style="color:#9CA3AF">· ${m.role}</span></span>${acc(m.access)}${s.kind==='host'?`<span style="font-size:10px;color:#0E4EF5;cursor:pointer;white-space:nowrap" onclick="toggleMemberAccess('${c.id}','${m.key}')">${m.access==='message'?'Remove':'Give access'}</span>`:''}</div>`).join('')}</div>
+      ${i>0?`<div style="text-align:right;margin-top:4px"><span style="font-size:10px;color:#B91C1C;cursor:pointer" onclick="removeParty('${c.id}','${s.key}')">Remove party</span></div>`:''}
+    </div>`).join(''):'<div style="font-size:12px;color:#9CA3AF;margin-bottom:8px">Internal case — no outside parties.</div>'}
+    <div style="font-size:11px;color:#6B7280;line-height:1.5;margin-bottom:8px">Nigh team: ${rep?rep.firstName+' (assigned)':'unassigned'} · AI: ${AI_NAMES.support} · ${AI_NAMES.internal} (drafts only)</div>
+    <div style="border-top:1px solid #F1F5F9;padding-top:8px">${v2lbl('Check access')}
+      <div style="display:flex;gap:6px"><select id="acc-test" class="select" style="flex:1;min-width:0;font-size:12px">${[...new Set(caseSides(c).filter(x=>x.kind==='host').map(x=>x.acct))].map(oid=>`<optgroup label="${(orgs.find(o=>o.id===oid)||{name:oid}).name} team">${(orgTeams[oid]||[]).filter(m=>m.status==='Active').map(m=>`<option value="${m.id}">${m.name} · ${m.access}</option>`).join('')}</optgroup>`).join('')}<optgroup label="Nigh users">${userAccounts.map(u=>`<option value="${u.id}">${u.name} (${u.id})</option>`).join('')}</optgroup></select><button class="btn btn-ghost btn-sm" onclick="runAccessTest('${c.id}')">Check</button></div>
+      <div style="font-size:11px;margin-top:6px;color:#6B7280;line-height:1.45">${S._accRes&&S._accRes.id===c.id?S._accRes.html:'Runs automatically on every message about this case from Nigh, Nigh Host or email.'}</div></div>
+  </div>`;
+}
+function runAccessTest(cid){const c=supportCases.find(x=>x.id===cid);const uid=document.getElementById('acc-test').value;let u=userAccounts.find(x=>x.id===uid);if(!u)Object.values(orgTeams).forEach(t=>t.forEach(m=>{if(m.id===uid)u=m;}));u=u||{name:uid};const r=caseAccessCheck(c,uid);
+  S._accRes={id:cid,html:r.ok?`<b style="color:#065F46">Allowed</b> — ${r.member.role} on ${r.side.label}’s thread`:`<b style="color:#B91C1C">Blocked</b> — ${r.reason}. ${AI_NAMES.consumer}/${AI_NAMES.host} would share no case details.`};
+  logTeam('Access Checked','Case '+cid,u.name+' ('+uid+') → '+(r.ok?'allowed · '+r.member.role:'blocked · '+r.reason),'info',L2(cid));reRender();}
+function toggleMemberAccess(cid,key){const c=supportCases.find(x=>x.id===cid);let m=null,s=null;caseSides(c).forEach(sd=>sideMembers(c,sd).forEach(x=>{if(x.key===key){m=x;s=sd;}}));if(!m)return;
+  const nv=m.access==='message'?'none':'message';(c.memberAccess=c.memberAccess||{})[key]=nv;
+  logTeam(nv==='message'?'Case Access Granted':'Case Access Removed','Case '+cid,m.name+' · '+m.role+' at '+s.label,'warn',L2(cid));reRender();}
+function addPartyModal(cid){
+  const hosts=orgs.filter(o=>o.status==='Active');
+  uiModal('Add a party to '+cid,`<div style="font-size:13px;color:#374151;line-height:1.5;margin-bottom:12px">They get their own private thread with Nigh about this case in their app. They won’t see the requester’s conversation.</div>
+    <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Who</div>
+    <select id="ap-who" class="select" style="width:100%;margin-bottom:10px"><optgroup label="Host accounts (Nigh Host)">${hosts.map(o=>`<option value="h:${o.id}">${o.name}</option>`).join('')}</optgroup><optgroup label="Users (Nigh)">${userAccounts.map(u=>`<option value="u:${u.id}">${u.name}</option>`).join('')}</optgroup></select>
+    <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Why they’re involved</div>
+    <input id="ap-why" class="input" placeholder="e.g. venue check-in records" style="width:100%;box-sizing:border-box;margin-bottom:10px"/>
+    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#374151"><input type="checkbox" id="ap-anon" checked/> Hide the requester’s identity from this party</label>`,
+    `<button class="btn btn-ghost btn-sm" onclick="closeUiModal()">Cancel</button><button class="btn btn-primary btn-sm" onclick="addParty('${cid}')">Add party</button>`);
+}
+function addParty(cid){
+  const c=supportCases.find(x=>x.id===cid);const v=document.getElementById('ap-who').value;const why=(document.getElementById('ap-why').value||'').trim()||'needs info';const anon=document.getElementById('ap-anon').checked;
+  const k=v.slice(0,1),id=v.slice(2);let side;
+  if(k==='h'){const o=orgs.find(x=>x.id===id);side={key:'h:'+id,kind:'host',acct:id,label:o.name,role:'Involved · '+why,app:'Nigh Host',anon};}
+  else{const u=userAccounts.find(x=>x.id===id);side={key:'u:'+id,kind:'user',acct:id,label:u.name,role:'Involved · '+why,app:'Nigh',anon};}
+  if(caseSides(c).find(s=>s.key===side.key)){uiToast('Already on this case');return;}
+  (c.involved=c.involved||[]).push(side);
+  sideThread(c,side.key).push({from:'system',text:'Nigh Support added '+side.label+' to case '+cid+' · '+why,ts:'Just now'});
+  logTeam('Party Added','Case '+cid,side.label+' ('+id+') · '+why+(anon?' · requester identity hidden':''),'warn',L2(cid));
+  (S.caseSide=S.caseSide||{})[cid]=side.key;closeUiModal();reRender();
+}
+function removeParty(cid,key){const c=supportCases.find(x=>x.id===cid);const s=(c.involved||[]).find(x=>x.key===key);if(!s)return;
+  sideThread(c,key).push({from:'system',text:'Removed from this case — they can no longer message about it',ts:'Just now'});
+  c.involved=c.involved.filter(x=>x.key!==key);(c.removed=c.removed||[]).push(s);if(S.caseSide)delete S.caseSide[cid];
+  logTeam('Party Removed','Case '+cid,s.label+' · access revoked','warn',L2(cid));reRender();}
+function aiHandoffHTML(c){
+  const ai=c.ai;if(!ai)return '';const p=Math.round(ai.confidence*100);const low=ai.confidence<COMMS_CFG.confMin;
+  return `<div class="card card-p">${v2lbl(c.status==='AI handling'?'AI handling':'Why this reached the team')}
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div style="flex:1;height:6px;background:#F3F4F6;border-radius:4px;overflow:hidden"><div style="width:${p}%;height:100%;background:${low?'#F59E0B':'#22C55E'}"></div></div><span style="font-size:11px;font-weight:700;color:${low?'#B45309':'#15803D'}">${p}% confident</span></div>
+    <div style="font-size:10px;color:#9CA3AF;margin-bottom:8px">Hands off below ${Math.round(COMMS_CFG.confMin*100)}%</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">${ai.reasons.length?ai.reasons.map(r=>chip(r,{bg:'#FFF7ED',fg:'#C2410C'})).join(''):chip('No hand-off triggers',{bg:'#ECFDF5',fg:'#065F46'})}</div>
+    <div style="font-size:12px;color:#374151;line-height:1.8"><div>Sentiment: <b>${ai.sentiment}</b></div><div>Channels: <b>${(ai.channels||[c.source]).join(' · ')}</b></div></div></div>`;
+}
+function dupCardHTML(c){
+  const acct=c.userId||c.orgId;if(!acct)return '';
+  const dups=supportCases.filter(x=>x.id!==c.id&&!x.mergedInto&&x.status!=='Resolved'&&(x.dupOf===c.id||c.dupOf===x.id));
+  const other=supportCases.filter(x=>x.id!==c.id&&!x.mergedInto&&x.status!=='Resolved'&&(x.userId||x.orgId)===acct&&!dups.includes(x));
+  if(!dups.length&&!other.length)return '';
+  return `<div class="card card-p" style="${dups.length?'border-color:#FDE68A;background:#FFFDF5':''}">${v2lbl(dups.length?'Likely duplicate':'Other open cases for this account')}
+    ${dups.map(x=>`<div style="font-size:12px;color:#374151;margin-bottom:6px"><b style="cursor:pointer;color:#0E4EF5" onclick="go('caseDetail',{caseId:'${x.id}'})">${x.id}</b> · ${x.title} <span style="color:#9CA3AF">· via ${x.source}</span></div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-bottom:6px" onclick="mergeCase('${c.dupOf===x.id?x.id:c.id}','${c.dupOf===x.id?c.id:x.id}')">Merge ${c.dupOf===x.id?c.id+' into '+x.id:x.id+' into '+c.id}</button>`).join('')}
+    ${other.map(x=>`<div style="font-size:12px;color:#374151;padding:3px 0"><b style="cursor:pointer;color:#0E4EF5" onclick="go('caseDetail',{caseId:'${x.id}'})">${x.id}</b> · ${x.title} · ${x.status}</div>`).join('')}</div>`;
+}
+function mergeCase(into,from){const a=supportCases.find(x=>x.id===into),b=supportCases.find(x=>x.id===from);if(!a||!b)return;
+  caseThread(b).push({from:'system',text:'Merged into '+into+' — the conversation continues there',ts:'Just now'});b.status='Resolved';b.mergedInto=into;b.resolved='Nov 3, 2026';
+  caseThread(a).push({from:'system',text:'Merged '+from+' (via '+b.source+') into this case',ts:'Just now'});
+  if(a.ai)a.ai.channels=[...new Set([...(a.ai.channels||[]),b.source])];
+  logTeam('Cases Merged','Case '+into,from+' (via '+b.source+') merged into '+into,'info',L2(into));go('caseDetail',{caseId:into});}
+function deliveryCardHTML(c){
+  const rows=[];caseSides(c).forEach(s=>sideThread(c,s.key).forEach(m=>{if(m.dlv)rows.push({to:s.label,m});}));
+  if(!rows.length)return '';
+  return `<div class="card card-p">${v2lbl('Delivery')}${rows.slice(-6).reverse().map(r=>{const w=r.m.from==='ai'?AI_NAMES.support:((nighTeam.find(x=>x.id===r.m.agentId)||{}).firstName||'Team');const f=r.m.dlv.st==='Failed';
+    return `<div style="padding:5px 0;border-bottom:1px solid #F3F4F6"><div style="font-size:11px;color:#111827"><b>${w}</b> → ${r.to}</div><div style="font-size:11px;color:${f?'#B91C1C':'#6B7280'}">${r.m.dlv.ch} · <b>${r.m.dlv.st}</b>${r.m.dlv.at?' '+r.m.dlv.at:''}</div></div>`;}).join('')}</div>`;
+}
+function rCaseDetail(id){
+  const c=supportCases.find(x=>x.id===id);if(!c)return '<p>Case not found</p>';
+  const a=caseAcct(c);const me=sessionUser();
+  const rep=nighTeam.find(m=>m.id===c.assignedTo);const due=caseDue(c);const mode=S.caseMode||'reply';
+  const sides=caseSides(c);const side=curSide(c);const primary=!side||side.key===sides[0].key;
+  const sideName=(side?side.label:a.name).split(' ')[0];const sideType=side?(side.kind==='host'?'Host':'User'):a.type;
+  const thread=side?sideThread(c,side.key):caseThread(c);
+  const art=k=>HELP_ARTICLES.find(x=>x.id===k);
+  const dl=(m,right)=>m.dlv?`<div style="font-size:10px;color:${m.dlv.st==='Failed'?'#B91C1C':'#9CA3AF'};margin-top:3px;${right?'text-align:right;margin-right:31px':'margin-left:31px'}">${m.dlv.ch} · ${m.dlv.st}${m.dlv.at?' '+m.dlv.at:''}</div>`:'';
+  const th=thread.map(m=>{
+    if(m.from==='system')return `<div style="text-align:center;margin:10px 0"><span style="display:inline-block;font-size:11px;color:#6B7280;background:#F3F4F6;border-radius:12px;padding:5px 11px">${m.text}${m.ts?' · '+m.ts:''}</span></div>`;
+    if(m.from==='note'){const w=nighTeam.find(x=>x.id===m.agentId);return `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:10px 12px;margin:10px 0"><div style="font-size:10px;font-weight:700;color:#92400E;margin-bottom:3px">INTERNAL NOTE · ${w?w.firstName:'Team'} · only visible to the Nigh team${m.ts?' · '+m.ts:''}</div><div style="font-size:13px;color:#78350F;line-height:1.5">${m.text}</div></div>`;}
+    if(m.from==='requester')return `<div style="margin:10px 0;max-width:72%"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${photoAv(24)}<span style="font-size:11px;font-weight:700;color:#374151">${m.by||sideName}</span><span style="font-size:10px;color:#9CA3AF">${m.role?m.role+' · ':''}${sideType}${m.app?' · via '+m.app:''}${m.ts?' · '+m.ts:''}</span></div><div style="margin-left:31px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:9px 12px;font-size:13px;color:#111827;line-height:1.5">${m.text}</div></div>`;
+    if(m.from==='ai')return `<div style="margin:10px 0;max-width:72%"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">${aiAv(24)}<span style="font-size:11px;font-weight:700;color:#374151">${AI_NAMES.support}</span><span style="font-size:9px;font-weight:700;color:#6D28D9;background:#EDE9FE;border-radius:5px;padding:0 5px">AI</span><span style="font-size:10px;color:#9CA3AF">${m.ts||''}</span></div><div style="margin-left:31px;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:12px;padding:9px 12px;font-size:13px;color:#1F1147;line-height:1.5">${m.text}</div>${m.src&&art(m.src)?`<div style="margin-left:31px;font-size:10px;color:#6D28D9;margin-top:3px">${svgI('book',10,'#6D28D9')} Source: ${art(m.src).title} (${m.src})</div>`:''}${dl(m)}</div>`;
+    const w=nighTeam.find(x=>x.id===m.agentId)||me;
+    return `<div style="margin:10px 0 10px auto;max-width:72%"><div style="display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-bottom:4px"><span style="font-size:10px;color:#9CA3AF">${m.ts||''}</span><span style="font-size:11px;font-weight:700;color:#374151">${w.firstName}</span><span style="font-size:10px;color:#6B7280">${teamLabel(w)}</span>${photoAv(24)}</div><div style="margin-right:31px;background:#0E4EF5;border-radius:12px;padding:9px 12px;font-size:13px;color:#fff;line-height:1.5">${m.text}</div>${dl(m,true)}</div>`;
+  }).join('')||'<div style="text-align:center;color:#9CA3AF;font-size:12px;padding:30px">No messages in this thread yet.</div>';
+  const closed=c.status==='Resolved';
+  const actions=[];
+  if(c.status==='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Take over from AI</button>`);
+  if(!closed&&c.status!=='Waiting on user'&&c.status!=='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Waiting on user')">Mark waiting on ${a.type==='Host'?'host':'user'}</button>`);
+  if(!closed)actions.push(`<button class="btn btn-green btn-sm" onclick="setCaseStatus('${c.id}','Resolved')">Resolve case</button>`);
+  if(closed&&!c.mergedInto)actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Reopen case</button>`);
+  if(c.assignedTo!==me.id)actions.push(`<button class="btn btn-ghost btn-sm" onclick="assignCaseToMe('${c.id}')">Assign to me</button>`);
+  const draft=neoDraftFor(c);const showDraft=!closed&&primary&&!(S.neoGone&&S.neoGone[c.id]);
+  const convos=AI_CONVOS.filter(x=>x.acct===(c.userId||c.orgId));
+  const openForAcct=supportCases.filter(x=>(x.userId||x.orgId)===(c.userId||c.orgId)&&x.status!=='Resolved').length;
+  const muted=TEAM_MUTED[c.userId||c.orgId];
+  S.pii=S.pii||{};const ct=acctContact(c);const shown=S.pii['case:'+c.id];
+  const tabs=sides.length>1?`<div style="display:flex;gap:6px;padding:8px 16px;border-bottom:1px solid #F1F5F9;background:#fff;flex-wrap:wrap;align-items:center">${sides.map(s=>`<button onclick="(S.caseSide=S.caseSide||{})['${c.id}']='${s.key}';reRender()" style="font-size:12px;font-weight:700;padding:5px 11px;border-radius:8px;border:1px solid ${s.key===side.key?'#0E4EF5':'#E5E7EB'};background:${s.key===side.key?'#EEF2FF':'#fff'};color:${s.key===side.key?'#0E4EF5':'#374151'};cursor:pointer">${s.label} <span style="font-weight:500;color:#9CA3AF">· ${s.key===sides[0].key?'Requester':'Involved'}</span></button>`).join('')}<span style="font-size:11px;color:#6B7280;margin-left:auto;display:flex;align-items:center;gap:4px">${svgI('lock',11,'#6B7280')} Each party sees only their own thread</span></div>`:'';
+  const csat=closed&&!c.mergedInto?`<div style="padding:10px 16px;border-top:1px solid #F1F5F9;font-size:12px;color:#374151;display:flex;gap:8px;align-items:center;justify-content:center">${c.csat?`Rated <b style="color:${c.csat.r==='up'?'#065F46':'#B91C1C'}">${c.csat.r==='up'?'Helpful':'Not helpful'}</b> · ${c.csat.by==='ai'?AI_NAMES.support:'Nigh team'}`:(COMMS_CFG.csat?'One-tap rating requested — no response yet':'Ratings off')}</div>`:'';
+  return `<div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+  <div style="flex:1 1 480px;min-width:0">
+    <button class="btn btn-ghost btn-sm" onclick="go('support')" style="margin-bottom:12px">← All cases</button>
+    <div class="card card-p" style="margin-bottom:14px">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <div style="font-size:11px;color:#9CA3AF;font-weight:600">${c.id} · ${c.category} · opened ${c.opened} by ${c.source==='Agent'?'agent':c.source}</div>
+          <div style="font-size:18px;font-weight:700;color:#1B2A4A;margin:3px 0 8px">${c.title}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${chip(c.mergedInto?'Merged into '+c.mergedInto:c.status,caseStatusColor(c.status))}${chip(c.priority,casePriColor(c.priority))}${c.urgentLive?chip('LIVE DROP',{bg:'#DC2626',fg:'#fff'}):''}
+            ${due?`<span style="font-size:11px;font-weight:700;color:${due.col}">${due.txt}</span>`:''}
+            <span style="font-size:11px;color:#6B7280">Assigned: ${rep?rep.name:(c.status==='AI handling'?AI_NAMES.support:'Unassigned')}</span></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${actions.join('')}</div>
+      </div>
+    </div>
+    <div class="card" style="overflow:hidden">
+      <div style="padding:10px 16px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div style="font-size:13px;font-weight:700;color:#1B2A4A">Conversation <span style="font-weight:500;color:#9CA3AF">· as ${sideName} sees it in ${side?side.app:'Nigh'} → Nigh Support</span></div>
+        <div style="display:flex;gap:10px;align-items:center">${side?`<span style="font-size:11px;color:#0E4EF5;cursor:pointer;font-weight:600" onclick="viewAsModal('${c.id}')">${svgI('eye',11)} View as ${sideName}</span>`:''}<span style="font-size:11px;color:#6B7280">${closed?`Can reopen for ${COMMS_CFG.reopenDays} days`:`Parties can reply while the case is active`}</span></div>
+      </div>
+      ${tabs}
+      ${side&&side.anon?`<div style="padding:7px 16px;background:#FFFBEB;border-bottom:1px solid #FDE68A;font-size:11px;color:#92400E">The requester’s identity is hidden from ${side.label}. Don’t include names or contact details.</div>`:''}
+      <div style="padding:6px 16px 12px;background:#FAFBFC;max-height:520px;overflow-y:auto">${th}</div>
+      ${closed?`<div style="padding:14px 16px;border-top:1px solid #F1F5F9;font-size:12px;color:#6B7280;text-align:center">${c.mergedInto?'Merged — continue in '+c.mergedInto+'.':'Case resolved — reopen it to reply.'}</div>${csat}`:`
+      <div style="border-top:1px solid #F1F5F9;padding:12px 16px">
+        <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap">
+          <button onclick="S.caseMode='reply';reRender()" style="font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid ${mode==='reply'?'#0E4EF5':'#E5E7EB'};background:${mode==='reply'?'#EEF2FF':'#fff'};color:${mode==='reply'?'#0E4EF5':'#6B7280'};cursor:pointer">Reply to ${side?side.label.split(' ')[0]:(a.type==='Host'?'host':'user')}</button>
+          <button onclick="S.caseMode='note';reRender()" style="font-size:12px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid ${mode==='note'?'#CA8A04':'#E5E7EB'};background:${mode==='note'?'#FFFBEB':'#fff'};color:${mode==='note'?'#92400E':'#6B7280'};cursor:pointer">Internal note</button>
+          ${mode==='reply'?`<select class="select" style="width:auto;font-size:12px;margin-left:auto" onchange="useSavedReply('${c.id}',this.value)"><option value="">Saved replies…</option>${SAVED_REPLIES.map(r=>`<option value="${r.id}">${r.title}</option>`).join('')}</select>`:''}
+        </div>
+        <textarea id="case-input" rows="3" placeholder="${mode==='reply'?'Write a reply…':'Add a note for the team…'}" style="width:100%;border:1px solid ${mode==='reply'?'#C7D2FE':'#FDE68A'};background:${mode==='reply'?'#fff':'#FFFDF5'};border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box">${S.caseDraft&&S.caseDraftFor===c.id?S.caseDraft:''}</textarea>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:10px;flex-wrap:wrap">
+          ${mode==='reply'?`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#6B7280">${photoAv(22)}<span>Sends as <b style="color:#111827">${me.firstName} · ${teamLabel(me)}</b> — only to ${side?side.label:sideName}</span></div>`:`<div style="font-size:11px;color:#92400E">Only visible to the Nigh team</div>`}
+          <button class="btn ${mode==='reply'?'btn-primary':'btn-ghost'} btn-sm" onclick="sendCaseMsg('${c.id}')">${mode==='reply'?'Send reply':'Add note'}</button>
+        </div>
+      </div>`}
+    </div>
+  </div>
+  <div style="flex:1 1 300px;max-width:360px;display:flex;flex-direction:column;gap:14px">
+    <div class="card card-p" style="border-color:#DDD6FE;background:#FCFBFF">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div class="niya-avatar-sm niya-live"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div><div style="font-size:13px;font-weight:700">${AI_NAMES.internal}</div><div style="font-size:10px;color:#7C3AED">Internal AI · never messages users</div></div></div>
+      ${v2lbl('Summary')}
+      <div style="font-size:12px;color:#374151;line-height:1.55;margin-bottom:12px">${c.notes||'—'}</div>
+      ${showDraft?`${v2lbl('Draft reply')}
+      <div style="font-size:12px;color:#1F1147;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:9px 10px;line-height:1.55;margin-bottom:8px">${draft}</div>
+      <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="neoUseDraft('${c.id}')">Use draft</button><button class="btn btn-ghost btn-sm" onclick="neoDiscard('${c.id}')">Discard</button></div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:6px">Sent as written, edited or discarded — all tracked.</div>`:''}
+    </div>
+    ${aiHandoffHTML(c)}
+    ${partiesCardHTML(c)}
+    ${dupCardHTML(c)}
+    <div class="card card-p">
+      ${v2lbl('Account')}
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">${photoAv(32)}<div><div style="font-size:13px;font-weight:700;color:#1B2A4A;cursor:pointer" onclick="${a.go}">${a.name}</div><div style="font-size:11px;color:#6B7280">${a.type==='Host'?'Host · Nigh Host app':a.type==='User'?'User · Nigh app':'Internal'}</div></div></div>
+      <div style="font-size:12px;color:#374151;line-height:1.9">
+        ${ct.email?`<div style="display:flex;justify-content:space-between;gap:6px"><span>${shown?ct.email:maskEmail(ct.email)} · ${shown?ct.phone:maskPhone(ct.phone)}</span>${shown?'':`<span style="font-size:11px;color:#0E4EF5;cursor:pointer" onclick="revealModal('case:${c.id}','Case ${c.id}')">Reveal</span>`}</div>`:''}
+        <div>Open cases: <b>${openForAcct}</b></div>
+        <div>Nigh Team channel: <b style="color:${muted?'#B45309':'#065F46'}">${muted?'Muted':'Subscribed'}</b></div>
+        <div>Recent ${a.type==='Host'?AI_NAMES.host:AI_NAMES.consumer} chats: <b>${convos.length}</b></div>
+      </div>
+      ${a.go?`<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="openAcctTimeline('${c.id}')">View full timeline →</button>`:''}
+    </div>
+    ${deliveryCardHTML(c)}
+    <div class="card card-p">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Audit trail</div><span style="font-size:11px;color:#0E4EF5;cursor:pointer" onclick="S.af={kind:'',actor:'',q:'Case ${c.id}'};go('audit')">All →</span></div>
+      ${auditLog.filter(l=>l.object==='Case '+c.id).slice(0,8).map(l=>`<div style="padding:6px 0;border-bottom:1px solid #F3F4F6"><div style="display:flex;gap:6px;align-items:center">${actorChip(l.actorKind)}<span style="font-size:11px;font-weight:700;color:#111827">${l.type}</span></div><div style="font-size:11px;color:#6B7280;margin-top:2px">${l.actor} · ${l.ts.slice(11,16)}</div></div>`).join('')||'<div style="font-size:12px;color:#9CA3AF">No actions yet.</div>'}
+    </div>
+  </div></div>`;
+}
+function sendCaseMsg(id){
+  const c=supportCases.find(x=>x.id===id);const el=document.getElementById('case-input');const v=el?el.value.trim():'';if(!v)return;
+  const side=curSide(c);const sides=caseSides(c);const primary=!side||side.key===sides[0].key;const note=S.caseMode==='note';
+  (side?sideThread(c,side.key):caseThread(c)).push({from:note?'note':'agent',agentId:SESSION_USER_ID,text:v,ts:'Just now',dlv:note?null:{ch:side&&side.kind==='host'?'Push + Nigh Host Inbox':'Push + Nigh Inbox',st:'Delivered'}});
+  let neo='';
+  if(S._draftUsed&&!note){if(v===S._draftUsed){neo=' · Neo draft sent as written';NEO_SESSION.asIs++;}else{neo=' · Neo draft edited before sending';NEO_SESSION.edited++;}}
+  logTeam(note?'Internal Note':'Reply Sent','Case '+c.id,(note?'Note: ':'To '+(side?side.label:caseAcctName(c))+': ')+v.slice(0,90)+neo,'info',L2(c.id));
+  S._draftUsed=null;
+  if(!note&&primary&&c.status==='Escalated'){c.status='Waiting on user';c.dueHrs=null;logTeam('Case Status Changed','Case '+c.id,'Escalated → Waiting on user (reply sent)','info',L2(c.id));}
+  if(!c.assignedTo)c.assignedTo=SESSION_USER_ID;
+  S.caseDraft='';reRender();
+}
+function setCaseStatus(id,s){
+  const c=supportCases.find(x=>x.id===id);const prev=c.status;c.status=s;
+  logTeam(prev==='AI handling'&&s==='Escalated'?'Took Over From AI':'Case Status Changed','Case '+id,prev+' → '+s,'info',L2(id));
+  const msg=s==='Resolved'?'Case resolved · can be reopened for '+COMMS_CFG.reopenDays+' days':s==='Escalated'&&prev==='Resolved'?'Case reopened':s==='Escalated'&&prev==='AI handling'?'Team took over from the '+AI_NAMES.support:s==='Waiting on user'?'Waiting on '+(c.requester==='host'?'host':'user'):'Status: '+s;
+  caseThread(c).push({from:'system',text:msg,ts:'Just now'});
+  if(s==='Resolved'){c.resolved='Nov 3, 2026';c.csat=null;if(COMMS_CFG.csat){caseThread(c).push({from:'system',text:'Asked for a one-tap rating',ts:'Just now'});logAI(AI_NAMES.support,'Rating Requested','Case '+id,'One-tap rating sent to '+caseAcctName(c),'info',L2(id));}}
+  if(s==='Escalated'){c.dueHrs=c.dueHrs??32;if(!c.assignedTo)c.assignedTo=SESSION_USER_ID;}
+  reRender();
+}
+
+// ── AUDIT EXPORT ──
+function auditExport(){
+  const f=S.af||{kind:'',actor:'',q:''};let list=auditLog.slice();
+  if(f.kind)list=list.filter(l=>l.actorKind===f.kind);if(f.actor)list=list.filter(l=>l.actor===f.actor);
+  if(f.q){const q=f.q.toLowerCase();list=list.filter(l=>(l.type+' '+l.object+' '+l.detail+' '+l.actor).toLowerCase().includes(q));}
+  const csv=['Timestamp,Actor type,Actor,Action,Object,Detail,Severity'].concat(list.map(l=>[l.ts,l.actorKind,l.actor,l.type,l.object,l.detail,l.severity].map(x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"').join(','))).join('\n');
+  try{const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const el=document.createElement('a');el.href=u;el.download='nigh-audit-'+AUDIT_DAY+'.csv';document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),800);}catch(e){}
+  logTeam('Audit Exported','Audit Log',list.length+' events · filter: '+([f.kind,f.actor,f.q].filter(Boolean).join(' / ')||'none'),'warn',"go('audit')");
+  uiToast('Exported '+list.length+' events');reRender();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
