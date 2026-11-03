@@ -3295,6 +3295,7 @@ function renderInbox(){
         </div>
       </div>`;
     })():''}
+    ${tab==='messages'?nsRowsHTML():''}
     <div style="padding:8px 0">
       ${filtered.length===0?(()=>{
         if(tab==='messages') return`<div style="text-align:center;padding:40px 24px;">
@@ -5947,10 +5948,11 @@ function renderModal(){
 
   // ── Report Drop modal ──────────────────────────────────
   if(S.modal==='reportDrop'){
-    const reasons=['Misleading content','Inappropriate','Spam or scam','Safety concern','Other'];
+    const reasons=['Misleading listing','Safety concern','Fake or no-show drop','Spam or scam','Inappropriate','Other'];
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()" style="padding-bottom:8px"><div class="mh"></div>
       <div style="font-size:15px;font-weight:700;color:#F5F5F7;margin-bottom:4px">Report Drop</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:16px">Why are you reporting this drop?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:6px">Why are you reporting this drop?</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:14px">${ic('lock',12)} The host won’t know who reported it.</div>
       ${reasons.map(r=>`<button onclick="S.reportReason='${r}';modal('reportConfirm')" style="display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:12px;background:#1A1A20;border:1px solid rgba(255,255,255,0.10);margin-bottom:8px;cursor:pointer;text-align:left;font-family:inherit">
         <div style="flex:1"><div style="font-size:14px;font-weight:600;color:#F5F5F7">${r}</div></div>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -5964,7 +5966,7 @@ function renderModal(){
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E4EF5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div style="font-size:15px;font-weight:700;color:#F5F5F7;margin-bottom:6px;text-align:center">Report submitted</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:20px;text-align:center">We'll review this drop.</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:20px;text-align:center">Thanks — our team will review this drop. The host won’t know it was you. If we need anything else, we’ll message you in Nigh Support.${S.reportReason==='Safety concern'?'<br><br>If anyone is in immediate danger, call 911.':''}</div>
       <button onclick="S.reportReason=null;modal(null)" style="width:100%;background:#0E4EF5;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Got it</button>
     </div></div>`;return;
   }
@@ -8050,6 +8052,104 @@ function chatSend(){
 }
 
 // ── RENDER ─────────────────────────────────────────────
+
+// ══ UNIFIED COMMS (consumer) — Nigh Team channel + case-gated Nigh Support, matches the Support app ══
+// Users can't message Nigh Support freely. Niya answers first and opens a case when it can't help.
+// The Nigh Support thread opens only while a case is active, is private to the user and the Nigh team,
+// and can be reopened for 7 days after it's resolved.
+const NS={ai:'Support Assistant',reply:'1–2 business days',reopenDays:7};
+if(S.nsCase==null)S.nsCase='active';           // prototype preview: none | active | resolved
+if(S.nsEscalated==null)S.nsEscalated=false;
+if(!S.nsReplies)S.nsReplies=[];
+if(!S.teamReax)S.teamReax={welcome:{'❤️':[41,false],'🙌':[18,false]},photo:{'🔥':[63,false],'❤️':[35,false]},video:{'❤️':[52,false],'👀':[22,false],'🔥':[24,false]}};
+function nsFirst(){return (currentUser.name||'there').split(' ')[0];}
+function nsSil(sz){return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#1f2430;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:rgba(255,255,255,0.35)"><svg width="${Math.round(sz*0.58)}" height="${Math.round(sz*0.58)}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></div>`;}
+function nsAiAv(sz){return `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="${Math.round(sz*0.55)}" height="${Math.round(sz*0.55)}" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l1.7 4.9a3 3 0 001.9 1.9L20.5 10.5l-4.9 1.7a3 3 0 00-1.9 1.9L12 19l-1.7-4.9a3 3 0 00-1.9-1.9L3.5 10.5l4.9-1.7a3 3 0 001.9-1.9z"/></svg></div>`;}
+const NS_HEADSET='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 14v-3a8 8 0 0116 0v3"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19a3 3 0 01-3 3h-3"/></svg>';
+const NS_BCAST='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="1.6" fill="currentColor" stroke="none"/><path d="M9.8 6.8a3.2 3.2 0 000 4.4"/><path d="M14.2 6.8a3.2 3.2 0 010 4.4"/><path d="M7.5 4.8a6 6 0 000 8.4"/><path d="M16.5 4.8a6 6 0 010 8.4"/><path d="M12 11v7"/></svg>';
+function nsVerified(){return `<span style="display:inline-flex;width:14px;height:14px;border-radius:50%;background:#0E4EF5;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></span>`;}
+function nsSupportSub(){const c=S.nsCase;if(c==='none')return 'No active case · Ask Niya for help';if(c==='resolved')return 'Case #1042 resolved · reopen within 7 days';return S.nsEscalated?'Case #1042 · With our team':'Case #1042 · Open';}
+function nsRowsHTML(){
+  const row=(scr,av,name,extra,sub,dot,muted)=>`<div onclick="S.scr='${scr}';render()" style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;display:flex;gap:12px;align-items:center;background:rgba(14,78,245,0.05)">
+    ${av}<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:5px"><span style="font-size:14px;font-weight:700;color:#fff">${name}</span>${nsVerified()}${extra}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">${sub}</div></div>
+    ${muted?`<span style="color:rgba(255,255,255,0.3);display:flex">${ic('bellOff',16)}</span>`:dot?'<div style="width:8px;height:8px;border-radius:50%;background:#0E4EF5;flex-shrink:0"></div>':''}</div>`;
+  return row('nighTeam',`<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;flex-shrink:0">N</div>`,'Nigh Team',`<span style="display:flex;color:rgba(255,255,255,0.3)" title="Broadcast">${NS_BCAST}</span>`,'Josh: Where Nigh goes next (video)',!S.teamMuted&&!S.teamSeen,S.teamMuted)
+   +row('nighSupport',`<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#0F766E,#0D9488);display:flex;align-items:center;justify-content:center;flex-shrink:0">${NS_HEADSET}</div>`,'Nigh Support','',nsSupportSub(),S.nsCase==='active'&&!S.nsSeen,false);
+}
+function nsHeader(av,name,handle,right,extra){
+  return `<div style="background:#0B0B1A;padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:99">
+    <button onclick="S.scr='inbox';S.inboxTab='messages';render()" style="background:none;border:none;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;font-family:inherit;padding:0">${ic('left',18)} Inbox</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:10px">${av}<div><div style="display:flex;align-items:center;gap:5px"><span style="font-size:16px;font-weight:800;color:#fff">${name}</span>${nsVerified()}</div><div style="font-size:11px;color:rgba(255,255,255,0.4)">${handle}</div></div>${right||''}</div>${extra||''}</div>`;
+}
+function nsReax(id){const r=S.teamReax[id]||{};return `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">${Object.keys(r).map(e=>`<button onclick="nsReact('${id}','${e}')" style="display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:14px;font-size:12px;cursor:pointer;font-family:inherit;border:1px solid ${r[e][1]?'rgba(14,78,245,0.6)':'rgba(255,255,255,0.12)'};background:${r[e][1]?'rgba(14,78,245,0.18)':'rgba(255,255,255,0.04)'};color:#fff">${e} <span style="font-size:11px;color:rgba(255,255,255,0.7)">${r[e][0]}</span></button>`).join('')}
+  <button onclick="nsReact('${id}','😂')" style="padding:4px 9px;border-radius:14px;font-size:12px;cursor:pointer;border:1px dashed rgba(255,255,255,0.15);background:none;color:rgba(255,255,255,0.5);font-family:inherit">+</button></div>`;}
+function nsReact(id,e){const r=S.teamReax[id]||(S.teamReax[id]={});const o=r[e];if(!o)r[e]=[1,true];else{o[1]=!o[1];o[0]+=o[1]?1:-1;if(o[0]<=0)delete r[e];}render();}
+function nsByline(name,role){return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">${nsSil(26)}<div style="font-size:12px;font-weight:700;color:#fff">${name}<span style="color:rgba(255,255,255,0.4);font-weight:500"> · ${role}</span></div></div>`;}
+function renderNighTeam(){
+  S.teamSeen=true;
+  const card='background:#12121F;border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;margin-bottom:6px';
+  const when=t=>`<div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin:14px 0 8px">${t}</div>`;
+  const photos=`<div style="display:flex;justify-content:center;gap:10px;margin:16px 0 2px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07)">${[0,1,2,3].map(()=>nsSil(34)).join('')}</div>`;
+  return `<div style="background:#0B0B1A;min-height:100%">
+  ${nsHeader(`<div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800">N</div>`,'Nigh Team','@Nigh',`<button onclick="S.teamMuted=!S.teamMuted;render()" style="margin-left:auto;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:inherit;color:${S.teamMuted?'#EAB308':'rgba(255,255,255,0.55)'}">${ic(S.teamMuted?'bellOff':'bell',20)}<span style="font-size:9px;font-weight:600">${S.teamMuted?'Muted':'Mute'}</span></button>`)}
+  <div style="padding:14px 14px 24px">
+    ${S.teamMuted?`<div style="background:rgba(234,179,8,0.10);border:1px solid rgba(234,179,8,0.25);border-radius:10px;padding:10px 12px;font-size:12px;color:#EAB308;margin-bottom:12px">You’ve muted the Nigh Team. You won’t be notified of new posts, but you can still open them here.</div>`:''}
+    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.35);line-height:1.5">Updates from the Nigh team — react anytime.</div>
+    ${when('Last week')}
+    <div style="${card};padding:14px"><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:12px">Welcome to Nigh</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.65">Hey ${nsFirst()} —<br><br>You’re one of the first people invited into Nigh. We’re building a trusted network designed to help people get out, show up, and connect IRL—and we appreciate your help shaping it.<br><br>We’ll use this channel to share important updates and more about what we’re building.<br><br>Need help, have a suggestion, or notice something broken? Ask Niya anytime—or tap Send Feedback to send it directly to our team.<br><br>Glad you’re here.<br><br>— Josh, Kaden, Preston &amp; Sid</div>${photos}${nsReax('welcome')}</div>
+    ${when('3 days ago')}
+    <div style="${card}"><div style="padding:12px 14px 0">${nsByline('Josh','Founder')}</div><div style="height:140px;background:linear-gradient(135deg,#1a2744,#0d1326);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:12px">[ photo from the founder ]</div>
+      <div style="padding:12px 14px"><div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.55">1,000 of you in Boulder now. Still no ads, still invite-only. Keep it quiet. 🤫</div>${nsReax('photo')}</div></div>
+    ${when('Today')}
+    <div style="${card}"><div style="position:relative;height:160px;background:linear-gradient(135deg,#17153a,#0d0b26);display:flex;align-items:center;justify-content:center"><div style="width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;color:#fff">${ic('play',22)}</div><span style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:6px">2:14</span></div>
+      <div style="padding:12px 14px">${nsByline('Josh','Founder')}<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px">Where Nigh goes next</div><div style="font-size:13px;color:rgba(255,255,255,0.6)">A quick look at what we’re building this month — and why you’re the first to see it.</div>${nsReax('video')}</div></div>
+    <div onclick="S.niyaScr='inbox';S.scr='niya';render()" style="text-align:center;margin:16px 0 0;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.4)">Need help? <span style="color:#41EFF9">Ask Niya</span></div>
+  </div></div>`;
+}
+function nsSys(t,c){return `<div style="text-align:center;margin:6px 0 14px"><div style="display:inline-block;max-width:290px;font-size:11px;line-height:1.5;color:${c||'rgba(255,255,255,0.5)'};background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:8px 12px">${t}</div></div>`;}
+function nsIn(kind,name,tag,text,sub,src){
+  return `<div style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">${kind==='ai'?nsAiAv(28):nsSil(28)}<span style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="font-weight:700;color:rgba(255,255,255,0.72)">${name}</span>${kind==='ai'?`<span style="font-size:9px;font-weight:700;color:#A78BFA;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.38);border-radius:5px;padding:0 5px">AI</span>`:`<span style="color:rgba(255,255,255,0.4)">${tag}</span>`}</span></div>
+    <div style="margin-left:35px"><div style="background:#15151f;border:1px solid rgba(255,255,255,0.07);color:#fff;font-size:13px;padding:9px 13px;border-radius:14px;max-width:235px;line-height:1.5;display:inline-block">${text}</div>
+    ${src?`<div style="font-size:10px;color:#A78BFA;margin:4px 0 0 2px">From help: ${src}</div>`:''}${sub?`<div style="font-size:10px;color:rgba(255,255,255,0.35);margin:3px 0 0 2px">${sub}</div>`:''}</div></div>`;
+}
+function nsYou(t){return `<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><div style="background:#0E4EF5;color:#fff;font-size:13px;padding:9px 13px;border-radius:16px 16px 4px 16px;max-width:75%;line-height:1.5">${t}</div></div>`;}
+function nsSetCase(s){S.nsCase=s;if(s!=='active')S.nsReplies=[];if(s==='none')S.nsEscalated=false;if(s==='resolved'){S.nsEscalated=true;S.nsRating=null;}render();}
+function nsSend(){const i=document.getElementById('ns-input');const v=i?i.value.trim():'';if(!v)return;S.nsReplies.push(v);render();}
+function renderNighSupport(){
+  S.nsSeen=true;const c=S.nsCase;const first=nsFirst();
+  const chipC=c==='resolved'?['Resolved','#22C55E','rgba(34,197,94,0.12)']:S.nsEscalated?['With our team','#EAB308','rgba(234,179,8,0.12)']:['Open','#60A5FA','rgba(14,78,245,0.15)'];
+  const caseCard=`<div style="background:#12121F;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px"><div><div style="font-size:12px;font-weight:700;color:#fff">Case #1042 · Check-in &amp; charge issue</div><div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">Opened by Niya · Today 9:12 AM</div></div><span style="font-size:10px;font-weight:700;color:${chipC[1]};background:${chipC[2]};border-radius:20px;padding:4px 9px;white-space:nowrap">${chipC[0]}</span></div>`;
+  const privacy=`<div style="display:flex;align-items:center;gap:6px;justify-content:center;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:12px">${ic('lock',11)} Private between you and the Nigh team</div>`;
+  let th=`<div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin:4px 0 10px">Today</div>`
+    +nsIn('ai',NS.ai,'',`Hi ${first} — Niya passed along your issue. Your check-in at Fate Brewing didn’t register last night. Your ticket was valid, so I’ve marked you as attended.`,'9:12 AM','My check-in didn’t work')
+    +nsYou('Thanks! I was also charged twice for it.')
+    +nsIn('ai',NS.ai,'','I see two $30 charges. I can’t reverse duplicate charges myself, so this needs our team.','9:14 AM','Refunds & duplicate charges');
+  th+=!S.nsEscalated?`<div style="margin:-2px 0 14px 35px"><button onclick="S.nsEscalated=true;render()" style="background:rgba(14,78,245,0.15);border:1px solid rgba(14,78,245,0.4);color:#93C5FD;font-size:12px;font-weight:700;padding:8px 14px;border-radius:16px;cursor:pointer;font-family:inherit">Escalate to the Nigh team</button><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:5px">Our team replies asynchronously — usually within ${NS.reply}.</div></div>`
+    :nsSys(`Escalated to the Nigh team · We reply asynchronously, usually within ${NS.reply}. You’ll get a notification here when we respond.`,'#EAB308');
+  if(c==='resolved')th+=`<div style="text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin:4px 0 10px">Tomorrow</div>`+nsIn('human','Jordan','Nigh Team',`Hi ${first} — I refunded the duplicate $30 charge to your card. It should show up in 3–5 business days. Sorry about that!`,'10:41 AM')+nsSys(`Case resolved · Reply within ${NS.reopenDays} days to reopen it.`,'#22C55E');
+  const preview=`<div style="display:flex;align-items:center;gap:6px;margin:10px 0 0;padding:7px 8px;border:1px dashed rgba(255,255,255,0.15);border-radius:10px"><span style="font-size:9px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-right:2px">Preview</span>${[['none','No case'],['active','Active case'],['resolved','Resolved']].map(p=>`<button onclick="nsSetCase('${p[0]}')" style="flex:1;font-size:11px;font-weight:700;padding:5px 0;border-radius:8px;border:none;cursor:pointer;font-family:inherit;background:${c===p[0]?'#0E4EF5':'rgba(255,255,255,0.06)'};color:${c===p[0]?'#fff':'rgba(255,255,255,0.6)'}">${p[1]}</button>`).join('')}</div>`;
+  const askNiya=`S.niyaScr='inbox';S.scr='niya';render()`;
+  let body,footer;
+  if(c==='none'){
+    body=`<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:9px 12px;font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:14px;display:flex;align-items:center;gap:7px">${ic('lock',13)}Support messages can’t be muted — we only use this when something needs your attention.</div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:8px">Past cases</div>
+      <div style="background:#12121F;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;opacity:0.8"><div><div style="font-size:12px;font-weight:700;color:#fff">Case #0987 · Refund, Centro Jazz Night</div><div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px">Resolved Mar 2</div></div><span style="font-size:10px;font-weight:700;color:#22C55E;background:rgba(34,197,94,0.12);border-radius:20px;padding:4px 9px">Resolved</span></div>`;
+    footer=`<div style="padding:14px;border-top:1px solid rgba(255,255,255,0.08);background:#0B0B1A;text-align:center"><div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5">Need help? Niya can answer most questions right away and will open a case with our team if needed.</div><button onclick="${askNiya}" style="width:100%;background:#0E4EF5;border:none;color:#fff;font-size:13px;font-weight:700;padding:11px;border-radius:20px;cursor:pointer;font-family:inherit">Ask Niya</button></div>`;
+  }else if(c==='active'){
+    body=caseCard+privacy+th+S.nsReplies.map(nsYou).join('');
+    footer=`<div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;background:#0B0B1A"><input id="ns-input" placeholder="${S.nsEscalated?'Add details for our team…':'Reply about this case…'}" onkeydown="if(event.key==='Enter')nsSend()" style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:20px;padding:11px 15px;font-size:13px;color:#fff;outline:none;font-family:inherit"/><button onclick="nsSend()" style="width:36px;height:36px;border-radius:50%;background:#0E4EF5;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff">${ic('send',15)}</button></div>`;
+  }else{
+    body=caseCard+privacy+th;
+    const rate=S.nsRating?`<div style="font-size:12px;color:#22C55E;margin-bottom:10px">Thanks — you rated this ${S.nsRating==='up'?'helpful':'not helpful'}.</div>`:`<div style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:8px">Was this helpful?</div><div style="display:flex;gap:8px;margin-bottom:12px"><button onclick="S.nsRating='up';render()" style="flex:1;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.35);color:#4ADE80;font-size:12px;font-weight:700;padding:9px;border-radius:16px;cursor:pointer;font-family:inherit">Helpful</button><button onclick="S.nsRating='down';render()" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:700;padding:9px;border-radius:16px;cursor:pointer;font-family:inherit">Not helpful</button></div>`;
+    footer=`<div style="padding:14px;border-top:1px solid rgba(255,255,255,0.08);background:#0B0B1A;text-align:center">${rate}<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:10px">Still need help with this? You can reopen it for ${NS.reopenDays} days.</div><div style="display:flex;gap:8px"><button onclick="nsSetCase('active')" style="flex:1;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:20px;cursor:pointer;font-family:inherit">Reopen case</button><button onclick="${askNiya}" style="flex:1;background:#0E4EF5;border:none;color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:20px;cursor:pointer;font-family:inherit">Ask Niya</button></div></div>`;
+  }
+  return `<div style="background:#0B0B1A;min-height:100%;display:flex;flex-direction:column">
+    ${nsHeader(`<div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#0F766E,#0D9488);display:flex;align-items:center;justify-content:center">${NS_HEADSET}</div>`,'Nigh Support','@NighSupport','',preview)}
+    <div style="flex:1;padding:14px 14px 12px">${body}</div>${footer}</div>`;
+}
+
 function render(){
   const scrEl=document.getElementById('scr');
   if(S.scr!=='ticketCollection'&&S.collFlip){S.collFlip={};}
@@ -8072,6 +8172,8 @@ function render(){
     case 'ticketCollection': html=renderTicketCollection();break;
     case 'transferTicket': html=renderTransferTicket();break;
     case 'inbox': html=renderInbox();break;
+    case 'nighTeam': html=renderNighTeam();break;
+    case 'nighSupport': html=renderNighSupport();break;
     case 'proProfile': html=renderProProfile();break;
     case 'menu': html=renderMenu();break;
     case 'niya': html=renderNiya();break;
