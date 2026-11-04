@@ -445,7 +445,7 @@ var CHATS={
 function chatOf(){return CHATS[S.chatId];}
 function isChatAdmin(c){if(!c.group)return true;return S.chatViewAs!=='member';}
 function niyaBanner(c){
- if(c.niya)return '<div style="display:flex;align-items:center;gap:8px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:8px 11px;margin:0 0 14px;font-size:11px;line-height:1.45;color:#C4B5FD"><span style="display:flex;color:#A78BFA">'+ICON.ai+'</span><span><b style="color:#E9D5FF">Niya is in this chat</b> to help coordinate plans. It only replies when someone types <b>@Niya</b>, and only uses what’s shared here and public info.</span></div>';
+ if(c.niya)return '<div style="display:flex;align-items:center;gap:8px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);border-radius:12px;padding:8px 11px;margin:0 0 14px;font-size:11px;line-height:1.45;color:#C4B5FD"><span style="display:flex;color:#A78BFA">'+ICON.ai+'</span><span><b style="color:#E9D5FF">Niya is in this chat</b> to help coordinate plans. It only replies when someone types <b>@Niya</b>, and only uses what’s shared here, public info, and preferences people chose to share with friends &amp; groups.</span></div>';
  return '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:8px 11px;margin:0 0 14px;font-size:11px;line-height:1.45;color:rgba(255,255,255,0.5)"><span style="display:flex">'+ICON.ai+'</span><span>Niya is off in this chat. '+(c.group?'A group admin':'Either of you')+' can turn it back on in chat settings.</span></div>';
 }
 function personBubble(name,text,sub){
@@ -468,22 +468,22 @@ function ideaRow(title,meta,src,btn){
   +(btn?'<button onclick="demo()" style="flex-shrink:0;background:'+(nigh?'#0E4EF5':'rgba(255,255,255,0.08)')+';border:none;color:#fff;font-size:11px;font-weight:700;padding:6px 11px;border-radius:14px;cursor:pointer;font-family:inherit">'+btn+'</button>':'')+'</div>';
 }
 function niyaMsg(m,c){
- if(m.kind==='ideas')return niyaWrap(nText('Here are a few ideas for 4 of you on Saturday — all under $20:')
+ if(m.kind==='ideas')return niyaWrap(nText('Here are a few ideas for 4 of you on Saturday — all under $20:')+sharedChips(groupShared())
    +ideaRow('Sunset Trivia · Avery Brewing','Sat 6:00 PM · Free · 12 spots left','nigh','View')
    +ideaRow('Chautauqua hike + picnic','Free · golden hour around 5:30 PM','web','Map')
    +ideaRow('Pearl St food truck crawl','~$12 each · walkable · no reservations','idea')
-   +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:7px">Want me to start a poll?</div>',m.t);
+   +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:7px">Want me to start a poll?</div>'+whyLink('squad'),m.t);
  if(m.kind==='poll'){var p=c.poll;var tot=p.opts.reduce(function(a,o){return a+o[1];},0)+(p.mine!=null?1:0);
    return niyaWrap('<div class="card" style="padding:12px;margin:0"><div style="font-size:13px;font-weight:700;margin-bottom:10px">'+p.q+'</div>'
     +p.opts.map(function(o,i){var n=o[1]+(p.mine===i?1:0);var pct=tot?Math.round(n/tot*100):0;return '<div onclick="votePoll('+i+')" style="cursor:pointer;margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>'+(p.mine===i?'✓ ':'')+o[0]+'</span><span style="color:rgba(255,255,255,0.5)">'+n+'</span></div><div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(p.mine===i?'#41EFF9':'#0E4EF5')+'"></div></div></div>';}).join('')
     +'<div style="font-size:10px;color:rgba(255,255,255,0.35)">'+tot+' of '+c.members.length+' voted · tap to vote</div></div>',m.t);}
- if(m.kind==='ideas1')return niyaWrap(nText('No Nigh drops fit Friday night, but here are a few quieter spots on Pearl St under $30 each:')
+ if(m.kind==='ideas1')return niyaWrap(nText('No Nigh drops fit Friday night, but here are a few quieter spots on Pearl St under $30 each:')+sharedChips(['Quiet','Under $30','Pearl St'])
    +ideaRow('Wine bar near Pearl & 13th','Small plates · ~$25 each · quiet','web','Map')
    +ideaRow('Neighborhood Italian place','~$28 each · takes reservations','web','Map')
-   +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:7px">Want me to pin a plan for Fri 7:30 PM?</div>',m.t);
+   +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:7px">Want me to pin a plan for Fri 7:30 PM?</div>'+whyLink('alex'),m.t);
  if(m.kind==='summary'){var lead=c.poll?c.poll.opts.map(function(o,i){return [o[0],o[1]+(c.poll.mine===i?1:0)];}).sort(function(a,b){return b[1]-a[1];})[0]:null;
    return niyaWrap(nText('<b>Plan so far</b><br>• Saturday, meeting up around 4 PM<br>• Budget: under $20 each'+(lead?'<br>• Leading in the poll: '+lead[0]+' ('+lead[1]+' votes)':'')+'<br><br><span style="color:rgba(255,255,255,0.6)">Still open: '+(c.group?'who’s driving, and a final yes from everyone.':'a final time.')+'</span>'),m.t);}
- if(m.kind==='privacy')return niyaWrap(nText('I only use what’s shared in this chat and public info — I can’t see or share anyone’s tickets, plans or other chats. '+(m.name?m.name+' can let you know!':'')),m.t);
+ if(m.kind==='privacy')return niyaWrap(nText('I only use what’s shared in this chat, public info and preferences people chose to share — I can’t see or share anyone’s tickets, plans, private preferences or other chats. '+(m.name?m.name+' can let you know!':'')),m.t);
  if(m.kind==='plan')return niyaWrap(nText('Here’s a quick idea to get things moving: pick a time, then I can suggest a few spots nearby. Want ideas for this weekend?'),m.t);
  if(m.kind==='pinned')return niyaWrap('<div style="background:rgba(14,78,245,0.08);border:1px solid rgba(14,78,245,0.25);border-radius:12px;padding:10px 12px"><div style="font-size:10px;color:#93C5FD;font-weight:700;margin-bottom:3px">'+ICON.pin.replace('width="15" height="15"','width="11" height="11"')+' PINNED PLAN</div><div style="font-size:13px;font-weight:700">Friday · 7:30 PM</div><div style="font-size:12px;color:rgba(255,255,255,0.6)">Wine bar near Pearl &amp; 13th</div></div>',m.t);
  return niyaWrap(nText(m.text||''),m.t);
@@ -491,9 +491,9 @@ function niyaMsg(m,c){
 function sysChat(t,private_){return '<div style="text-align:center;margin:4px 0 12px"><span style="display:inline-block;max-width:290px;font-size:11px;line-height:1.45;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:6px 11px">'+t+(private_?'<br><span style="font-size:9px;color:rgba(255,255,255,0.3)">Only visible to you</span>':'')+'</span></div>';}
 function renderChat(){
  var c=chatOf();
- var body=c.msgs.map(function(m){
+ var body=c.msgs.map(function(m,idx){
   if(m.who==='sys')return sysChat(m.text,m.private);
-  if(m.who==='niya')return niyaMsg(m,c);
+  if(m.who==='niya')return m.kind==='remember'?rememberCard(m,idx):niyaMsg(m,c);
   if(m.who==='me')return meBubble(m.text);
   return personBubble(m.who,m.text,m.t);
  }).join('');
@@ -501,7 +501,7 @@ function renderChat(){
    +(c.niya?'<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5);border:2px solid #0B0B1A;margin-left:-8px;display:flex;align-items:center;justify-content:center;color:#fff">'+ICON.ai.replace('width="17" height="17"','width="11" height="11"')+'</div>':'')+'</div>'
    :av26(PEOPLE.Alex.grad,PEOPLE.Alex.av);
  var sub=c.group?(c.members.length+' members'+(c.niya?' + Niya':'')):(c.niya?'Niya is on in this chat':'Niya is off');
- var chips=c.niya?(c.group?['@Niya sum it up','@Niya is Jordan going to the Nike drop?','@Niya ideas if it rains?']:['@Niya pin the plan','@Niya sum it up']):[];
+ var chips=c.niya?(c.group?['@Niya remember I’m vegetarian','@Niya sum it up','@Niya is Jordan going to the Nike drop?','@Niya ideas if it rains?']:['@Niya pin the plan','@Niya sum it up']):[];
  return '<div class="hdr" style="padding-bottom:12px">'
   +'<button class="chBack" onclick="back()">'+ICON.back+' Inbox</button>'
   +'<div onclick="S.screen=\'chatSettings\';render()" style="display:flex;align-items:center;gap:10px;margin-top:10px;cursor:pointer">'+avs
@@ -517,6 +517,7 @@ function sendChat(pre){
  var c=chatOf();var v=pre;if(!v){var i=document.getElementById('creply');v=i?i.value.trim():'';}if(!v)return;
  c.msgs.push({who:'me',text:v});
  if(/@niya/i.test(v)){
+  if(c.niya&&/remember/i.test(v)){var rv=v.replace(/@niya/ig,'').replace(/remember( that)?( i’m| i'm| i am)?/i,'').replace(/[?.!]$/,'').trim();var cat=/vegetarian|vegan|gluten|allerg/i.test(rv)?'Food':/free|after|weeknight|weekend/i.test(rv)?'Free times':/\$/.test(rv)?'Budget':'Interests';c.msgs.push({who:'niya',kind:'remember',val:rv.charAt(0).toUpperCase()+rv.slice(1),cat:cat,t:'Just now'});render();var sc0=document.getElementById('chatScroll');if(sc0)sc0.scrollTop=sc0.scrollHeight;return;}
   if(!c.niya){c.msgs.push({who:'sys',private:true,text:'Niya is currently not part of this chat. '+(c.group?'A group administrator needs to turn Niya back on for this group chat.':'Either of you can turn Niya back on in chat settings.')});}
   else{
    var q=v.toLowerCase();var who=null;Object.keys(PEOPLE).forEach(function(n){if(q.indexOf(n.toLowerCase())>-1&&/going|ticket|plans|where|doing/.test(q))who=n;});
@@ -554,19 +555,94 @@ function renderChatSettings(){
     +'<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07)">'
      +bullet('Only replies when someone types <b>@Niya</b>')
      +bullet('Can read recent messages here so it can help')
-     +bullet('Only uses what’s shared in this chat and public info — never anyone’s tickets, plans or other chats')
+     +bullet('Only uses what’s shared in this chat, public info, and preferences people chose to share with friends &amp; groups — never anyone’s tickets, private preferences or other chats')
      +bullet('Suggests things to do, starts polls and sums up plans — even when there’s no drop')
      +bullet(c.group?'Any group admin can turn Niya off or back on. Everyone sees when it changes.':'Either of you can turn Niya off or back on. You’ll both see when it changes.')
     +'</div></div>'
+   +'<div onclick="openPrefs()" style="display:flex;align-items:center;gap:10px;background:#12121F;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:12px 14px;cursor:pointer"><span style="display:flex;color:#A78BFA">'+ICON.people+'</span><div style="flex:1"><div style="font-size:13px;font-weight:700">Your Niya preferences</div><div style="font-size:11px;color:rgba(255,255,255,0.45)">'+PREFS.filter(function(p){return p.lvl==='friends';}).length+' shared with friends &amp; groups · '+PREFS.filter(function(p){return p.lvl==='niya';}).length+' Me &amp; Niya</div></div><span style="color:rgba(255,255,255,0.4)">›</span></div>'
    +'<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin:16px 0 4px">Members</div>'
    +'<div class="card" style="padding:4px 14px">'+mem+'</div>'
   +'</div>';
 }
 function openChat(id){S.chatId=id;S.screen='chat';render();var sc=document.getElementById('chatScroll');if(sc)sc.scrollTop=sc.scrollHeight;}
 
+
+// ══ PREFERENCES — two levels: Me & Niya (default) · My friends & groups. Nothing public. ══
+// Niya asks before remembering. In chats, Niya only uses "My friends & groups" preferences, combined, never named.
+// Nigh staff can't see preferences unless shared for a support case. Counted only in anonymized totals.
+var LEVELS={niya:{l:'Me & Niya',c:'#C4B5FD',bg:'rgba(124,58,237,0.15)',bd:'rgba(124,58,237,0.4)'},friends:{l:'My friends & groups',c:'#7DD3FC',bg:'rgba(14,165,233,0.12)',bd:'rgba(14,165,233,0.4)'}};
+var PREFS=[
+ {id:'p1',cat:'Budget',val:'Under $20 per outing',lvl:'friends',used:true},
+ {id:'p2',cat:'Free times',val:'Weekends after 3 PM',lvl:'friends',used:true},
+ {id:'p3',cat:'Where',val:'Boulder · Pearl St & North Boulder',lvl:'friends'},
+ {id:'p4',cat:'Vibe',val:'Chill, outdoors',lvl:'niya'},
+ {id:'p5',cat:'Interests',val:'Live music, trivia, hiking',lvl:'niya'},
+ {id:'p6',cat:'Group size',val:'Small groups',lvl:'niya'}
+];
+function lvlPill(k,click){var L=LEVELS[k];return '<button '+(click?'onclick="'+click+'"':'')+' style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:'+L.c+';background:'+L.bg+';border:1px solid '+L.bd+';border-radius:12px;padding:3px 8px;cursor:'+(click?'pointer':'default')+';font-family:inherit;white-space:nowrap">'+(k==='niya'?ICON.lock:ICON.people)+' '+L.l+(click?' ▾':'')+'</button>';}
+function sharedChips(list){return '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px">'+list.map(function(t){return '<span style="font-size:10px;font-weight:600;color:#7DD3FC;background:rgba(14,165,233,0.10);border:1px solid rgba(14,165,233,0.3);border-radius:10px;padding:2px 8px">'+t+'</span>';}).join('')+'</div>';}
+function whyLink(chat){return '<div onclick="openWhy(\''+chat+'\')" style="font-size:11px;color:#A78BFA;margin-top:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">ⓘ Why am I seeing this?</div>';}
+function groupShared(){var s=['Under $20','Free Sat after 4 PM'];if(PREFS.some(function(p){return /vegetarian/i.test(p.val)&&p.lvl==='friends';})||S.othersVeg!==false)s.push('Vegetarian-friendly');return s;}
+function openWhy(chat){S.whyFor=chat;render();}
+function closeWhy(){S.whyFor=null;render();}
+function whySheet(){
+ var chat=S.whyFor;if(!chat)return '';var c=CHATS[chat];
+ var mine=PREFS.filter(function(p){return p.lvl==='friends'&&(chat==='squad'?/Budget|Free times|Food/.test(p.cat):/Budget|Where|Food/.test(p.cat));});
+ var req=chat==='squad'?'Priya asked for ideas for 4 people on Saturday, under $20.':'You asked for somewhere on Pearl St, not too loud, under $30 each.';
+ var shared=chat==='squad'?groupShared():['Quiet','Under $30','Pearl St'];
+ return '<div onclick="closeWhy()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:50;display:flex;align-items:flex-end">'
+  +'<div onclick="event.stopPropagation()" style="background:#14141f;border-top:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:16px 16px 22px;width:100%;max-height:82%;overflow-y:auto">'
+  +'<div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);margin:0 auto 12px"></div>'
+  +'<div style="font-size:16px;font-weight:800;margin-bottom:12px">Why Niya suggested these</div>'
+  +'<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:5px">From this chat</div>'
+  +'<div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5;margin-bottom:12px">'+req+'</div>'
+  +'<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:5px">'+(c.group?'Shared group preferences':'Shared preferences')+'</div>'
+  +sharedChips(shared)
+  +'<div style="font-size:11px;color:rgba(255,255,255,0.45);margin:7px 0 12px;line-height:1.5">Combined from preferences people chose to share with friends &amp; groups. Niya never says whose preference is whose.</div>'
+  +'<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:6px">Your preferences used</div>'
+  +(mine.length?mine.map(function(p){return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><div><div style="font-size:10px;color:rgba(255,255,255,0.4)">'+p.cat+'</div><div style="font-size:13px">'+esc(p.val)+'</div></div>'+lvlPill(p.lvl)+'</div>';}).join(''):'<div style="font-size:12px;color:rgba(255,255,255,0.45)">None.</div>')
+  +'<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.45);margin:10px 0 14px">'+ICON.lock+' Your “Me &amp; Niya” preferences are never used in chats with others.</div>'
+  +'<div style="display:flex;gap:8px"><button onclick="S.whyFor=null;toast(\'Got it — Niya will suggest fewer things like this\')" style="flex:1;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:12px;font-weight:700;padding:10px;border-radius:18px;cursor:pointer;font-family:inherit">Don’t suggest things like this</button>'
+  +'<button onclick="S.whyFor=null;openPrefs()" style="flex:1;background:#0E4EF5;border:none;color:#fff;font-size:12px;font-weight:700;padding:10px;border-radius:18px;cursor:pointer;font-family:inherit">Edit my preferences</button></div>'
+  +'</div></div>';
+}
+function rememberCard(m,idx){
+ var body;
+ if(m.state==='later')body='<div style="font-size:12px;color:rgba(255,255,255,0.6)">No problem — I won’t save it.</div>';
+ else if(m.state)body='<div style="font-size:12px;color:#4ADE80">Saved · '+LEVELS[m.state].l+'</div><div onclick="openPrefs()" style="font-size:11px;color:#A78BFA;margin-top:6px;cursor:pointer">View what Niya knows about me →</div>';
+ else body='<div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:8px">Who can I use it with?</div>'
+  +'<button onclick="rememberPref('+idx+',\'niya\')" style="display:block;width:100%;text-align:left;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.35);color:#fff;border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer;font-family:inherit"><div style="font-size:12px;font-weight:700">Me &amp; Niya</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Only when I’m helping you</div></button>'
+  +'<button onclick="rememberPref('+idx+',\'friends\')" style="display:block;width:100%;text-align:left;background:rgba(14,165,233,0.10);border:1px solid rgba(14,165,233,0.35);color:#fff;border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer;font-family:inherit"><div style="font-size:12px;font-weight:700">My friends &amp; groups</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Helps me plan with your friends — I won’t say it’s yours</div></button>'
+  +'<button onclick="rememberPref('+idx+',\'later\')" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;cursor:pointer;font-family:inherit;padding:4px 0">Not now</button>';
+ return niyaWrap('<div style="background:rgba(124,58,237,0.10);border:1px solid rgba(124,58,237,0.28);border-radius:14px;padding:11px 12px"><div style="font-size:13px;margin-bottom:8px">Want me to remember you’re <b>'+esc(m.val.toLowerCase())+'</b>?</div>'+body+'</div><div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px">Only visible to you</div>',m.t);
+}
+function rememberPref(idx,lvl){var c=chatOf();var m=c.msgs[idx];m.state=lvl;if(lvl!=='later'){var ex=PREFS.find(function(p){return p.val===m.val;});if(ex)ex.lvl=lvl;else PREFS.unshift({id:'p'+Date.now(),cat:m.cat,val:m.val,lvl:lvl,isNew:true});}render();}
+function cyclePref(id){var p=PREFS.find(function(x){return x.id===id;});p.lvl=p.lvl==='niya'?'friends':'niya';toast('Now: '+LEVELS[p.lvl].l);render();}
+function deletePref(id){PREFS=PREFS.filter(function(x){return x.id!==id;});toast('Deleted — Niya won’t use it anymore');render();}
+function openPrefs(){S.prefsBack=S.screen;S.whyFor=null;S.screen='prefs';render();}
+function renderPrefs(){
+ var cats=[];PREFS.forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat);});
+ var note=function(ic,t){return '<div style="display:flex;gap:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;margin-top:8px"><span style="display:flex;color:rgba(255,255,255,0.4);margin-top:1px">'+ic+'</span><span>'+t+'</span></div>';};
+ return '<div class="hdr" style="padding-bottom:12px"><button class="chBack" onclick="S.screen=S.prefsBack||\'inbox\';render()">'+ICON.back+' Back</button>'
+  +'<div style="display:flex;align-items:center;gap:10px;margin-top:10px"><div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#6226E9,#0E4EF5);display:flex;align-items:center;justify-content:center;color:#fff">'+ICON.ai+'</div><div><div style="font-size:16px;font-weight:800">What Niya knows about me</div><div style="font-size:11px;color:rgba(255,255,255,0.4)">Your preferences · '+PREFS.length+' saved</div></div></div></div>'
+  +'<div class="scroll" style="padding:14px">'
+   +'<div class="card" style="padding:12px 14px">'
+    +'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:9px">'+lvlPill('niya')+'<div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.45">Niya uses it only when helping you. <span style="color:rgba(255,255,255,0.4)">Default</span></div></div>'
+    +'<div style="display:flex;align-items:flex-start;gap:10px">'+lvlPill('friends')+'<div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:1.45">Niya can use it to plan in your 1:1s and groups — without saying it’s yours.</div></div>'
+   +'</div>'
+   +cats.map(function(cat){return '<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;color:rgba(255,255,255,0.3);text-transform:uppercase;margin:14px 0 6px">'+cat+'</div>'
+     +PREFS.filter(function(p){return p.cat===cat;}).map(function(p){return '<div style="background:#12121F;border:1px solid '+(p.isNew?'rgba(74,222,128,0.4)':'rgba(255,255,255,0.07)')+';border-radius:12px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px"><div style="flex:1;min-width:0;font-size:13px">'+esc(p.val)+(p.isNew?' <span style="font-size:9px;color:#4ADE80;font-weight:700">NEW</span>':'')+'</div>'+lvlPill(p.lvl,'cyclePref(\''+p.id+'\')')+'<button onclick="deletePref(\''+p.id+'\')" aria-label="Delete" style="background:none;border:none;color:rgba(255,255,255,0.35);font-size:16px;cursor:pointer;padding:0 2px">×</button></div>';}).join('');}).join('')
+   +'<button onclick="toast(\'Tell Niya anytime — e.g. “remember I’m free weeknights after 7”\')" style="width:100%;margin-top:10px;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.18);color:rgba(255,255,255,0.7);font-size:12px;font-weight:700;padding:10px;border-radius:12px;cursor:pointer;font-family:inherit">+ Add a preference</button>'
+   +'<div style="margin-top:14px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.07)">'
+    +note(ICON.ai,'Niya only saves something after you say yes. Delete anything anytime.')
+    +note(ICON.lock,'Nothing here is public. Nigh staff can’t see your preferences unless you choose to share them for a support case.')
+    +note(ICON.people,'Preferences are counted in anonymized totals to improve Nigh — never sold or used for ads.')
+   +'</div><div style="height:20px"></div></div>';
+}
+
 function render(){
- var v=S.screen==='chat'?renderChat():S.screen==='chatSettings'?renderChatSettings():S.screen==='channel'?renderChannel():S.screen==='support'?renderSupport():S.screen==='host'?renderHost():S.screen==='gallery'?renderGallery():renderInbox();
- document.getElementById('app').innerHTML = v;
+ var v=S.screen==='prefs'?renderPrefs():S.screen==='chat'?renderChat():S.screen==='chatSettings'?renderChatSettings():S.screen==='channel'?renderChannel():S.screen==='support'?renderSupport():S.screen==='host'?renderHost():S.screen==='gallery'?renderGallery():renderInbox();
+ document.getElementById('app').innerHTML = v+(S.screen==='chat'?whySheet():'');
 }
 function switchTab(t){S.tab=t;render();}
 function openChannel(){S.screen='channel';render();}
