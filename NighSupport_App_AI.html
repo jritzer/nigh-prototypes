@@ -4282,6 +4282,8 @@ ${(()=>{
     </div>
     <div style="font-size:11px;color:#9CA3AF;margin-top:6px">Controls whether the Neo in-app AI assistant (icon, tab, and prompts) appears for this host account. Disable to hold Neo back from this host while it rolls out to a limited group before general availability.</div>
 
+    ${nzHTML(o)}
+
     ${secHdr('Drop Media')}
     <div style="font-size:11px;color:#9CA3AF;margin-bottom:8px">Controls what this host can use as a Drop cover. If no upload type is allowed, a solid colored background is used automatically.</div>
     ${[['dmVideo','Allow video upload',true],['dmPhoto','Allow photo upload',false],['dmSolid','Allow solid colored background (no upload)',false]].map(function(r){var key=r[0],label=r[1],def=r[2];var val=(o[key]!==undefined)?o[key]:def;return '<label style="display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer"><input type="checkbox" '+(val?'checked':'')+' onchange="(function(){var x=orgs.find(g=>g.id===\''+o.id+'\');if(x)x.'+key+'=this.checked;}).call(this)" style="width:16px;height:16px;accent-color:#0E4EF5;flex-shrink:0"/><span style="font-size:0.85rem;color:#0f172a">'+label+'</span></label>';}).join('')}
@@ -7981,6 +7983,37 @@ function auditExport(){
   try{const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const el=document.createElement('a');el.href=u;el.download='nigh-audit-'+AUDIT_DAY+'.csv';document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(u),800);}catch(e){}
   logTeam('Audit Exported','Audit Log',list.length+' events · filter: '+([f.kind,f.actor,f.q].filter(Boolean).join(' / ')||'none'),'warn',"go('audit')");
   uiToast('Exported '+list.length+' events');reRender();
+}
+
+// ══ NIGH ZONE CONFIG (per host account) — v1: on by default; Support sets on/off, host per-drop override, and stages ══
+var NZ_DEFAULT=[[180,50],[120,35],[60,20],[30,10],[15,5]]; // [minutes before broadcast ends, radius mi]
+function nzOf(o){if(!o.nz)o.nz={on:true,hostOff:false,stages:NZ_DEFAULT.map(function(x){return x.slice();})};return o.nz;}
+function nzFmt(m){return m>=60&&m%60===0?(m/60)+'h':m>=60?Math.floor(m/60)+'h '+(m%60)+'m':m+'m';}
+function nzLog(o,detail){logTeam('Config Changed','Host '+o.id,'Nigh Zone · '+detail,'warn',"go('orgDetail',{orgId:'"+o.id+"'})");}
+function nzSet(id,k,v){var o=orgs.find(x=>x.id===id);var z=nzOf(o);var prev=z[k];z[k]=v;nzLog(o,(k==='on'?'Zone for this account':'Host can turn off per drop')+': '+(prev?'On':'Off')+' → '+(v?'On':'Off'));reRender();}
+function nzStage(id,i,k,v){var o=orgs.find(x=>x.id===id);var z=nzOf(o);v=Math.max(k===0?1:0.1,+v||0);var prev=z.stages[i][k];z.stages[i][k]=v;nzLog(o,'Stage '+(i+1)+' '+(k===0?'time':'radius')+': '+(k===0?nzFmt(prev)+' → '+nzFmt(v):prev+' mi → '+v+' mi'));reRender();}
+function nzAdd(id){var o=orgs.find(x=>x.id===id);var z=nzOf(o);if(z.stages.length>=8){uiToast('Max 8 stages');return;}var last=z.stages[z.stages.length-1]||[30,10];z.stages.push([Math.max(1,Math.round(last[0]/2)),Math.max(0.5,Math.round(last[1]/2*10)/10)]);nzLog(o,'Added stage '+z.stages.length);reRender();}
+function nzDel(id,i){var o=orgs.find(x=>x.id===id);var z=nzOf(o);if(z.stages.length<=1)return;var r=z.stages.splice(i,1)[0];nzLog(o,'Removed stage '+nzFmt(r[0])+' · '+r[1]+' mi');reRender();}
+function nzReset(id){var o=orgs.find(x=>x.id===id);var z=nzOf(o);z.stages=NZ_DEFAULT.map(function(x){return x.slice();});nzLog(o,'Stages reset to Nigh defaults');reRender();}
+function nzHTML(o){var z=nzOf(o);var st=z.stages.slice().sort(function(a,b){return b[0]-a[0];});
+ var bad=[];z.stages.forEach(function(s,i){if(i>0&&s[0]>=z.stages[i-1][0])bad.push('Stage '+(i+1)+' starts later than stage '+i+' — list stages from earliest (most time left) to latest.');if(i>0&&s[1]>z.stages[i-1][1])bad.push('Stage '+(i+1)+' is bigger than stage '+i+' — the zone should shrink, not grow.');});
+ var isDef=JSON.stringify(z.stages)===JSON.stringify(NZ_DEFAULT);
+ var tog=function(on,fn,lab,sub){return '<label style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;cursor:pointer"><input type="checkbox" '+(on?'checked':'')+' onchange="'+fn+'(this.checked)" style="margin-top:3px"/><span><span style="font-size:13px;font-weight:600;color:#111827">'+lab+'</span><br><span style="font-size:11px;color:#6B7280">'+sub+'</span></span></label>';};
+ var rows=z.stages.map(function(s,i){return '<div style="display:grid;grid-template-columns:28px 1fr 1fr 28px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #F3F4F6">'
+   +'<span style="font-size:11px;font-weight:700;color:#9CA3AF">'+(i+1)+'</span>'
+   +'<div style="display:flex;align-items:center;gap:6px"><input class="input" type="number" min="1" value="'+s[0]+'" onchange="nzStage(\''+o.id+'\','+i+',0,this.value)" style="width:80px"/><span style="font-size:12px;color:#6B7280">min left <span style="color:#9CA3AF">('+nzFmt(s[0])+')</span></span></div>'
+   +'<div style="display:flex;align-items:center;gap:6px"><input class="input" type="number" min="0.1" step="0.5" value="'+s[1]+'" onchange="nzStage(\''+o.id+'\','+i+',1,this.value)" style="width:80px"/><span style="font-size:12px;color:#6B7280">mi</span></div>'
+   +'<button onclick="nzDel(\''+o.id+'\','+i+')" title="Remove stage" '+(z.stages.length<=1?'disabled':'')+' style="border:none;background:none;color:#9CA3AF;font-size:16px;cursor:pointer">×</button></div>';}).join('');
+ var first=z.stages[0],lastS=z.stages[z.stages.length-1];
+ return '<div style="font-size:10px;font-weight:700;color:#9CA3AF;letter-spacing:1px;text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">Nigh Zone</div>'
+  +'<div style="font-size:11px;color:#6B7280;margin-bottom:6px;line-height:1.5">In the final stretch of a drop’s broadcast (the purchase window), only guests inside the zone can reserve. The zone steps down at each stage and the last stage holds until the broadcast ends. Applies to every audience.</div>'
+  +tog(z.on,"(function(v){nzSet('"+o.id+"','on',v)})",'Nigh Zone on for this host account','On by default. When off, no drops on this account use a zone.')
+  +(z.on?tog(z.hostOff,"(function(v){nzSet('"+o.id+"','hostOff',v)})",'Allow host to turn off Nigh Zone per drop','Off by default. When on, the host sees a Nigh Zone toggle in Create / Edit Drop (still defaults to on).'):'')
+  +(z.on?'<div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 2px"><span style="font-size:12px;font-weight:700;color:#111827">Stages <span style="font-weight:500;color:#9CA3AF">· '+z.stages.length+(isDef?' · Nigh defaults':' · customized')+'</span></span><span style="display:flex;gap:6px">'+(isDef?'':'<button class="btn btn-ghost btn-sm" onclick="nzReset(\''+o.id+'\')">Reset to defaults</button>')+'<button class="btn btn-ghost btn-sm" onclick="nzAdd(\''+o.id+'\')">+ Add stage</button></span></div>'
+   +'<div style="display:grid;grid-template-columns:28px 1fr 1fr 28px;gap:8px;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.04em;padding:6px 0;border-bottom:1px solid #E5E7EB"><span>#</span><span>Starts at (before broadcast ends)</span><span>Radius</span><span></span></div>'+rows
+   +(bad.length?'<div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:8px;padding:8px 10px;font-size:11px;margin-top:8px;line-height:1.5">'+bad.join('<br>')+'</div>':'')
+   +'<div style="background:#F0FDFA;border:1px solid #99F6E4;border-radius:8px;padding:8px 10px;font-size:12px;color:#134E4A;margin-top:10px;line-height:1.5">Zone starts <b>'+nzFmt(first[0])+'</b> before broadcast ends at <b>'+first[1]+' mi</b>, steps down through '+z.stages.length+' stage'+(z.stages.length>1?'s':'')+', and holds at <b>'+lastS[1]+' mi</b> for the last '+nzFmt(lastS[0])+'.</div>'
+   +'<div style="font-size:11px;color:#9CA3AF;margin-top:6px">Changes apply to drops whose broadcast hasn’t reached the zone yet. Every change is logged in the audit trail.</div>':'');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
