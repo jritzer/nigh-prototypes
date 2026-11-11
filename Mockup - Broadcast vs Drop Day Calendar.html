@@ -210,6 +210,8 @@ var DATA_NOW=[
  {id:2,title:'Rooftop Social',bS:D(5,19),bE:D(7,18),dS:D(7,19),dE:D(7,23),timing:'Start time',status:'Live',soldOut:true,res:60,cap:60,price:'$15',videos:[V('Rooftop teaser',5,19,0,'0:20',0)]},
  {id:6,title:'Sunday Farmers Market Breakfast',bS:D(7,7),bE:D(8,12,30),dS:D(8,9),dE:D(8,13),timing:'Arrival window',status:'Live',res:46,cap:80,price:'$8',venue:'Boulder County Farmers Market, 13th St & Canyon Blvd, Boulder, CO',videos:[V('Fresh from the farm',7,7,0,'0:22',3)]},
  {id:7,zoneOff:true,title:'Late Night Comedy Showcase',bS:D(7,6),bE:D(9,19,30),dS:D(9,20),dE:D(9,22),timing:'Start time',status:'Live',res:22,cap:50,price:'$10',audience:'public',venue:'Centro Boulder, 950 Pearl St, Boulder, CO',videos:[V('Comedy lineup',7,6,0,'0:27',0)]},
+ {id:8,status:'Canceled',title:'Pottery & Pints Night',bS:D(3,18),bE:D(5,17),dS:D(5,18),dE:D(5,21),timing:'Start time',res:18,cap:24,price:'$35',audience:'followers',venue:'Centro Boulder, 950 Pearl St, Boulder, CO',videos:[V('Pottery teaser',3,18,0,'0:19',5)]},
+ {id:9,status:'Draft',title:'Wine & Paint Night',bS:D(9,18),bE:D(11,17),dS:D(11,18),dE:D(11,21),timing:'Start time',res:0,cap:1,price:'$45',audience:'guests',venue:'Centro Boulder, 950 Pearl St, Boulder, CO',videos:[V('Draft video',9,18,0,'0:15',3)]},
  {id:3,title:'Sunset Trivia Night',bS:D(7,18),bE:D(9,17),dS:D(9,18),dE:D(9,21),timing:'Start time',status:'Live',res:0,cap:40,price:'Free',videos:[V('Trivia is back',7,18,0,'0:18',2)]},
  {id:4,title:'Chef’s Table: Seven-Course Tasting Dinner with Wine Pairings from Our Sommelier',venue:'Frasca Food & Wine Private Dining Room at the Back of the Restaurant, 1738 Pearl Street Suite 100, Boulder, CO 80302',bS:D(8,19),bE:D(10,17),dS:D(10,19),dE:D(10,22),timing:'Start time',status:'Live',res:0,cap:12,price:'$85',videos:[V('Meet the chef',8,19,0,'0:41',3)]},
  {id:5,title:'Holiday Market Pop-Up',bS:D(12,10),bE:D(15,15),dS:D(14,10),dE:D(15,16),timing:'Arrival window · 2 days',status:'Live',res:0,cap:200,price:'Free',videos:[V('Market teaser',12,10,0,'0:25',5)]}
@@ -231,12 +233,12 @@ var ZONE_STEPS=[[3,50],[2,35],[1,20],[0.5,10],[0.25,5]];
 DATA_NOW.concat(DATA_FUTURE).forEach(function(d){d.zone=d.zoneOff?null:{hrs:3,start:50,floor:5};});
 function zStepAt(h){var r=null;for(var i=0;i<ZONE_STEPS.length;i++){if(h<=ZONE_STEPS[i][0])r=ZONE_STEPS[i][1];}return r;}
 function zNextAt(h){for(var i=0;i<ZONE_STEPS.length;i++){if(h>ZONE_STEPS[i][0])return ZONE_STEPS[i][0];}return 0;}
-COL.ComingSoon='#8B5CF6';LBL.ComingSoon='Coming Soon';
+COL.ComingSoon='#8B5CF6';LBL.ComingSoon='Coming Soon';COL.Draft='#9CA3AF';COL.Canceled='#6B7280';COL.Pending='#EAB308';LBL.Draft='Draft';LBL.Canceled='Canceled';LBL.Pending='Broadcast Pending';
 S.mode='now';DROPS=DATA_NOW;
 function vS(d){return d.cs||d.bS;}
 function isB(d,day){return overlaps(day,vS(d),d.bE);}
 function phaseAt(d,x){if(x<vS(d))return 'Scheduled';if(d.cs&&x<d.bS)return 'ComingSoon';if(x<=d.bE)return d.status==='Paused'?'Paused':'Live';return 'Ended';}
-function bStateNow(d){return phaseAt(d,NOW);}
+function bStateNow(d){if(d.status==='Draft'||d.status==='Canceled'||d.status==='Pending')return d.status;return phaseAt(d,NOW);}
 function setMode(m){S.mode=m;DROPS=m==='now'?DATA_NOW:DATA_FUTURE;S.day=D(7);S.weekStart=D(4);S.pv=null;if(m==='future'&&['A','B','C','D'].indexOf(S.opt)>-1)S.opt='I';render();}
 function phasePill(d,x){var s=phaseAt(d,x||NOW);var c=COL[s];var h='<span class="pill" style="background:'+c+'1F;color:'+(s==='Scheduled'?'#C2410C':s==='ComingSoon'?'#6D28D9':c)+'"><span style="width:6px;height:6px;border-radius:50%;background:'+c+'"></span>'+(s==='Live'?'On sale':LBL[s])+'</span>';if(d.soldOut&&s==='Live')h+=' <span class="pill" style="background:#15803D;color:#fff">Sold Out</span>';return h;}
 function curVid(d,x){x=x||NOW;var v=null,i=-1;d.videos.forEach(function(y,k){if(y.t<=x){v=y;i=k;}});return {v:v,i:i};}
@@ -418,7 +420,7 @@ function dayWord(x){var n=Math.round((d0(x)-d0(NOW))/864e5);return n===0?'Today'
 function tL(x){var h=x.getHours(),m=x.getMinutes();return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM');}
 function iWhen(d){var arr=d.timing.indexOf('Arrival')===0;var tt=arr?tL(d.dS)+' – '+tL(d.dE):tL(d.dS);if(!same(d.dS,d.dE))return dayWord(d.dS)+' – '+dayWord(d.dE)+' · '+tt;return dayWord(d.dS)+' · '+tt;}
 function dur(ms){var m=Math.max(0,Math.round(ms/6e4));var dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return dd?dd+'d '+h+'h':h?h+'h '+mm+'m':mm+'m';}
-function iRemain(d){var ph=bStateNow(d);if(ph==='Scheduled')return 'Broadcast starts in '+dur(vS(d)-NOW);if(ph==='ComingSoon')return 'Tickets open in '+dur(d.bS-NOW);if(ph==='Live'||ph==='Paused'){var ms=d.bE-NOW;if(ms<36e5)return 'Broadcast ends in <span class="bcd" data-end="'+d.bE.getTime()+'" style="color:#F87171;font-weight:700">'+mmss(ms)+'</span>';return 'Broadcast ends in <span style="color:#F87171;font-weight:700">'+dur(ms)+'</span>';}return 'Broadcast ended';}
+function iRemain(d){var ph=bStateNow(d);if(ph==='Draft')return 'Draft · not published yet';if(ph==='Canceled')return 'Canceled · '+d.res+' reservations refunded';if(ph==='Pending')return 'Broadcast pending · video still processing';if(ph==='Scheduled')return 'Broadcast starts in '+dur(vS(d)-NOW);if(ph==='ComingSoon')return 'Tickets open in '+dur(d.bS-NOW);if(ph==='Live'||ph==='Paused'){var ms=d.bE-NOW;if(ms<36e5)return 'Broadcast ends in <span class="bcd" data-end="'+d.bE.getTime()+'" style="color:#F87171;font-weight:700">'+mmss(ms)+'</span>';return 'Broadcast ends in <span style="color:#F87171;font-weight:700">'+dur(ms)+'</span>';}return 'Broadcast ended';}
 var ZONE_IC='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#41EFF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#41EFF9" stroke="none"/></svg>';
 function zS(d){return d.zone?new Date(Math.max(d.bS.getTime(),d.bE.getTime()-d.zone.hrs*36e5)):null;}
 function zRad(d){var left=(d.bE-NOW)/36e5;return zStepAt(left)||d.zone.start;}
@@ -436,12 +438,12 @@ function iDropIn(d,bgc){var ms=d.dS-NOW;var txt;
 function mmss(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
 var T0=Date.now();
 setInterval(function(){var el=document.querySelectorAll('.bcd');if(!el.length)return;var now=NOW.getTime()+(Date.now()-T0);var rr=false;for(var i=0;i<el.length;i++){var left=+el[i].getAttribute('data-end')-now;el[i].textContent=mmss(left);if(left<=0&&el[i].getAttribute('data-rr'))rr=true;}if(rr){NOW=new Date(now);T0=Date.now();render();}},1000);
-function iStatus(d){var ph=bStateNow(d);var lab={Live:'BROADCASTING LIVE',Paused:'Broadcast Paused',ComingSoon:'Coming Soon',Scheduled:'Broadcast Scheduled',Ended:'Broadcast Ended'}[ph];return [lab,COL[ph]];}
+function iStatus(d){var ph=bStateNow(d);var lab={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',ComingSoon:'COMING SOON',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED'}[ph];return [lab,COL[ph]];}
 function iTimeline(d,noPins){
  var s=new Date(Math.min(vS(d),NOW)),e=new Date(Math.max(d.bE,NOW));var span=e-s||1;var P=function(x){return Math.max(0,Math.min(100,(x-s)/span*100));};
  var h='<div style="position:relative;height:30px">';
  if(d.cs)h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(d.cs)+'%;width:'+(P(d.bS)-P(d.cs))+'%;border-radius:3px 0 0 3px;background:repeating-linear-gradient(135deg,#A78BFA 0 4px,#7C3AED 4px 7px)"></div>';
- h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(d.bS)+'%;width:'+Math.max(1,P(d.bE)-P(d.bS))+'%;border-radius:'+(d.cs?'0 3px 3px 0':'3px')+';background:'+(NOW>d.bE?'rgba(255,255,255,0.45)':(d.status==='Paused'?'#60A5FA':'#22C55E'))+'"></div>';
+ h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(d.bS)+'%;width:'+Math.max(1,P(d.bE)-P(d.bS))+'%;border-radius:'+(d.cs?'0 3px 3px 0':'3px')+';background:'+((NOW>d.bE||/Draft|Canceled|Pending/.test(d.status))?'rgba(255,255,255,0.45)':(d.status==='Paused'?'#60A5FA':'#22C55E'))+'"></div>';
  if(d.zone){var zs=zS(d);h+='<div title="Nigh Zone" style="position:absolute;z-index:3;top:16px;height:10px;left:'+P(zs)+'%;width:'+Math.max(1.5,P(d.bE)-P(zs))+'%;border-radius:3px;background:'+(NOW>d.bE?'rgba(65,239,249,0.4)':'#41EFF9')+';box-shadow:0 0 6px rgba(65,239,249,0.7)"></div>';}
  var dl=P(d.dS),dw=Math.max(5,P(d.dE)-dl);if(dl+dw>100)dl=100-dw;
  var LG=NLOGO.replace(/fill="white"/g,'fill="#1B2A4A"').replace('width="9" height="13"','width="12" height="18"');
@@ -478,10 +480,10 @@ function iCard(d,day){
   +'<div style="display:flex;gap:1px;margin-bottom:6px"><div style="height:6px;flex:'+(ciN||0.001)+';background:#0D9488;border-radius:3px 0 0 3px"></div><div style="height:6px;flex:'+(resv||0.001)+';background:#0284C7"></div><div style="height:6px;flex:'+((d.cap-d.res)||0.001)+';background:#E5E7EB;border-radius:0 3px 3px 0"></div></div>'
   +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280"><span><b style="color:#0284C7">'+resv+'</b> Reserved</span><span><b style="color:#0D9488">'+ciN+'</b> Checked In</span></div></div>';
  var mid=ph==='Live'?['pause','Pause','#0E4EF5']:ph==='Paused'?['play','Resume','#22C55E']:['edit','Edit','#6B7280'];
- var preLive=(ph==='Scheduled'||ph==='ComingSoon');
+ var preLive=(ph==='Scheduled'||ph==='ComingSoon'||ph==='Draft'||ph==='Pending');var noCI=preLive||ph==='Canceled';
  var foot='<div style="display:flex;border-top:1px solid #E5E7EB"><button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(preLive?'#D1D5DB':'#6B7280')+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:'+(preLive?'default':'pointer')+';font-family:inherit">'+hic('edit',16)+' Manage</button>'
-  +(ph==='Ended'?'':'<button onclick="demo()" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+mid[2]+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:pointer;font-family:inherit">'+hic(mid[0],16)+' '+mid[1]+'</button>')
-  +'<button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(preLive?'#D1D5DB':'#0D9488')+';display:flex;align-items:center;justify-content:center;gap:6px;cursor:'+(preLive?'default':'pointer')+';font-family:inherit">'+hic('qr',16)+' Check-In</button></div>';
+  +((ph==='Ended'||ph==='Canceled')?'':'<button onclick="demo()" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+mid[2]+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:pointer;font-family:inherit">'+hic(mid[0],16)+' '+mid[1]+'</button>')
+  +'<button '+(noCI?'disabled title="'+(ph==='Canceled'?'This drop was canceled':'Available once the broadcast is live')+'"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(noCI?'#D1D5DB':'#0D9488')+';display:flex;align-items:center;justify-content:center;gap:6px;cursor:'+(noCI?'default':'pointer')+';font-family:inherit">'+hic('qr',16)+' Check-In</button></div>';
  if(S.opt==='K')body=kBody(d);
  return '<div class="card" style="border:2px solid '+border+';border-radius:14px;margin-bottom:20px;overflow:hidden;transform:translateZ(0)">'+media+body+foot+'</div>';
 }
@@ -582,8 +584,8 @@ NOTES.K={t:'K · Time slots (up to 5)',sub:'Same card as I, sized to fit on one 
 var POKE_MAX=3;
 var POKES=[
  {key:'broadcast',label:'Broadcast countdown',fn:function(d){return iRemain(d);}},
- {key:'zone',label:'Nigh Zone',fn:function(d){return iZone(d,null);}},
- {key:'drop',label:'Drop countdown',fn:function(d){return iDropIn(d,null);}},
+ {key:'zone',label:'Nigh Zone',fn:function(d){return /Draft|Canceled/.test(bStateNow(d))?'':iZone(d,null);}},
+ {key:'drop',label:'Drop countdown',fn:function(d){return bStateNow(d)==='Canceled'?'':iDropIn(d,null);}},
  {key:'spots',label:'Spots left (example)',fn:function(d){var l=d.cap-d.res;return (bStateNow(d)==='Live'&&l>0&&l<=Math.max(5,Math.round(d.cap*0.25)))?'Only <span style="color:#FBBF24;font-weight:700">'+l+' spots</span> left':'';}},
  {key:'views',label:'Viewing now (example)',fn:function(d){return bStateNow(d)==='Live'?'<span style="font-weight:700">'+(12+d.id*7%40)+'</span> people viewing now':'';}}
 ];
