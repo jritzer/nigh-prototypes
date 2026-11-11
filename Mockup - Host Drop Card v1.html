@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nigh Host — Broadcast vs Drop Day (Calendar options)</title>
+<title>Nigh Host — Drop Card v1</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#EEF0F4;color:#111827;min-height:100vh;padding:20px 12px}
@@ -44,8 +44,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </style></head>
 <body>
 <div class="top">
-  <h1>Broadcast days vs. drop day — Nigh Host calendar options</h1>
-  <p>Standalone mockup · not part of the current prototypes. Today is Sat Nov 7, 8:00 AM. Tap days, change weeks, switch options and sample data. Options E–G add Coming Soon, multiple hype videos, 3+ drops a day and a Nigh preview.</p>
+  <h1>Nigh Host — Drop Card v1</h1>
+  <p>Engineering handoff prototype · “today” is fixed at Sat Nov 7, 8:00 AM so every state is visible. Tap days, change weeks, and tap the zone, audience and play buttons.</p>
   <div class="opts" id="opts"></div>
 </div>
 <div class="wrap"><div class="phone" id="phone"></div><div class="notes" id="notes"></div></div>
@@ -624,5 +624,9 @@ NOTES.I={t:'I · Current drop card + video timeline',sub:'Starts from today’s 
 
 NOTES.J={t:'J · Card with 4 videos across the timeline',sub:'Same card as I, but the media area shows the hype-video plan instead of one big video: the drop’s 4 hype videos in an even row, each with when it starts and ends playing (S: 11/7 6:00 PM · E: 11/7 8:00 PM), above the timeline (Coming Soon → Broadcast → Drop, red “now” line). The video playing now has a green outline. Videos are added and edited in Create / Edit, not here. Opening J switches to Future sample data. Tap any thumbnail to preview what guests see.',pros:['Whole hype sequence visible at once','Each video shows exactly when it starts and ends','Compact S / E times never wrap'],cons:['Loses the big “what’s playing” hero image','Thumbnails are small for judging the video itself (preview fixes that)']};
 S.opt='I';
+NOTES.I={t:'Drop card v1',sub:'The v1 host feed drop card. Status in the top row (all caps), the drop’s video with ranked countdown messages, a broadcast-only timeline with the Nigh Zone, and fixed-height body and footer. See the eng handoff doc for full rules, states and colors.',pros:['Tap the Nigh Zone icon, audience icon or play button for the popups and the Nigh preview','Thu 5 canceled · Sat 7 live + sold out, back-to-back broadcast, zone off · Sun 8 arrival window · Tue 10 long title/venue · Wed 11 draft, single-spot · Sat 14–Sun 15 multi-day'],cons:['Sample data only — “today” is fixed at Sat Nov 7, 8:00 AM']};
+NOTES.I.cons=NOTES.I.cons;
+S.opt='I';S.mode='now';DROPS=DATA_NOW;
+var _renderAll=render;render=function(){S.opt='I';S.hView='feed';_renderAll();var o=document.getElementById('opts');if(o)o.innerHTML='';};
 render();
 </script></body></html>
