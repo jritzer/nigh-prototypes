@@ -5590,7 +5590,7 @@ function renderModal(){
         ${tooShort&&hNew.length>0?`<div style="font-size:10px;color:#9CA3AF;margin-top:4px">Must be at least 3 characters</div>`:''}
         ${isSame?`<div style="font-size:10px;color:#F59E0B;margin-top:4px">This is your current handle</div>`:''}
         ${avail===true?`<div style="font-size:10px;color:#16A34A;margin-top:4px">✓ @${hNew} is available</div>`:''}
-        ${avail===false?`<div style="font-size:10px;color:#EF4444;margin-top:4px">@${hNew} is already taken</div>`:''}
+        ${avail===false?`<div style="font-size:10px;color:#EF4444;margin-top:4px">@${hNew} is not available. Please try another.</div>`:''}
         </div>
       </div>
       <div id="handleAction">
