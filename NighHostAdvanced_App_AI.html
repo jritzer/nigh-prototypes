@@ -190,14 +190,14 @@ function go(scr,x){
   // Gate key host actions if onboarding incomplete
   if(needsOnboarding()&&(scr==='create'||scr==='inbox'||scr==='guests'||scr==='checkin'||scr==='liveview')){showOnboardingGate();return;}
   S.scr=scr;S.showNiyaBar=false;
-  if(scr==='create'){S.cStep=0;if(!x||!x.cloneFrom){S.cloneFrom=null;S.ticketMode='standard';S.ticketTypes=null;}}
+  if(scr==='create'){S.cStep=0;if(S.editDrop==null){S.dropZoneOff=false;S.nzInfo=false;}if(!x||!x.cloneFrom){S.cloneFrom=null;S.ticketMode='standard';S.ticketTypes=null;}}
   if(scr==='checkin')S.ciMode='scan';
   if(scr==='guests'){S.rFilter='All';S.rSel=null;S.guestDrop='current';S.guestView='checkin';S.ciMode='scan';S.guestListDetail=null;S.guestListAddMode=false;S.glDetailSearch='';}
   if(scr==='menu')S.menuSub=null;
   if(scr==='liveview')S.lvTab=null;
   S.showAcct=false;S.modal=null;render();}
 function toggleAcctPicker(e){e.stopPropagation();S.showAcct=!S.showAcct;render();}
-function pickAcct(e,i){e.stopPropagation();acctIdx=i;S.showAcct=false;S.menuSub=null;S.niyaOnboarding=false;S.dropAudience=null;userVerified=accts[i].unverified?false:true;go('home');}
+function pickAcct(e,i){e.stopPropagation();acctIdx=i;S.showAcct=false;S.menuSub=null;S.niyaOnboarding=false;S.dropAudience=null;S.dropZoneOff=false;userVerified=accts[i].unverified?false:true;go('home');}
 
 function startEditDrop(idx){
   const d=drops[idx];
@@ -215,6 +215,7 @@ function startEditDrop(idx){
   S.dualPrice=d.dualPrice||false;
   S.dropPrice=d.price||0;
   S.dropPartners=d.partners?d.partners.map(p=>p.handle):[];
+  S.dropZoneOff=!!d.zoneOff;S.nzInfo=false;
   S.termsAccepted=false;
   render();
 }
@@ -229,6 +230,7 @@ function commitEditDrop(schedule){
   if(S.formTiming==='start'&&S.dropStartTime){d.timing='Start Time';d.start=fmt(S.dropStartTime);}
   else if(S.formTiming==='window'&&S.dropWindowStart){d.timing='Arrival Window';d.start=fmt(S.dropWindowStart)+' – '+fmt(S.dropWindowEnd);}
   if(S.dropAgeRestriction)d.ageRestriction=S.dropAgeRestriction;
+  if(nzAcct().on&&nzAcct().hostOff)d.zoneOff=!!S.dropZoneOff;
   if(S.dropPhoneRequest)d.phoneRequest=S.dropPhoneRequest;
   if(S.dropTaxOn!==undefined)d.taxOn=S.dropTaxOn;
   if(S.dropTax!==undefined&&S.dropTax!==null)d.tax=S.dropTax;
@@ -353,8 +355,8 @@ function reverifyAvailDate(){const dt=new Date(userVerifiedDate);dt.setDate(dt.g
 function canReverify(){return daysSinceVerified()>=REVERIFY_DAYS;}
 const accts=[
   {name:'Josh Ritzer',short:'Josh',brandName:'',hostType:'personal',businessVerified:false,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Personal',subCat:'',addr:'1234 Walnut St',city:'Boulder',state:'CO',zip:'80302',handle:'joshr',phone:'(720) 555-0199',email:'',website:'',description:'Just a guy who loves hosting friends for good food and good times.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Josh Ritzer',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:''},
-  {name:'Centro Boulder',short:'Centro',brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:''},
-  {name:'Nike Boulder',short:'Nike',brandName:'Nike',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',email:'boulder@nike.com',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'nikeboulder',socTiktok:'nike',socX:'nikeboulder'},
+  {name:'Centro Boulder',short:'Centro',nz:{on:true,hostOff:true},brandName:'Centro Mexican Kitchen',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Restaurant & Dining',subCat:'Bar & Grill',addr:'950 Pearl St',city:'Boulder',state:'CO',zip:'80302',handle:'centroboulder',phone:'(720) 555-0145',email:'hello@centro.com',website:'https://www.centroboulder.com',description:'Award-winning Mexican restaurant featuring authentic cuisine and craft cocktails in the heart of Boulder.',tags:['Craft Cocktails','Date Night','Outdoor Dining','Award-Winning'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Big Red F',enterprise:false,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'centroboulder',socTiktok:'centromexican',socX:''},
+  {name:'Nike Boulder',short:'Nike',nz:{on:false},brandName:'Nike',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,role:'Manager',userDisplayName:'Josh R.',cat:'Retail',subCat:'Apparel',addr:'1800 29th St',city:'Boulder',state:'CO',zip:'80301',handle:'nikeboulder',phone:'(303) 555-0177',email:'boulder@nike.com',website:'https://www.nike.com',description:'Boulder\'s flagship Nike store featuring the latest athletic gear, exclusive releases, and community run events.',tags:['Sneakers','Run Club','Limited Releases','Athlete Gear'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,parentOrg:'Nike',enterprise:true,location:'Boulder',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'nikeboulder',socTiktok:'nike',socX:'nikeboulder'},
   {name:'Avery Brewing Co',short:'Avery',brandName:'Avery Brewing Co',hostType:'place',entity:true,businessVerified:true,stripeConnected:true,role:'Account Owner',userDisplayName:'Josh Ritzer',cat:'Bar & Nightlife',subCat:'Craft Beer',addr:'4910 Nautilus Ct',city:'Boulder',state:'CO',zip:'80301',handle:'averybrewing',phone:'(303) 555-0192',email:'hello@averybrewing.com',website:'https://www.averybrewing.com',description:'Boulder\'s original craft brewery. Barrel-aged and boundary-pushing beers since 1993.',tags:['Craft Beer','Barrel-Aged','Brewery Tours','Taproom'],operationMode:'Fixed',plan:'Pro',maxPartners:5,parentOrg:'Avery Brewing, Inc.',multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'averybrewingco',socTiktok:'',socX:'averybrewing'},
   {name:'Empower Field',short:'Broncos',brandName:'Denver Broncos',hostType:'brand',entity:true,businessVerified:true,stripeConnected:true,locLabel:'Venue',role:'Manager',userDisplayName:'Josh R.',cat:'Sports & Recreation',subCat:'Stadium',addr:'1701 Bryant St',city:'Denver',state:'CO',zip:'80204',handle:'broncos-empower',phone:'(720) 258-3333',email:'events@empowerfield.com',website:'https://www.denverbroncos.com',description:'Home of the Denver Broncos. Empower Field at Mile High hosts NFL games and major events.',tags:['NFL','Game Day','Fan Zone','VIP Experience'],operationMode:'Fixed',plan:'Enterprise',maxPartners:7,enterprise:true,parentOrg:'Denver Broncos',zones:['Club Level','Fan Zone','Suite Level','Field Entry'],multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',socIG:'broncos',socTiktok:'broncos',socX:'broncos'},
   {name:'Sarah Chen',short:'Sarah',brandName:'',hostType:'personal',businessVerified:false,unverified:true,role:'Account Owner',userDisplayName:'Sarah Chen',cat:'Personal',subCat:'',addr:'742 Arapahoe Ave',city:'Boulder',state:'CO',zip:'80302',handle:'sarahc',phone:'(303) 555-0218',email:'',website:'',description:'Yoga teacher and plant-based cook. Hosting community gatherings and wellness experiences.',tags:[],operationMode:'Flexible',plan:'Launch',privateAcct:true,maxPartners:3,parentOrg:'Sarah Chen',enterprise:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',stripeConnected:false},
@@ -369,6 +371,14 @@ let acctIdx=0;const acct=()=>accts[acctIdx];
 // Nico (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Nico surface (icon, tab, bar). Lets Nico roll out to a subset of accounts before going generally available.
 function niyaOn(){return acct().niyaEnabled!==false;}
 // Heads Up (daily announcements to followers) feature flag — per host account. Defaults ON; set acct().headsUpEnabled=false to hide every Heads Up surface (compose, home button, drop-detail button, management screen, Nico). Supports phased rollout / subscription gating.
+// Nigh Zone — per host account, set by Nigh Support (Support app › host account › Config › Nigh Zone).
+//   on:      zone used on this account's drops (default on)
+//   hostOff: host may turn the zone off per drop in Create / Edit Drop (default off → zone is always on and not changeable)
+//   stages:  [minutes before broadcast ends, radius mi], 1–8 stages; the last stage holds until the broadcast ends
+const NZ_DEFAULT=[[180,50],[120,35],[60,20],[30,10],[15,5]];
+function nzAcct(){const z=acct().nz||{};return {on:z.on!==false,hostOff:z.hostOff===true,stages:(z.stages&&z.stages.length?z.stages:NZ_DEFAULT)};}
+function nzHrs(){return nzAcct().stages[0][0]/60;}
+function nzFmtM(m){return m>=60?(m%60?Math.floor(m/60)+'h '+(m%60)+'m':(m/60)+(m===60?' hour':' hours')):m+' min';}
 function headsUpOn(){return false;} // v1: Heads Up is out of scope — every Heads Up surface stays hidden
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
@@ -1553,7 +1563,7 @@ function renderNewAccount(){
 // Time math uses the drop's local time (sample data is all Mountain Time). "Now" = TODAY.
 const IV_LBL={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED',Expired:'EXPIRED'};
 // v1 Nigh Zone default steps [hours before broadcast end, miles]. Last step holds until the broadcast ends. Support can change per host (1–8 stages).
-const IV_ZONE_STEPS=[[3,50],[2,35],[1,20],[0.5,10],[0.25,5]];
+function ivSteps(){return nzAcct().stages.slice().sort((a,b)=>b[0]-a[0]).map(x=>[x[0]/60,x[1]]);}
 const IV_POKE_MAX=3; // overlay messages: top 3 shown; space reserved so card height never changes
 const IV_NLOGO='<svg width="9" height="13" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>';
 const IV_ZONE_IC='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#41EFF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#41EFF9" stroke="none"/></svg>';
@@ -1568,13 +1578,13 @@ function ivDropTimes(d){if(!d.date||!d.start)return {dS:null,dE:null};const part
   if(parts.length<2){const s=ivAt(d.date,parts[0]);return {dS:s,dE:s?new Date(s.getTime()+3*36e5):null};}
   const e=ivAt(d.date,parts[1]);let st=parts[0];if(!/AM|PM/i.test(st))st+=' '+((parts[1].match(/AM|PM/i)||['PM'])[0]);let s=ivAt(d.date,st);if(s&&e&&s>e)s=new Date(s.getTime()-12*36e5);return {dS:s,dE:e};}
 // Map a host drop to the card model (Date objects). Live/Paused drops whose broadcast start time is later today started the day before (v1: broadcast ≤48h before the drop).
-function ivModel(d){if(d._iv&&d._iv.k===d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd)return d._iv;
+function ivModel(d){if(d._iv&&d._iv.a===acctIdx&&d._iv.z===!!d.zoneOff&&d._iv.k===d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd)return d._iv;
   const t=ivDropTimes(d);let bS=ivAt(d.bcastStartDate||d.date,d.bcastStart),bE=ivAt(d.date,d.bcastEnd);
   if(!bE&&t.dS){bE=new Date(t.dS.getTime()-15*6e4);bS=new Date(bE.getTime()-24*36e5);}
   if(bS&&bE&&bS>bE)bS=new Date(bS.getTime()-24*36e5);
   if(bS&&(d.status==='Live'||d.status==='Paused')&&bS>ivNow())bS=new Date(bS.getTime()-24*36e5);
-  const zoneOn=!(d.zoneOff||acct().nzOff);
-  d._iv={k:d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd,dS:t.dS,dE:t.dE,bS:bS,bE:bE,zone:zoneOn&&bE?{hrs:IV_ZONE_STEPS[0][0],start:IV_ZONE_STEPS[0][1],floor:IV_ZONE_STEPS[IV_ZONE_STEPS.length-1][1]}:null};return d._iv;}
+  const nz=nzAcct();const zoneOn=nz.on&&!(nz.hostOff&&d.zoneOff);
+  d._iv={a:acctIdx,z:!!d.zoneOff,k:d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd,dS:t.dS,dE:t.dE,bS:bS,bE:bE,zone:zoneOn&&bE?{hrs:ivSteps()[0][0],start:ivSteps()[0][1],floor:ivSteps()[ivSteps().length-1][1]}:null};return d._iv;}
 // Display phase: Draft / Canceled / Pending / Expired come from status. Live & Paused become Ended once the broadcast end time has passed.
 function ivPhase(d){const s=d.status;if(s==='Draft'||s==='Canceled'||s==='Pending'||s==='Expired'||s==='Ended'||s==='Scheduled')return s;const m=ivModel(d);if(m.bE&&ivNow()>m.bE)return 'Ended';return s==='Paused'?'Paused':'Live';}
 function ivStatus(d){const ph=ivPhase(d);return [IV_LBL[ph]||ph.toUpperCase(),(ph==='Live'&&d.cap>0&&d.res>=d.cap)?STATUS_COLORS.SoldOut:dropStatusColor(ph)];}
@@ -1582,8 +1592,8 @@ function ivDayWord(x){const n=Math.round((ivD0(x)-ivD0(ivNow()))/864e5);return n
 function ivTL(x){const h=x.getHours(),m=x.getMinutes();return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM');}
 function ivDur(ms){const m=Math.max(0,Math.round(ms/6e4));const dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return dd?dd+'d '+h+'h':h?h+'h '+mm+'m':mm+'m';}
 function ivMMSS(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
-function ivZStepAt(h){let r=null;for(let i=0;i<IV_ZONE_STEPS.length;i++){if(h<=IV_ZONE_STEPS[i][0])r=IV_ZONE_STEPS[i][1];}return r;}
-function ivZNextAt(h){for(let i=0;i<IV_ZONE_STEPS.length;i++){if(h>IV_ZONE_STEPS[i][0])return IV_ZONE_STEPS[i][0];}return 0;}
+function ivZStepAt(h){let r=null;for(let i=0;i<ivSteps().length;i++){if(h<=ivSteps()[i][0])r=ivSteps()[i][1];}return r;}
+function ivZNextAt(h){for(let i=0;i<ivSteps().length;i++){if(h>ivSteps()[i][0])return ivSteps()[i][0];}return 0;}
 function ivZS(m){return m.zone?new Date(Math.max(m.bS?m.bS.getTime():0,m.bE.getTime()-m.zone.hrs*36e5)):null;}
 // ── Overlay messages (ranked; first IV_POKE_MAX that apply are shown) ──
 function ivRemain(d){const ph=ivPhase(d),m=ivModel(d),N=ivNow();
@@ -1703,14 +1713,14 @@ function ivRenderModal(mr){const k=S.modal;
       +'<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:12px;padding-top:10px;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8">'
       +'<div style="display:flex;justify-content:space-between"><span>Active window</span><b style="color:#fff">Last '+z.hrs+' hrs of broadcast</b></div>'
       +'<div style="display:flex;justify-content:space-between"><span>Zone starts</span><b style="color:#fff">'+ivDayWord(zs)+' - '+ivTL(zs)+'</b></div>'
-      +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff;text-align:right">'+IV_ZONE_STEPS.map(x=>(x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi').join('<br>')+'</b></div></div>'
-      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">Nigh Zone is on for every drop, using Nigh’s standard distances. Custom zones are coming later.</div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff;text-align:right">'+ivSteps().map(x=>(x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi').join('<br>')+'</b></div></div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">'+(nzAcct().hostOff?'Nigh Zone is on by default. You can turn it off for a drop in Edit Drop.':'Nigh Zone is on for every drop on this account.')+' Distances are set by Nigh.</div>'
       +'</div></div>';return;}
   if(k.startsWith('ivzoneoff-')){
     mr.innerHTML='<div onclick="modal(null)" style="position:absolute;inset:0;background:rgba(10,10,20,0.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px">'
       +'<div onclick="event.stopPropagation()" style="width:100%;max-width:300px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)">'
       +'<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:36px;height:36px;border-radius:10px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+IV_ZONE_OFF_IC.replace('width="16" height="16"','width="20" height="20"')+'</div>'
-      +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for this drop</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.</div></div>'
+      +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for '+(nzAcct().on?'this drop':'your account')+'</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.'+(nzAcct().on?'':' Contact Nigh Support to turn it on.')+'</div></div>'
       +'<span onclick="modal(null)" style="font-size:18px;color:#9CA3AF;cursor:pointer;line-height:1">×</span></div></div></div>';return;}
   if(k.startsWith('ivpv-')){const i=+k.slice(5);const d=drops[i];if(!d){S.modal=null;mr.innerHTML='';return;}const ph=ivPhase(d);const m=ivModel(d);const sold=d.cap&&d.res>=d.cap;
     const chip=ph==='Live'?(sold?['SOLD OUT',STATUS_COLORS.SoldOut,'Join the waitlist']:['LIVE',STATUS_COLORS.Live,(d.cap-d.res)+' spots left']):ph==='Paused'?['PAUSED',STATUS_COLORS.Paused,'Back soon']:ph==='Scheduled'||ph==='Pending'||ph==='Draft'?['NOT VISIBLE YET','#6B7280',m.bS?'Starts '+ivDayWord(m.bS)+' '+ivTL(m.bS):'']:ph==='Canceled'?['CANCELED','#6B7280','']:['ENDED','#6B7280',''];
@@ -2030,6 +2040,22 @@ function ticketTypesUI(){
   </div>`;
 }
 var dropMediaPolicy={photo:false,video:true,solid:false}; // Set by Nigh Support: which cover media a host may use (default: video only)
+// Nigh Zone row in Create / Edit Drop (step 3). Three states, from the host account's Support settings:
+//   zone off for account → muted "OFF" row · zone on, host can't change → "ON" pill · zone on, host may turn off → toggle (defaults on)
+function nzCreateRow(clone){const z=nzAcct();const off=!!S.dropZoneOff;
+  const editing=S.editDrop!=null&&drops[S.editDrop];let started=false;
+  if(editing){const m=ivModel(drops[S.editDrop]);const zs=m.zone?ivZS(m):null;started=!!(zs&&ivNow()>=zs&&m.bE&&ivNow()<=m.bE)||ivPhase(drops[S.editDrop])==='Ended';}
+  const icon='<span style="display:flex;color:'+(z.on&&!off?'#0E4EF5':'#9CA3AF')+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>';
+  const info='<button onclick="event.stopPropagation();S.nzInfo=!S.nzInfo;render()" style="width:14px;height:14px;border-radius:50%;border:1.2px solid #9CA3AF;background:none;color:#6B7280;font-size:9px;font-weight:800;font-style:italic;font-family:Georgia,serif;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;flex-shrink:0">i</button>';
+  const pill=(t,on)=>'<span style="flex-shrink:0;background:'+(on?'#E3F7EE':'#F3F4F6')+';border:1px solid '+(on?'#B9E9D2':'#E5E7EB')+';color:'+(on?'#0E8F5D':'#6B7280')+';font-size:12px;font-weight:800;letter-spacing:.04em;padding:6px 13px;border-radius:99px">'+t+'</span>';
+  const tog='<button onclick="S.dropZoneOff=!S.dropZoneOff;render()" '+(started?'disabled':'')+' aria-label="Nigh Zone" style="width:42px;height:25px;border-radius:14px;border:none;padding:0;background:'+(off?'#D1D5DB':'#0E4EF5')+';position:relative;flex-shrink:0;cursor:'+(started?'default':'pointer')+';opacity:'+(started?0.5:1)+'"><span style="position:absolute;top:2px;left:'+(off?'2px':'19px')+';width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></button>';
+  const sub=!z.on?'Turned off for your account by Nigh':(z.hostOff&&off)?'Off — anyone who can see this drop can reserve until the broadcast ends':'Only those nearby can reserve in final hours';
+  const right=!z.on?pill('OFF',false):z.hostOff?tog:pill('ON',true);
+  const st=z.stages;const pop=S.nzInfo?'<div onclick="event.stopPropagation()" style="position:absolute;top:44px;left:12px;right:12px;z-index:40;background:#111827;color:#E5E7EB;font-size:11px;line-height:1.6;padding:11px 13px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.28)">'
+    +(z.on?'In the last <b style="color:#fff">'+nzFmtM(st[0][0])+'</b> of the broadcast, only people inside the Nigh Zone can reserve, so only guests with enough time to arrive safely can reserve a spot. The zone <b style="color:#fff">shrinks toward your venue</b> as the broadcast end gets closer: '+st.map(x=>nzFmtM(x[0])+' · '+x[1]+' mi').join(', ')+'.'+(z.hostOff?'<br><br>On by default. You can turn it off for this drop.':'')
+      :'Nigh Zone limits reservations in the final hours of a broadcast to people nearby. It is turned off for your account. Contact Nigh Support to turn it on.')
+    +'<span onclick="S.nzInfo=false;render()" style="position:absolute;top:6px;right:9px;cursor:pointer;color:#9CA3AF">×</span></div>':'';
+  return '<div style="margin:-10px 0 22px"><div style="border:1px solid #E5E7EB;border-radius:10px;padding:0 12px;position:relative;background:'+(z.on?'#fff':'#F9FAFB')+'"><div style="display:flex;align-items:center;gap:10px;padding:13px 0"><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(z.on?'#111827':'#6B7280')+';display:flex;align-items:center;gap:7px">'+icon+' Nigh Zone '+info+'</div><div style="font-size:11px;color:#6B7280;margin-top:3px">'+sub+'</div>'+(started&&z.hostOff?'<div style="font-size:10px;color:#9CA3AF;margin-top:3px">Can’t change once the zone has started.</div>':'')+'</div>'+right+'</div>'+pop+'</div></div>';}
 function renderCreate(){
   if(!canFull('drops'))return `${hdr('Create',null,"go('home')")}<div style="padding:14px 16px">${roleGate('Create Drop')}</div>`;
   const clone=S.cloneFrom!==null?drops[S.cloneFrom]:null;
@@ -2456,6 +2482,7 @@ function renderCreate(){
         </div>`:''}`;
       })()}
     </div>
+    ${nzCreateRow(clone)}
     <div style="margin-bottom:22px">
       <label style="font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:8px">Age Restriction <span style="color:#EF4444">*</span></label>
       <div style="position:relative">
@@ -2677,6 +2704,7 @@ function renderCreate(){
       ]),
       ['user','Host',acct().name],
       ['shield','Visibility',audLabel],
+      ['target','Nigh Zone',!nzAcct().on?'Off for this account':(nzAcct().hostOff&&S.dropZoneOff)?'Off for this drop':'On · last '+nzFmtM(nzAcct().stages[0][0])+' of broadcast · '+nzAcct().stages[0][1]+' → '+nzAcct().stages[nzAcct().stages.length-1][1]+' mi'],
       ...((S.dropPhoneRequest&&S.dropPhoneRequest!=='none')?[['user','Guest Phone',S.dropPhoneRequest==='optional'?'Optional — guest can choose':'Required — guests must share']]:[]),
       ...(partnerHandles.length?[['link','Partners',partnerDisplay]]:[]),
     ];
@@ -2902,6 +2930,7 @@ function renderLive(){
         :row('users','Tickets',`${d.cap} spots available`)+row('dollar','Ticket Price',priceLabel)}
       ${taxLabel?row('percent','Sales Tax',taxLabel):''}
       ${row(audIc(d.audience).icon,'Audience',d.audience==='public'?'Public':d.audience==='guests'?'Existing Guests':d.audience==='followers'?'Followers':d.audience==='link'?'Link Only':d.audience==='groups'?'Groups Only':'Private')}
+      ${row('target','Nigh Zone',ivModel(d).zone?'On · last '+nzFmtM(nzAcct().stages[0][0])+' of broadcast · '+nzAcct().stages[0][1]+' → '+nzAcct().stages[nzAcct().stages.length-1][1]+' mi':(nzAcct().on?'Off for this drop':'Off for this account'))}
       ${row('shield','Age Restriction',ageLabel)}
       ${row('user','Host',acct().name)}
       ${d.partners&&d.partners.length?`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6"><div style="width:28px;display:flex;justify-content:center;flex-shrink:0;padding-top:1px;color:#9CA3AF">${ic('link',13)}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px">Partners</div><div style="display:flex;flex-direction:column;gap:4px">${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:9px;background:${p.status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${p.status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div><div style="font-size:12px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#6B7280">${p.handle}</div></div><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;background:${p.status==='Accepted'?'#DCFCE7':'#FEF3C7'};color:${p.status==='Accepted'?'#16A34A':'#D97706'}">${p.status}</span></div>`).join('')}</div></div></div>`:''}
