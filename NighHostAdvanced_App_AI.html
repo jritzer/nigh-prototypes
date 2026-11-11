@@ -1656,7 +1656,7 @@ function ivCard(d){const i=drops.indexOf(d);const st=ivStatus(d);const ph=ivPhas
   const btn='flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;';
   const foot='<div style="display:flex;border-top:1px solid #E5E7EB">'
     +'<button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="go(\'liveview\',{drop:'+i+'})"')+' style="'+btn+'color:'+(preLive?'#D1D5DB':'#6B7280')+';border-right:1px solid #E5E7EB;cursor:'+(preLive?'default':'pointer')+'">'+ic(full?'edit':'eye',16)+' '+(full?'Manage':'View')+'</button>'
-    +((ph==='Ended'||ph==='Canceled'||!full)?'':'<button onclick="'+mid[3]+'" style="'+btn+'color:'+mid[2]+';border-right:1px solid #E5E7EB;cursor:pointer">'+ic(mid[0],16)+' '+mid[1]+'</button>')
+    +((ph==='Ended'||ph==='Canceled'||!full)?'':'<button onclick="'+mid[3]+'" style="'+btn+(ph==='Paused'?'background:#16A34A;color:#fff;':'color:'+mid[2]+';')+'border-right:1px solid #E5E7EB;cursor:pointer">'+ic(mid[0],16,ph==='Paused'?'#fff':undefined)+' '+mid[1]+'</button>')
     +'<button '+(noCI?'disabled title="'+(ph==='Canceled'?'This drop was canceled':'Available once the broadcast is live')+'"':'onclick="S.ciDropFilter=\''+d.id+'\';go(\'checkin\')"')+' style="'+btn+'color:'+(noCI?'#D1D5DB':'#0D9488')+';cursor:'+(noCI?'default':'pointer')+'">'+ic('qr',16)+' Check-In</button></div>';
   return '<div class="card" style="border:2px solid '+st[1]+';border-radius:14px;margin-bottom:20px;overflow:hidden;transform:translateZ(0)">'+media+body+foot+'</div>';}
 function ivToggle(i){const d=drops[i];if(!d)return;d.status=d.status==='Paused'?'Live':'Paused';render();}
