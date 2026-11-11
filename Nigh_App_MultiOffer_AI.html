@@ -4392,8 +4392,7 @@ function renderMenu(){
             <div><span style="font-size:18px;font-weight:800;color:#fff">${inviteStats.joined}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">joined Nigh</span></div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${inviteUrl()}</div>
-            <button onclick="copyInvite()" style="background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:text;-webkit-user-select:text;cursor:text">${inviteUrl()}</div>
             <button onclick="inviteFriends()" style="background:#fff;color:#0E4EF5;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Share</button>
           </div>
         </div>
