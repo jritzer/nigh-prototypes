@@ -231,7 +231,7 @@ function commitEditDrop(schedule){
   else if(S.formTiming==='window'&&S.dropWindowStart){d.timing='Arrival Window';d.start=fmt(S.dropWindowStart)+' – '+fmt(S.dropWindowEnd);}
   if(S.dropAgeRestriction)d.ageRestriction=S.dropAgeRestriction;
   if(nzSnapOf(d).on&&nzSnapOf(d).hostOff)d.zoneOff=!!S.dropZoneOff;
-  if(S.dropPhoneRequest&&guestPhoneOn())d.phoneRequest=S.dropPhoneRequest;
+  if(S.dropPhoneRequest&&gpOf(d))d.phoneRequest=S.dropPhoneRequest;
   if(S.dropTaxOn!==undefined)d.taxOn=S.dropTaxOn;
   if(S.dropTax!==undefined&&S.dropTax!==null)d.tax=S.dropTax;
   if(S.dualPrice!==undefined)d.dualPrice=S.dualPrice;
@@ -380,6 +380,9 @@ function nzFmtM(m){return m>=60?(m%60?Math.floor(m/60)+'h '+(m%60)+'m':(m/60)+(m
 // Guest Phone Number — per host account, turned on/off by Nigh Support (Support app › host account › Config). Off by default.
 // v1: on/off per account. Later: part of subscription offerings.
 function guestPhoneOn(){return acct().guestPhone===true;}
+// Each drop keeps whether Guest Phone was available to its account when it was created; editing an existing drop uses that, not today's account setting.
+function gpOf(d){if(d.gpSnap===undefined){const a=accts.find(x=>x.name===d.acctName)||{};d.gpSnap=a.guestPhone===true;}return d.gpSnap;}
+function guestPhoneAvail(){return (S.editDrop!=null&&drops[S.editDrop])?gpOf(drops[S.editDrop]):guestPhoneOn();}
 function headsUpOn(){return false;} // v1: Heads Up is out of scope — every Heads Up surface stays hidden
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
@@ -1547,7 +1550,7 @@ const IV_LBL={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST P
 // Each drop keeps the Nigh Zone config its account had when the drop was created (d.nzSnap).
 // Later Support config changes apply only to drops created after the change.
 function nzSnapOf(d){if(!d.nzSnap){const a=accts.find(x=>x.name===d.acctName)||{};const z=a.nz||{};d.nzSnap={on:z.on!==false,hostOff:z.hostOff===true,stages:(z.stages&&z.stages.length?z.stages:NZ_DEFAULT).map(x=>x.slice())};}return d.nzSnap;}
-drops.forEach(nzSnapOf);
+drops.forEach(nzSnapOf);drops.forEach(d=>{if(typeof gpOf==='function')gpOf(d);});
 function ivSteps(d){return (d?nzSnapOf(d):nzAcct()).stages.slice().sort((a,b)=>b[0]-a[0]).map(x=>[x[0]/60,x[1]]);}
 const IV_POKE_MAX=3; // overlay messages: top 3 shown; space reserved so card height never changes
 const IV_NLOGO='<svg width="9" height="13" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>';
@@ -2375,7 +2378,7 @@ function renderCreate(){
       </div>
     </div>
     ${(()=>{
-      if(!guestPhoneOn())return ''; // Guest Phone Number is only available when Nigh Support turns it on for this account
+      if(!guestPhoneAvail())return ''; // Guest Phone Number is only available when Nigh Support turns it on for this account
       const pv=S.dropPhoneRequest||'none';
       return `<div style="margin-bottom:22px">
         <label style="font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px;margin-bottom:8px">Guest Phone Number</label>
@@ -2577,7 +2580,7 @@ function renderCreate(){
       ['user','Host',acct().name],
       ['shield','Visibility',audLabel],
       ['target','Nigh Zone',(()=>{const z=(S.editDrop!=null&&drops[S.editDrop])?nzSnapOf(drops[S.editDrop]):nzAcct();return !z.on?'Off for this account':(z.hostOff&&S.dropZoneOff)?'Off for this drop':'On · last '+nzFmtM(z.stages[0][0])+' of broadcast · '+z.stages[0][1]+' → '+z.stages[z.stages.length-1][1]+' mi';})()],
-      ...((guestPhoneOn()&&S.dropPhoneRequest&&S.dropPhoneRequest!=='none')?[['user','Guest Phone',S.dropPhoneRequest==='optional'?'Optional — guest can choose':'Required — guests must share']]:[]),
+      ...((guestPhoneAvail()&&S.dropPhoneRequest&&S.dropPhoneRequest!=='none')?[['user','Guest Phone',S.dropPhoneRequest==='optional'?'Optional — guest can choose':'Required — guests must share']]:[]),
       ...(partnerHandles.length?[['link','Partners',partnerDisplay]]:[]),
     ];
     return `${hdr(S.editDrop!=null?'Edit Drop':'Create Drop','Step 4/4 — Review & Schedule',"S.cStep--;render()")}
