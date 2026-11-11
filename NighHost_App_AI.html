@@ -230,7 +230,7 @@ function commitEditDrop(schedule){
   if(S.formTiming==='start'&&S.dropStartTime){d.timing='Start Time';d.start=fmt(S.dropStartTime);}
   else if(S.formTiming==='window'&&S.dropWindowStart){d.timing='Arrival Window';d.start=fmt(S.dropWindowStart)+' – '+fmt(S.dropWindowEnd);}
   if(S.dropAgeRestriction)d.ageRestriction=S.dropAgeRestriction;
-  if(nzAcct().on&&nzAcct().hostOff)d.zoneOff=!!S.dropZoneOff;
+  if(nzSnapOf(d).on&&nzSnapOf(d).hostOff)d.zoneOff=!!S.dropZoneOff;
   if(S.dropPhoneRequest&&guestPhoneOn())d.phoneRequest=S.dropPhoneRequest;
   if(S.dropTaxOn!==undefined)d.taxOn=S.dropTaxOn;
   if(S.dropTax!==undefined&&S.dropTax!==null)d.tax=S.dropTax;
@@ -1544,7 +1544,11 @@ function renderNewAccount(){
 // Time math uses the drop's local time (sample data is all Mountain Time). "Now" = TODAY.
 const IV_LBL={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED',Expired:'EXPIRED'};
 // v1 Nigh Zone default steps [hours before broadcast end, miles]. Last step holds until the broadcast ends. Support can change per host (1–8 stages).
-function ivSteps(){return nzAcct().stages.slice().sort((a,b)=>b[0]-a[0]).map(x=>[x[0]/60,x[1]]);}
+// Each drop keeps the Nigh Zone config its account had when the drop was created (d.nzSnap).
+// Later Support config changes apply only to drops created after the change.
+function nzSnapOf(d){if(!d.nzSnap){const a=accts.find(x=>x.name===d.acctName)||{};const z=a.nz||{};d.nzSnap={on:z.on!==false,hostOff:z.hostOff===true,stages:(z.stages&&z.stages.length?z.stages:NZ_DEFAULT).map(x=>x.slice())};}return d.nzSnap;}
+drops.forEach(nzSnapOf);
+function ivSteps(d){return (d?nzSnapOf(d):nzAcct()).stages.slice().sort((a,b)=>b[0]-a[0]).map(x=>[x[0]/60,x[1]]);}
 const IV_POKE_MAX=3; // overlay messages: top 3 shown; space reserved so card height never changes
 const IV_NLOGO='<svg width="9" height="13" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>';
 const IV_ZONE_IC='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#41EFF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#41EFF9" stroke="none"/></svg>';
@@ -1564,8 +1568,8 @@ function ivModel(d){if(d._iv&&d._iv.a===acctIdx&&d._iv.z===!!d.zoneOff&&d._iv.k=
   if(!bE&&t.dS){bE=new Date(t.dS.getTime()-15*6e4);bS=new Date(bE.getTime()-24*36e5);}
   if(bS&&bE&&bS>bE)bS=new Date(bS.getTime()-24*36e5);
   if(bS&&(d.status==='Live'||d.status==='Paused')&&bS>ivNow())bS=new Date(bS.getTime()-24*36e5);
-  const nz=nzAcct();const zoneOn=nz.on&&!(nz.hostOff&&d.zoneOff);
-  d._iv={a:acctIdx,z:!!d.zoneOff,k:d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd,dS:t.dS,dE:t.dE,bS:bS,bE:bE,zone:zoneOn&&bE?{hrs:ivSteps()[0][0],start:ivSteps()[0][1],floor:ivSteps()[ivSteps().length-1][1]}:null};return d._iv;}
+  const nz=nzSnapOf(d);const zoneOn=nz.on&&!(nz.hostOff&&d.zoneOff);const st=ivSteps(d);
+  d._iv={a:acctIdx,z:!!d.zoneOff,k:d.status+'|'+d.date+'|'+d.start+'|'+(d.bcastStartDate||'')+'|'+d.bcastStart+'|'+d.bcastEnd,dS:t.dS,dE:t.dE,bS:bS,bE:bE,zone:zoneOn&&bE?{hrs:st[0][0],start:st[0][1],floor:st[st.length-1][1],st:st}:null};return d._iv;}
 // Display phase: Draft / Canceled / Pending / Expired come from status. Live & Paused become Ended once the broadcast end time has passed.
 function ivPhase(d){const s=d.status;if(s==='Draft'||s==='Canceled'||s==='Pending'||s==='Expired'||s==='Ended'||s==='Scheduled')return s;const m=ivModel(d);if(m.bE&&ivNow()>m.bE)return 'Ended';return s==='Paused'?'Paused':'Live';}
 function ivStatus(d){const ph=ivPhase(d);return [IV_LBL[ph]||ph.toUpperCase(),(ph==='Live'&&d.cap>0&&d.res>=d.cap)?STATUS_COLORS.SoldOut:dropStatusColor(ph)];}
@@ -1573,8 +1577,8 @@ function ivDayWord(x){const n=Math.round((ivD0(x)-ivD0(ivNow()))/864e5);return n
 function ivTL(x){const h=x.getHours(),m=x.getMinutes();return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM');}
 function ivDur(ms){const m=Math.max(0,Math.round(ms/6e4));const dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return dd?dd+'d '+h+'h':h?h+'h '+mm+'m':mm+'m';}
 function ivMMSS(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
-function ivZStepAt(h){let r=null;for(let i=0;i<ivSteps().length;i++){if(h<=ivSteps()[i][0])r=ivSteps()[i][1];}return r;}
-function ivZNextAt(h){for(let i=0;i<ivSteps().length;i++){if(h>ivSteps()[i][0])return ivSteps()[i][0];}return 0;}
+function ivZStepAt(h,st){st=st||ivSteps();let r=null;for(let i=0;i<st.length;i++){if(h<=st[i][0])r=st[i][1];}return r;}
+function ivZNextAt(h,st){st=st||ivSteps();for(let i=0;i<st.length;i++){if(h>st[i][0])return st[i][0];}return 0;}
 function ivZS(m){return m.zone?new Date(Math.max(m.bS?m.bS.getTime():0,m.bE.getTime()-m.zone.hrs*36e5)):null;}
 // ── Overlay messages (ranked; first IV_POKE_MAX that apply are shown) ──
 function ivRemain(d){const ph=ivPhase(d),m=ivModel(d),N=ivNow();
@@ -1584,7 +1588,7 @@ function ivRemain(d){const ph=ivPhase(d),m=ivModel(d),N=ivNow();
   return 'Broadcast ended';}
 function ivZoneMsg(d){const m=ivModel(d),N=ivNow();if(!m.zone||N>m.bE||/Draft|Canceled|Expired/.test(ivPhase(d)))return '';const st=ivZS(m);
   if(N<st)return 'Nigh Zone starts in <span style="color:#41EFF9;font-weight:700">'+ivDur(st-N)+'</span>';
-  const left=(m.bE-N)/36e5;const r=ivZStepAt(left)||m.zone.start;const nxt=m.bE.getTime()-ivZNextAt(left)*36e5;
+  const left=(m.bE-N)/36e5;const r=ivZStepAt(left,m.zone.st)||m.zone.start;const nxt=m.bE.getTime()-ivZNextAt(left,m.zone.st)*36e5;
   return 'Nigh Zone: <span style="color:#41EFF9;font-weight:700">'+r+' mi</span> for <span class="ivcd" data-end="'+nxt+'" style="color:#41EFF9;font-weight:700">'+ivMMSS(nxt-N.getTime())+'</span>';}
 function ivDropMsg(d){const m=ivModel(d),N=ivNow();if(!m.dS||/Canceled|Expired/.test(ivPhase(d)))return '';const ms=m.dS-N;
   if(ms>0)return 'Drop starts in '+(ms<36e5?'<span class="ivcd" data-end="'+m.dS.getTime()+'" style="color:#fff;font-weight:700">'+ivMMSS(ms)+'</span>':ivDur(ms));
@@ -1664,7 +1668,7 @@ function ivDayDrops(day,md){const ds=dk(day);const isT=sameD(day,TODAY);
 // Day dot = color of that day's drop (status color). Selected day = white.
 function ivDotColor(dayDrops){let top=null;dayDrops.forEach(x=>{if(top===null||(STATUS_PRIO[ivPhase(x)]??-1)>(STATUS_PRIO[ivPhase(top)]??-1))top=x;});return top?ivStatus(top)[1]:null;}
 // ── Popups: Nigh Zone (with drag preview), Nigh Zone off, Nigh preview ──
-function ivZvRad(m,h){if(h>m.zone.hrs)return null;return ivZStepAt(h)||m.zone.floor;}
+function ivZvRad(m,h){if(h>m.zone.hrs)return null;return ivZStepAt(h,m.zone.st)||m.zone.floor;}
 function ivFmtH(h){const mm=Math.round(h*60);return Math.floor(mm/60)+'h '+String(mm%60).padStart(2,'0')+'m';}
 function ivZvBody(d,h){const m=ivModel(d);const z=m.zone;const r=ivZvRad(m,h);const PX=78/z.start;const C=150;
   let grid='';for(let i=0;i<=300;i+=30)grid+='<line x1="'+i+'" y1="0" x2="'+i+'" y2="200" stroke="rgba(255,255,255,0.05)"/>';for(let j=0;j<=200;j+=30)grid+='<line x1="0" y1="'+j+'" x2="300" y2="'+j+'" stroke="rgba(255,255,255,0.05)"/>';
@@ -1694,14 +1698,14 @@ function ivRenderModal(mr){const k=S.modal;
       +'<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:12px;padding-top:10px;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8">'
       +'<div style="display:flex;justify-content:space-between"><span>Active window</span><b style="color:#fff">Last '+z.hrs+' hrs of broadcast</b></div>'
       +'<div style="display:flex;justify-content:space-between"><span>Zone starts</span><b style="color:#fff">'+ivDayWord(zs)+' - '+ivTL(zs)+'</b></div>'
-      +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff;text-align:right">'+ivSteps().map(x=>(x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi').join('<br>')+'</b></div></div>'
-      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">'+(nzAcct().hostOff?'Nigh Zone is on by default. You can turn it off for a drop in Edit Drop.':'Nigh Zone is on for every drop on this account.')+' Distances are set by Nigh.</div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff;text-align:right">'+m.zone.st.map(x=>(x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi').join('<br>')+'</b></div></div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">'+(nzSnapOf(d).hostOff?'Nigh Zone is on by default. You can turn it off for a drop in Edit Drop.':'Nigh Zone is on for every drop on this account.')+' Distances are set by Nigh.</div>'
       +'</div></div>';return;}
-  if(k.startsWith('ivzoneoff-')){
+  if(k.startsWith('ivzoneoff-')){const zd=drops[+k.slice(10)];const zsn=zd?nzSnapOf(zd):nzAcct();
     mr.innerHTML='<div onclick="modal(null)" style="position:absolute;inset:0;background:rgba(10,10,20,0.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px">'
       +'<div onclick="event.stopPropagation()" style="width:100%;max-width:300px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)">'
       +'<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:36px;height:36px;border-radius:10px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+IV_ZONE_OFF_IC.replace('width="16" height="16"','width="20" height="20"')+'</div>'
-      +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for '+(nzAcct().on?'this drop':'your account')+'</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.'+(nzAcct().on?'':' Contact Nigh Support to turn it on.')+'</div></div>'
+      +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for '+(zsn.on?'this drop':'your account')+'</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.'+(zsn.on?'':' Contact Nigh Support to turn it on.')+'</div></div>'
       +'<span onclick="modal(null)" style="font-size:18px;color:#9CA3AF;cursor:pointer;line-height:1">×</span></div></div></div>';return;}
   if(k.startsWith('ivpv-')){const i=+k.slice(5);const d=drops[i];if(!d){S.modal=null;mr.innerHTML='';return;}const ph=ivPhase(d);const m=ivModel(d);const sold=d.cap&&d.res>=d.cap;
     const chip=ph==='Live'?(sold?['SOLD OUT',STATUS_COLORS.SoldOut,'Join the waitlist']:['LIVE',STATUS_COLORS.Live,(d.cap-d.res)+' spots left']):ph==='Paused'?['PAUSED',STATUS_COLORS.Paused,'Back soon']:ph==='Scheduled'||ph==='Pending'||ph==='Draft'?['NOT VISIBLE YET','#6B7280',m.bS?'Starts '+ivDayWord(m.bS)+' '+ivTL(m.bS):'']:ph==='Canceled'?['CANCELED','#6B7280','']:['ENDED','#6B7280',''];
@@ -1918,7 +1922,8 @@ function checkCreateSave(){
 var dropMediaPolicy={photo:false,video:true,solid:false}; // Set by Nigh Support: which cover media a host may use (default: video only)
 // Nigh Zone row in Create / Edit Drop (step 3). Three states, from the host account's Support settings:
 //   zone off for account → muted "OFF" row · zone on, host can't change → "ON" pill · zone on, host may turn off → toggle (defaults on)
-function nzCreateRow(clone){const z=nzAcct();const off=!!S.dropZoneOff;
+function nzCreateRow(clone){const z=(S.editDrop!=null&&drops[S.editDrop])?nzSnapOf(drops[S.editDrop]):nzAcct(); // editing → the config this drop was created with
+ const off=!!S.dropZoneOff;
   const editing=S.editDrop!=null&&drops[S.editDrop];let started=false;
   if(editing){const m=ivModel(drops[S.editDrop]);const zs=m.zone?ivZS(m):null;started=!!(zs&&ivNow()>=zs&&m.bE&&ivNow()<=m.bE)||ivPhase(drops[S.editDrop])==='Ended';}
   const icon='<span style="display:flex;color:'+(z.on&&!off?'#0E4EF5':'#9CA3AF')+'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>';
@@ -2571,7 +2576,7 @@ function renderCreate(){
       ['dollar','Ticket Price',(src.price>0||(S.priceTiers&&S.priceTiers.length>1))?pl:'Free'],
       ['user','Host',acct().name],
       ['shield','Visibility',audLabel],
-      ['target','Nigh Zone',!nzAcct().on?'Off for this account':(nzAcct().hostOff&&S.dropZoneOff)?'Off for this drop':'On · last '+nzFmtM(nzAcct().stages[0][0])+' of broadcast · '+nzAcct().stages[0][1]+' → '+nzAcct().stages[nzAcct().stages.length-1][1]+' mi'],
+      ['target','Nigh Zone',(()=>{const z=(S.editDrop!=null&&drops[S.editDrop])?nzSnapOf(drops[S.editDrop]):nzAcct();return !z.on?'Off for this account':(z.hostOff&&S.dropZoneOff)?'Off for this drop':'On · last '+nzFmtM(z.stages[0][0])+' of broadcast · '+z.stages[0][1]+' → '+z.stages[z.stages.length-1][1]+' mi';})()],
       ...((guestPhoneOn()&&S.dropPhoneRequest&&S.dropPhoneRequest!=='none')?[['user','Guest Phone',S.dropPhoneRequest==='optional'?'Optional — guest can choose':'Required — guests must share']]:[]),
       ...(partnerHandles.length?[['link','Partners',partnerDisplay]]:[]),
     ];
@@ -2795,7 +2800,7 @@ function renderLive(){
       ${row('dollar','Ticket Price',priceLabel)}
       ${taxLabel?row('percent','Sales Tax',taxLabel):''}
       ${row(audIc(d.audience).icon,'Audience',d.audience==='public'?'Public':d.audience==='guests'?'Existing Guests':d.audience==='followers'?'Followers':d.audience==='link'?'Link Only':d.audience==='groups'?'Groups Only':'Private')}
-      ${row('target','Nigh Zone',ivModel(d).zone?'On · last '+nzFmtM(nzAcct().stages[0][0])+' of broadcast · '+nzAcct().stages[0][1]+' → '+nzAcct().stages[nzAcct().stages.length-1][1]+' mi':(nzAcct().on?'Off for this drop':'Off for this account'))}
+      ${row('target','Nigh Zone',(()=>{const z=nzSnapOf(d);return ivModel(d).zone?'On · last '+nzFmtM(z.stages[0][0])+' of broadcast · '+z.stages[0][1]+' → '+z.stages[z.stages.length-1][1]+' mi':(z.on?'Off for this drop':'Off for this account');})())}
       ${row('shield','Age Restriction',ageLabel)}
       ${row('user','Host',acct().name)}
       ${d.partners&&d.partners.length?`<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6"><div style="width:28px;display:flex;justify-content:center;flex-shrink:0;padding-top:1px;color:#9CA3AF">${ic('link',13)}</div><div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px">Partners</div><div style="display:flex;flex-direction:column;gap:4px">${d.partners.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:9px;background:${p.status==='Accepted'?'#F0FDF4':'#FFFBEB'};border:1px solid ${p.status==='Accepted'?'#BBF7D0':'#FDE68A'}"><div><div style="font-size:12px;font-weight:600;color:#111827">${p.name}</div><div style="font-size:10px;color:#6B7280">${p.handle}</div></div><span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:6px;background:${p.status==='Accepted'?'#DCFCE7':'#FEF3C7'};color:${p.status==='Accepted'?'#16A34A':'#D97706'}">${p.status}</span></div>`).join('')}</div></div></div>`:''}
