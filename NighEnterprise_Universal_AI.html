@@ -2988,6 +2988,7 @@ function locationDetail(l){
                 <div style="font-size:0.82rem;font-weight:700;color:#0f172a;">${q.label}</div>
                 <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
                   <span style="font-size:0.65rem;font-weight:700;font-family:monospace;color:#64748b;">${q.id}</span>
+                  <span style="font-size:0.65rem;font-family:monospace;color:#0E4EF5;">follow.nigh.com/${q.id.replace(/^NQ-/,'')}</span>
                   <span style="font-size:0.65rem;font-weight:700;padding:1px 7px;border-radius:8px;background:${q.status==='active'?'#dcfce7':'#f1f5f9'};color:${q.status==='active'?'#16a34a':'#94a3b8'};">${q.status==='active'?'Active':'Deactivated'}</span>
                   <span style="font-size:0.65rem;color:#94a3b8;">${q.scans} scans</span>
                 </div>
@@ -7055,7 +7056,7 @@ function rQRPage(){
 
     <!-- Info banner -->
     <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:14px 18px;font-size:0.73rem;color:#0369a1;line-height:1.6;">
-      ${ic('qr',16)} <strong>How stickers work:</strong> When someone scans a linked sticker, they're taken to your Nigh profile page to follow and see live drops. Order uniquely-coded stickers at <span style="font-weight:700;">nigh.com/stickers</span> and link each one here by entering the printed code.
+      ${ic('qr',16)} <strong>How stickers work:</strong> When someone scans a linked sticker (follow.nigh.com/&lt;sticker code&gt;), they're taken to your Nigh profile page to follow and see live drops. Each sticker has its own code, so scans are tracked per sticker. Order uniquely-coded stickers at <span style="font-weight:700;">nigh.com/stickers</span> and link each one here by entering the printed code.
     </div>
   </div>`;
 }

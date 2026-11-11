@@ -240,7 +240,7 @@ function openMaps(address){
 }
 
 function showToast(msg){S.toast=msg;render();setTimeout(function(){S.toast=null;render();},2500);}
-// Invite-only beta: a link is valid only with a recognized route word + a resolvable source (person/host/partner/drop); every share link credits the sharer (handle = referrer). Bare/unrecognized links (nigh.com/<handle>, nigh.com/<code>) are NOT valid and route to request-access. Verb-first links: invite.nigh.com/<handle or code> · follow.nigh.com/<handle or code> · drop.nigh.com/<code> · group.nigh.com/<code>. Invite and follow resolve either a handle (default, readable) or a code (can be revoked/rotated); drop and group codes are per sharer so they carry attribution.
+// Invite-only beta: a link is valid only with a recognized route word + a resolvable source (person/host/partner/drop); every share link credits the sharer (handle = referrer). Bare/unrecognized links (nigh.com/<handle>, nigh.com/<code>) are NOT valid and route to request-access. Verb-first links: invite.nigh.com/<handle or code> · follow.nigh.com/<handle or code> · drop.nigh.com/<code> · group.nigh.com/<code>. Invite and follow resolve either a handle (default, readable) or a code (can be revoked/rotated; host stickers use the sticker ID as their follow code so scans tie back to that sticker); drop and group codes are per sharer so they carry attribution.
 function dropShareUrl(d){const code=(d.slug||'').split('/').pop();return 'https://drop.nigh.com/'+code;}
 const inviteStats={clicks:47,joined:12}; // anonymous beta-invite stats: times the link was clicked, and people who joined Nigh after clicking (no names/details)
 function inviteUrl(){return 'invite.nigh.com/'+currentUser.uname.replace(/^@/,'');}
