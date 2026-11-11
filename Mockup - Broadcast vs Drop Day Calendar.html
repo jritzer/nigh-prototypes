@@ -233,7 +233,7 @@ var ZONE_STEPS=[[3,50],[2,35],[1,20],[0.5,10],[0.25,5]];
 DATA_NOW.concat(DATA_FUTURE).forEach(function(d){d.zone=d.zoneOff?null:{hrs:3,start:50,floor:5};});
 function zStepAt(h){var r=null;for(var i=0;i<ZONE_STEPS.length;i++){if(h<=ZONE_STEPS[i][0])r=ZONE_STEPS[i][1];}return r;}
 function zNextAt(h){for(var i=0;i<ZONE_STEPS.length;i++){if(h>ZONE_STEPS[i][0])return ZONE_STEPS[i][0];}return 0;}
-COL.ComingSoon='#8B5CF6';LBL.ComingSoon='Coming Soon';COL.Draft='#9CA3AF';COL.Canceled='#6B7280';COL.Pending='#EAB308';LBL.Draft='Draft';LBL.Canceled='Canceled';LBL.Pending='Broadcast Pending';
+COL.ComingSoon='#8B5CF6';LBL.ComingSoon='Coming Soon';COL.Draft='#D1D5DB';COL.Canceled='#6B7280';COL.Pending='#EAB308';LBL.Draft='Draft';LBL.Canceled='Canceled';LBL.Pending='Broadcast Pending';
 S.mode='now';DROPS=DATA_NOW;
 function vS(d){return d.cs||d.bS;}
 function isB(d,day){return overlaps(day,vS(d),d.bE);}
@@ -438,7 +438,7 @@ function iDropIn(d,bgc){var ms=d.dS-NOW;var txt;
 function mmss(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
 var T0=Date.now();
 setInterval(function(){var el=document.querySelectorAll('.bcd');if(!el.length)return;var now=NOW.getTime()+(Date.now()-T0);var rr=false;for(var i=0;i<el.length;i++){var left=+el[i].getAttribute('data-end')-now;el[i].textContent=mmss(left);if(left<=0&&el[i].getAttribute('data-rr'))rr=true;}if(rr){NOW=new Date(now);T0=Date.now();render();}},1000);
-function iStatus(d){var ph=bStateNow(d);var lab={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',ComingSoon:'COMING SOON',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED'}[ph];return [lab,COL[ph]];}
+function iStatus(d){var ph=bStateNow(d);var lab={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',ComingSoon:'COMING SOON',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED'}[ph];return [lab,(ph==='Live'&&d.res>=d.cap)?'#15803D':COL[ph]];}
 function iTimeline(d,noPins){
  var s=new Date(Math.min(vS(d),NOW)),e=new Date(Math.max(d.bE,NOW));var span=e-s||1;var P=function(x){return Math.max(0,Math.min(100,(x-s)/span*100));};
  var h='<div style="position:relative;height:30px">';
@@ -464,7 +464,7 @@ function soldChip(d){return d.soldOut&&bStateNow(d)==='Live'?'<span style="posit
 function iCard(d,day){
  var st=iStatus(d);var ph=bStateNow(d);var c=curVid(d,NOW>=vS(d)?NOW:vS(d));var ci=Math.max(0,c.i);var v=d.videos[ci];var au=audInfo(d);
  var ended=NOW>d.dE;var ciN=d.ci!=null?d.ci:(NOW>=d.dS?Math.round(d.res*(ended?0.8:0.4)):0);var ns=ended?Math.max(0,Math.round(d.res*0.1)):0;var resv=Math.max(0,d.res-ciN);
- var border=ended?'#D1D5DB':st[1];
+ var border=st[1];
  var zo=zOff(d);var K=S.opt==='K';var media='<div '+(K?'onclick="openPv('+d.id+','+ci+')" ':'')+'style="cursor:'+(K?'pointer':'default')+';height:'+(K?106+POKE_MAX*30:186+POKE_MAX*30)+'px;background:'+v.grad+';position:relative;border-radius:12px 12px 0 0;overflow:hidden">'
   +iHeader(d)
   +(K?'':'<div onclick="openPv('+d.id+','+ci+')" style="position:absolute;top:'+(46+POKE_MAX*30)+'px;left:0;right:0;bottom:80px;display:flex;align-items:center;justify-content:center;cursor:pointer"><div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.22);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff">'+hic('play',22,'#fff')+'</div></div>')
@@ -476,10 +476,10 @@ function iCard(d,day){
  var body='<div style="padding:10px 14px;height:166px;box-sizing:border-box;overflow:hidden"><div title="'+d.title.replace(/"/g,'&quot;')+'" style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.title+'</div>'
   +timeRow(d)
   +(function(){var v=d.venue||'Centro Boulder, 950 Pearl St, Boulder, CO';var k=v.indexOf(',');var nm=k>0?v.slice(0,k):v,ad=k>0?v.slice(k+1).trim():'';return '<div style="display:flex;gap:5px;margin:2px 0 8px;height:34px"><span style="color:#6B7280;margin-top:1px">'+hic('map',13)+'</span><div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div><div style="font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(ad||'&nbsp;')+'</div></div></div>';})()
-  +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:#111827">'+hic('users',14)+' '+d.res+' / '+d.cap+' <span style="font-weight:400;color:#6B7280;font-size:11px">spots</span></div>'+(d.res>=d.cap?'<span style="font-size:10px;font-weight:600;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:10px">SOLD OUT</span>':'<span style="font-size:11px;color:#6B7280">'+(d.cap-d.res)+' remaining</span>')+'</div>'
+  +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:#111827">'+hic('users',14)+' '+d.res+' / '+d.cap+' <span style="font-weight:400;color:#6B7280;font-size:11px">spots</span></div>'+(d.res>=d.cap?'<span style="font-size:10px;font-weight:700;color:#fff;background:#15803D;padding:2px 8px;border-radius:10px">SOLD OUT</span>':'<span style="font-size:11px;color:#6B7280">'+(d.cap-d.res)+' remaining</span>')+'</div>'
   +'<div style="display:flex;gap:1px;margin-bottom:6px"><div style="height:6px;flex:'+(ciN||0.001)+';background:#0D9488;border-radius:3px 0 0 3px"></div><div style="height:6px;flex:'+(resv||0.001)+';background:#0284C7"></div><div style="height:6px;flex:'+((d.cap-d.res)||0.001)+';background:#E5E7EB;border-radius:0 3px 3px 0"></div></div>'
   +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280"><span><b style="color:#0284C7">'+resv+'</b> Reserved</span><span><b style="color:#0D9488">'+ciN+'</b> Checked In</span></div></div>';
- var mid=ph==='Live'?['pause','Pause','#0E4EF5']:ph==='Paused'?['play','Resume','#22C55E']:['edit','Edit','#6B7280'];
+ var mid=ph==='Live'?['pause','Pause','#0E4EF5']:ph==='Paused'?['play','Resume','#16A34A']:['edit','Edit','#6B7280'];
  var preLive=(ph==='Scheduled'||ph==='ComingSoon'||ph==='Draft'||ph==='Pending');var noCI=preLive||ph==='Canceled';
  var foot='<div style="display:flex;border-top:1px solid #E5E7EB"><button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(preLive?'#D1D5DB':'#6B7280')+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:'+(preLive?'default':'pointer')+';font-family:inherit">'+hic('edit',16)+' Manage</button>'
   +((ph==='Ended'||ph==='Canceled')?'':'<button onclick="demo()" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+mid[2]+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:pointer;font-family:inherit">'+hic(mid[0],16)+' '+mid[1]+'</button>')
