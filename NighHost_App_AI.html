@@ -2953,9 +2953,9 @@ function renderG(){
   <div style="padding:12px 16px">${modeToggle}${guestList}</div>`;
 }
 // ═══ MENU ═══
-// Host follow-link sharing (menu card): grow your audience by sharing nigh.com/follow/<handle>
+// Host follow-link sharing (menu card): grow your audience by sharing follow.nigh.com/<handle>
 const followLinkStats={clicks:64,followers:18}; // demo: link clicks + new followers gained from your follow link
-function followLinkUrl(){return 'nigh.com/follow/'+(acct().handle||'');}
+function followLinkUrl(){return 'follow.nigh.com/'+(acct().handle||'');}
 function copyFollowLink(btn){var u='https://'+followLinkUrl();try{navigator.clipboard&&navigator.clipboard.writeText(u);}catch(e){}if(btn){btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy';},1500);}}
 function shareFollowLink(){var u='https://'+followLinkUrl();if(navigator.share){navigator.share({title:'Follow on Nigh',text:'Follow '+acct().name+' on Nigh',url:u}).catch(function(){});}else{try{navigator.clipboard&&navigator.clipboard.writeText(u);}catch(e){}}}
 function renderMenu(){
@@ -3020,7 +3020,7 @@ function renderMenu(){
             <div><span style="font-size:18px;font-weight:800;color:#fff">${followLinkStats.followers}</span> <span style="font-size:11px;color:rgba(255,255,255,0.72)">new followers</span></div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">nigh.com/follow/${a.handle}</div>
+            <div style="flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">follow.nigh.com/${a.handle}</div>
             <button onclick="copyFollowLink(this)" style="background:rgba(255,255,255,0.22);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Copy</button>
             <button onclick="shareFollowLink()" style="background:#fff;color:#0E4EF5;border:none;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Share</button>
           </div>
@@ -3581,7 +3581,7 @@ function renderFollowers(){
 
   // ── FOLLOW LINK TAB ──
   const handle=a.handle||a.name.toLowerCase().replace(/\\s/g,'');
-  const url='nigh.com/follow/'+handle;
+  const url='follow.nigh.com/'+handle;
   const qrSize=160;
   const qrSvg=`<svg width="${qrSize}" height="${qrSize}" viewBox="0 0 ${qrSize} ${qrSize}" xmlns="http://www.w3.org/2000/svg">
     <rect width="${qrSize}" height="${qrSize}" fill="#fff" rx="8"/>
@@ -3680,7 +3680,7 @@ function renderFollowers(){
 function renderFollowLink(){
   const a=acct();
   const handle=a.handle||a.name.toLowerCase().replace(/\s/g,'');
-  const url='nigh.com/follow/'+handle;
+  const url='follow.nigh.com/'+handle;
   // Generate a simple QR code visual (placeholder grid pattern)
   const qrSize=180;
   const qrSvg=`<svg width="${qrSize}" height="${qrSize}" viewBox="0 0 ${qrSize} ${qrSize}" xmlns="http://www.w3.org/2000/svg">
@@ -4496,7 +4496,7 @@ function renderPartnerDrop(){
   if(!p)return renderPartners();
   const myHandle=(acct().handle||'@host').replace(/^@?/,'');
   const code=pvCode(p);
-  const shareUrl='nigh.com/drop/'+myHandle+'/'+code;
+  const shareUrl='drop.nigh.com/'+code;
   const guests=pvStat(p,0);const views=guests*6+pvStat(p,3);
   const typeColors={Brand:'#eff6ff',Sponsor:'#f5f3ff',Partner:'#f0fdf4',Influencer:'#fef3c7',Venue:'#ecfeff'};
   const typeTextColors={Brand:'#1d4ed8',Sponsor:'#5b21b6',Partner:'#15803d',Influencer:'#b45309',Venue:'#0e7490'};
@@ -7169,7 +7169,7 @@ function renderModal(){
       ...(dEnded||!canFull('messageGuests')?[]:[{ic:'megaphone',l:'Send Message',d:'Notify all spot holders',act:"modal('broadcast')"}]),
       ...(['Scheduled','Live','Paused'].includes(d.status)?[{ic:'ticket',l:'Guest Passes',d:'Privately distributed tickets',act:"modal('guestpasses')"}]:[]),
       ...(dEnded?[]:[{ic:'qr',l:'Show QR Code',d:'Display or print drop QR',act:"modal(null)"}]),
-      ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'nigh.com/drop/'+(acct().handle||'')+'/'+((d.slug||'').split('/').pop()),act:"modal('share-'+(S.drop||0))"}]),
+      ...(dEnded?[]:[{ic:'share',l:'Share Drop',d:'drop.nigh.com/'+((d.slug||'').split('/').pop()),act:"modal('share-'+(S.drop||0))"}]),
       {ic:'history',l:'Drop History',d:'View all changes & edits',act:"modal('history')"},
     ];
     mr.innerHTML=`<div class="modal-bg" onclick="modal(null)"><div class="modal fi" onclick="event.stopPropagation()"><div class="mh"></div>
@@ -7256,7 +7256,7 @@ function renderModal(){
         <span>This is a semi-private drop — only people with this link can view and reserve tickets. It won't appear in search or public feeds.</span>
       </div>`:''}
       <div style="display:flex;align-items:center;gap:8px;background:#F3F4F6;border-radius:10px;padding:10px 14px;margin-bottom:14px">
-        <span style="font-size:13px;color:#374151;flex:1;font-weight:500">nigh.com/drop/${acct().handle}/${(d.slug||'').split('/').pop()}</span>
+        <span style="font-size:13px;color:#374151;flex:1;font-weight:500">drop.nigh.com/${(d.slug||'').split('/').pop()}</span>
         <button onclick="this.textContent='Copied!';this.style.background='#16A34A';setTimeout(()=>{this.textContent='Copy';this.style.background='#0E4EF5'},1500)" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;border:none;background:#0E4EF5;color:#fff;cursor:pointer">Copy</button>
       </div>
       <div style="display:flex;gap:8px;justify-content:center">
