@@ -63,7 +63,7 @@ button{cursor:pointer}
 let S={scr:'home',drop:null,cStep:1,ciMode:'scan',rFilter:'All',rSel:null,loginStep:'welcome',loginPhone:'',loginCode:'',loginIsNew:false,loginUserType:'new',loginFirstName:'',loginLastName:'',loginHandle:'',loginDob:'',loginObStep:0,loginHostType:'',loginDropIdea:'',loginListening:false,loginExHandle:'',loginExChoice:'',loginBizCategory:'',loginBizSubCat:'',
   calDay:new Date('2026-03-05T12:00:00'),showAcct:false,menuSub:null,cloneFrom:null,venueEdit:null,selectedVenue:null,showNiyaBar:false,
   formTiming:'start',modal:null,guestDrop:'current',custSearch:'',importStep:0,dropPhoneRequest:'none',guestListTab:'guests',guestListDetail:null,guestListCreateName:'',guestListAddMode:false,addGuestModal:false,addGuestSearch:'',addGuestTab:'add',addGuestAdded:false,
-  niyaMode:null,niyaStep:0,niyaListening:false,niyaOnboarding:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:{text:'Fresh truffle pasta available tonight only.',time:'Just now',date:'2026-03-05',visibility:'public'},draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',handleModal:false,handleNew:'',handleAvail:null,handleConfirm:false,verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null,bizVerifyStep:'welcome',bizVerifyType:null,bizVerifyDoc:false,bizVerifyEin:false,bizVerifyDomain:false,bizVerifyResult:null,contactPicker:false,contactPickerSearch:'',contactPickerSelected:[],contactSynced:true,contactSyncCount:47};
+  niyaMode:null,niyaStep:0,niyaListening:false,niyaOnboarding:false,niyaManageQ:null,niyaForm:{},niyaFabContext:'home',guestView:'list',custFilter:'all',custDropFilter:'all',ciDropFilter:null,lvFilter:'All',lvTab:'guests',headsUp:null,draftDelete:null,alFilter:'All',inboxFilter:'All',dualPrice:false,multiVenue:false,invitePhone:'',inviteEmail:'',inviteRole:'',handleModal:false,handleNew:'',handleAvail:null,handleConfirm:false,verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null,bizVerifyStep:'welcome',bizVerifyType:null,bizVerifyDoc:false,bizVerifyEin:false,bizVerifyDomain:false,bizVerifyResult:null,contactPicker:false,contactPickerSearch:'',contactPickerSelected:[],contactSynced:true,contactSyncCount:47};
 const STATUS_COLORS={Live:'#22C55E',SoldOut:'#15803D',Pending:'#EAB308',Scheduled:'#EA580C',Paused:'#0E4EF5',Draft:'#D1D5DB',Ended:'#6B7280',Canceled:'#6B7280',Expired:'#9CA3AF'};
 const STATUS_PRIO={Live:6,Pending:5,Scheduled:4,Paused:3,Ended:2,Canceled:2,Expired:1,Draft:0};
 function dropStatusColor(s){return STATUS_COLORS[s]||'#6B7280';}
@@ -367,7 +367,7 @@ let acctIdx=0;const acct=()=>accts[acctIdx];
 // Nico (in-app AI assistant) feature flag — per host account. Defaults ON; set acct().niyaEnabled=false to hide every Nico surface (icon, tab, bar). Lets Nico roll out to a subset of accounts before going generally available.
 function niyaOn(){return acct().niyaEnabled!==false;}
 // Heads Up (daily announcements to followers) feature flag — per host account. Defaults ON; set acct().headsUpEnabled=false to hide every Heads Up surface (compose, home button, drop-detail button, management screen, Nico). Supports phased rollout / subscription gating.
-function headsUpOn(){return acct().headsUpEnabled!==false;}
+function headsUpOn(){return false;} // v1: Heads Up is out of scope — every Heads Up surface stays hidden
 const isVerified=()=>userVerified===true; // person-level: is this human identity-verified?
 const isBusinessVerified=()=>acct().businessVerified===true; // account-level: is this business entity verified?
 const isEntity=()=>acct().entity===true; // is this a business/org that needs separate entity verification?
@@ -381,9 +381,8 @@ function uRole(){const locName=acct().name;const u=team.find(t=>t.name==='Josh R
 // thresholds used to derive built-in role grants. Adding a permission here flows
 // automatically to enforcement (canFull/canView) AND the Roles reference table.
 const PERM_CATALOG=[
-  {cat:'Drops & Heads Up',perms:[
+  {cat:'Drops',perms:[
     {key:'drops',label:'Manage drops',full:1,view:0},
-    {key:'headsup',label:'Manage Heads Up',full:1,view:0},
   ]},
   {cat:'Guests & Contacts',perms:[
     {key:'checkin',label:'Check in guests',full:0,view:0},
@@ -434,7 +433,7 @@ Object.keys(BUILTIN_ROLE_LEVELS).forEach(function(role){
 const customRoles={};
 // Seed a couple of example custom roles for the Enterprise demo.
 customRoles['Front Desk']={builtin:false,grants:{checkin:'full',guests:'view'}};
-customRoles['Marketing']={builtin:false,grants:{drops:'full',headsup:'full',analytics:'full',partners:'view'}};
+customRoles['Marketing']={builtin:false,grants:{drops:'full',analytics:'full',partners:'view'}};
 function roleDef(role){return ROLES[role]||customRoles[role]||null;}
 function roleGrant(role,perm){
   const r=roleDef(role);
@@ -445,7 +444,7 @@ function roleGrant(role,perm){
 // Owner-only powers (billing, payouts, subscription, verification, account deletion, admin management) are never grantable via a custom role.
 function canUseCustomRoles(){return acct().plan==='Enterprise'||acct().enterprise===true;}
 const ROLE_GROUPS=[
-  {key:'drops',label:'Drops & Heads Up',perms:['drops','headsup']},
+  {key:'drops',label:'Drops',perms:['drops']},
   {key:'checkin',label:'Check-in',perms:['checkin']},
   {key:'guests',label:'Guests & Contacts',perms:['guests','messageGuests','inviteFromContacts','guestGroups','blockGuests','guestListLock','guestAuditTrail','contactImport']},
   {key:'orders',label:'Orders & Revenue',perms:['orders','refunds','revenue']},
@@ -570,7 +569,7 @@ const drops=[
     desc:'Live jazz trio with our curated tapas menu and craft cocktail specials.',slug:'centroboulder/JZ05AB'},
   {id:'D002',title:'Taco Tuesday: Chef Special Menu',timing:'Arrival Window',acctName:'Centro Boulder',
     start:'5:00 - 9:00 PM',bcastStart:'2:00 PM',bcastEnd:'4:45 PM',date:'2026-03-07',cap:40,res:0,ci:0,ns:0,
-    price:0,status:'Scheduled',noTicket:true,venue:'Centro Boulder, 950 Pearl St, Boulder, CO 80302',
+    price:0,status:'Scheduled',noTicket:true,zoneOff:true,venue:'Centro Boulder, 950 Pearl St, Boulder, CO 80302',
     ageRestriction:'everyone',taxOn:false,tax:0,dualPrice:false,
     hosts:['Josh Ritzer'],partners:[],media:'photo',
     desc:'Our chef is debuting 3 new taco specials — first come, first served.',slug:'centroboulder/TT07CM'},
@@ -1527,6 +1526,183 @@ function renderNewAccount(){
 }
 
 // ═══ HOME ═══
+// ═══ HOME FEED DROP CARD — v1 (Option I) ═══
+// Spec: "Nigh — Host Drop Card v1 (Eng Handoff)". Card border = status color. Statuses are all caps.
+// Time math uses the drop's local time (sample data is all Mountain Time). "Now" = TODAY.
+const IV_LBL={Draft:'DRAFT',Scheduled:'BROADCAST SCHEDULED',Pending:'BROADCAST PENDING',Live:'BROADCASTING LIVE',Paused:'BROADCAST PAUSED',Ended:'BROADCAST ENDED',Canceled:'CANCELED',Expired:'EXPIRED'};
+// v1 Nigh Zone default steps [hours before broadcast end, miles]. Last step holds until the broadcast ends. Support can change per host (1–8 stages).
+const IV_ZONE_STEPS=[[3,50],[2,35],[1,20],[0.5,10],[0.25,5]];
+const IV_POKE_MAX=3; // overlay messages: top 3 shown; space reserved so card height never changes
+const IV_NLOGO='<svg width="9" height="13" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>';
+const IV_ZONE_IC='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#41EFF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#41EFF9" stroke="none"/></svg>';
+const IV_ZONE_OFF_IC='<svg width="16" height="16" viewBox="0 0 24 24" overflow="visible" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#9CA3AF" stroke="none"/><line x1="1" y1="1" x2="23" y2="23" stroke="#9CA3AF" stroke-width="2.2"/></svg>';
+const IV_WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],IV_MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function ivNow(){return TODAY;}
+function ivD0(x){return new Date(x.getFullYear(),x.getMonth(),x.getDate());}
+function ivSame(a,b){return ivD0(a).getTime()===ivD0(b).getTime();}
+function ivAt(dateStr,tm){if(!dateStr||!tm)return null;const m=tm.match(/(\d+):(\d+)\s*(AM|PM)?/i);if(!m)return null;let h=+m[1];const mn=+m[2];const ap=(m[3]||'').toUpperCase();if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;const p=dateStr.split('-').map(Number);return new Date(p[0],p[1]-1,p[2],h,mn);}
+// Parse "7:00 PM" or "7:00 - 10:00 PM" (start inherits the end's AM/PM; flips to AM if that would put it after the end)
+function ivDropTimes(d){if(!d.date||!d.start)return {dS:null,dE:null};const parts=d.start.split(/\s*[-–]\s*/);
+  if(parts.length<2){const s=ivAt(d.date,parts[0]);return {dS:s,dE:s?new Date(s.getTime()+3*36e5):null};}
+  const e=ivAt(d.date,parts[1]);let st=parts[0];if(!/AM|PM/i.test(st))st+=' '+((parts[1].match(/AM|PM/i)||['PM'])[0]);let s=ivAt(d.date,st);if(s&&e&&s>e)s=new Date(s.getTime()-12*36e5);return {dS:s,dE:e};}
+// Map a host drop to the card model (Date objects). Live/Paused drops whose broadcast start time is later today started the day before (v1: broadcast ≤48h before the drop).
+function ivModel(d){if(d._iv&&d._iv.k===d.status+'|'+d.date+'|'+d.start+'|'+d.bcastStart+'|'+d.bcastEnd)return d._iv;
+  const t=ivDropTimes(d);let bS=ivAt(d.date,d.bcastStart),bE=ivAt(d.date,d.bcastEnd);
+  if(!bE&&t.dS){bE=new Date(t.dS.getTime()-15*6e4);bS=new Date(bE.getTime()-24*36e5);}
+  if(bS&&bE&&bS>bE)bS=new Date(bS.getTime()-24*36e5);
+  if(bS&&(d.status==='Live'||d.status==='Paused')&&bS>ivNow())bS=new Date(bS.getTime()-24*36e5);
+  const zoneOn=!(d.zoneOff||acct().nzOff);
+  d._iv={k:d.status+'|'+d.date+'|'+d.start+'|'+d.bcastStart+'|'+d.bcastEnd,dS:t.dS,dE:t.dE,bS:bS,bE:bE,zone:zoneOn&&bE?{hrs:IV_ZONE_STEPS[0][0],start:IV_ZONE_STEPS[0][1],floor:IV_ZONE_STEPS[IV_ZONE_STEPS.length-1][1]}:null};return d._iv;}
+// Display phase: Draft / Canceled / Pending / Expired come from status. Live & Paused become Ended once the broadcast end time has passed.
+function ivPhase(d){const s=d.status;if(s==='Draft'||s==='Canceled'||s==='Pending'||s==='Expired'||s==='Ended'||s==='Scheduled')return s;const m=ivModel(d);if(m.bE&&ivNow()>m.bE)return 'Ended';return s==='Paused'?'Paused':'Live';}
+function ivStatus(d){const ph=ivPhase(d);return [IV_LBL[ph]||ph.toUpperCase(),(ph==='Live'&&d.cap>0&&d.res>=d.cap)?STATUS_COLORS.SoldOut:dropStatusColor(ph)];}
+function ivDayWord(x){const n=Math.round((ivD0(x)-ivD0(ivNow()))/864e5);return n===0?'Today':n===1?'Tomorrow':n===-1?'Yesterday':IV_WD[x.getDay()]+' '+IV_MO[x.getMonth()]+' '+x.getDate();}
+function ivTL(x){const h=x.getHours(),m=x.getMinutes();return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM');}
+function ivDur(ms){const m=Math.max(0,Math.round(ms/6e4));const dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return dd?dd+'d '+h+'h':h?h+'h '+mm+'m':mm+'m';}
+function ivMMSS(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
+function ivZStepAt(h){let r=null;for(let i=0;i<IV_ZONE_STEPS.length;i++){if(h<=IV_ZONE_STEPS[i][0])r=IV_ZONE_STEPS[i][1];}return r;}
+function ivZNextAt(h){for(let i=0;i<IV_ZONE_STEPS.length;i++){if(h>IV_ZONE_STEPS[i][0])return IV_ZONE_STEPS[i][0];}return 0;}
+function ivZS(m){return m.zone?new Date(Math.max(m.bS?m.bS.getTime():0,m.bE.getTime()-m.zone.hrs*36e5)):null;}
+// ── Overlay messages (ranked; first IV_POKE_MAX that apply are shown) ──
+function ivRemain(d){const ph=ivPhase(d),m=ivModel(d),N=ivNow();
+  if(ph==='Draft')return 'Draft · not published yet';if(ph==='Canceled')return 'Canceled · '+d.res+' reservations refunded';if(ph==='Pending')return 'Broadcast pending · video still processing';if(ph==='Expired')return 'Draft expired · drop date passed';
+  if(ph==='Scheduled')return m.bS?'Broadcast starts in '+ivDur(m.bS-N):'Broadcast scheduled';
+  if(ph==='Live'||ph==='Paused'){const ms=m.bE-N;return 'Broadcast ends in '+(ms<36e5?'<span class="ivcd" data-end="'+m.bE.getTime()+'" style="color:#F87171;font-weight:700">'+ivMMSS(ms)+'</span>':'<span style="color:#F87171;font-weight:700">'+ivDur(ms)+'</span>');}
+  return 'Broadcast ended';}
+function ivZoneMsg(d){const m=ivModel(d),N=ivNow();if(!m.zone||N>m.bE||/Draft|Canceled|Expired/.test(ivPhase(d)))return '';const st=ivZS(m);
+  if(N<st)return 'Nigh Zone starts in <span style="color:#41EFF9;font-weight:700">'+ivDur(st-N)+'</span>';
+  const left=(m.bE-N)/36e5;const r=ivZStepAt(left)||m.zone.start;const nxt=m.bE.getTime()-ivZNextAt(left)*36e5;
+  return 'Nigh Zone: <span style="color:#41EFF9;font-weight:700">'+r+' mi</span> for <span class="ivcd" data-end="'+nxt+'" style="color:#41EFF9;font-weight:700">'+ivMMSS(nxt-N.getTime())+'</span>';}
+function ivDropMsg(d){const m=ivModel(d),N=ivNow();if(!m.dS||/Canceled|Expired/.test(ivPhase(d)))return '';const ms=m.dS-N;
+  if(ms>0)return 'Drop starts in '+(ms<36e5?'<span class="ivcd" data-end="'+m.dS.getTime()+'" style="color:#fff;font-weight:700">'+ivMMSS(ms)+'</span>':ivDur(ms));
+  if(m.dE&&N<=m.dE)return 'Drop happening now · ends in '+ivDur(m.dE-N);return '';}
+const IV_POKES=[
+  {key:'broadcast',fn:ivRemain},
+  {key:'zone',fn:ivZoneMsg},
+  {key:'drop',fn:ivDropMsg},
+  {key:'spots',fn:d=>{const l=d.cap-d.res;return (ivPhase(d)==='Live'&&l>0&&l<=Math.max(5,Math.round(d.cap*0.25)))?'Only <span style="color:#FBBF24;font-weight:700">'+l+' spot'+(l===1?'':'s')+'</span> left':'';}},
+  {key:'views',fn:d=>ivPhase(d)==='Live'?'<span style="font-weight:700">'+(12+(parseInt(String(d.id).replace(/\D/g,''))||1)*7%40)+'</span> people viewing now':''}
+];
+function ivPokes(d){const out=[];for(let i=0;i<IV_POKES.length&&out.length<IV_POKE_MAX;i++){const t=IV_POKES[i].fn(d);if(t)out.push(t);}
+  return out.map(t=>'<span style="display:inline-block;max-width:255px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,0.45);border-radius:6px;padding:4px 9px">'+t+'</span>').join('');}
+// Live countdowns (minutes, then seconds under a minute)
+if(!window._ivTick){window._ivTick=setInterval(function(){const el=document.querySelectorAll('.ivcd');if(!el.length)return;const now=TODAY.getTime()+(Date.now()-IV_T0);for(let i=0;i<el.length;i++){el[i].textContent=ivMMSS(+el[i].getAttribute('data-end')-now);}},1000);}
+const IV_T0=Date.now();
+// ── Timeline: broadcast only (green; blue when paused; gray when not running) + Nigh Zone (light blue) + red "now" line ──
+function ivTimeline(d){const m=ivModel(d),N=ivNow(),ph=ivPhase(d);
+  const lab=(top,x,al)=>'<div style="text-align:'+al+';line-height:1.3"><div style="font-size:8.5px;color:rgba(255,255,255,0.7)">'+top+'</div><div style="font-size:9px;color:rgba(255,255,255,0.95)">'+(x?ivDayWord(x)+' - '+ivTL(x):'Not set')+'</div></div>';
+  if(!m.bS||!m.bE)return '<div style="position:relative;height:30px"><div style="position:absolute;top:18px;left:0;right:0;height:6px;border-radius:3px;background:rgba(255,255,255,0.25)"></div></div><div style="display:flex;justify-content:space-between;margin-top:9px">'+lab('Broadcast Starts',null,'left')+lab('Broadcast Ends',null,'right')+'</div>';
+  const s=new Date(Math.min(m.bS,N)),e=new Date(Math.max(m.bE,N));const span=e-s||1;const P=x=>Math.max(0,Math.min(100,(x-s)/span*100));
+  let h='<div style="position:relative;height:30px">';
+  h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(m.bS)+'%;width:'+Math.max(1,P(m.bE)-P(m.bS))+'%;border-radius:3px;background:'+((ph==='Ended'||/Draft|Canceled|Pending|Expired/.test(ph))?'rgba(255,255,255,0.45)':(ph==='Paused'?'#60A5FA':'#22C55E'))+'"></div>';
+  if(m.zone){const zs=ivZS(m);h+='<div title="Nigh Zone" style="position:absolute;z-index:3;top:16px;height:10px;left:'+P(zs)+'%;width:'+Math.max(1.5,P(m.bE)-P(zs))+'%;border-radius:3px;background:'+(N>m.bE?'rgba(65,239,249,0.4)':'#41EFF9')+';box-shadow:0 0 6px rgba(65,239,249,0.7)"></div>';}
+  if(N>=s&&N<=e)h+='<div style="position:absolute;top:8px;left:'+P(N)+'%;width:2px;height:22px;background:#F87171;z-index:3"></div>';
+  return h+'</div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:9px">'+lab(m.bS<=N?'Broadcast Started':'Broadcast Starts',m.bS,'left')+lab(m.bE<=N?'Broadcast Ended':'Broadcast Ends',m.bE,'right')+'</div>';}
+function ivTimeRow(d){const m=ivModel(d);const arr=/arrival/i.test(d.timing||'');
+  const when=m.dS?ivDayWord(m.dS)+' '+ivTL(m.dS)+(arr&&m.dE?' – '+ivTL(m.dE):''):'No date or time set';
+  return '<div style="display:flex;align-items:center;gap:14px;height:20px;margin-bottom:2px;font-size:14px;font-weight:500;color:'+(m.dS?'#374151':'#9CA3AF')+'"><span style="display:flex;align-items:center;gap:5px;min-width:0">'+ic('clock',13)+'<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+when+'</span></span><span style="flex-shrink:0">'+(d.price===''||d.price==null?'':fmtP(d.price))+'</span></div>';}
+function ivCard(d){const i=drops.indexOf(d);const st=ivStatus(d);const ph=ivPhase(d);const m=ivModel(d);const N=ivNow();const au=audIc(d.audience||'public');
+  const hasVid=d.media==='video',hasImg=d.media==='photo';
+  const bg=hasVid||hasImg?'linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%)':'linear-gradient(135deg,#4B5563 0%,#9CA3AF 100%)';
+  const center=hasVid?'<div onclick="modal(\'ivpv-'+i+'\')" style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.22);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer">'+ic('play',22,'#fff')+'</div>'
+    :hasImg?'<div onclick="modal(\'ivpv-'+i+'\')" style="color:rgba(255,255,255,0.25);cursor:pointer">'+ic('image',44)+'</div>'
+    :'<div style="display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,0.7)">'+ic('cam',30)+'<div style="font-size:11px;font-weight:500">No video yet</div></div>';
+  const header='<div style="position:absolute;top:0;left:0;right:0;height:34px;border-radius:12px 12px 0 0;background:rgba(0,0,0,0.58);backdrop-filter:blur(8px);padding:0 12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;z-index:4">'
+    +'<div style="display:flex;align-items:center;gap:4px">'+IV_NLOGO+'<span style="font-size:11px;font-weight:700;color:#fff">DROP</span></div>'
+    +'<div style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:'+st[1]+'"></span><span style="font-size:11px;font-weight:700;color:#fff;white-space:nowrap">'+st[0]+'</span></div>'
+    +'<div style="display:flex;justify-content:flex-end;align-items:center;gap:16px">'+(m.zone?'<button onclick="event.stopPropagation();modal(\'ivzone-'+i+'\')" title="Nigh Zone" style="border:none;background:none;display:flex;cursor:pointer;padding:0">'+IV_ZONE_IC+'</button>':'<button onclick="event.stopPropagation();modal(\'ivzoneoff-'+i+'\')" title="Nigh Zone off" style="border:none;background:none;display:flex;cursor:pointer;padding:0">'+IV_ZONE_OFF_IC+'</button>')
+    +'<button onclick="event.stopPropagation();modal(\'audience-drop-'+i+'\')" title="'+au.label+'" style="border:none;background:none;display:flex;cursor:pointer;padding:0">'+ic(au.icon,16,'rgba(255,255,255,0.9)')+'</button></div></div>';
+  const media='<div style="height:'+(186+IV_POKE_MAX*30)+'px;background:'+bg+';position:relative;overflow:hidden;border-radius:12px 12px 0 0">'+header
+    +'<div style="position:absolute;top:'+(46+IV_POKE_MAX*30)+'px;left:0;right:0;bottom:80px;display:flex;align-items:center;justify-content:center">'+center+'</div>'
+    +'<div style="position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.6) 30%)">'+ivTimeline(d)+'</div>'
+    +'<div style="position:absolute;top:42px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;z-index:3"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;height:'+(IV_POKE_MAX*30-4)+'px">'+ivPokes(d)+'</div>'
+    +(/Draft|Canceled|Expired/.test(ph)?'':'<button onclick="event.stopPropagation();modal(\'share-'+i+'\')" aria-label="Share drop" style="width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.45);border:none;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0">'+ic('share',17,'#fff')+'</button>')+'</div>'
+    +'</div>';
+  const ended=m.dE&&N>m.dE;const ciN=Math.min(d.ci||0,d.res||0);const resv=Math.max(0,(d.res||0)-ciN);const cap=d.cap||0;
+  const v=fmtVenueLines(d.venue||'');const k=v.indexOf(',');const nm=k>0?v.slice(0,k):(v||'No venue set'),ad=k>0?v.slice(k+1).trim():'';
+  const body='<div style="padding:10px 14px;height:166px;box-sizing:border-box;overflow:hidden">'
+    +'<div title="'+(d.title||'').replace(/"/g,'&quot;')+'" style="font-size:16px;font-weight:700;color:'+(d.title?'#111827':'#9CA3AF')+';margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(d.title||'Untitled Drop')+'</div>'
+    +ivTimeRow(d)
+    +'<div style="display:flex;gap:5px;margin:2px 0 8px;height:34px"><span style="color:#6B7280;margin-top:1px">'+ic('map',13)+'</span><div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div><div style="font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(ad||'&nbsp;')+'</div></div></div>'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:#111827;display:flex;align-items:center;gap:4px">'+ic('users',14)+' '+(d.res||0)+' / '+(cap||'—')+' <span style="font-weight:400;color:#6B7280;font-size:11px">spot'+(cap===1?'':'s')+'</span></div>'+(cap&&d.res>=cap?'<span style="font-size:10px;font-weight:700;color:#fff;background:'+STATUS_COLORS.SoldOut+';padding:2px 8px;border-radius:10px">SOLD OUT</span>':'<span style="font-size:11px;color:#6B7280">'+(cap?(cap-(d.res||0))+' remaining':'')+'</span>')+'</div>'
+    +'<div style="display:flex;gap:1px;margin-bottom:6px"><div style="height:6px;flex:'+(ciN||0.001)+';background:#0D9488;border-radius:3px 0 0 3px"></div><div style="height:6px;flex:'+(resv||0.001)+';background:#0284C7"></div><div style="height:6px;flex:'+((cap-(d.res||0))||0.001)+';background:#E5E7EB;border-radius:0 3px 3px 0"></div></div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280"><span><b style="color:#0284C7">'+resv+'</b> Reserved</span><span><b style="color:#0D9488">'+ciN+'</b> Checked In</span></div></div>';
+  // Footer: Manage · Pause/Resume/Edit · Check-In. Manage and Check-In are disabled before the broadcast goes live; Check-In is disabled when canceled.
+  const full=canFull('drops');
+  const preLive=/Scheduled|Draft|Pending|Expired/.test(ph);const noCI=preLive||ph==='Canceled';
+  const mid=ph==='Live'?['pause','Pause','#0E4EF5','ivToggle('+i+')']:ph==='Paused'?['play','Resume','#16A34A','ivToggle('+i+')']:['edit','Edit','#6B7280',"go('liveview',{drop:"+i+"})"];
+  const btn='flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;';
+  const foot='<div style="display:flex;border-top:1px solid #E5E7EB">'
+    +'<button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="go(\'liveview\',{drop:'+i+'})"')+' style="'+btn+'color:'+(preLive?'#D1D5DB':'#6B7280')+';border-right:1px solid #E5E7EB;cursor:'+(preLive?'default':'pointer')+'">'+ic(full?'edit':'eye',16)+' '+(full?'Manage':'View')+'</button>'
+    +((ph==='Ended'||ph==='Canceled'||!full)?'':'<button onclick="'+mid[3]+'" style="'+btn+'color:'+mid[2]+';border-right:1px solid #E5E7EB;cursor:pointer">'+ic(mid[0],16)+' '+mid[1]+'</button>')
+    +'<button '+(noCI?'disabled title="'+(ph==='Canceled'?'This drop was canceled':'Available once the broadcast is live')+'"':'onclick="S.ciDropFilter=\''+d.id+'\';go(\'checkin\')"')+' style="'+btn+'color:'+(noCI?'#D1D5DB':'#0D9488')+';cursor:'+(noCI?'default':'pointer')+'">'+ic('qr',16)+' Check-In</button></div>';
+  return '<div class="card" style="border:2px solid '+st[1]+';border-radius:14px;margin-bottom:20px;overflow:hidden;transform:translateZ(0)">'+media+body+foot+'</div>';}
+function ivToggle(i){const d=drops[i];if(!d)return;d.status=d.status==='Paused'?'Live':'Paused';render();}
+// Drops shown for a calendar day: drops happening that day (incl. drafts), then drops still broadcasting that day whose drop is later.
+function ivDayDrops(day,md){const ds=dk(day);const isT=sameD(day,TODAY);
+  const on=md.filter(d=>d.status!=='Deleted'&&(d.date===ds||(isT&&d.status==='Draft'&&!d.date)));
+  // Same rule as before: drafts are hidden on a day that already has an active (non-draft, non-ended) drop.
+  const active=on.some(d=>d.date===ds&&d.status!=='Draft'&&d.status!=='Ended');
+  const on2=active?on.filter(d=>d.status!=='Draft'):on;
+  const also=md.filter(d=>{if(d.status==='Deleted'||d.date===ds||!d.date||/Draft|Canceled|Expired/.test(d.status))return false;const m=ivModel(d);if(!m.bS||!m.bE)return false;const a=ivD0(day),b=new Date(a.getTime()+864e5);return m.bS<b&&m.bE>=a;});
+  const by=(a,b)=>{const x=ivModel(a).dS,y=ivModel(b).dS;return (x?x.getTime():9e15)-(y?y.getTime():9e15);};
+  return on2.sort(by).concat(also.sort(by));}
+// Day dot = color of that day's drop (status color). Selected day = white.
+function ivDotColor(dayDrops){let top=null;dayDrops.forEach(x=>{if(top===null||(STATUS_PRIO[ivPhase(x)]??-1)>(STATUS_PRIO[ivPhase(top)]??-1))top=x;});return top?ivStatus(top)[1]:null;}
+// ── Popups: Nigh Zone (with drag preview), Nigh Zone off, Nigh preview ──
+function ivZvRad(m,h){if(h>m.zone.hrs)return null;return ivZStepAt(h)||m.zone.floor;}
+function ivFmtH(h){const mm=Math.round(h*60);return Math.floor(mm/60)+'h '+String(mm%60).padStart(2,'0')+'m';}
+function ivZvBody(d,h){const m=ivModel(d);const z=m.zone;const r=ivZvRad(m,h);const PX=78/z.start;const C=150;
+  let grid='';for(let i=0;i<=300;i+=30)grid+='<line x1="'+i+'" y1="0" x2="'+i+'" y2="200" stroke="rgba(255,255,255,0.05)"/>';for(let j=0;j<=200;j+=30)grid+='<line x1="0" y1="'+j+'" x2="300" y2="'+j+'" stroke="rgba(255,255,255,0.05)"/>';
+  const map='<svg viewBox="0 0 300 200" style="width:100%;display:block;background:#0F172A;border-radius:12px">'+grid
+    +'<path d="M0 140 Q90 120 150 100 T300 60" stroke="rgba(255,255,255,0.12)" stroke-width="6" fill="none"/><path d="M60 0 L110 200" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>'
+    +'<circle cx="'+C+'" cy="100" r="'+(z.start*PX)+'" fill="none" stroke="rgba(255,255,255,0.3)" stroke-dasharray="4 4"/>'
+    +'<text x="'+C+'" y="'+(100-z.start*PX-5)+'" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle" font-family="sans-serif">'+z.start+' mi ('+z.hrs+'h left)</text>'
+    +(r!=null?'<circle cx="'+C+'" cy="100" r="'+(r*PX)+'" fill="rgba(65,239,249,0.15)" stroke="#41EFF9" stroke-width="2"/>':'')
+    +'<circle cx="'+C+'" cy="100" r="'+(z.floor*PX)+'" fill="none" stroke="rgba(65,239,249,0.5)" stroke-dasharray="2 3"/>'
+    +IV_NLOGO.replace('<svg width="9" height="13"','<svg x="'+(C-10)+'" y="70" width="20" height="30"')+'</svg>';
+  const ro=(k,v,c)=>'<div style="flex:1;background:rgba(255,255,255,0.06);border-radius:10px;padding:7px 8px"><div style="font-size:9px;color:rgba(255,255,255,0.55)">'+k+'</div><div style="font-size:14px;font-weight:800;color:'+(c||'#fff')+'">'+v+'</div></div>';
+  return '<div style="display:flex;gap:6px;margin-bottom:8px">'+ro('Broadcast ends in',ivFmtH(h),'#F87171')+ro('Zone radius',r!=null?r+' mi':'Not active')+ro('Who can reserve',r!=null?'Inside zone':'Anyone',r!=null?'#41EFF9':'#fff')+'</div>'+map
+    +'<div style="text-align:center;margin:8px 0 2px"><span style="display:inline-block;font-size:11px;font-weight:700;border-radius:14px;padding:4px 11px;'+(r!=null?'background:rgba(65,239,249,0.15);color:#41EFF9':'background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7)')+'">'+(r!=null?'Zone active · only guests within '+r+' mi can reserve':'Open to all eligible guests · zone starts in '+ivFmtH(h-z.hrs))+'</span></div>';}
+function ivZvSlide(i,v){const d=drops[i];const m=ivModel(d);S.ivZvT=m.zone.hrs+1-(+v);const el=document.getElementById('ivzvbody');if(el)el.innerHTML=ivZvBody(d,S.ivZvT);}
+function ivRenderModal(mr){const k=S.modal;
+  if(k.startsWith('ivzone-')){const i=+k.slice(7);const d=drops[i];const m=d&&ivModel(d);if(!m||!m.zone){S.modal=null;mr.innerHTML='';return;}const z=m.zone;
+    if(S.ivZvFor!==k){S.ivZvFor=k;S.ivZvT=Math.max(0,Math.min(z.hrs+1,(m.bE-ivNow())/36e5));}const h=S.ivZvT;const zs=ivZS(m);
+    mr.innerHTML='<div onclick="modal(null)" style="position:absolute;inset:0;background:rgba(10,10,20,0.6);z-index:200;display:flex;align-items:flex-end">'
+      +'<div onclick="event.stopPropagation()" style="width:100%;background:#0C0C14;color:#fff;border-radius:20px 20px 0 0;padding:14px 16px 18px;max-height:92%;overflow-y:auto">'
+      +'<div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.25);margin:0 auto 10px"></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="display:flex">'+IV_ZONE_IC+'</span><span style="font-size:16px;font-weight:800">Nigh Zone</span><span style="margin-left:auto;font-size:18px;opacity:.6;cursor:pointer" onclick="modal(null)">×</span></div>'
+      +'<div style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:10px">'+d.title+' · In the last <b>'+z.hrs+' hours</b> of the broadcast, only people inside the zone can reserve, so guests have time to arrive. The zone steps down toward the venue as the broadcast end gets closer.</div>'
+      +'<div id="ivzvbody">'+ivZvBody(d,h)+'</div>'
+      +'<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.55);margin-bottom:2px"><span>'+(z.hrs+1)+'h left</span><span>zone activates →</span><span>broadcast ends</span></div>'
+      +'<input type="range" min="0" max="'+(z.hrs+1)+'" step="0.05" value="'+(z.hrs+1-h)+'" oninput="ivZvSlide('+i+',this.value)" style="width:100%;accent-color:#41EFF9">'
+      +'<div style="font-size:10px;color:rgba(255,255,255,0.45);text-align:center">Drag to preview how the zone shrinks</div></div>'
+      +'<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:12px;padding-top:10px;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8">'
+      +'<div style="display:flex;justify-content:space-between"><span>Active window</span><b style="color:#fff">Last '+z.hrs+' hrs of broadcast</b></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Zone starts</span><b style="color:#fff">'+ivDayWord(zs)+' - '+ivTL(zs)+'</b></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff;text-align:right">'+IV_ZONE_STEPS.map(x=>(x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi').join('<br>')+'</b></div></div>'
+      +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">Nigh Zone is on for every drop, using Nigh’s standard distances. Custom zones are coming later.</div>'
+      +'</div></div>';return;}
+  if(k.startsWith('ivzoneoff-')){
+    mr.innerHTML='<div onclick="modal(null)" style="position:absolute;inset:0;background:rgba(10,10,20,0.35);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px">'
+      +'<div onclick="event.stopPropagation()" style="width:100%;max-width:300px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)">'
+      +'<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:36px;height:36px;border-radius:10px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+IV_ZONE_OFF_IC.replace('width="16" height="16"','width="20" height="20"')+'</div>'
+      +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for this drop</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.</div></div>'
+      +'<span onclick="modal(null)" style="font-size:18px;color:#9CA3AF;cursor:pointer;line-height:1">×</span></div></div></div>';return;}
+  if(k.startsWith('ivpv-')){const i=+k.slice(5);const d=drops[i];if(!d){S.modal=null;mr.innerHTML='';return;}const ph=ivPhase(d);const m=ivModel(d);const sold=d.cap&&d.res>=d.cap;
+    const chip=ph==='Live'?(sold?['SOLD OUT',STATUS_COLORS.SoldOut,'Join the waitlist']:['LIVE',STATUS_COLORS.Live,(d.cap-d.res)+' spots left']):ph==='Paused'?['PAUSED',STATUS_COLORS.Paused,'Back soon']:ph==='Scheduled'||ph==='Pending'||ph==='Draft'?['NOT VISIBLE YET','#6B7280',m.bS?'Starts '+ivDayWord(m.bS)+' '+ivTL(m.bS):'']:ph==='Canceled'?['CANCELED','#6B7280','']:['ENDED','#6B7280',''];
+    const cta=ph==='Live'?(sold?'Sold Out':'Reserve · '+fmtP(d.price)):'—';
+    const when=m.dS?ivDayWord(m.dS)+' · '+ivTL(m.dS)+(/arrival/i.test(d.timing||'')&&m.dE?' – '+ivTL(m.dE):''):'';
+    mr.innerHTML='<div onclick="modal(null)" style="position:absolute;inset:0;background:rgba(10,10,20,0.78);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px">'
+      +'<div onclick="event.stopPropagation()" style="width:270px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:12px;margin-bottom:8px"><b>Preview in Nigh</b><span onclick="modal(null)" style="cursor:pointer;font-size:18px;opacity:.7">×</span></div>'
+      +'<div style="position:relative;height:440px;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);border:4px solid #111827">'
+      +'<div style="position:absolute;top:18px;left:0;right:0;background:rgba(0,0,0,0.5);padding:7px 10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px;font-weight:800;color:#fff;letter-spacing:.05em">DROP</span><span style="width:7px;height:7px;border-radius:50%;background:'+chip[1]+'"></span><span style="font-size:10px;font-weight:800;color:#fff">'+chip[0]+'</span><span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.8)">'+chip[2]+'</span></div>'
+      +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center">'+ic(d.media==='photo'?'image':'play',24,'#fff')+'</div></div>'
+      +'<div style="position:absolute;left:0;right:0;bottom:0;padding:40px 12px 12px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.75));color:#fff"><div style="font-size:10px;opacity:.8;margin-bottom:2px">'+acct().name+'</div><div style="font-size:16px;font-weight:800">'+(d.title||'Untitled Drop')+'</div><div style="font-size:11px;opacity:.85;margin:3px 0 9px">'+when+' · '+fmtP(d.price)+'</div><div style="background:'+(ph==='Live'&&!sold?'#0E4EF5':'rgba(255,255,255,0.18)')+';text-align:center;font-size:13px;font-weight:700;padding:9px;border-radius:12px">'+cta+'</div></div>'
+      +'</div><div style="color:rgba(255,255,255,0.8);font-size:11px;line-height:1.5;margin-top:10px;text-align:center">What guests see in the Nigh app'+(ph==='Live'?' <b>right now</b>':'')+'</div></div></div>';return;}
+}
+
 function renderHome(){
   const today=S.calDay;const ds=dk(today);const isT=sameD(today,TODAY);
   const md=myDrops();
@@ -1563,7 +1739,7 @@ function renderHome(){
         return `<button onclick="S.calDay=new Date('${d.toISOString()}');render()" style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:12px;border:none;background:${sel?'#0E4EF5':'transparent'};min-width:40px">
           <span style="font-size:10px;font-weight:500;color:${sel?'rgba(255,255,255,0.7)':isTd?'#0E4EF5':'#9CA3AF'}">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]}</span>
           <span style="font-size:16px;font-weight:${sel||isTd?700:500};color:${sel?'#fff':isTd?'#0E4EF5':'#374151'}">${d.getDate()}</span>
-          ${topSt?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'#fff':dropStatusColor(topSt)}"></span>`:'<span style="width:5px;height:5px"></span>'}
+          ${topSt?`<span style="width:5px;height:5px;border-radius:50%;background:${sel?'#fff':ivDotColor(dayAll)}"></span>`:'<span style="width:5px;height:5px"></span>'}
         </button>`;}).join('')}
     </div>
   </div>
@@ -1572,155 +1748,12 @@ function renderHome(){
     const isPast=today<TODAY&&!sameD(today,TODAY);
     const isToday=sameD(today,TODAY);
 
-    /* LIVE drop for this day only */
-    let liveHtml='';
-    if(live){
-      liveHtml=`<div class="card" style="border:2px solid #22C55E;margin-bottom:10px;border-radius:14px;overflow:hidden;transform:translateZ(0)">
-        <div onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="cursor:pointer;clip-path:inset(0 round 12px 12px 0 0)">
-          <div style="height:220px;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);display:flex;align-items:center;justify-content:center;position:relative">
-            ${live.media==='video'?`<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',28)}</div>
-            <div style="position:absolute;bottom:12px;left:14px;background:rgba(0,0,0,0.5);color:#fff;font-size:11px;padding:4px 10px;border-radius:5px">0:32</div>`
-            :`<div style="color:rgba(255,255,255,0.15)">${ic('image',52)}</div>`}
-            <button onclick="event.stopPropagation();modal('share-${drops.indexOf(live)}')" style="position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);border:none;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer">${ic('share',15)}</button>
-            <div style="position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,0.58);backdrop-filter:blur(8px);padding:8px 12px;display:flex;align-items:center;gap:7px">
-              <svg width="15" height="15" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>
-              <span style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.95);letter-spacing:0.05em;margin-left:-6px;min-width:62px">DROP</span>
-              <span style="width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;margin-left:12px"></span>
-              <span style="font-size:11px;font-weight:700;color:#fff">LIVE</span>
-              <button onclick="event.stopPropagation();modal('audience-drop-${drops.indexOf(live)}')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.85);margin-left:8px;flex-shrink:0;cursor:pointer;padding:0" title="${audIc(live.audience).label}">${ic(audIc(live.audience).icon,15,'rgba(255,255,255,0.85)')}</button>
-              <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.7)">${timeRem(live)}</span>
-            </div>
-          </div>
-          <div class="cb" style="padding:10px 14px">
-            <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">${live.title}</div>
-            <div style="display:flex;gap:14px;font-size:14px;color:#374151;margin-bottom:3px">
-              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',13)} ${live.start}</span>
-              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${fmtP(live.price)}</span>
-            </div>
-            <div style="display:flex;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px;line-height:1.4">
-              <span style="flex-shrink:0;margin-top:1px">${ic('map',13)}</span>
-              <span>${fmtVenueLines(live.venue)}</span>
-            </div>
-            ${(()=>{const acc=live.partners.filter(p=>p.status==='Accepted');const awt=live.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#0E4EF5">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
-            ${live.cap===1?(()=>{
-  const sg=guests.find(g=>g.drop===live.id);
-  const st=sg?sg.tickets[0].status:'Open';
-  const stCol=st==='Checked In'?'#0D9488':st==='Reserved'?'#0284C7':st==='No-Show'?'#6B7280':'#9CA3AF';
-  if(!sg||st==='Open') return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;margin-bottom:8px"><div style="width:8px;height:8px;border-radius:50%;background:#D1D5DB"></div><span style="font-size:13px;color:#6B7280">No reservation yet — spot available</span></div>`;
-  return `<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0E4EF5,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${sg.av}</div><div><div style="font-size:13px;font-weight:600;color:#111827">${sg.name}</div><div style="font-size:11px;color:#9CA3AF">${sg.uname}</div></div></div>${bg(st,true)}</div>`;
-})():`
-<div style="margin-bottom:4px">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-    <div style="font-size:13px;font-weight:600;color:#111827">${ic('users',14)} <span style="margin-left:2px">${live.res} / ${live.cap}</span> <span style="font-weight:400;color:#6B7280;font-size:11px">spots</span></div>
-    ${live.cap===live.res?`<span style="font-size:10px;font-weight:600;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:10px">SOLD OUT</span>`:`<span style="font-size:11px;color:#6B7280">${live.cap-live.res} remaining</span>`}
-  </div>
-  <div style="display:flex;gap:1px;margin-bottom:6px">
-    <div style="height:6px;flex:${live.ci};background:#0D9488;border-radius:3px 0 0 3px"></div>
-    <div style="height:6px;flex:${live.res-live.ci-(live.ns||0)};background:#0284C7"></div>
-    <div style="height:6px;flex:${live.ns||0.001};background:#6B7280"></div>
-    <div style="height:6px;flex:${live.cap-live.res||0.001};background:#E5E7EB;border-radius:0 3px 3px 0"></div>
-  </div>
-  ${(()=>{const _its=[live.ci>0?{v:live.ci,l:'Checked In',c:'#0D9488'}:null,(live.res-live.ci-(live.ns||0))>0?{v:live.res-live.ci-(live.ns||0),l:'Reserved',c:'#0284C7'}:null,(live.ns||0)>0?{v:live.ns,l:'No-Show',c:'#6B7280'}:null,null].filter(Boolean);return`<div style="display:flex;font-size:11px;color:#6B7280;margin-top:2px">${_its.map((it,i)=>`<div style="flex:1;text-align:${i===0?'left':i===_its.length-1?'right':'center'};white-space:nowrap"><b style="color:${it.c}">${it.v}</b> ${it.l}</div>`).join('')}</div>`;})()}
-</div>
-`}
-          </div>
-        </div>
-        <div style="display:flex;border-top:1px solid #E5E7EB">
-          ${canFull('drops')?`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('edit',16)} Manage</button>
-          <button style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0E4EF5;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('pause',16)} Pause</button>`:`<button onclick="go('liveview',{drop:${drops.indexOf(live)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB">${ic('eye',16)} View</button>`}
-          <button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0D9488;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>
-        </div>
-      </div>`;
-    }
-
-    /* Scheduled drops — same layout as live card */
-    const scheduled=dd.filter(d=>d.status==='Scheduled'||d.status==='Paused');
-    const schedHtml=scheduled.map(d=>`
-      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px;border:2px solid ${dropStatusColor(d.status)};border-radius:14px;overflow:hidden;transform:translateZ(0)">
-        <div style="clip-path:inset(0 round 12px 12px 0 0)">
-        <div style="height:250px;background:linear-gradient(135deg,#1B2A4A 0%,#0E4EF5 100%);display:flex;align-items:center;justify-content:center;position:relative">
-          ${d.media==='video'?`<div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',28)}</div>`
-          :`<div style="color:rgba(255,255,255,0.15)">${ic('image',52)}</div>`}
-          <div style="position:absolute;top:0;left:0;right:0;background:rgba(0,0,0,0.58);backdrop-filter:blur(8px);padding:8px 12px;display:flex;align-items:center;gap:7px">
-            <svg width="15" height="15" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>
-            <span style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.95);letter-spacing:0.05em;margin-left:-6px">DROP</span>
-            <span style="width:7px;height:7px;border-radius:50%;background:${dropStatusColor(d.status)};flex-shrink:0;margin-left:8px"></span>
-            <span style="font-size:11px;font-weight:700;color:#fff;white-space:nowrap">${d.status.toUpperCase()}</span>
-            <button onclick="event.stopPropagation();modal('audience-drop-${drops.indexOf(d)}')" style="border:none;background:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.85);margin-left:6px;flex-shrink:0;cursor:pointer;padding:0" title="${audIc(d.audience).label}">${ic(audIc(d.audience).icon,15,'rgba(255,255,255,0.85)')}</button>
-            <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,0.7);white-space:nowrap">${timeRem(d)}</span>
-          </div>
-        </div>
-        <div class="cb" style="padding:10px 14px">
-          <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">${d.title}</div>
-          <div style="display:flex;gap:14px;font-size:14px;color:#374151;margin-bottom:3px">
-            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',13)} ${d.start}</span>
-            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${fmtP(d.price)}</span>
-          </div>
-          <div style="display:flex;gap:4px;font-size:12px;color:#6B7280;margin-bottom:4px;line-height:1.4">
-            <span style="flex-shrink:0;margin-top:1px">${ic('map',13)}</span>
-            <span>${fmtVenueLines(d.venue)}</span>
-          </div>
-          ${(()=>{const acc=d.partners.filter(p=>p.status==='Accepted');const awt=d.partners.filter(p=>p.status==='Awaiting');if(!acc.length&&!awt.length)return'';const show=acc.slice(0,2).map(p=>p.handle).join(', ')+(acc.length>2?` +${acc.length-2} more`:'');return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">${acc.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#0E4EF5">${ic('link',12)} ${show}</div>`:''}${awt.length?`<span style="font-size:10px;color:#F59E0B;background:#FFFBEB;border:1px solid #FDE68A;padding:1px 6px;border-radius:8px">${awt.length} awaiting</span>`:''}</div>`;})()}
-          <div style="font-size:11px;color:#6B7280">${d.cap-d.res} spot${d.cap-d.res===1?'':'s'} available</div>
-        </div>
-        </div>
-        <div style="display:flex;border-top:1px solid #E5E7EB">
-          ${canFull('drops')?`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('edit',16)} Edit</button>`:`<button onclick="event.stopPropagation();go('liveview',{drop:${drops.indexOf(d)}})" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#6B7280;display:flex;align-items:center;justify-content:center;gap:6px;${d.status==='Paused'?'border-right:1px solid #E5E7EB':''}">${ic('eye',16)} View</button>`}
-          ${d.status==='Paused'?`<button onclick="event.stopPropagation();go('checkin')" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:#0D9488;display:flex;align-items:center;justify-content:center;gap:6px">${ic('qr',16)} Check-In</button>`:''}
-        </div>
-      </div>
-    `).join('');
-
-    /* Ended drops — for past days, shown with clone option */
-    const ended=dd.filter(d=>d.status==='Ended'||d.status==='Canceled');
-    const endedHtml=ended.map(d=>`
-      <div class="card" onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer;margin-bottom:10px">
-        <div style="height:200px;background:linear-gradient(135deg,#4B5563 0%,#6B7280 100%);display:flex;align-items:center;justify-content:center;position:relative;opacity:0.85">
-          ${d.media==='video'?`<div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#fff">${ic('play',22)}</div>`
-          :`<div style="color:rgba(255,255,255,0.2)">${ic('image',40)}</div>`}
-          <div style="position:absolute;top:12px;left:12px">${dropBadge(d)}</div>
-        </div>
-        <div class="cb" style="padding:10px 14px">
-          <div style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px">${d.title}</div>
-          <div style="display:flex;gap:14px;font-size:14px;color:#374151;margin-bottom:3px">
-            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',13)} ${d.start}</span>
-            <span style="display:flex;align-items:center;gap:4px;font-weight:500">${fmtP(d.price)}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6B7280;margin-bottom:6px">
-            ${ic('users',13)} ${d.ci}/${d.res} checked in
-          </div>
-          ${canFull('drops')?`<button onclick="event.stopPropagation();go('create',{cloneFrom:${drops.indexOf(d)}})" style="padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #8B5CF6;background:#EDE9FE;color:#5B21B6;display:flex;align-items:center;gap:5px">${ic('copy',13)} Clone Drop</button>`:''}
-        </div>
-      </div>
-    `).join('');
-
-    /* Drafts — same card layout, dashed border, gray placeholder if no media */
-    const draftHtml=dayDrafts.length?`<div style="margin-top:12px">
-    ${dayDrafts.map(d=>{
-      const hasMedia=d.media&&d.media!=='none'&&d.media!=='';
-      return `<div style="margin-bottom:8px;border:2px dashed #D1D5DB;border-radius:14px;overflow:hidden;background:#FAFAFA">
-        <div onclick="go('liveview',{drop:${drops.indexOf(d)}})" style="cursor:pointer">
-          <div style="height:200px;background:${hasMedia?'linear-gradient(135deg,#6B7280 0%,#9CA3AF 100%)':'#E5E7EB'};display:flex;align-items:center;justify-content:center;position:relative">
-            ${hasMedia?(d.media==='video'?`<div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;backdrop-filter:blur(4px)">${ic('play',24)}</div>`:`<div style="color:rgba(255,255,255,0.15)">${ic('image',44)}</div>`)
-            :`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:#9CA3AF"><div>${ic('cam',36)}</div><div style="font-size:12px;font-weight:500">No video or image yet</div></div>`}
-            <div style="position:absolute;top:12px;left:12px">${bg('Draft')}</div>
-          </div>
-          <div class="cb" style="padding:14px 16px">
-            <div style="font-size:17px;font-weight:700;color:#6B7280;margin-bottom:5px">${d.title||'Untitled Drop'}</div>
-            ${d.start?`<div style="display:flex;gap:14px;font-size:13px;color:#9CA3AF;margin-bottom:4px">
-              <span style="display:flex;align-items:center;gap:4px;font-weight:500">${ic('clock',14)} ${d.start}</span>
-              ${d.price!==''?`<span style="display:flex;align-items:center;gap:4px;font-weight:500">${fmtP(d.price)}</span>`:''}
-            </div>`:`<div style="font-size:13px;color:#D1D5DB;margin-bottom:4px">No time set</div>`}
-            ${d.hosts&&d.hosts.length?`<div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#9CA3AF;margin-bottom:4px">
-              ${ic('user',13)} ${d.hosts.join(', ')}
-            </div>`:''}
-          </div>
-        </div>
-      </div>`;
-    }).join('')}</div>`:'';
+    /* v1 drop cards (Option I) — every drop on this day, then drops still broadcasting that day */
+    const dayCards=ivDayDrops(today,md);
+    const cardsHtml=dayCards.map(ivCard).join('');
 
     /* Empty state */
-    const hasAnything=live||scheduled.length||ended.length||dayDrafts.length;
+    const hasAnything=dayCards.length;
     let emptyHtml='';
     if(!hasAnything){
       if(isPast) emptyHtml=`<div style="text-align:center;padding:28px 16px;color:#9CA3AF"><div style="margin-bottom:6px">${ic('cal',28)}</div><div style="font-size:13px;font-weight:500">No Drop on this day</div></div>`;
@@ -1773,7 +1806,7 @@ function renderHome(){
       `:''}
     </div>`:''
 
-    return emptyHtml+liveHtml+schedHtml+endedHtml+(!dayHasActiveDrop?draftHtml:'')+huCard+huSection+createHtml;
+    return emptyHtml+cardsHtml+createHtml;
   })()}
   </div>`;
 }
@@ -6661,13 +6694,6 @@ function renderSettings(){
         <div style="position:absolute;top:3px;${niyaOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
       </div>
     </div>
-    <div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px">
-      <div style="color:#16A34A">${ic('headsupIc',16)}</div>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:#374151">Heads Up</div><div style="font-size:11px;color:#9CA3AF;margin-top:1px">Post Heads Up announcements from this account</div></div>
-      <div onclick="acct().headsUpEnabled=!headsUpOn();render()" style="width:44px;height:26px;border-radius:13px;background:${headsUpOn()?'#0E4EF5':'#D1D5DB'};cursor:pointer;position:relative;flex-shrink:0">
-        <div style="position:absolute;top:3px;${headsUpOn()?'right:3px':'left:3px'};width:20px;height:20px;border-radius:50%;background:#fff;transition:all 0.2s"></div>
-      </div>
-    </div>
     <div style="text-align:center;margin-top:14px"><button onclick="S.loginStep='welcome';S.loginPhone='';S.loginCode='';S.otpError=false;S.otpResent=false;S.scr='login';S.menuSub=null;render()" style="padding:12px 28px;border-radius:10px;font-size:13px;font-weight:600;border:none;background:none;color:#EF4444;cursor:pointer">${t('account.logout')}</button></div>
     <div style="text-align:center;margin-top:24px;font-size:10px;color:#9CA3AF">Nigh Host v1.0</div>
   </div>`;
@@ -6951,6 +6977,7 @@ function renderPrivacy(){
 // ═══ MODALS ═══
 function renderModal(){
   const mr=document.getElementById('mr');
+  if(S.modal&&/^iv(zone|zoneoff|pv)-/.test(S.modal)){ivRenderModal(mr);return;}
   if(S.handleModal){
     const a=acct();
     const hNew=S.handleNew||'';
@@ -7785,10 +7812,10 @@ const inboxItems=[
     nighDetail:{authorName:'Josh Ritzer',authorRole:'Founder & CEO',category:'From the Founder',
       description:"Hey — I wanted to take a minute to say thank you. You're one of the hosts building something real on Nigh, and I don't take that lightly. This short video is about why I started this, where we're headed, and how hosts like you are at the center of everything. I'd love your feedback — hit Send Feedback in Settings anytime."}},
   {id:'I017',type:'nigh',unread:false,avatar:'N',avatarBg:'linear-gradient(135deg,#7C3AED,#A78BFA)',
-    title:"What's New for Hosts — June Update",sub:'Heads Up, guest messaging, and more',
+    title:"What's New for Hosts — June Update",sub:'Guest messaging, venues, and more',
     time:'2 days ago',action:null,actionFn:null,mediaType:'text',critical:false,
     nighDetail:{authorName:'Josh Ritzer',authorRole:'Founder & CEO',category:'Product Updates',
-      description:"Quick update on what we shipped this month. Heads Up lets you broadcast to followers before a drop goes live. Guest messaging now supports threads so you can have real conversations. We also added venue management and sticker customization. More host tools coming in July — stay tuned."}},
+      description:"Quick update on what we shipped this month. Guest messaging now supports threads so you can have real conversations. We also added venue management and sticker customization. More host tools coming in July — stay tuned."}},
   {id:'I018',type:'nigh',unread:false,avatar:'N',avatarBg:'linear-gradient(135deg,#7C3AED,#A78BFA)',
     title:'Payout for Centro Jazz Night failed — action required',sub:'Payment issue · Card on file expired',
     time:'3 days ago',action:'Fix Payment',actionFn:"go('menu',{menuSub:'payouts'})",mediaType:'text',critical:true,
@@ -7844,7 +7871,7 @@ const personalInboxItems=[
     nighDetail:{authorName:'Josh Ritzer',authorRole:'Founder & CEO',category:'From the Founder',
       description:"I started Nigh because I believe we've lost something important — real, in-person connection. This short video is my story and why hosts like you matter so much. Whether you're throwing a birthday BBQ or a game night, you're bringing people together. That's everything. Thank you."}},
   {id:'PI016',type:'nigh',unread:false,avatar:'N',avatarBg:'linear-gradient(135deg,#7C3AED,#A78BFA)',
-    title:"What's New in Nigh — June Update",sub:'Heads Up, shared links, and more',
+    title:"What's New in Nigh — June Update",sub:'Shared links, guest threads, and more',
     time:'2 days ago',action:null,actionFn:null,mediaType:'text',critical:false,
     nighDetail:{authorName:'Josh Ritzer',authorRole:'Founder & CEO',category:'Product Updates',
       description:"Quick update for personal hosts. You can now share a link for your drops so people outside your friend list can RSVP. Guest messaging has threading now, and we added better RSVP tracking. More coming soon."}},
