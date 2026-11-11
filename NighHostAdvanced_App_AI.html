@@ -2922,7 +2922,7 @@ function renderLive(){
       return bar(
         (isLive?btn(`startEditDrop(${S.drop})`,'border:1px solid #6B7280;background:#fff;color:#6B7280',ic('edit',13)+' Edit'):'')
         +(isLive?btn(`togglePauseDrop(${S.drop})`,'border:1px solid #0E4EF5;background:#EEF2FF;color:#0E4EF5',ic('pause',13)+' Pause Drop')
-          :btn(`togglePauseDrop(${S.drop})`,'border:1px solid #bbf7d0;background:#dcfce7;color:#16A34A',ic('play',13)+' Resume Drop'))
+          :btn(`togglePauseDrop(${S.drop})`,'border:1px solid #16A34A;background:#16A34A;color:#fff',ic('play',13,'#fff')+' Resume Drop'))
         +btn(`S.cancelDropIdx=${S.drop};modal('cancelDrop')`,'border:1px solid #e5e7eb;background:#f1f5f9;color:#6B7280',ic('x',13)+' Cancel')
       );
     }
