@@ -365,7 +365,7 @@ function calHdr(){var ws=weekDays();
 function goToday(){S.day=d0(NOW);S.weekStart=addD(d0(NOW),-3);S.pv=null;render();}
 function dayBelowH(w){var sel=same(w,S.day);var ds=DROPS.filter(function(d){return isDrop(d,w);}).sort(function(a,b){return a.dS-b.dS;});
  if(!ds.length)return '<span style="height:12px"></span>';
- return '<span style="display:flex;gap:3px;height:12px;align-items:center">'+ds.slice(0,3).map(function(d){return '<span style="width:7px;height:7px;border-radius:50%;background:'+iStatus(d)[1]+';'+(sel?'box-shadow:0 0 0 1.5px #fff':'')+'"></span>';}).join('')+(ds.length>3?'<span style="font-size:9px;font-weight:700;color:'+(sel?'#fff':'#6B7280')+'">+'+(ds.length-3)+'</span>':'')+'</span>';}
+ return '<span style="display:flex;gap:3px;height:12px;align-items:center">'+ds.slice(0,3).map(function(d){return '<span style="width:7px;height:7px;border-radius:50%;background:'+(sel?'#fff':iStatus(d)[1])+'"></span>';}).join('')+(ds.length>3?'<span style="font-size:9px;font-weight:700;color:'+(sel?'#fff':'#6B7280')+'">+'+(ds.length-3)+'</span>':'')+'</span>';}
 function dayIdx(d,day){var a=Math.round((d0(day)-d0(d.dS))/864e5)+1,n=Math.round((d0(d.dE)-d0(d.dS))/864e5)+1;return {i:a,n:n};}
 function dateTile(d,day,isDropDay){
  if(isDropDay){var x=dayIdx(d,day);var past=NOW>d.dE;var top=x.n>1?'DAY '+x.i+'/'+x.n:(same(day,NOW)?'TODAY':WD[day.getDay()].toUpperCase());
