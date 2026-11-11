@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh — Face Check-In (Guest + Host)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#E9ECF1;color:#111827;padding:22px 20px 40px}
+h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.sub{font-size:13px;color:#6B7280;margin-top:3px;max-width:900px;line-height:1.5}
+.wrap{display:flex;gap:26px;align-items:flex-start;margin-top:18px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:.08em;color:#6B7280;text-transform:uppercase}
+.phone{width:375px;height:760px;border-radius:40px;border:10px solid #111827;overflow:hidden;position:relative;box-shadow:0 18px 40px rgba(17,24,39,.22);display:flex;flex-direction:column}
+.g{background:#0E0E12;color:#F5F5F7}
+.h{background:#F9FAFB;color:#111827}
+.sbar{height:30px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:12px;font-weight:700;flex-shrink:0}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 18px}
+.btn{border:none;border-radius:12px;padding:13px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%}
+.bp{background:#0E4EF5;color:#fff}.bt{background:#0D9488;color:#fff}.bg{background:rgba(255,255,255,.08);color:#fff}.bl{background:#fff;color:#374151;border:1px solid #E5E7EB}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:375px}
+.chip{border:1px solid #CBD5E1;background:#fff;border-radius:16px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:#374151}
+.chip.on{background:#0E4EF5;border-color:#0E4EF5;color:#fff}
+.notes{flex:1;min-width:300px;max-width:430px;background:#fff;border-radius:16px;padding:18px 20px;border:1px solid #E2E8F0;font-size:13px;line-height:1.55;color:#374151}
+.notes h3{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6B7280;margin:16px 0 6px}
+.notes h3:first-child{margin-top:0}
+.notes ul{padding-left:18px}.notes li{margin-bottom:4px}
+.notes b{color:#111827}
+@keyframes scan{0%{top:12%}50%{top:82%}100%{top:12%}}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<h1>Nigh — Face Check-In (prototype)</h1>
+<div class="sub">Opt-in facial authentication at check-in. The guest sets it up once in the Nigh app and earns a Face Check-In badge; at the door a host team member scans their face in the Nigh Host app. QR and manual check-in stay as fallbacks. The two phones are linked — check in Maya on the host phone and her ticket updates on the guest phone.</div>
+<div class="wrap">
+  <div class="col"><div class="lbl">Guest · Nigh app (Maya)</div><div class="phone g" id="gp"></div>
+    <div class="ctl" id="gctl"></div></div>
+  <div class="col"><div class="lbl">Host · Nigh Host app (door staff)</div><div class="phone h" id="hp"></div>
+    <div class="ctl" id="hctl"></div></div>
+  <div class="notes" id="notes"></div>
+</div>
+<script>
+// ── Icons
+const I={
+ check:'<path d="M20 6 9 17l-5-5"/>',face:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>',
+ qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 19h2M19 14h2"/>',
+ search:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.6" y2="16.6"/>',left:'<path d="M15 18l-6-6 6-6"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+ alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+ users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+ trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>',chev:'<path d="M9 18l6-6-6-6"/>',ticket:'<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/>'
+};
+const ic=(n,s,c)=>`<svg width="${s||18}" height="${s||18}" viewBox="0 0 24 24" fill="none" stroke="${c||'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">${I[n]}</svg>`;
+const FACEBADGE=(sz)=>`<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(65,239,249,.14);border:1px solid rgba(65,239,249,.45);color:#41EFF9;font-size:${sz||11}px;font-weight:700;padding:3px 8px;border-radius:999px">${ic('face',(sz||11)+2,'#41EFF9')} Face Check-In ready</span>`;
+const DROP={title:'Friday Night Jazz & Tapas',when:'Tonight · 7:00 – 10:00 PM',venue:'Centro Boulder',addr:'950 Pearl St, Boulder, CO',age:'21+'};
+// ── Shared state
+const G={scr:'ticket',enrolled:false,verifiedId:true,consent:false,live:0,qr:false,useVerif:true};
+const GUESTS=[
+ {id:'maya',name:'Maya Torres',handle:'@mayat',av:'MT',col:'#7C3AED',tickets:2,face:false,status:'Reserved',purchaser:true},
+ {id:'sarah',name:'Sarah Mitchell',handle:'@sarahm',av:'SM',col:'#0E4EF5',tickets:1,face:true,status:'Reserved'},
+ {id:'james',name:'James Kim',handle:'@jamesk',av:'JK',col:'#0891B2',tickets:1,face:false,status:'Reserved'},
+ {id:'alex',name:'Alex Rivera',handle:'@alexr',av:'AR',col:'#EA580C',tickets:2,face:true,status:'Checked In',ci:2,method:'Face',time:'6:58 PM',by:'Josh R.'},
+ {id:'riley',name:'Riley Chen',handle:'@rileyc',av:'RC',col:'#16A34A',tickets:1,face:false,status:'Checked In',ci:1,method:'QR',time:'7:01 PM',by:'Maria S.'}
+];
+const H={mode:'face',scan:null,who:null,q:'',confirm:null,toast:null,count:2};
+const maya=()=>GUESTS.find(g=>g.id==='maya');
+function nowT(){return '7:'+String(4+GUESTS.filter(g=>g.status==='Checked In').length).padStart(2,'0')+' PM';}
+// ══ GUEST PHONE ═══════════════════════════════════════════
+function gHdr(title,back){return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0 14px">${back?`<button onclick="${back}" style="background:none;border:none;color:#fff;cursor:pointer;display:flex">${ic('left',22)}</button>`:''}<div style="font-size:18px;font-weight:800">${title}</div></div>`;}
+function gTicket(){const m=maya();const done=m.status==='Checked In';
+ let h=gHdr('Your ticket');
+ h+=`<div style="border-radius:18px;overflow:hidden;background:#16161C;border:1px solid rgba(255,255,255,.08)">
+  <div style="height:120px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);position:relative;display:flex;align-items:flex-end;padding:12px 14px">
+   <div><div style="font-size:11px;font-weight:800;letter-spacing:.06em;opacity:.8">CENTRO BOULDER · ${DROP.age}</div><div style="font-size:18px;font-weight:800">${DROP.title}</div></div></div>
+  <div style="padding:12px 14px;font-size:13px;color:rgba(255,255,255,.75);display:flex;flex-direction:column;gap:6px">
+   <div style="display:flex;gap:8px;align-items:center">${ic('clock',14)} ${DROP.when}</div>
+   <div style="display:flex;gap:8px;align-items:center">${ic('map',14)} ${DROP.venue}, ${DROP.addr}</div>
+   <div style="display:flex;gap:8px;align-items:center">${ic('ticket',14)} 2 tickets · you + 1</div></div></div>`;
+ if(done){
+  h+=`<div style="margin-top:14px;border-radius:18px;background:rgba(13,148,136,.16);border:1px solid rgba(13,148,136,.5);padding:20px 16px;text-align:center;animation:pop .35s ease">
+   <div style="width:58px;height:58px;border-radius:50%;background:#0D9488;margin:0 auto 10px;display:flex;align-items:center;justify-content:center">${ic('check',30,'#fff')}</div>
+   <div style="font-size:18px;font-weight:800">You're checked in</div>
+   <div style="font-size:13px;color:rgba(255,255,255,.7);margin-top:4px">${m.ci} of ${m.tickets} · ${m.time} · by face</div>
+   <div style="font-size:11px;color:#5EEAD4;margin-top:8px;font-weight:700">VERIFIED AT VENUE</div></div>`;
+  return h;}
+ if(G.enrolled){
+  h+=`<div style="margin-top:14px;border-radius:18px;background:#16161C;border:1px solid rgba(65,239,249,.35);padding:16px;text-align:center">
+   <div style="width:64px;height:64px;border-radius:50%;margin:0 auto 10px;border:2px solid #41EFF9;display:flex;align-items:center;justify-content:center;animation:pulse 2s infinite">${ic('face',32,'#41EFF9')}</div>
+   <div style="font-size:16px;font-weight:800">Face Check-In ready</div>
+   <div style="font-size:13px;color:rgba(255,255,255,.65);margin-top:4px;line-height:1.45">At the door, just look at the host's camera. No phone needed.</div>
+   <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:8px">${DROP.age} drop — bring your ID; staff will still check it.</div>
+   <button class="btn bg" style="margin-top:12px" onclick="G.qr=!G.qr;render()">${G.qr?'Hide QR':'Show QR instead'}</button>
+   ${G.qr?qrBox():''}</div>`;
+ }else{
+  h+=`<div style="margin-top:14px;border-radius:18px;background:linear-gradient(135deg,rgba(14,78,245,.25),rgba(65,239,249,.12));border:1px solid rgba(65,239,249,.35);padding:16px">
+   <div style="display:flex;gap:12px;align-items:flex-start"><div style="width:42px;height:42px;border-radius:12px;background:rgba(65,239,249,.15);display:flex;align-items:center;justify-content:center">${ic('face',22,'#41EFF9')}</div>
+   <div style="flex:1"><div style="font-size:15px;font-weight:800">Skip the line with Face Check-In</div><div style="font-size:12.5px;color:rgba(255,255,255,.7);margin-top:3px;line-height:1.45">Set it up once (about 30 seconds) and check in at any Nigh drop by just looking at the host's camera. Optional.</div></div></div>
+   <button class="btn bp" style="margin-top:12px" onclick="G.scr='intro';render()">Set up Face Check-In</button></div>
+   <div style="margin-top:14px;text-align:center"><div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:8px">Or show this QR at the door</div>${qrBox()}</div>`;}
+ return h;}
+function qrBox(){let cells='';const seed=[1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1,1,1,0,0,1,0,1];for(let i=0;i<81;i++){const on=(seed[i%25]+i%7)%2;cells+=`<rect x="${(i%9)*10}" y="${Math.floor(i/9)*10}" width="10" height="10" fill="${on?'#111':'#fff'}"/>`;}
+ return `<div style="background:#fff;border-radius:14px;padding:12px;display:inline-block;margin-top:10px"><svg width="132" height="132" viewBox="0 0 90 90">${cells}<rect x="0" y="0" width="30" height="30" fill="none" stroke="#111" stroke-width="6"/><rect x="60" y="0" width="30" height="30" fill="none" stroke="#111" stroke-width="6"/><rect x="0" y="60" width="30" height="30" fill="none" stroke="#111" stroke-width="6"/></svg></div>`;}
+function gIntro(){return gHdr('Face Check-In',"G.scr='ticket';render()")+`
+ <div style="text-align:center;padding:10px 0 18px"><div style="width:96px;height:96px;border-radius:50%;margin:0 auto;border:2px solid #41EFF9;display:flex;align-items:center;justify-content:center">${ic('face',46,'#41EFF9')}</div></div>
+ ${[['face','Your face is your ticket','Check in at any Nigh drop by looking at the host’s camera.'],['lock','Private by design','We save a face template (a set of numbers), not your photo. It’s only matched against the guest list of drops you hold tickets for.'],['shield','You’re in control','Optional. QR still works. Turn it off and delete your face data anytime in Settings.']].map(r=>`<div style="display:flex;gap:12px;padding:10px 0"><div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0">${ic(r[0],18,'#41EFF9')}</div><div><div style="font-size:14px;font-weight:700">${r[1]}</div><div style="font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.45;margin-top:2px">${r[2]}</div></div></div>`).join('')}
+ <button class="btn bp" style="margin-top:14px" onclick="G.scr='consent';render()">Get started</button>
+ <button class="btn bg" style="margin-top:8px" onclick="G.scr='ticket';render()">Not now</button>`;}
+function gConsent(){return gHdr('Consent',"G.scr='intro';render()")+`
+ <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.55;background:#16161C;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px">
+ <b style="color:#fff">What you’re agreeing to</b><br>
+ Nigh will create a face template from a live selfie and use it only to check you in at Nigh drops you hold a ticket for. Hosts never get your template. Matching happens on the check-in device against that drop’s guest list only. We keep your template until you turn Face Check-In off, or after 12 months without use, then delete it.</div>
+ ${G.verifiedId?`<div style="margin-top:12px;font-size:12px;font-weight:800;letter-spacing:.06em;color:rgba(255,255,255,.5)">YOUR SELFIE</div>
+ ${[[true,'Use my identity-verification selfie','You verified your ID on Oct 2 — no new photo needed. We still do a quick live check.'],[false,'Take a new selfie','About 30 seconds.']].map(o=>`<div onclick="G.useVerif=${o[0]};render()" style="cursor:pointer;margin-top:8px;padding:12px;border-radius:12px;border:1.5px solid ${G.useVerif===o[0]?'#0E4EF5':'rgba(255,255,255,.12)'};background:${G.useVerif===o[0]?'rgba(14,78,245,.12)':'transparent'}"><div style="font-size:14px;font-weight:700">${o[1]}</div><div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px">${o[2]}</div></div>`).join('')}`:''}
+ <label style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;color:rgba(255,255,255,.85);cursor:pointer"><input type="checkbox" ${G.consent?'checked':''} onchange="G.consent=this.checked;render()" style="margin-top:3px;width:18px;height:18px;accent-color:#0E4EF5"> I agree to Nigh using my face template for check-in as described in the Biometric Privacy Notice.</label>
+ <button class="btn bp" style="margin-top:16px;opacity:${G.consent?1:.4}" ${G.consent?'':'disabled'} onclick="G.scr='capture';G.live=0;liveRun();render()">Continue</button>`;}
+const LIVE=['Center your face in the circle','Turn slightly left','Turn slightly right','Blink','Hold still…'];
+let liveT=null;
+function liveRun(){clearTimeout(liveT);liveT=setTimeout(function(){if(G.scr!=='capture')return;G.live++;if(G.live>=LIVE.length){G.enrolled=true;maya().face=true;G.scr='done';render();return;}render();liveRun();},950);}
+function gCapture(){const pct=Math.round(G.live/LIVE.length*100);return gHdr('Live selfie',"clearTimeout(liveT);G.scr='consent';render()")+`
+ <div style="position:relative;width:260px;height:320px;margin:10px auto 0;border-radius:140px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#2a2f3a,#0b0d12)">
+  <svg viewBox="0 0 100 120" width="260" height="320" style="position:absolute;inset:0;opacity:.55"><ellipse cx="50" cy="48" rx="22" ry="28" fill="#3b4250"/><path d="M14 120c4-22 18-32 36-32s32 10 36 32z" fill="#3b4250"/></svg>
+  <div style="position:absolute;left:8%;right:8%;height:2px;background:#41EFF9;box-shadow:0 0 12px #41EFF9;animation:scan 1.8s ease-in-out infinite"></div></div>
+ <svg width="300" height="16" style="display:block;margin:14px auto 0"><rect x="0" y="5" width="300" height="6" rx="3" fill="rgba(255,255,255,.12)"/><rect x="0" y="5" width="${3*pct}" height="6" rx="3" fill="#41EFF9"/></svg>
+ <div style="text-align:center;font-size:17px;font-weight:800;margin-top:12px">${LIVE[Math.min(G.live,LIVE.length-1)]}</div>
+ <div style="text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin-top:6px">${G.useVerif&&G.verifiedId?'Matching to your verification selfie · liveness check':'Liveness check · good light helps'}</div>`;}
+function gDone(){return `<div style="text-align:center;padding-top:60px;animation:pop .35s ease">
+ <div style="width:110px;height:110px;border-radius:50%;margin:0 auto;background:rgba(65,239,249,.12);border:2px solid #41EFF9;display:flex;align-items:center;justify-content:center">${ic('face',52,'#41EFF9')}</div>
+ <div style="font-size:22px;font-weight:800;margin-top:18px">You’re set</div>
+ <div style="font-size:13.5px;color:rgba(255,255,255,.7);margin:8px 18px 0;line-height:1.5">Face Check-In is ready for every Nigh drop. The badge is now on your profile.</div>
+ <div style="margin-top:16px">${FACEBADGE(13)}</div>
+ <button class="btn bp" style="margin-top:28px" onclick="G.scr='ticket';render()">Back to my ticket</button>
+ <button class="btn bg" style="margin-top:8px" onclick="G.scr='profile';render()">View my profile</button></div>`;}
+function gProfile(){return gHdr('Profile',"G.scr='ticket';render()")+`
+ <div style="text-align:center;padding:8px 0 14px"><div style="width:84px;height:84px;border-radius:50%;background:#7C3AED;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800">MT</div>
+ <div style="font-size:20px;font-weight:800;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px">Maya Torres <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0E4EF5"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+ <div style="font-size:13px;color:rgba(255,255,255,.55)">@mayat · Boulder, CO</div>
+ <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">${G.enrolled?FACEBADGE(12):'<span style="font-size:12px;color:rgba(255,255,255,.45)">No Face Check-In yet</span>'}</div></div>
+ <div style="background:#16161C;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;margin-top:6px">
+  <div onclick="G.scr='manage';render()" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px"><span style="color:#41EFF9">${ic('face',18,'#41EFF9')}</span><div style="flex:1"><div style="font-size:14px;font-weight:700">Face Check-In</div><div style="font-size:12px;color:rgba(255,255,255,.55)">${G.enrolled?'On · set up Nov 11':'Off'}</div></div>${ic('chev',16,'rgba(255,255,255,.4)')}</div></div>
+ <div style="font-size:11.5px;color:rgba(255,255,255,.45);margin-top:10px;line-height:1.5">The badge shows you completed Face Check-In setup. It does not show your face data to anyone.</div>`;}
+function gManage(){return gHdr('Face Check-In',"G.scr='profile';render()")+`
+ <div style="background:#16161C;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.55">
+ <div style="display:flex;justify-content:space-between"><span>Status</span><b style="color:#fff">${G.enrolled?'On':'Off'}</b></div>
+ <div style="display:flex;justify-content:space-between;margin-top:6px"><span>Used at</span><b style="color:#fff">${maya().status==='Checked In'?'1 drop':'0 drops'}</b></div>
+ <div style="display:flex;justify-content:space-between;margin-top:6px"><span>Auto-delete</span><b style="color:#fff">After 12 months unused</b></div></div>
+ ${G.enrolled?`<button class="btn" style="margin-top:14px;background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.35);display:flex;align-items:center;justify-content:center;gap:8px" onclick="G.enrolled=false;maya().face=false;G.consent=false;G.scr='profile';render()">${ic('trash',16,'#F87171')} Turn off and delete my face data</button>
+ <div style="font-size:11.5px;color:rgba(255,255,255,.45);margin-top:8px">Your template is deleted right away. The badge is removed. You can set it up again anytime.</div>`:`<button class="btn bp" style="margin-top:14px" onclick="G.scr='intro';render()">Set up Face Check-In</button>`}`;}
+function renderG(){const m={ticket:gTicket,intro:gIntro,consent:gConsent,capture:gCapture,done:gDone,profile:gProfile,manage:gManage}[G.scr]||gTicket;
+ document.getElementById('gp').innerHTML=`<div class="sbar"><span>7:03</span><span>●●●</span></div><div class="scroll">${m()}</div>`;
+ document.getElementById('gctl').innerHTML=[['ticket','Ticket'],['profile','Profile'],['manage','Settings']].map(t=>`<button class="chip${G.scr===t[0]?' on':''}" onclick="G.scr='${t[0]}';render()">${t[1]}</button>`).join('')+`<button class="chip" onclick="resetAll()">Reset demo</button>`;}
+// ══ HOST PHONE ════════════════════════════════════════════
+function hHdr(){const ci=GUESTS.reduce((s,g)=>s+(g.ci||0),0),tot=GUESTS.reduce((s,g)=>s+g.tickets,0);
+ return `<div style="background:#fff;border-bottom:1px solid #E5E7EB;padding:6px 16px 10px;margin:0 -16px">
+  <div style="display:flex;align-items:center;gap:10px"><span style="color:#374151">${ic('left',20)}</span><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">Check-In</div><div style="font-size:11.5px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${DROP.title} · ${DROP.age}</div></div><div style="text-align:right"><div style="font-size:16px;font-weight:800;color:#0D9488">${ci}/${tot}</div><div style="font-size:10px;color:#6B7280">checked in</div></div></div>
+  <div style="display:flex;background:#F3F4F6;border-radius:10px;padding:3px;margin-top:10px">${[['face','Face'],['qr','QR'],['manual','Manual']].map(t=>`<button onclick="H.mode='${t[0]}';H.scan=null;H.confirm=null;render()" style="flex:1;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;padding:7px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;background:${H.mode===t[0]?'#fff':'transparent'};color:${H.mode===t[0]?'#111827':'#6B7280'};box-shadow:${H.mode===t[0]?'0 1px 2px rgba(0,0,0,.12)':'none'}">${ic(t[0]==='manual'?'search':t[0],15)} ${t[1]}</button>`).join('')}</div></div>`;}
+function viewfinder(kind){const sq=kind==='qr';return `<div style="position:relative;height:300px;margin:12px -4px 0;border-radius:18px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#2b313d,#0b0d12)">
+ ${sq?'':`<svg viewBox="0 0 100 120" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;opacity:${H.scan?'.6':'.25'}"><ellipse cx="50" cy="46" rx="18" ry="23" fill="#4b5363"/><path d="M18 120c3-20 15-30 32-30s29 10 32 30z" fill="#4b5363"/></svg>`}
+ <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:${sq?190:170}px;height:${sq?190:220}px;border-radius:${sq?'18px':'50%'};border:3px solid ${H.scan==='match'?'#22C55E':H.scan==='nomatch'||H.scan==='notenrolled'?'#F59E0B':'rgba(255,255,255,.85)'}"></div>
+ ${H.scan==='scanning'?'<div style="position:absolute;left:22%;right:22%;height:2px;background:#41EFF9;box-shadow:0 0 12px #41EFF9;animation:scan 1.2s ease-in-out infinite"></div>':''}
+ <div style="position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:12.5px;font-weight:700;color:#fff">${H.scan==='scanning'?'Matching against tonight’s guest list…':sq?'Point at the guest’s QR code':'Point at the guest’s face'}</div>
+ <div style="position:absolute;top:10px;left:12px;font-size:10.5px;font-weight:700;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:5px">${ic('lock',12,'rgba(255,255,255,.7)')} On-device · guest list only</div></div>`;}
+function av(g,s){return `<div style="width:${s}px;height:${s}px;border-radius:50%;background:${g.col};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:${Math.round(s/2.8)}px;flex-shrink:0">${g.av}</div>`;}
+function matchCard(g,via){const left=g.tickets-(g.ci||0);if(H.count>left)H.count=left;
+ if(g.status==='Checked In'&&!left)return `<div style="margin-top:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;padding:14px;display:flex;gap:10px;align-items:center">${av(g,44)}<div style="flex:1"><div style="font-weight:800">${g.name}</div><div style="font-size:12px;color:#92400E">Already checked in · ${g.time} by ${g.by} (${g.method})</div></div></div>`;
+ return `<div style="margin-top:12px;background:#fff;border:1.5px solid #22C55E;border-radius:16px;padding:14px;animation:pop .25s ease">
+  <div style="display:flex;gap:12px;align-items:center">${av(g,52)}<div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:800">${g.name}</div><div style="font-size:12px;color:#6B7280">${g.handle} · ${g.tickets} ticket${g.tickets>1?'s':''}${g.purchaser?' · purchaser':''}</div>
+  <div style="font-size:11px;font-weight:700;color:#16A34A;margin-top:3px;display:flex;align-items:center;gap:4px">${ic(via==='Face'?'face':via==='QR'?'qr':'search',12,'#16A34A')} ${via==='Face'?'Face match · 99.6%':via==='QR'?'QR valid':'Found on guest list'}</div></div></div>
+  <div style="margin-top:12px;background:#FEF3C7;border-radius:10px;padding:9px 11px;font-size:12px;color:#92400E;display:flex;gap:8px;align-items:center">${ic('alert',15,'#D97706')} <span><b>${DROP.age} drop — check ID</b> before checking in.</span></div>
+  ${left>1?`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px"><span style="font-size:13px;font-weight:600">Checking in</span><div style="display:flex;align-items:center;gap:10px"><button class="chip" onclick="H.count=Math.max(1,H.count-1);render()">−</button><b>${H.count} of ${left}</b><button class="chip" onclick="H.count=Math.min(${left},H.count+1);render()">+</button></div></div><div style="font-size:11px;color:#6B7280;margin-top:4px">Count the people with them now. Anyone else can check in later with their own face or QR.</div>`:''}
+  <button class="btn bt" style="margin-top:12px" onclick="doCheckIn('${g.id}','${via}')">${ic('check',16,'#fff').replace('style="','style="vertical-align:-3px;margin-right:6px;')}Check in ${left>1?H.count:''}</button>
+  <button class="btn bl" style="margin-top:8px" onclick="H.scan=null;H.confirm=null;render()">${via==='Face'?'Not them — scan again':'Cancel'}</button></div>`;}
+function hFace(){let h=viewfinder('face');
+ if(H.scan==='match')h+=matchCard(GUESTS.find(g=>g.id===H.who),'Face');
+ else if(H.scan==='notenrolled'||H.scan==='nomatch')h+=`<div style="margin-top:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;padding:14px">
+  <div style="font-weight:800;color:#92400E">${H.scan==='nomatch'?'No match on this guest list':'No match'}</div>
+  <div style="font-size:12.5px;color:#92400E;margin-top:3px;line-height:1.45">${H.scan==='nomatch'?'They may not have a ticket for this drop, or haven’t set up Face Check-In.':'This guest hasn’t set up Face Check-In.'} Use their QR or find them by name.</div>
+  <div style="display:flex;gap:8px;margin-top:10px"><button class="btn bl" onclick="H.mode='qr';H.scan=null;render()">Scan QR</button><button class="btn bl" onclick="H.mode='manual';H.scan=null;render()">Find by name</button></div></div>`;
+ else h+=`<div style="margin-top:12px;font-size:12px;color:#6B7280;text-align:center;line-height:1.5">Only guests who set up Face Check-In and hold a ticket for this drop can match. Use the buttons under this phone to simulate who walks up.</div>`;
+ return h;}
+function hQR(){let h=viewfinder('qr');if(H.scan==='match')h+=matchCard(GUESTS.find(g=>g.id===H.who),'QR');else h+=`<div style="margin-top:12px;font-size:12px;color:#6B7280;text-align:center">Mutual QR scan · the existing fallback.</div>`;return h;}
+function hManual(){if(H.confirm)return matchCard(GUESTS.find(g=>g.id===H.confirm),'Manual');
+ const q=H.q.toLowerCase();const list=GUESTS.filter(g=>!q||g.name.toLowerCase().includes(q)||g.handle.includes(q));
+ return `<div style="position:relative;margin-top:12px"><span style="position:absolute;left:12px;top:11px;color:#9CA3AF">${ic('search',16)}</span><input value="${H.q}" oninput="H.q=this.value;renderH(true)" placeholder="Search name or @handle" style="width:100%;padding:11px 12px 11px 36px;border-radius:12px;border:1px solid #E5E7EB;font-size:14px;font-family:inherit;outline:none"></div>
+ <div style="margin-top:10px;background:#fff;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden">${list.map(g=>guestRow(g,true)).join('')}</div>`;}
+function guestRow(g,tap){const done=g.status==='Checked In';return `<div ${tap&&!done?`onclick="H.confirm='${g.id}';H.count=${g.tickets-(g.ci||0)};render()"`:''} style="display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #F3F4F6;cursor:${tap&&!done?'pointer':'default'}">${av(g,36)}<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px">${g.name}${g.face?`<span title="Face Check-In ready" style="color:#0891B2;display:flex">${ic('face',14,'#0891B2')}</span>`:''}</div><div style="font-size:11.5px;color:#6B7280">${g.handle} · ${g.tickets} ticket${g.tickets>1?'s':''}</div></div>
+ <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:${done?'#CCFBF1':'#E0F2FE'};color:${done?'#0F766E':'#0369A1'}">${done?`In ${g.ci}/${g.tickets} · ${g.method}`:'Reserved'}</span></div>`;}
+function renderH(keepFocus){const body=H.mode==='face'?hFace():H.mode==='qr'?hQR():hManual();
+ const recent=GUESTS.filter(g=>g.status==='Checked In');
+ document.getElementById('hp').innerHTML=`<div class="sbar" style="background:#fff"><span>7:03</span><span>●●●</span></div><div class="scroll">${hHdr()}${body}
+  ${H.mode!=='manual'?`<div style="font-size:11px;font-weight:800;letter-spacing:.06em;color:#6B7280;margin:18px 0 6px">CHECKED IN</div><div style="background:#fff;border:1px solid #E5E7EB;border-radius:14px;overflow:hidden">${recent.map(g=>guestRow(g,false)).join('')}</div>`:''}</div>
+  ${H.toast?`<div style="position:absolute;left:16px;right:16px;bottom:20px;background:#111827;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center;animation:pop .2s ease">${ic('check',16,'#22C55E')} ${H.toast}</div>`:''}`;
+ if(keepFocus){const i=document.querySelector('#hp input');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);}}
+ document.getElementById('hctl').innerHTML='<div style="width:100%;text-align:center;font-size:11px;font-weight:700;color:#6B7280;margin-bottom:2px">'+(H.mode==='face'?'Who walks up to the camera?':H.mode==='qr'?'Whose QR is scanned?':'Manual: tap a guest on the phone')+'</div>'
+  +(H.mode==='manual'?'':(H.mode==='face'?[['maya','Maya (guest phone)'],['sarah','Sarah · enrolled'],['james','James · not enrolled'],['alex','Alex · already in'],['nobody','Someone without a ticket']]:[['maya','Maya'],['james','James'],['sarah','Sarah']]).map(b=>`<button class="chip" onclick="simulate('${b[0]}')">${b[1]}</button>`).join(''));}
+function simulate(id){H.scan='scanning';H.who=null;H.confirm=null;render();
+ setTimeout(function(){const g=GUESTS.find(x=>x.id===id);
+  if(H.mode==='qr'){H.scan='match';H.who=id;H.count=g.tickets-(g.ci||0);render();return;}
+  if(!g)H.scan='nomatch';else if(!g.face)H.scan='notenrolled';else{H.scan='match';H.who=id;H.count=g.tickets-(g.ci||0);}
+  render();},1200);}
+function doCheckIn(id,via){const g=GUESTS.find(x=>x.id===id);g.ci=(g.ci||0)+H.count;g.status='Checked In';g.method=via;g.time=nowT();g.by='You';
+ H.toast=`${g.name} checked in (${H.count}) · ${via==='Face'?'face match':via}`;H.scan=null;H.confirm=null;H.q='';render();
+ setTimeout(function(){H.toast=null;render();},2200);}
+function resetAll(){location.reload();}
+// ══ NOTES ══
+function renderNotes(){document.getElementById('notes').innerHTML=`
+ <h3>How it works</h3><ul>
+ <li><b>Opt-in.</b> Guests set up Face Check-In once in the Nigh app (ticket card or Profile › Face Check-In): intro → consent → live selfie with a liveness check.</li>
+ <li><b>Badge.</b> Finishing setup adds a <b>Face Check-In ready</b> badge to the guest’s Nigh profile. It shows setup is complete — never any face data.</li>
+ <li><b>Reuse ID verification.</b> If the guest already verified their ID, they can reuse that selfie (still with a live check), so the face is tied to a verified identity.</li>
+ <li><b>Host team member scans.</b> Only a host app team member with Check-In permission scans faces, on the Check-In screen (Face · QR · Manual).</li>
+ <li><b>Staff confirm every check-in.</b> A match shows the guest’s name, photo initials, ticket count and an ID reminder on 18+/21+ drops; nothing is checked in until staff tap Check in. “Not them” rescans.</li>
+ <li><b>Groups.</b> The purchaser’s match can check in their party; staff set the count. Others can check in later by face, QR or name.</li>
+ <li><b>Fallbacks.</b> No match or not enrolled → QR or find by name. Existing QR and manual flows are unchanged.</li></ul>
+ <h3>Privacy rules</h3><ul>
+ <li>Stores a face template, not a photo. Hosts never receive it.</li>
+ <li>Matches only against guests holding tickets for that drop, on the check-in device.</li>
+ <li>No match for anyone who hasn’t opted in; no live video is recorded.</li>
+ <li>Delete anytime in Settings (instant, badge removed); auto-delete after 12 months unused.</li>
+ <li>Written consent before capture (Illinois BIPA, Texas, Washington and similar laws). Legal to review the notice.</li></ul>
+ <h3>Records</h3><ul>
+ <li>Face check-ins are <b>Verified at venue</b> (the top attendance tier) and log method = face, team member, device and time.</li>
+ <li>Guest list shows a face icon next to guests who are Face Check-In ready.</li></ul>
+ <h3>Open questions</h3><ul>
+ <li>Guests aged 13–17: allow Face Check-In, or adults only?</li>
+ <li>Template retention: 12 months unused — OK?</li>
+ <li>Should Support be able to turn Face Check-In on/off per host account (like Nigh Zone)?</li></ul>
+ <h3>Try it</h3><ul>
+ <li>Guest phone: Set up Face Check-In → watch the badge appear (Profile).</li>
+ <li>Host phone: tap “Maya (guest phone)” under the host phone — before setup she’s “not enrolled”; after setup she matches and her ticket flips to checked in.</li>
+ <li>Try James (not enrolled), Alex (already in) and someone without a ticket.</li></ul>`;}
+function render(){renderG();renderH();}
+renderNotes();render();
+</script>
+</body>
+</html>
