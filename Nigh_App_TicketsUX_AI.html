@@ -43,6 +43,9 @@ input:focus,textarea:focus{outline:none}
 <body>
 <div id="app"><div id="scr"></div><div class="tb" id="tb"></div><div id="mr" style="position:absolute;inset:0;z-index:500;pointer-events:none"></div></div>
 <script>
+// v1: attribution is totals only for users (Community Impact). Listing people who joined from your invite on the Friends page is a possible future addition — off for now.
+const SHOW_INVITE_JOINS=false;
+
 let S={scr:'feed',drop:0,orderQty:1,confirmNew:false,ticketId:null,menuSub:null,menuSettingsOpen:false,ticketFlip:{},modal:null,proHandle:null,obStep:0,obPhone:'',obCode:'',obFirstName:'',obLastName:'',obHandle:'',obListening:false,obExChoice:'',obBizCategory:'',obBizSubCat:'',obDropIdea:'',niyaOnboarding:false,termsAgreed:false,checkedIn:{},ticketSubIdx:{},subTicketOverrides:{},transferPhase:null,transferSelectedFriend:null,transferSubIdx:0,niyaScr:'feed',niyaStep:0,niyaListening:false,niyaWebSearch:false,ticketPrivacy:{},inboxFilter:'all',friendGroups:[{id:'G001',name:'Wine Crew',members:['F001','F002','F003'],owner:'me',anyoneCanAdd:false},{id:'G002',name:'Hiking Buddies',members:['F002','F004'],owner:'me',anyoneCanAdd:true}],newGroupName:'',newGroupMembers:[],editGroupName:'',composeAud:null,composeGroup:null,composeFriend:null,composeNiya:false,handleNew:'',handleAvail:null,handleConfirm:false,chatMsgId:null,chatNew:null,chatReplyIdx:null,chatDropPicker:false,chatDropAttach:null,groupAddMember:false,groupTab:null,dropMenu:null,reportReason:null,passwordUnlocked:{},pwError:false,guestPhone:'',guestBlocked:['F004','F008'],blockedBiz:{'@fatebrewing':true,'@patagonia':true},verifyStep:'welcome',verifyIdType:null,verifyIdFront:false,verifyIdBack:false,selfie1:false,selfie2:false,selfie3:false,verifyResult:null};
 
 // ── i18n Framework ───────────────────────────────────
@@ -4244,7 +4247,7 @@ function renderFriends(){
         <button onclick="modal('addByPhone')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid #E5E7EB;background:#fff;color:#374151;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-family:inherit">${ic('userPlus',14)} Add by Phone</button>
       </div>
 
-      ${inviteJoins.length>0?`
+      ${(SHOW_INVITE_JOINS&&inviteJoins.length>0)?`
       <!-- Joined from your invite — close the invite→friend loop -->
       <div style="margin-bottom:16px">
         <div style="font-size:11px;font-weight:700;color:#16A34A;letter-spacing:0.06em;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid #F3F4F6">Joined from your invite (${inviteJoins.length})</div>

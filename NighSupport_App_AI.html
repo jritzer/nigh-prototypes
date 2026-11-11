@@ -1872,8 +1872,8 @@ function go(page,extra){
   const navKey=page==='caseDetail'?'support':page==='userDetail'?'users':page==='orgDetail'?'orgs':page==='orgOrgDetail'?'organizations':page==='dropDetail'?'drops':page==='orderDetail'?'orders':page;
   const nav=document.getElementById('nav-'+navKey);
   if(nav)nav.classList.add('active');
-  const titles={review:'Trust & Review',earlyaccess:'Early Access',knowledge:'Help Articles & AI',caseDetail:'Support Case',feedback:'Feedback',channel:'Channels',mytasks:'My Tasks',dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Neo Configuration',promos:'Subscription Promos',stickers:'Sticker Program'};
-  const subs={review:'Drop reports, business verification and handle claims',earlyaccess:'Sign-ups from the website early-access pages',knowledge:'What the AI answers from, what it can’t answer yet, and how well it’s doing',caseDetail:'Parties, private threads, internal notes & Neo draft',feedback:'One-way feedback from users and hosts — no reply expected',channel:'Post to Nigh Team and Nigh-owned accounts · automated messages',mytasks:'Your follow-ups, support cases, and account check-ins',dashboard:'Welcome back, Josh',inbox:'Escalated cases, feedback, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Cases from users and hosts — opened by Niya, Nico, or an agent',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Neo\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts',stickers:'Configure free sticker allowance and pricing (platform-wide)'};
+  const titles={attribution:'Attribution',review:'Trust & Review',earlyaccess:'Early Access',knowledge:'Help Articles & AI',caseDetail:'Support Case',feedback:'Feedback',channel:'Channels',mytasks:'My Tasks',dashboard:'Dashboard',inbox:'Inbox',search:'Search',onboarding:'Onboarding Queue',support:'Support Cases',users:'User Accounts',userDetail:'User Account',organizations:'Organizations',orgOrgDetail:'Organization',orgs:'Host Accounts',orgDetail:'Host Account',pipeline:'Pipeline',drops:'Drops',reservations:'Tickets',orders:'Orders',orderDetail:'Order Detail',credits:'Credits',refunds:'Refunds',financials:'Financial Reconciliation',team:'Nigh Team',audit:'Audit Log',sessions:'Sessions & Security',flags:'Feature Flags',videos:'From Nigh Videos',niyaconfig:'Neo Configuration',promos:'Subscription Promos',stickers:'Sticker Program'};
+  const subs={attribution:'Share-link totals and the full attribution trail · Support only',review:'Drop reports, business verification and handle claims',earlyaccess:'Sign-ups from the website early-access pages',knowledge:'What the AI answers from, what it can’t answer yet, and how well it’s doing',caseDetail:'Parties, private threads, internal notes & Neo draft',feedback:'One-way feedback from users and hosts — no reply expected',channel:'Post to Nigh Team and Nigh-owned accounts · automated messages',mytasks:'Your follow-ups, support cases, and account check-ins',dashboard:'Welcome back, Josh',inbox:'Escalated cases, feedback, AI flags, and team notes',search:'Find any entity in the system',onboarding:'Review pending Pro applications',support:'Cases from users and hosts — opened by Niya, Nico, or an agent',users:'Search, view and edit user accounts',userDetail:'View and edit user account',organizations:'Corporate entities and enterprise groups',orgOrgDetail:'View and manage org details',orgs:'Manage all host accounts',orgDetail:'View and edit host account config',pipeline:'Prospects being pursued — not yet on Nigh',drops:'View and manage all drops',reservations:'View and override tickets & spots',orders:'All checkout transactions — linked to users, drops, host accounts, and tickets',orderDetail:'Order transaction detail',credits:'Issue and manage N Credits',refunds:'Override refund authority',financials:'Payment reconciliation view',team:'Internal team members and access levels',audit:'Immutable activity log',sessions:'Monitor user sessions',flags:'Per-org feature management',videos:'Manage From Nigh video library',niyaconfig:'Manage Neo\'s knowledge, beliefs, tone, and boundaries across all three apps',promos:'Manage promo groups, codes, and subscription discounts',stickers:'Configure free sticker allowance and pricing (platform-wide)'};
   document.getElementById('topbar-title').textContent=titles[page]||page;
   document.getElementById('topbar-sub').textContent=subs[page]||'';
   document.getElementById('content').innerHTML=renderPage(page);
@@ -1990,6 +1990,7 @@ function renderPage(p){
   if(p==='review')return rReview();
   if(p==='earlyaccess')return rEarlyAccess();
   if(p==='knowledge')return rKnowledge();
+  if(p==='attribution')return rAttribution();
   return '<p>Page not found</p>';
 }
 
@@ -6870,6 +6871,134 @@ function niyaConfigSaveNew() {
 }
 
 
+// ══ ATTRIBUTION ANALYTICS (Support only) ══════════════════════════════════
+// BRD 16.5 · Nigh Support sees totals AND the full trail. Users, hosts and partners only ever see their own totals
+// (direct and extended) in their apps. Opening a trail is written to the audit log.
+// Credit rules: each viewer has their own share code · last link used wins · ticket credit goes to the closest
+// host/partner (official) link in the lineage, else the peer who shared · people credit = 2 degrees (direct, extended).
+const ATTR_CODES={
+  K7P2:{type:'drop',drop:'D007',sharer:'Colorado Rush FC',st:'Host'},
+  P4M8:{type:'drop',drop:'D007',sharer:'Left Hand Brewing',st:'Partner'},
+  A9F3:{type:'drop',drop:'D007',sharer:'Sarah Mitchell',st:'Guest'},
+  B3T8:{type:'drop',drop:'D007',sharer:'James Kim',st:'Guest'},
+  C6M1:{type:'drop',drop:'D007',sharer:'Alex Rivera',st:'Guest'},
+  D2W5:{type:'drop',drop:'D007',sharer:'Maya Torres',st:'Guest'},
+  W2H6:{type:'drop',drop:'D003',sharer:'Whole Foods Market',st:'Host'},
+  S5N1:{type:'drop',drop:'D003',sharer:'Sarah Mitchell',st:'Guest'},
+  sarahm:{type:'invite',sharer:'Sarah Mitchell',st:'Guest'},
+  rushfc:{type:'follow',sharer:'Colorado Rush FC',st:'Host'},
+  A4B7X2:{type:'follow',sharer:'Colorado Rush FC',st:'Sticker',sticker:'Front Door sticker (NQ-A4B7X2)'},
+  G7R2Q9:{type:'group',sharer:'Alex Rivera',st:'Guest',group:'Boulder Foodies'}
+};
+// [date, time, person, action, code|null, excluded reason]
+const ATTR_EVENTS=[
+  ['Mar 7','6:02 PM','Sarah Mitchell','view','K7P2'],
+  ['Mar 7','6:05 PM','Sarah Mitchell','reserve','K7P2'],
+  ['Mar 7','7:10 PM','James Kim','view','A9F3'],
+  ['Mar 7','7:12 PM','James Kim','reserve','A9F3'],
+  ['Mar 7','9:40 PM','Alex Rivera','view','B3T8'],
+  ['Mar 7','9:52 PM','James Kim','view','B3T8','Self-referral'],
+  ['Mar 8','9:15 AM','Alex Rivera','reserve','B3T8'],
+  ['Mar 8','10:02 AM','Maya Torres','view','A9F3'],
+  ['Mar 8','11:30 AM','Maya Torres','view','C6M1'],
+  ['Mar 8','11:31 AM','Maya Torres','reserve','C6M1'],
+  ['Mar 8','12:02 PM','Dana Brooks','join','P4M8'],
+  ['Mar 8','12:05 PM','Dana Brooks','reserve','P4M8'],
+  ['Mar 8','12:40 PM','Chris Park','view','D2W5'],
+  ['Mar 8','12:44 PM','Chris Park','reserve','D2W5'],
+  ['Mar 8','1:00 PM','Jordan Lee','join','sarahm'],
+  ['Mar 8','1:20 PM','Rush FC staff (team)','view','K7P2','Host team member'],
+  ['Mar 8','2:15 PM','Taylor Nguyen','follow','A4B7X2'],
+  ['Mar 8','2:18 PM','Morgan Diaz','follow','rushfc'],
+  ['Mar 8','2:20 PM','Sam Ortiz','reserve',null,null,'D007'],
+  ['Mar 6','8:10 AM','Sarah Mitchell','view',null,null,'D003'],
+  ['Mar 6','9:30 AM','Riley Chen','view','S5N1'],
+  ['Mar 6','9:34 AM','Riley Chen','reserve','S5N1'],
+  ['Mar 8','3:05 PM','Jordan Lee','join','G7R2Q9']
+].map((e,i)=>({id:'AE'+(101+i),date:e[0],time:e[1],who:e[2],act:e[3],code:e[4],excl:e[5]||null,drop:e[4]?(ATTR_CODES[e[4]].drop||null):(e[6]||null)}));
+const ATTR_ACT={view:'Viewed drop',reserve:'Reserved',join:'Joined',follow:'Followed host'};
+// Lineage: who brought each person, per scope (a drop, Nigh itself via invite, or a group). Last link used to join/reserve wins.
+function attrModel(){
+  const parent={};const ev=ATTR_EVENTS.filter(e=>!e.excl);
+  const scope=e=>{const c=e.code&&ATTR_CODES[e.code];return !c?(e.drop||'-'):c.type==='drop'?c.drop:c.type==='invite'?'nigh':c.type==='group'?'group:'+c.group:'follow:'+c.sharer;};
+  ev.forEach(e=>{if((e.act==='reserve'||e.act==='join'||e.act==='follow')&&e.code){const k=scope(e);parent[k]=parent[k]||{};parent[k][e.who]=ATTR_CODES[e.code].sharer;}});
+  const typeOf=n=>{for(const k in ATTR_CODES)if(ATTR_CODES[k].sharer===n)return ATTR_CODES[k].st==='Sticker'?'Host':ATTR_CODES[k].st;return 'Guest';};
+  const chain=(k,who)=>{const out=[];let p=parent[k]&&parent[k][who];let guard=0;while(p&&guard++<12){out.push(p);p=parent[k][p];}return out;};
+  ev.forEach(e=>{
+    e.scope=scope(e);const c=e.code&&ATTR_CODES[e.code];
+    if(e.act==='reserve'){
+      if(!c){e.ticket=(drops.find(d=>d.id===e.drop)||{}).org+' (organic)';e.rule='No link — organic, credited to the host';return;}
+      const ch=chain(e.scope,e.who);const off=ch.find(n=>typeOf(n)!=='Guest');
+      e.chain=ch;e.ticket=off?off:c.sharer;e.rule=off?(off===c.sharer?'Official link used':'Official source earlier in the lineage keeps ticket credit'):'No official source — peer link credited';
+    }
+    if(c&&(e.act==='reserve'||e.act==='join'||e.act==='follow')){const ch=chain(e.scope,e.who);e.direct=ch[0]||null;e.extended=ch[1]||null;}
+  });
+  return {parent,chain,typeOf,ev};
+}
+function attrTotals(m,f){
+  const rows={};const ev=m.ev.filter(e=>attrMatch(e,f));
+  const get=(n,link,type)=>{const k=n+'|'+link;return rows[k]||(rows[k]={sharer:n,link,type,views:0,tickets:0,direct:new Set(),extended:new Set(),signups:0,follows:0});};
+  for(const code in ATTR_CODES){const c=ATTR_CODES[code];if(f.type!=='all'&&c.type!==f.type)continue;if(f.drop!=='all'&&c.drop!==f.drop)continue;if(f.st!=='all'&&c.st!==f.st)continue;get(c.sharer,code,c.st);}
+  ev.forEach(e=>{const c=e.code&&ATTR_CODES[e.code];if(!c)return;const r=rows[c.sharer+'|'+e.code];if(!r)return;
+    if(e.act==='view')r.views++;if(e.act==='join')r.signups++;if(e.act==='follow')r.follows++;});
+  ev.filter(e=>e.act==='reserve'&&e.ticket&&e.code).forEach(e=>{const r=Object.values(rows).find(x=>x.sharer===e.ticket&&ATTR_CODES[x.link].drop===e.drop);if(r)r.tickets++;});
+  ev.forEach(e=>{if(!e.code)return;const c=ATTR_CODES[e.code];
+    if(e.direct){const r=Object.values(rows).find(x=>x.sharer===e.direct&&(ATTR_CODES[x.link].drop||ATTR_CODES[x.link].type)===(c.drop||c.type));if(r)r.direct.add(e.who);}
+    if(e.extended){const r=Object.values(rows).find(x=>x.sharer===e.extended&&(ATTR_CODES[x.link].drop||ATTR_CODES[x.link].type)===(c.drop||c.type));if(r)r.extended.add(e.who);}});
+  return Object.values(rows);
+}
+function attrMatch(e,f){const c=e.code&&ATTR_CODES[e.code];
+  if(f.drop!=='all'&&e.drop!==f.drop)return false;
+  if(f.type!=='all'&&(!c||c.type!==f.type))return false;
+  if(f.st!=='all'&&(!c||c.st!==f.st))return false;
+  if(f.date!=='all'&&e.date!==f.date)return false;
+  if(f.q){const q=f.q.toLowerCase();const hay=[e.who,e.code||'',c?c.sharer:'',e.ticket||''].join(' ').toLowerCase();if(!hay.includes(q))return false;}
+  return true;}
+function attrF(){return Object.assign({drop:'all',type:'all',st:'all',date:'all',q:'',sel:null,view:'totals'},S.attrF||{});}
+function attrSet(k,v){S.attrF=Object.assign(attrF(),{[k]:v});if(k!=='sel'&&k!=='view')S.attrF.sel=null;reRender();}
+function attrOpenTrail(sharer){S.attrF=Object.assign(attrF(),{sel:sharer,view:'trail'});logTeam('Attribution Trail Viewed','Sharer '+sharer,'Opened the attribution trail (Support only)','info');reRender();}
+function attrLinkLabel(code){const c=ATTR_CODES[code];return c.type+'.nigh.com/'+code;}
+function attrStBadge(st){const col={Host:['#EEF2FF','#0E4EF5'],Partner:['#F5F3FF','#7C3AED'],Guest:['#F1F5F9','#475569'],Sticker:['#ECFEFF','#0E7490']}[st]||['#F1F5F9','#475569'];return '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:'+col[0]+';color:'+col[1]+'">'+st+'</span>';}
+function rAttribution(){
+  const f=attrF();const m=attrModel();const rows=attrTotals(m,f);const ev=m.ev.filter(e=>attrMatch(e,f));
+  const sum=k=>rows.reduce((s,r)=>s+(typeof r[k]==='number'?r[k]:r[k].size),0);
+  const organic=ev.filter(e=>e.act==='reserve'&&!e.code).length;const excl=ATTR_EVENTS.filter(e=>e.excl&&attrMatch(e,f)).length;
+  const sel=(id,val,opts)=>'<select class="select" style="width:auto;min-width:130px" onchange="attrSet(\''+id+'\',this.value)">'+opts.map(o=>'<option value="'+o[0]+'"'+(val===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>';
+  const dropOpts=[['all','All drops']].concat([...new Set(Object.values(ATTR_CODES).map(c=>c.drop).filter(Boolean))].map(id=>[id,(drops.find(d=>d.id===id)||{}).title||id]));
+  const tabs='<div style="display:inline-flex;background:#F1F5F9;border-radius:8px;padding:3px">'+[['totals','Totals'],['trail','Trail']].map(t=>'<button onclick="attrSet(\'view\',\''+t[0]+'\')" style="border:none;cursor:pointer;font-size:12px;font-weight:700;padding:6px 14px;border-radius:6px;font-family:inherit;background:'+(f.view===t[0]?'#fff':'transparent')+';color:'+(f.view===t[0]?'#111827':'#6B7280')+'">'+t[1]+'</button>').join('')+'</div>';
+  let h='<div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 14px;font-size:12px;color:#1E3A8A;margin-bottom:16px;line-height:1.5">'+svgI('shield',12)+' <b>Support only.</b> Users, hosts and partners see only their own totals (direct and extended) in their apps. Opening a trail is written to the audit log.</div>'
+   +'<div class="grid grid-4" style="margin-bottom:16px">'
+   +'<div class="stat"><div class="stat-label">Views credited</div><div class="stat-val">'+sum('views')+'</div><div class="stat-sub">Unique signed-in arrivals via a link</div></div>'
+   +'<div class="stat"><div class="stat-label">Tickets credited</div><div class="stat-val">'+sum('tickets')+'</div><div class="stat-sub">'+organic+' organic (no link) · net of refunds</div></div>'
+   +'<div class="stat"><div class="stat-label">People credit</div><div class="stat-val">'+sum('direct')+' <span style="font-size:13px;color:#6B7280;font-weight:600">direct</span> · '+sum('extended')+' <span style="font-size:13px;color:#6B7280;font-weight:600">extended</span></div><div class="stat-sub">Two degrees, no further</div></div>'
+   +'<div class="stat"><div class="stat-label">Sign-ups · follows</div><div class="stat-val">'+sum('signups')+' · '+sum('follows')+'</div><div class="stat-sub">'+excl+' excluded (self / team)</div></div></div>'
+   +'<div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">'+tabs
+   +'<div class="search-wrap"><span class="search-icon">'+svgI('search',14)+'</span><input class="input" placeholder="Person, sharer or code…" value="'+(f.q||'').replace(/"/g,'&quot;')+'" onchange="attrSet(\'q\',this.value)" style="width:230px"/></div>'
+   +sel('drop',f.drop,dropOpts)+sel('type',f.type,[['all','All link types'],['drop','Drop'],['invite','Invite'],['follow','Follow'],['group','Group']])
+   +sel('st',f.st,[['all','All sharers'],['Host','Host'],['Partner','Partner'],['Guest','Guest'],['Sticker','Sticker']])+sel('date',f.date,[['all','All dates'],['Mar 6','Mar 6'],['Mar 7','Mar 7'],['Mar 8','Mar 8']])
+   +((f.drop!=='all'||f.type!=='all'||f.st!=='all'||f.date!=='all'||f.q||f.sel)?'<button class="btn btn-ghost btn-sm" onclick="S.attrF={view:\''+f.view+'\'};reRender()">Clear filters</button>':'')+'</div>';
+  if(f.view==='totals'){
+    h+='<div class="card"><table class="tbl"><thead><tr><th>Sharer</th><th>Type</th><th>Link</th><th>Views</th><th>Tickets credited</th><th>Direct</th><th>Extended</th><th>Sign-ups / follows</th><th></th></tr></thead><tbody>'
+     +(rows.length?rows.sort((a,b)=>b.tickets-a.tickets||b.views-a.views).map(r=>'<tr><td style="font-weight:600">'+r.sharer+(ATTR_CODES[r.link].sticker?'<div style="font-size:11px;color:#6B7280;font-weight:400">'+ATTR_CODES[r.link].sticker+'</div>':'')+'</td><td>'+attrStBadge(r.type)+'</td><td style="font-family:monospace;font-size:12px;color:#0E4EF5">'+attrLinkLabel(r.link)+'</td><td>'+r.views+'</td><td style="font-weight:700">'+r.tickets+'</td><td>'+r.direct.size+'</td><td>'+r.extended.size+'</td><td>'+(r.signups||r.follows?(r.signups+' / '+r.follows):'—')+'</td><td><button class="btn btn-ghost btn-sm" onclick="attrOpenTrail(\''+r.sharer.replace(/'/g,"\\'")+'\')">Trail</button></td></tr>').join(''):'<tr><td colspan="9" style="text-align:center;color:#9CA3AF;padding:24px">No links match these filters</td></tr>')
+     +'</tbody></table></div><div style="font-size:11px;color:#9CA3AF;margin-top:8px">Ticket credit goes to the closest host or partner link in the buyer’s lineage, otherwise to the guest who shared. Direct = people who came through this link; extended = people who came through theirs.</div>';
+    return h;
+  }
+  // Trail view
+  const tv=ev.concat(ATTR_EVENTS.filter(e=>e.excl&&attrMatch(e,f))).filter(e=>!f.sel||e.who===f.sel||(e.code&&ATTR_CODES[e.code].sharer===f.sel)||e.ticket===f.sel||e.direct===f.sel||e.extended===f.sel||(e.chain||[]).includes(f.sel))
+    .sort((a,b)=>{const t=x=>Date.parse('2026 '+x.date+' '+x.time);return t(a)-t(b);});
+  if(f.sel)h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px">Trail for <b>'+f.sel+'</b><button class="btn btn-ghost btn-sm" onclick="attrSet(\'sel\',null)">Show everyone</button></div>';
+  h+='<div class="card"><table class="tbl"><thead><tr><th>When</th><th>Person</th><th>Action</th><th>Link used</th><th>Lineage</th><th>Ticket credit</th><th>People credit</th></tr></thead><tbody>'
+   +(tv.length?tv.map(e=>{const c=e.code&&ATTR_CODES[e.code];
+     const lin=e.excl?'<span style="color:#DC2626;font-size:11px;font-weight:700">Excluded · '+e.excl+'</span>':e.chain&&e.chain.length?'<span style="font-size:12px">'+[e.who].concat(e.chain).map((n,i)=>i?'<span style="color:#9CA3AF"> ← </span>'+n:n).join('')+'</span>':'<span style="color:#9CA3AF">—</span>';
+     return '<tr><td style="white-space:nowrap;font-size:12px;color:#6B7280">'+e.date+' · '+e.time+'</td><td style="font-weight:600">'+e.who+'</td><td>'+ATTR_ACT[e.act]+(e.drop&&e.act!=='join'&&e.act!=='follow'?'<div style="font-size:11px;color:#6B7280">'+((drops.find(d=>d.id===e.drop)||{}).title||e.drop)+'</div>':'')+'</td>'
+      +'<td>'+(c?'<span style="font-family:monospace;font-size:12px;color:#0E4EF5">'+attrLinkLabel(e.code)+'</span><div style="font-size:11px;color:#6B7280">'+c.sharer+' · '+c.st+'</div>':'<span style="color:#9CA3AF">No link (feed)</span>')+'</td>'
+      +'<td>'+lin+'</td>'
+      +'<td>'+(e.ticket?'<b>'+e.ticket+'</b><div style="font-size:11px;color:#6B7280">'+e.rule+'</div>':'<span style="color:#9CA3AF">—</span>')+'</td>'
+      +'<td style="font-size:12px">'+(e.direct?'Direct → '+e.direct+(e.extended?'<br>Extended → '+e.extended:''):'<span style="color:#9CA3AF">—</span>')+'</td></tr>';}).join(''):'<tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:24px">No events match these filters</td></tr>')
+   +'</tbody></table></div><div style="font-size:11px;color:#9CA3AF;margin-top:8px">Last link used wins. A guest’s reshare never takes ticket credit from a host or partner earlier in the lineage. Credit freezes when the purchase window closes.</div>';
+  return h;
+}
+
 function renderSidebar(){
   document.getElementById('sb-nav').innerHTML=`
     <div class="sb-section">MY DESK</div>
@@ -6889,6 +7018,7 @@ function renderSidebar(){
     <div class="sb-section">GROWTH</div>
     <button class="sb-item" id="nav-pipeline" onclick="go('pipeline')">${svgI('chart')} Pipeline <span class="badge" style="background:#7C3AED">${orgs.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length+organizations.filter(o=>o.status==='Prospect'&&!['Not Interested','Lost'].includes(o.pipelineStage)).length}</span></button>
     <button class="sb-item" id="nav-earlyaccess" onclick="go('earlyaccess')">${svgI('star')} Early Access</button>
+    <button class="sb-item" id="nav-attribution" onclick="go('attribution')">${svgI('trending')} Attribution</button>
     <button class="sb-item" id="nav-drops" onclick="go('drops')"><svg width="13" height="20" viewBox="82 36 196 292" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M256.5,52c-5-5-11.8-8-19.4-8H118.2C103,44,90.7,56.3,90.7,71.4v115.5c0,6.9,2.8,13.4,7.7,18.2l79.2,76.4l79.2-76.4c4.9-4.8,7.7-11.3,7.7-18.2V71.4C264.5,63.8,261.4,57,256.5,52z M177.6,251.4l-59.2-56.7c-3.8-3.6-5.9-8.5-6-13.7c0-0.1,0-0.2,0-0.3V83c0-4.4,1.5-8.4,4.1-11.5c3.1-3.8,7.8-6.3,13.1-6.6l95.1,0c5,0,9.6,2,12.9,5.3c0.4,0.4,0.8,0.9,1.2,1.3c2.4,2.9,3.9,6.6,4.1,10.7c0,0.3,0,98.5,0,98.5c0,5.3-2.1,10.3-6,14L177.6,251.4z"/><polygon points="199.3,143.5 154.9,86.5 138.2,86.5 138.2,171.9 155.9,171.9 155.9,116.3 199.1,171.9 217,171.9 217,86.5 199.3,86.5"/><ellipse cx="177.5" cy="308.4" rx="33.6" ry="8.4"/><path d="M171.2,202.2c-3.5,3.5-3.5,9.1-0.1,12.6c0,0,0,0,0.1,0.1c3.5,3.5,9.1,3.5,12.6,0c3.5-3.5,3.5-9.1,0-12.6C180.3,198.7,174.7,198.7,171.2,202.2z"/></svg> Drops</button>
     <button class="sb-item" id="nav-reservations" onclick="go('reservations')">${svgI('ticket')} Tickets</button>
     <button class="sb-item" id="nav-orders" onclick="go('orders')">${svgI('shoppingBag')} Orders</button>
