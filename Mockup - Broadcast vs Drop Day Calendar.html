@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nigh Host — Broadcast vs Drop Day (Calendar options)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#EEF0F4;color:#111827;min-height:100vh;padding:20px 12px}
+.top{max-width:980px;margin:0 auto 16px;text-align:center}
+.top h1{font-size:20px;font-weight:800}
+.top p{font-size:13px;color:#6B7280;margin-top:4px}
+.opts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.opt{border:1px solid #D1D5DB;background:#fff;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#374151}
+.opt.on{background:#0E4EF5;border-color:#0E4EF5;color:#fff}
+.wrap{display:flex;gap:22px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:980px;margin:0 auto}
+.phone{position:relative;width:390px;max-width:100%;height:800px;background:#fff;border-radius:38px;overflow:hidden;box-shadow:0 20px 50px rgba(17,24,39,0.18);border:1px solid #E5E7EB;display:flex;flex-direction:column}
+.notes{width:340px;max-width:100%;background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:18px}
+.notes h2{font-size:16px;font-weight:800;margin-bottom:6px}
+.notes .sub{font-size:13px;color:#374151;line-height:1.5;margin-bottom:12px}
+.notes h3{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6B7280;margin:12px 0 6px}
+.notes li{font-size:13px;color:#374151;line-height:1.5;margin:0 0 5px 16px}
+.scroll{flex:1;overflow-y:auto}
+.scroll::-webkit-scrollbar{width:0}
+.acct{background:#F3F4F6;padding:14px 16px 12px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;gap:8px}
+.cal{background:#fff;padding:10px 0 8px;border-bottom:1px solid #E5E7EB}
+.calhdr{display:flex;justify-content:space-between;align-items:center;padding:0 14px;margin-bottom:8px}
+.calhdr button{background:none;border:none;font-size:18px;color:#374151;cursor:pointer;padding:2px 6px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);padding:0 6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:12px;cursor:pointer;border:none;background:none;font-family:inherit}
+.day .wd{font-size:10px;color:#9CA3AF;font-weight:500}
+.day .dn{font-size:16px;font-weight:500;color:#374151}
+.day.sel{background:#0E4EF5}
+.day.sel .wd{color:rgba(255,255,255,.75)}
+.day.sel .dn{color:#fff;font-weight:700}
+.day.today .dn{color:#0E4EF5;font-weight:700}
+.day.today.sel .dn{color:#fff}
+.sec{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#6B7280;margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.card{background:#fff;border:1px solid #E5E7EB;border-radius:14px;margin-bottom:10px;overflow:hidden}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;white-space:nowrap}
+.legend{display:flex;gap:14px;justify-content:center;font-size:10px;color:#6B7280;padding:8px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.muted{color:#6B7280}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #E5E7EB;border-radius:12px;margin-bottom:8px;background:#fff}
+.empty{text-align:center;color:#9CA3AF;font-size:13px;padding:24px 0}
+.nav{height:60px;border-top:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-around;color:#9CA3AF;flex-shrink:0;font-size:11px}
+</style></head>
+<body>
+<div class="top">
+  <h1>Broadcast days vs. drop day — Nigh Host calendar options</h1>
+  <p>Standalone mockup · not part of the current prototypes. Today is Sat Nov 7, 8:00 AM. Tap days, change weeks, switch options and sample data. Options E–G add Coming Soon, multiple hype videos, 3+ drops a day and a Nigh preview.</p>
+  <div class="opts" id="opts"></div>
+</div>
+<div class="wrap"><div class="phone" id="phone"></div><div class="notes" id="notes"></div></div>
+<script>
+// ── Sample data (Centro Boulder) ──
+function D(d,h,m){return new Date(2026,10,d,h||0,m||0);}
+var NOW=D(7,8,0);
+var DROPS=[
+ {id:1,title:'Friday Night Jazz & Tapas',bS:D(4,9),bE:D(6,18,45),dS:D(6,19),dE:D(6,22),timing:'Arrival window',status:'Ended',res:28,cap:30,price:'$25'},
+ {id:2,title:'Sunset Trivia Night',bS:D(5,10),bE:D(9,17),dS:D(9,18),dE:D(9,21),timing:'Start time',status:'Live',res:14,cap:40,price:'Free'},
+ {id:3,title:'Rooftop Social',bS:D(3,12),bE:D(8,18),dS:D(8,19),dE:D(8,23),timing:'Start time',status:'Live',soldOut:true,res:60,cap:60,price:'$15'},
+ {id:4,title:'Saturday Morning Flow',bS:D(7,6),bE:D(7,8,45),dS:D(7,9),dE:D(7,10),timing:'Start time',status:'Live',res:9,cap:20,price:'Free'},
+ {id:5,title:'Chef’s Table: Seven-Course Tasting Dinner with Wine Pairings from Our Sommelier',venue:'Frasca Food & Wine Private Dining Room at the Back of the Restaurant, 1738 Pearl Street Suite 100, Boulder, CO 80302',bS:D(6,9),bE:D(10,17),dS:D(10,19),dE:D(10,22),timing:'Start time',status:'Paused',res:6,cap:12,price:'$85'},
+ {id:6,title:'Holiday Market Pop-Up',bS:D(8,9),bE:D(13,20),dS:D(14,10),dE:D(15,16),timing:'Arrival window · 2 days',status:'Scheduled',res:0,cap:200,price:'Free'}
+];
+var COL={Live:'#22C55E',SoldOut:'#15803D',Scheduled:'#EA580C',Paused:'#0E4EF5',Ended:'#6B7280',Pending:'#EAB308'};
+var LBL={Live:'Broadcast Live',Paused:'Broadcast Paused',Scheduled:'Scheduled',Ended:'Broadcast Ended',Pending:'Broadcast Pending'};
+var DROPC='#1B2A4A';
+var S={opt:'A',day:D(7),weekStart:D(4)};
+var WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// ── helpers ──
+function d0(x){return new Date(x.getFullYear(),x.getMonth(),x.getDate());}
+function same(a,b){return d0(a).getTime()===d0(b).getTime();}
+function addD(x,n){var y=new Date(x);y.setDate(y.getDate()+n);return y;}
+function overlaps(day,s,e){var a=d0(day),b=addD(a,1);return s<b&&e>=a;}
+function isB(d,day){return overlaps(day,d.bS,d.bE);}
+function isDrop(d,day){return overlaps(day,d.dS,d.dE);}
+function t(x){var h=x.getHours(),m=x.getMinutes();var ap=h>=12?'PM':'AM';h=h%12||12;return h+(m?':'+String(m).padStart(2,'0'):'')+' '+ap;}
+function dshort(x){return WD[x.getDay()]+' '+MO[x.getMonth()]+' '+x.getDate();}
+function md(x){return MO[x.getMonth()]+' '+x.getDate();}
+function bStateNow(d){if(NOW<d.bS)return 'Scheduled';if(NOW>d.bE)return 'Ended';return d.status==='Paused'?'Paused':'Live';}
+function bcol(d){var s=bStateNow(d);return COL[s];}
+function statusPill(d){var s=bStateNow(d);var c=COL[s];var h='<span class="pill" style="background:'+c+'1F;color:'+(s==='Scheduled'?'#C2410C':c)+'"><span style="width:6px;height:6px;border-radius:50%;background:'+c+'"></span>'+LBL[s]+'</span>';if(d.soldOut&&s==='Live')h+=' <span class="pill" style="background:#15803D;color:#fff">Sold Out</span>';return h;}
+function countdown(d){var n=Math.round((d0(d.dS)-d0(NOW))/864e5);if(NOW>d.dE)return {t:'Drop ended',c:'#6B7280'};if(NOW>=d.dS)return {t:'Happening now',c:'#16A34A'};if(n===0)return {t:'Drop today · '+t(d.dS),c:'#0E4EF5'};if(n===1)return {t:'Drop tomorrow · '+t(d.dS),c:'#0E4EF5'};return {t:'Drop in '+n+' days · '+WD[d.dS.getDay()]+' '+t(d.dS),c:'#374151'};}
+function dropWhen(d){return same(d.dS,d.dE)?dshort(d.dS)+' · '+t(d.dS)+(d.timing.indexOf('Arrival')===0?'–'+t(d.dE):''):md(d.dS)+'–'+md(d.dE)+' · '+t(d.dS)+'–'+t(d.dE)+' daily';}
+function bWhen(d){return md(d.bS)+' '+t(d.bS)+' → '+md(d.bE)+' '+t(d.bE);}
+var IC={
+ bcast:function(c,s){s=s||13;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="9" r="1.6" fill="'+c+'" stroke="none"/><path d="M9.8 6.8a3.2 3.2 0 000 4.4M14.2 6.8a3.2 3.2 0 010 4.4M7.5 4.8a6 6 0 000 8.4M16.5 4.8a6 6 0 010 8.4M12 11v7"/></svg>';},
+ ticket:function(c,s){s=s||13;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="'+c+'" stroke-width="2.2" stroke-linejoin="round"><path d="M3 8a2 2 0 002-2h14a2 2 0 002 2v2a2 2 0 000 4v2a2 2 0 00-2 2H5a2 2 0 00-2-2v-2a2 2 0 000-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/></svg>';},
+ clock:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+};
+function weekDays(){var a=[];for(var i=0;i<7;i++)a.push(addD(S.weekStart,i));return a;}
+function hdrBlock(){
+ return '<div class="acct"><div style="width:32px;height:32px;border-radius:8px;background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-weight:800;color:#374151">C</div><div style="font-size:14px;font-weight:700">Centro Boulder</div></div>';
+}
+function calHdr(){var ws=weekDays();return '<div class="calhdr"><button onclick="shiftWeek(-7)">‹</button><span style="font-size:14px;font-weight:700">'+MO[ws[3].getMonth()]+' '+ws[3].getFullYear()+'</span><button onclick="shiftWeek(7)">›</button></div>';}
+function dayBtn(day,below){var cls='day'+(same(day,S.day)?' sel':'')+(same(day,NOW)?' today':'');return '<button class="'+cls+'" onclick="pick('+day.getDate()+')"><span class="wd">'+WD[day.getDay()]+'</span><span class="dn">'+day.getDate()+'</span>'+(below||'')+'</button>';}
+function shiftWeek(n){S.weekStart=addD(S.weekStart,n);S.day=addD(S.day,n);render();}
+function pick(n){var w=weekDays();for(var i=0;i<7;i++)if(w[i].getDate()===n)S.day=w[i];render();}
+function navBar(){return '<div class="nav"><span>Home</span><span>Create</span><span style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6226E9,#0E4EF5)"></span><span>Inbox</span><span>Menu</span></div>';}
+function heroCard(d,day){
+ var cd=countdown(d);var s=bStateNow(d);
+ var bLine=NOW<d.bS?'Broadcast starts '+md(d.bS)+' '+t(d.bS):NOW>d.bE?'Broadcast ended '+md(d.bE)+' '+t(d.bE):'Broadcast '+(s==='Paused'?'paused':'live')+' until '+(same(d.bE,NOW)?t(d.bE):md(d.bE)+' '+t(d.bE));
+ return '<div class="card" style="border:2px solid '+DROPC+'"><div style="height:90px;background:linear-gradient(135deg,#1B2A4A,#0E4EF5);position:relative"><div style="position:absolute;top:10px;left:12px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.95);border-radius:10px;padding:3px 9px;font-size:11px;font-weight:800;color:'+DROPC+'">'+IC.ticket(DROPC,12)+' DROP DAY</div></div>'
+  +'<div style="padding:10px 14px"><div style="font-size:16px;font-weight:700;margin-bottom:4px">'+d.title+'</div>'
+  +'<div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#111827;margin-bottom:6px">'+IC.clock+' '+dropWhen(d)+'</div>'
+  +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">'+statusPill(d)+'</div>'
+  +'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6B7280">'+IC.bcast('#6B7280',12)+' '+bLine+'</div>'
+  +'<div style="font-size:12px;color:#6B7280;margin-top:4px">'+d.res+'/'+d.cap+' reserved · '+d.price+'</div></div></div>';
+}
+// ══ OPTION A — broadcast bars + drop-day markers, split day view ══
+function optA(){
+ var ws=weekDays();
+ var vis=DROPS.filter(function(d){return ws.some(function(w){return isB(d,w)||isDrop(d,w);});});
+ var rows=vis.map(function(d){
+  var bc=bcol(d);var past=NOW>d.bE;var h='';
+  var bs=-1,be=-1,dc=[];ws.forEach(function(w,i){if(isB(d,w)){if(bs<0)bs=i;be=i;}if(isDrop(d,w))dc.push(i);});
+  if(bs>=0){var L=bs+(dc.indexOf(bs)>-1&&bs===be?0.2:0.15),R=be+(dc.indexOf(be)>-1?0.5:(be===6&&d.bE>addD(ws[6],1)?1:0.85));
+   h+='<div style="position:absolute;top:6px;height:5px;border-radius:3px;left:'+(L/7*100)+'%;width:'+((R-L)/7*100)+'%;background:'+(past?'#D1D5DB':bc)+'"></div>';}
+  dc.forEach(function(i){var c=NOW>d.dE?'#9CA3AF':DROPC;h+='<div style="position:absolute;top:0;left:calc('+((i+0.5)/7*100)+'% - 8px);width:16px;height:16px;border-radius:50%;background:'+c+';border:2px solid #fff;box-shadow:0 0 0 1px '+c+';display:flex;align-items:center;justify-content:center">'+IC.ticket('#fff',8)+'</div>';});
+  return '<div style="position:relative;height:17px;margin:3px 6px 0">'+h+'</div>';
+ }).join('');
+ var happening=DROPS.filter(function(d){return isDrop(d,S.day);});
+ var bcasting=DROPS.filter(function(d){return isB(d,S.day)&&!isDrop(d,S.day);});
+ var body='<div class="sec">'+IC.ticket('#6B7280',13)+' Happening '+(same(S.day,NOW)?'today':dshort(S.day))+'</div>'+(happening.length?happening.map(function(d){return heroCard(d,S.day);}).join(''):'<div class="empty">No drops happening this day.</div>')
+  +'<div class="sec">'+IC.bcast('#6B7280',13)+' Broadcasting '+(same(S.day,NOW)?'today':'this day')+' · happens later</div>'
+  +(bcasting.length?bcasting.map(function(d){var cd=countdown(d);return '<div class="row"><div style="width:4px;align-self:stretch;border-radius:2px;background:'+bcol(d)+'"></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">'+d.title+'</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:4px 0">'+statusPill(d)+'</div><div style="font-size:12px;color:'+cd.c+';font-weight:600">'+IC.ticket(cd.c,11)+' '+cd.t+'</div></div></div>';}).join(''):'<div class="empty">Nothing broadcasting for a later date.</div>');
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w);}).join('')+'</div>'+rows
+  +'<div class="legend"><span><span style="width:18px;height:5px;border-radius:3px;background:#22C55E"></span>Broadcasting</span><span><span style="width:12px;height:12px;border-radius:50%;background:'+DROPC+'"></span>Drop day</span><span><span style="width:18px;height:5px;border-radius:3px;background:#D1D5DB"></span>Broadcast ended</span></div></div>'
+  +'<div class="scroll" style="padding:0 16px 16px">'+body+'</div>'+navBar();
+}
+// ══ OPTION B — two marker types + timeline on every card ══
+function timeline(d){
+ var start=new Date(Math.min(d.bS,NOW)),end=new Date(Math.max(d.dE,NOW));var span=end-start;var pct=function(x){return Math.max(0,Math.min(100,(x-start)/span*100));};
+ var bl=pct(d.bS),bw=pct(d.bE)-bl,dl=pct(d.dS),dw=Math.max(6,pct(d.dE)-dl),nl=pct(NOW);if(dl+dw>100)dl=100-dw;
+ return '<div style="position:relative;height:26px;margin:10px 2px 4px">'
+  +'<div style="position:absolute;top:11px;left:0;right:0;height:3px;background:repeating-linear-gradient(90deg,#E5E7EB 0 4px,transparent 4px 8px)"></div>'
+  +'<div style="position:absolute;top:10px;left:'+bl+'%;width:'+bw+'%;height:5px;border-radius:3px;background:'+(NOW>d.bE?'#D1D5DB':bcol(d))+'"></div>'
+  +'<div style="position:absolute;top:5px;left:'+dl+'%;width:'+dw+'%;height:15px;border-radius:5px;background:'+DROPC+';display:flex;align-items:center;justify-content:center">'+IC.ticket('#fff',9)+'</div>'
+  +'<div style="position:absolute;top:0;left:'+nl+'%;width:2px;height:26px;background:#EF4444;border-radius:1px"></div><div style="position:absolute;top:-14px;left:calc('+nl+'% - 12px);font-size:9px;font-weight:800;color:#EF4444">NOW</div>'
+  +'</div><div style="display:flex;justify-content:space-between;font-size:10px;color:#6B7280"><span>'+IC.bcast('#6B7280',10)+' '+md(d.bS)+' → '+md(d.bE)+'</span><span style="color:'+DROPC+';font-weight:700">'+IC.ticket(DROPC,10)+' '+md(d.dS)+(same(d.dS,d.dE)?'':'–'+md(d.dE))+'</span></div>';
+}
+function optB(){
+ var ws=weekDays();
+ var mk=function(w){var drop=DROPS.some(function(d){return isDrop(d,w);});var b=DROPS.filter(function(d){return isB(d,w)&&!isDrop(d,w)&&NOW<=d.bE;});var sel=same(w,S.day);
+  return '<span style="display:flex;gap:3px;height:9px;align-items:center">'+(b.length?'<span style="width:8px;height:8px;border-radius:50%;border:2px solid '+(sel?'#fff':bcol(b[0]))+'"></span>':'')+(drop?'<span style="width:8px;height:8px;border-radius:2px;background:'+(sel?'#fff':DROPC)+';transform:rotate(45deg)"></span>':'')+'</span>';};
+ var list=DROPS.filter(function(d){return isB(d,S.day)||isDrop(d,S.day);}).sort(function(a,b){return a.dS-b.dS;});
+ var body=list.length?list.map(function(d){var cd=countdown(d);var dropToday=isDrop(d,S.day);
+   return '<div class="card" style="padding:12px 14px;'+(dropToday?'border:2px solid '+DROPC:'')+'"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div style="font-size:15px;font-weight:700">'+d.title+'</div><span class="pill" style="background:'+(dropToday?DROPC:'#F3F4F6')+';color:'+(dropToday?'#fff':cd.c)+'">'+(dropToday?'Drop day':cd.t.split(' · ')[0])+'</span></div>'
+    +'<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0 4px">'+statusPill(d)+'</div>'
+    +timeline(d)
+    +'<div style="font-size:12px;color:'+cd.c+';font-weight:600;margin-top:8px">'+cd.t+'</div></div>';}).join(''):'<div class="empty">Nothing broadcasting or happening this day.</div>';
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w,mk(w));}).join('')+'</div>'
+  +'<div class="legend"><span><span style="width:8px;height:8px;border-radius:50%;border:2px solid #22C55E"></span>Broadcasting</span><span><span style="width:8px;height:8px;border-radius:2px;background:'+DROPC+';transform:rotate(45deg)"></span>Drop day</span><span><span style="width:2px;height:10px;background:#EF4444"></span>Now</span></div></div>'
+  +'<div class="scroll" style="padding:14px 16px">'+body+'</div>'+navBar();
+}
+// ══ OPTION C — week planner (one lane per drop) ══
+function optC(){
+ var ws=weekDays();var selI=ws.findIndex(function(w){return same(w,S.day);});
+ var vis=DROPS.filter(function(d){return ws.some(function(w){return isB(d,w)||isDrop(d,w);});});
+ var lanes=vis.map(function(d){
+  var bs=-1,be=-1,dc=[];ws.forEach(function(w,i){if(isB(d,w)){if(bs<0)bs=i;be=i;}if(isDrop(d,w))dc.push(i);});
+  var cells='';var past=NOW>d.bE;
+  if(bs>=0){var L=bs+0.05,R=be+(dc.indexOf(be)>-1?0.3:(be===6&&d.bE>addD(ws[6],1)?1:0.95));cells+='<div style="position:absolute;top:7px;height:8px;border-radius:4px;left:'+(L/7*100)+'%;width:'+((R-L)/7*100)+'%;background:'+(past?'#E5E7EB':bcol(d))+';display:flex;align-items:center;padding-left:4px;overflow:hidden">'+(R-L>=1.6&&!past?'<span style="font-size:8px;font-weight:800;color:#fff;letter-spacing:.03em">BROADCAST</span>':'')+'</div>';}
+  dc.forEach(function(i){cells+='<div style="position:absolute;top:0;left:calc('+(i/7*100)+'% + 2px);width:calc('+(100/7)+'% - 4px);height:22px;border-radius:6px;background:'+(NOW>d.dE?'#9CA3AF':DROPC)+';color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:2px">'+IC.ticket('#fff',9)+t(d.dS).replace(' ','')+'</div>';});
+  return '<div onclick="S.focus='+d.id+';render()" style="padding:6px 0 8px;border-bottom:1px solid #F3F4F6;cursor:pointer"><div style="font-size:11px;font-weight:700;color:#111827;margin:0 10px 4px;display:flex;justify-content:space-between"><span>'+d.title+'</span>'+(d.soldOut?'<span style="color:#15803D">Sold Out</span>':'')+'</div><div style="position:relative;height:22px;margin:0 6px">'+cells+'</div></div>';
+ }).join('');
+ var colHl='<div style="position:absolute;top:0;bottom:0;left:calc(6px + (100% - 12px)/7*'+selI+');width:calc((100% - 12px)/7);background:rgba(14,78,245,0.06);pointer-events:none"></div>';
+ var happening=DROPS.filter(function(d){return isDrop(d,S.day);}),bc=DROPS.filter(function(d){return isB(d,S.day)&&!isDrop(d,S.day);});
+ var summary='<div style="padding:12px 16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">'+dshort(S.day)+'</div>'
+  +'<div style="display:flex;gap:8px"><div style="flex:1;border:1px solid #E5E7EB;border-radius:12px;padding:10px"><div style="font-size:22px;font-weight:800;color:'+DROPC+'">'+happening.length+'</div><div style="font-size:11px;color:#6B7280">'+IC.ticket('#6B7280',11)+' Drops happening</div></div><div style="flex:1;border:1px solid #E5E7EB;border-radius:12px;padding:10px"><div style="font-size:22px;font-weight:800;color:#16A34A">'+bc.length+'</div><div style="font-size:11px;color:#6B7280">'+IC.bcast('#6B7280',11)+' Broadcasting for later</div></div></div>'
+  +happening.concat(bc).map(function(d){var cd=countdown(d);return '<div class="row" style="margin-top:8px"><div style="flex:1"><div style="font-size:13px;font-weight:700">'+d.title+'</div><div style="font-size:11px;color:'+cd.c+';margin-top:2px">'+(isDrop(d,S.day)?'Drop day · '+dropWhen(d):cd.t)+'</div></div>'+statusPill(d)+'</div>';}).join('')+'</div>';
+ return hdrBlock()+'<div class="cal" style="padding-bottom:0">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w);}).join('')+'</div></div>'
+  +'<div class="scroll"><div style="position:relative;padding-top:4px">'+colHl+lanes+'</div>'
+  +'<div class="legend" style="padding:8px 0"><span><span style="width:18px;height:8px;border-radius:4px;background:#22C55E"></span>Broadcast window</span><span><span style="width:18px;height:12px;border-radius:4px;background:'+DROPC+'"></span>Drop (start / arrival)</span></div>'+summary+'</div>'+navBar();
+}
+// ══ OPTION D — agenda by drop date + "Broadcasting now" strip ══
+function optD(){
+ var live=DROPS.filter(function(d){return NOW>=d.bS&&NOW<=d.bE;});
+ var upcoming=DROPS.filter(function(d){return d.dE>=d0(NOW);}).sort(function(a,b){return a.dS-b.dS;});
+ var groups={};upcoming.forEach(function(d){var k=d0(d.dS).getTime();(groups[k]=groups[k]||[]).push(d);});
+ var strip='<div style="padding:12px 0 4px"><div class="sec" style="margin:0 16px 8px">'+IC.bcast('#16A34A',13)+' <span style="color:#16A34A">Broadcasting now</span> · '+live.length+'</div><div style="display:flex;gap:10px;overflow-x:auto;padding:0 16px 6px">'
+  +live.map(function(d){var cd=countdown(d);return '<div style="flex-shrink:0;width:180px;border:1px solid #E5E7EB;border-radius:12px;padding:10px;border-top:4px solid '+bcol(d)+'"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.title+'</div><div style="margin:5px 0">'+statusPill(d)+'</div><div style="font-size:11px;color:#6B7280">Ends '+(same(d.bE,NOW)?'today '+t(d.bE):dshort(d.bE)+' '+t(d.bE))+'</div><div style="font-size:11px;color:'+DROPC+';font-weight:700;margin-top:3px">'+IC.ticket(DROPC,10)+' '+cd.t+'</div></div>';}).join('')+'</div></div>';
+ var agenda=Object.keys(groups).sort().map(function(k){var day=new Date(+k);var rel=Math.round((day-d0(NOW))/864e5);var lab=rel===0?'Today':rel===1?'Tomorrow':dshort(day);
+  return '<div style="display:flex;gap:12px;padding:12px 16px;border-top:1px solid #F3F4F6"><div style="width:44px;text-align:center;flex-shrink:0"><div style="font-size:10px;color:#6B7280;font-weight:600">'+WD[day.getDay()].toUpperCase()+'</div><div style="font-size:22px;font-weight:800;color:'+(rel===0?'#0E4EF5':'#111827')+'">'+day.getDate()+'</div><div style="font-size:9px;color:#9CA3AF">'+MO[day.getMonth()]+'</div></div><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:6px">'+lab.toUpperCase()+' · DROPS</div>'
+   +groups[k].map(function(d){var s=bStateNow(d);var bl=s==='Scheduled'?'Broadcast starts '+dshort(d.bS)+' '+t(d.bS):s==='Ended'?'Broadcast ended '+(same(d.bE,NOW)?t(d.bE):dshort(d.bE)):'Broadcasting now · until '+(same(d.bE,NOW)?t(d.bE):dshort(d.bE)+' '+t(d.bE));
+    return '<div class="card" style="padding:10px 12px;margin-bottom:8px"><div style="font-size:14px;font-weight:700">'+d.title+'</div><div style="font-size:12px;font-weight:600;margin:3px 0 6px">'+IC.clock+' '+dropWhen(d)+'</div><div style="display:flex;align-items:center;gap:6px;font-size:11px;color:'+(s==='Live'?'#16A34A':s==='Paused'?'#0E4EF5':'#6B7280')+';font-weight:600">'+IC.bcast(COL[s],11)+' '+bl+(d.soldOut?' · <span style="color:#15803D">Sold Out</span>':'')+'</div></div>';}).join('')+'</div></div>';}).join('');
+ return hdrBlock()+'<div style="display:flex;border-bottom:1px solid #E5E7EB"><div style="flex:1;text-align:center;padding:11px 0;font-size:13px;font-weight:700;border-bottom:2px solid #0E4EF5;color:#0E4EF5">Upcoming</div><div style="flex:1;text-align:center;padding:11px 0;font-size:13px;font-weight:600;color:#9CA3AF">Past</div></div>'
+  +'<div class="scroll">'+strip+agenda+'<div style="height:16px"></div></div>'+navBar();
+}
+var NOTES={
+ A:{t:'A · Broadcast bars + drop-day markers',sub:'Each drop gets a thin lane under the week: a colored bar for the broadcast window that runs into a navy ticket dot on the drop day. The day view is split into “Happening today” and “Broadcasting today · happens later.”',pros:['Closest to today’s design — easy step from what hosts know','The bar visually “points” to the drop day','Drop day keeps the big card; broadcast-only days stay compact'],cons:['Lanes add height when many drops overlap (would cap at ~3 + “more”)']},
+ B:{t:'B · Two markers + timeline on every card',sub:'The week strip keeps one row of markers: a hollow ring for broadcasting days and a navy diamond for drop days. Every card shows a mini timeline — broadcast window, gap, drop — with a red “Now” line and a countdown.',pros:['Calendar stays compact','Every card explains itself — no need to read the calendar','Countdown (“Drop in 2 days”) answers the main question'],cons:['Marker differences are small at a glance','Timeline is detailed for a quick scan']},
+ C:{t:'C · Week planner (one lane per drop)',sub:'A Gantt-style week: each drop has its own row with a labeled broadcast bar and a solid drop block showing the start time. The selected day is highlighted and summarized below.',pros:['Best overview of overlapping drops and multi-day windows','Very explicit: “BROADCAST” bar vs. drop block','Great for hosts running several drops a week'],cons:['Busier; less room for media','Departs most from the current card-based home']},
+ D:{t:'D · Agenda by drop date + “Broadcasting now”',sub:'No day picker. Drops are listed under the date they happen. A “Broadcasting now” strip at the top shows what guests can see and buy right now, each with when the drop happens.',pros:['Simplest mental model: drops live on their own date','“What’s broadcasting now” is always one glance away','Scales well with few drops (early days)'],cons:['Loses the week-at-a-glance calendar','Harder to see past or specific-day activity']}
+};
+function render(){
+ document.getElementById('opts').innerHTML=['A','B','C','D'].map(function(k){return '<button class="opt'+(S.opt===k?' on':'')+'" onclick="S.opt=\''+k+'\';render()">'+NOTES[k].t.split(' · ')[0]+' · '+NOTES[k].t.split(' · ')[1]+'</button>';}).join('');
+ document.getElementById('phone').innerHTML=S.opt==='A'?optA():S.opt==='B'?optB():S.opt==='C'?optC():optD();
+ var n=NOTES[S.opt];
+ document.getElementById('notes').innerHTML='<h2>'+n.t+'</h2><div class="sub">'+n.sub+'</div><h3>Works well</h3><ul>'+n.pros.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul><h3>Watch out</h3><ul>'+n.cons.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'
+  +'<h3>Sample drops this week</h3><ul style="font-size:12px">'+DROPS.map(function(d){return '<li style="font-size:12px">'+d.title+' — broadcast '+md(d.bS)+'–'+md(d.bE)+', drop '+md(d.dS)+(same(d.dS,d.dE)?'':'–'+md(d.dE))+'</li>';}).join('')+'</ul>';
+}
+
+// ══ FUTURE-READY OPTIONS (E–G) · Coming Soon phase · multiple hype videos · 3+ drops/day · Nigh preview ══
+var GR=['linear-gradient(135deg,#7C3AED,#EC4899)','linear-gradient(135deg,#0E4EF5,#41EFF9)','linear-gradient(135deg,#F59E0B,#EF4444)','linear-gradient(135deg,#10B981,#0E4EF5)','linear-gradient(135deg,#1B2A4A,#6226E9)','linear-gradient(135deg,#DB2777,#F59E0B)'];
+function V(label,d,h,m,dur,g){return {label:label,t:D(d,h,m),dur:dur||'0:30',grad:GR[g||0]};}
+// Today's rules: 1 drop/day, broadcast ≤48h before drop start, one video, no Coming Soon.
+var DATA_NOW=[
+ {id:1,title:'Friday Night Jazz & Tapas',bS:D(4,19),bE:D(6,18,45),dS:D(6,19),dE:D(6,22),timing:'Arrival window',status:'Live',res:28,cap:30,price:'$25',videos:[V('Jazz trio',4,19,0,'0:32',4)]},
+ {id:2,title:'Rooftop Social',bS:D(5,19),bE:D(7,18),dS:D(7,19),dE:D(7,23),timing:'Start time',status:'Live',soldOut:true,res:60,cap:60,price:'$15',videos:[V('Rooftop teaser',5,19,0,'0:20',0)]},
+ {id:6,title:'Sunday Farmers Market Breakfast',bS:D(7,7),bE:D(8,12,30),dS:D(8,9),dE:D(8,13),timing:'Arrival window',status:'Live',res:46,cap:80,price:'$8',venue:'Boulder County Farmers Market, 13th St & Canyon Blvd, Boulder, CO',videos:[V('Fresh from the farm',7,7,0,'0:22',3)]},
+ {id:7,zoneOff:true,title:'Late Night Comedy Showcase',bS:D(7,6),bE:D(9,19,30),dS:D(9,20),dE:D(9,22),timing:'Start time',status:'Live',res:22,cap:50,price:'$10',audience:'public',venue:'Centro Boulder, 950 Pearl St, Boulder, CO',videos:[V('Comedy lineup',7,6,0,'0:27',0)]},
+ {id:3,title:'Sunset Trivia Night',bS:D(7,18),bE:D(9,17),dS:D(9,18),dE:D(9,21),timing:'Start time',status:'Live',res:0,cap:40,price:'Free',videos:[V('Trivia is back',7,18,0,'0:18',2)]},
+ {id:4,title:'Chef’s Table: Seven-Course Tasting Dinner with Wine Pairings from Our Sommelier',venue:'Frasca Food & Wine Private Dining Room at the Back of the Restaurant, 1738 Pearl Street Suite 100, Boulder, CO 80302',bS:D(8,19),bE:D(10,17),dS:D(10,19),dE:D(10,22),timing:'Start time',status:'Live',res:0,cap:12,price:'$85',videos:[V('Meet the chef',8,19,0,'0:41',3)]},
+ {id:5,title:'Holiday Market Pop-Up',bS:D(12,10),bE:D(15,15),dS:D(14,10),dE:D(15,16),timing:'Arrival window · 2 days',status:'Live',res:0,cap:200,price:'Free',videos:[V('Market teaser',12,10,0,'0:25',5)]}
+];
+// Future: Coming Soon before tickets, several hype videos, 3+ drops on one day.
+var DATA_FUTURE=[
+ {id:11,title:'Friday Night Jazz & Tapas',bS:D(4,19),bE:D(6,18,45),dS:D(6,19),dE:D(6,22),timing:'Arrival window',status:'Live',res:28,cap:30,price:'$25',videos:[V('Jazz trio',4,19,0,'0:32',4),V('Tapas menu',5,12,0,'0:18',2),V('Meet the band',6,9,0,'0:25',0),V('Doors at 7',6,15,0,'0:09',1)]},
+ {id:12,title:'Sunrise Coffee Cupping',bS:D(6,9),bE:D(7,8,30),dS:D(7,9),dE:D(7,10),timing:'Start time',status:'Live',res:11,cap:16,price:'$12',videos:[V('Cupping teaser',6,9,0,'0:24',2),V('Meet the roaster',6,15,0,'0:30',3),V('Bean lineup',6,20,0,'0:16',5),V('See you at 9',7,6,0,'0:08',1)]},
+ {id:13,title:'Brunch Pop-Up',cs:D(5,12),bS:D(6,11),bE:D(7,10,30),dS:D(7,11),dE:D(7,14),timing:'Arrival window',status:'Live',res:34,cap:50,price:'Free',videos:[V('Menu sneak peek',5,12,0,'0:22',5),V('Chef in the kitchen',6,18,0,'0:35',2),V('Doors open soon',7,9,0,'0:12',1),V('Line is forming',7,10,30,'0:08',3)]},
+ {id:14,title:'Rooftop Social',cs:D(4,18),bS:D(6,19),bE:D(7,18),dS:D(7,19),dE:D(7,23),timing:'Start time',status:'Live',soldOut:true,res:60,cap:60,price:'$15',videos:[V('Coming soon teaser',4,18,0,'0:15',0),V('DJ lineup',6,19,0,'0:28',4),V('Sold out — see you tonight',7,12,0,'0:10',0),V('Doors at 7',7,17,0,'0:11',1)]},
+ {id:18,zoneOff:true,title:'Late Night Comedy Showcase',cs:D(6,12),bS:D(7,6),bE:D(9,19,30),dS:D(9,20),dE:D(9,22),timing:'Start time',status:'Live',res:22,cap:50,price:'$10',audience:'public',venue:'Centro Boulder, 950 Pearl St, Boulder, CO',videos:[V('Comedy lineup',6,12,0,'0:27',0),V('Meet the headliner',7,6,0,'0:31',4),V('Doors at 7:30',9,12,0,'0:10',1),V('Last call for tickets',9,18,0,'0:08',2)]},
+ {id:15,title:'Sunset Trivia Night',cs:D(6,10),bS:D(7,18),bE:D(9,17),dS:D(9,18),dE:D(9,21),timing:'Start time',status:'Live',res:0,cap:40,price:'Free',videos:[V('Trivia is back',6,10,0,'0:18',2),V('Prize reveal',8,12,0,'0:20',5),V('Last call',9,12,0,'0:09',1),V('Team sign-ups',7,18,0,'0:16',3)]},
+ {id:16,title:'Chef’s Table: Seven-Course Tasting Dinner with Wine Pairings from Our Sommelier',venue:'Frasca Food & Wine Private Dining Room at the Back of the Restaurant, 1738 Pearl Street Suite 100, Boulder, CO 80302',cs:D(6,9),bS:D(8,19),bE:D(10,17),dS:D(10,19),dE:D(10,22),timing:'Start time',status:'Live',res:0,cap:12,price:'$85',videos:[V('Menu teaser',6,9,0,'0:30',3),V('Meet the chef',9,12,0,'0:41',4),V('Final seats',10,10,0,'0:12',2),V('Behind the menu',8,19,0,'0:26',5)]},
+ {id:17,title:'Holiday Market Pop-Up',cs:D(5,9),bS:D(12,10),bE:D(15,15),dS:D(14,10),dE:D(15,16),timing:'Arrival window · 2 days',status:'Live',res:0,cap:200,price:'Free',videos:[V('Teaser',5,9,0,'0:15',5),V('Vendor reveal',9,18,0,'0:40',0),V('Tickets open',12,10,0,'0:14',1),V('This weekend!',14,8,0,'0:20',3)]}
+];
+DATA_FUTURE.forEach(function(d){d.videos.sort(function(a,b){return a.t-b.t;});});
+// v1 Nigh Zone: on for every drop, step-based, measured from BROADCAST END (the purchase window). Last step holds until broadcast ends.
+var ZONE_STEPS=[[3,50],[2,35],[1,20],[0.5,10],[0.25,5]];
+DATA_NOW.concat(DATA_FUTURE).forEach(function(d){d.zone=d.zoneOff?null:{hrs:3,start:50,floor:5};});
+function zStepAt(h){var r=null;for(var i=0;i<ZONE_STEPS.length;i++){if(h<=ZONE_STEPS[i][0])r=ZONE_STEPS[i][1];}return r;}
+function zNextAt(h){for(var i=0;i<ZONE_STEPS.length;i++){if(h>ZONE_STEPS[i][0])return ZONE_STEPS[i][0];}return 0;}
+COL.ComingSoon='#8B5CF6';LBL.ComingSoon='Coming Soon';
+S.mode='now';DROPS=DATA_NOW;
+function vS(d){return d.cs||d.bS;}
+function isB(d,day){return overlaps(day,vS(d),d.bE);}
+function phaseAt(d,x){if(x<vS(d))return 'Scheduled';if(d.cs&&x<d.bS)return 'ComingSoon';if(x<=d.bE)return d.status==='Paused'?'Paused':'Live';return 'Ended';}
+function bStateNow(d){return phaseAt(d,NOW);}
+function setMode(m){S.mode=m;DROPS=m==='now'?DATA_NOW:DATA_FUTURE;S.day=D(7);S.weekStart=D(4);S.pv=null;if(m==='future'&&['A','B','C','D'].indexOf(S.opt)>-1)S.opt='I';render();}
+function phasePill(d,x){var s=phaseAt(d,x||NOW);var c=COL[s];var h='<span class="pill" style="background:'+c+'1F;color:'+(s==='Scheduled'?'#C2410C':s==='ComingSoon'?'#6D28D9':c)+'"><span style="width:6px;height:6px;border-radius:50%;background:'+c+'"></span>'+(s==='Live'?'On sale':LBL[s])+'</span>';if(d.soldOut&&s==='Live')h+=' <span class="pill" style="background:#15803D;color:#fff">Sold Out</span>';return h;}
+function curVid(d,x){x=x||NOW;var v=null,i=-1;d.videos.forEach(function(y,k){if(y.t<=x){v=y;i=k;}});return {v:v,i:i};}
+function nextVid(d,x){x=x||NOW;for(var k=0;k<d.videos.length;k++)if(d.videos[k].t>x)return {v:d.videos[k],i:k};return {v:null,i:-1};}
+function thumb(d,i,w,h,opts){opts=opts||{};var v=d.videos[i];if(!v)return '<div style="width:'+w+'px;height:'+h+'px;border-radius:8px;background:#F3F4F6;flex-shrink:0"></div>';
+ var future=v.t>NOW;return '<div onclick="event.stopPropagation();openPv('+d.id+','+i+')" title="Preview in Nigh" style="position:relative;width:'+w+'px;height:'+h+'px;border-radius:'+(opts.r||8)+'px;background:'+v.grad+';flex-shrink:0;cursor:pointer;overflow:hidden;'+(future?'opacity:.55;':'')+'">'
+  +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:'+Math.max(14,w*0.32)+'px;height:'+Math.max(14,w*0.32)+'px;border-radius:50%;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center"><svg width="'+Math.max(7,w*0.14)+'" height="'+Math.max(7,w*0.14)+'" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>'
+  +(w>=44?'<span style="position:absolute;bottom:3px;right:4px;font-size:8px;font-weight:700;color:#fff;background:rgba(0,0,0,0.45);border-radius:4px;padding:0 3px">'+v.dur+'</span>':'')+'</div>';}
+function vidStatus(d,i){var v=d.videos[i];var c=curVid(d).i;if(i===c&&NOW<=d.dE)return ['Live now','#16A34A'];if(v.t<=NOW)return ['Posted','#6B7280'];var n=nextVid(d).i;return [(i===n?'Next · ':'')+WD[v.t.getDay()]+' '+t(v.t),i===n?'#0E4EF5':'#9CA3AF'];}
+function dayBelow(w){var sel=same(w,S.day);var n=DROPS.filter(function(d){return isDrop(d,w);}).length;var b=DROPS.filter(function(d){return isB(d,w)&&!isDrop(d,w);});var cs=b.some(function(d){return phaseAt(d,same(w,NOW)?NOW:new Date(d0(w).getTime()+12*36e5))==='ComingSoon';});
+ return '<span style="display:flex;gap:3px;height:14px;align-items:center">'+(b.length?'<span style="width:8px;height:8px;border-radius:50%;border:2px solid '+(sel?'#fff':cs?COL.ComingSoon:COL.Live)+'"></span>':'')+(n?'<span style="min-width:14px;height:14px;border-radius:7px;background:'+(sel?'#fff':DROPC)+';color:'+(sel?DROPC:'#fff')+';font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px">'+n+'</span>':'')+'</span>';}
+function legendEF(){return '<div class="legend"><span><span style="width:8px;height:8px;border-radius:50%;border:2px solid '+COL.ComingSoon+'"></span>Coming Soon</span><span><span style="width:8px;height:8px;border-radius:50%;border:2px solid '+COL.Live+'"></span>On sale</span><span><span style="min-width:14px;height:14px;border-radius:7px;background:'+DROPC+';color:#fff;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center">2</span>Drops that day</span></div>';}
+function dayRef(day){return same(day,NOW)?NOW:new Date(d0(day).getTime()+12*36e5);}
+// ── E · Day schedule: all-day broadcast row + timed drops + hype-video/milestone lane ──
+function optE(){
+ var ws=weekDays();var day=S.day;var H0=6,H1=24,PX=38;var dayS=d0(day);
+ var y=function(x){var hrs=(x-dayS)/36e5;return Math.max(0,Math.min(H1-H0,hrs-H0))*PX;};
+ var allDay=DROPS.filter(function(d){return isB(d,day)&&!isDrop(d,day);});
+ var drops=DROPS.filter(function(d){return isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var miles=[];DROPS.forEach(function(d){d.videos.forEach(function(v,i){if(same(v.t,day))miles.push({t:v.t,kind:'vid',d:d,i:i});});if(same(d.bS,day)&&d.cs)miles.push({t:d.bS,kind:'sale',d:d});if(same(d.cs||new Date(0),day))miles.push({t:d.cs,kind:'cs',d:d});});
+ miles.sort(function(a,b){return a.t-b.t;});
+ var grid='';for(var h=H0;h<=H1;h++)grid+='<div style="position:absolute;left:0;right:0;top:'+((h-H0)*PX)+'px;border-top:1px solid #F3F4F6"><span style="position:absolute;left:4px;top:-7px;font-size:9px;color:#9CA3AF;background:#fff;padding-right:3px">'+(h===24?'12 AM':(h%12||12)+(h<12?' AM':' PM'))+'</span></div>';
+ var lanesEnd=[];var blocks=drops.map(function(d){var s=d0(d.dS)<dayS?dayS:d.dS;var top=y(same(d.dS,day)?d.dS:new Date(dayS.getTime()+d.dS.getHours()*36e5)),bot=y(same(d.dE,day)?d.dE:new Date(dayS.getTime()+d.dE.getHours()*36e5));var hgt=Math.max(46,bot-top);var lane=0;while(lanesEnd[lane]>top)lane++;lanesEnd[lane]=top+hgt;
+   var c=curVid(d,dayRef(day));return {lane:lane,html:function(n){return '<div onclick="openPv('+d.id+','+Math.max(0,c.i)+')" style="position:absolute;top:'+top+'px;height:'+(hgt-3)+'px;left:calc(44px + (62% - 44px)/'+n+'*'+lane+');width:calc((62% - 44px)/'+n+' - 4px);background:'+(NOW>d.dE?'#9CA3AF':DROPC)+';border-radius:8px;padding:5px 6px;color:#fff;cursor:pointer;overflow:hidden;display:flex;gap:6px">'+(c.v?thumb(d,c.i,26,36,{r:5}):'')+'<div style="min-width:0"><div style="font-size:11px;font-weight:700;line-height:1.2">'+d.title+'</div><div style="font-size:9px;opacity:.8;margin-top:2px">'+IC.ticket('#fff',9)+' '+t(d.dS)+(d.timing.indexOf('Arrival')===0?'–'+t(d.dE):'')+'</div>'+(d.soldOut?'<div style="font-size:9px;font-weight:800;color:#86EFAC">SOLD OUT</div>':'')+'</div></div>';}};});
+ var nL=Math.max(1,lanesEnd.length);
+ var mk=miles.map(function(m){var top=y(m.t);var lab=m.kind==='vid'?'Hype video · '+m.d.videos[m.i].label:m.kind==='sale'?'Tickets open':'Coming Soon starts';var c=m.kind==='vid'?'#7C3AED':m.kind==='sale'?'#16A34A':COL.ComingSoon;
+   return '<div style="position:absolute;top:'+(top-10)+'px;left:63%;right:6px;display:flex;align-items:center;gap:5px;background:#fff;border:1px solid '+c+'55;border-radius:8px;padding:3px 5px">'+(m.kind==='vid'?thumb(m.d,m.i,18,24,{r:4}):'<span style="width:8px;height:8px;border-radius:50%;background:'+c+';flex-shrink:0"></span>')+'<div style="min-width:0"><div style="font-size:9px;font-weight:700;color:'+c+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+t(m.t)+' · '+lab+'</div><div style="font-size:9px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+m.d.title+'</div></div></div>';}).join('');
+ var nowLine=same(day,NOW)?'<div style="position:absolute;left:40px;right:0;top:'+y(NOW)+'px;height:2px;background:#EF4444;z-index:3"><span style="position:absolute;left:-4px;top:-4px;width:9px;height:9px;border-radius:50%;background:#EF4444"></span></div>':'';
+ var all='<div style="padding:10px 12px 8px;border-bottom:1px solid #E5E7EB;background:#FAFAFB"><div style="font-size:10px;font-weight:700;letter-spacing:.05em;color:#6B7280;text-transform:uppercase;margin-bottom:6px">'+IC.bcast('#6B7280',11)+' Broadcasting all day · happens later</div>'
+  +(allDay.length?allDay.map(function(d){var ph=phaseAt(d,dayRef(day));var c=curVid(d,dayRef(day));var cd=countdown(d);return '<div onclick="openPv('+d.id+','+Math.max(0,c.i)+')" style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E5E7EB;border-left:4px solid '+COL[ph]+';border-radius:8px;padding:5px 8px;margin-bottom:5px;cursor:pointer">'+(c.v?thumb(d,c.i,22,30,{r:4}):'')+'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.title+'</div><div style="font-size:10px;color:#6B7280">'+(ph==='ComingSoon'?'Coming Soon · tickets '+WD[d.bS.getDay()]+' '+t(d.bS):ph==='Live'?'On sale':LBL[ph])+' · drop '+WD[d.dS.getDay()]+' '+t(d.dS)+'</div></div></div>';}).join(''):'<div style="font-size:11px;color:#9CA3AF">Nothing else broadcasting.</div>')+'</div>';
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w,dayBelow(w));}).join('')+'</div>'+legendEF()+'</div>'
+  +'<div class="scroll">'+all
+  +'<div style="display:flex;font-size:9px;font-weight:700;letter-spacing:.05em;color:#9CA3AF;text-transform:uppercase;padding:6px 0 10px"><span style="width:44px"></span><span style="width:calc(62% - 44px)">'+IC.ticket('#9CA3AF',10)+' Drops</span><span>▶ Videos &amp; milestones</span></div>'
+  +'<div style="position:relative;height:'+((H1-H0)*PX+10)+'px;margin-bottom:10px">'+grid+blocks.map(function(b){return b.html(nL);}).join('')+mk+nowLine+'</div></div>'+navBar()+pvOverlay();
+}
+// ── F · Drop story cards: phase stepper + hype-video filmstrip ──
+function stepper(d){var ph=bStateNow(d);var dropNow=NOW>=d.dS&&NOW<=d.dE,done=NOW>d.dE;
+ var steps=[['Coming Soon',d.cs,COL.ComingSoon,ph==='ComingSoon'],['On sale',d.bS,COL.Live,ph==='Live'||ph==='Paused'],['Drop',d.dS,DROPC,dropNow]];
+ return '<div style="display:flex;gap:3px;margin:8px 0 2px">'+steps.map(function(s){var off=!s[1];var past=s[1]&&s[1]<=NOW&&!s[3];var bg=off?'#F3F4F6':s[3]?s[2]:past?s[2]+'55':'#fff';return '<div style="flex:1;border:1px solid '+(off?'#F3F4F6':s[2]+'88')+';background:'+bg+';border-radius:6px;padding:4px 5px;'+(off?'opacity:.55':'')+'"><div style="font-size:9px;font-weight:800;color:'+(s[3]?'#fff':off?'#9CA3AF':s[2])+'">'+s[0].toUpperCase()+(s[3]?' · NOW':'')+'</div><div style="font-size:9px;color:'+(s[3]?'rgba(255,255,255,.85)':'#6B7280')+'">'+(off?'Not used':WD[s[1].getDay()]+' '+md(s[1])+' '+t(s[1]))+'</div></div>';}).join('')+'</div>';}
+function optF(){
+ var ws=weekDays();var day=S.day;
+ var list=DROPS.filter(function(d){return isB(d,day)||isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var happening=list.filter(function(d){return isDrop(d,day);}).length;
+ var body=list.length?list.map(function(d){var c=curVid(d);var cd=countdown(d);var dropDay=isDrop(d,day);
+   return '<div class="card" style="padding:12px;'+(dropDay?'border:2px solid '+DROPC:'')+'"><div style="display:flex;gap:10px">'+thumb(d,Math.max(0,c.i),60,80)+'<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:6px"><div style="font-size:14px;font-weight:700;line-height:1.25">'+d.title+'</div>'+(dropDay?'<span class="pill" style="background:'+DROPC+';color:#fff;height:18px">'+IC.ticket('#fff',10)+' Drop day</span>':'')+'</div><div style="font-size:12px;font-weight:600;margin:3px 0 5px">'+IC.clock+' '+dropWhen(d)+'</div><div>'+phasePill(d)+'</div><div style="font-size:11px;color:'+cd.c+';font-weight:600;margin-top:4px">'+cd.t+'</div></div></div>'
+    +stepper(d)
+    +'<div style="font-size:10px;font-weight:700;letter-spacing:.05em;color:#6B7280;text-transform:uppercase;margin:10px 0 6px">Hype videos · '+d.videos.length+'</div><div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px">'
+    +d.videos.map(function(v,i){var st=vidStatus(d,i);return '<div style="width:62px;flex-shrink:0">'+thumb(d,i,62,84)+'<div style="font-size:9px;font-weight:700;color:#111827;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+v.label+'</div><div style="font-size:9px;font-weight:700;color:'+st[1]+'">'+st[0]+'</div></div>';}).join('')
+    +'<div onclick="demo()" style="width:62px;height:84px;flex-shrink:0;border:1.5px dashed #D1D5DB;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9CA3AF;font-size:10px;cursor:pointer"><span style="font-size:18px">+</span>Add</div></div>'
+    +'<button onclick="openPv('+d.id+','+Math.max(0,c.i)+')" style="width:100%;margin-top:10px;background:#EEF2FF;border:none;color:#0E4EF5;font-size:12px;font-weight:700;padding:9px;border-radius:10px;cursor:pointer;font-family:inherit">▶ Preview what guests see in Nigh</button></div>';}).join(''):'<div class="empty">Nothing broadcasting or happening this day.</div>';
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w,dayBelow(w));}).join('')+'</div>'+legendEF()+'</div>'
+  +'<div class="scroll" style="padding:12px 16px"><div style="font-size:12px;color:#6B7280;margin-bottom:10px"><b style="color:#111827">'+dshort(day)+'</b> · '+happening+' drop'+(happening===1?'':'s')+' happening · '+(list.length-happening)+' broadcasting for later</div>'+body+'</div>'+navBar()+pvOverlay();
+}
+// ── G · Week phases planner: Coming Soon → On sale → Drop, with video pins ──
+function optG(){
+ var ws=weekDays();var W0=d0(ws[0]).getTime(),SPAN=7*864e5;var X=function(x){return Math.max(0,Math.min(100,(x-W0)/SPAN*100));};
+ var selI=ws.findIndex(function(w){return same(w,S.day);});
+ var vis=DROPS.filter(function(d){return ws.some(function(w){return isB(d,w)||isDrop(d,w);});}).sort(function(a,b){return a.dS-b.dS;});
+ var rows=vis.map(function(d){var segs='';var past=function(x){return x<NOW;};
+   if(d.cs){var a=X(d.cs),b=X(d.bS);if(b>a)segs+='<div style="position:absolute;top:9px;height:9px;left:'+a+'%;width:'+(b-a)+'%;border-radius:5px 0 0 5px;background:repeating-linear-gradient(135deg,'+COL.ComingSoon+' 0 5px,#C4B5FD 5px 9px)"></div>';}
+   var a2=X(d.bS),b2=X(d.bE);if(b2>a2)segs+='<div style="position:absolute;top:9px;height:9px;left:'+a2+'%;width:'+(b2-a2)+'%;border-radius:'+(d.cs?'0 5px 5px 0':'5px')+';background:'+(NOW>d.bE?'#D1D5DB':COL.Live)+'"></div>';
+   if(d.zone){var za=X(zS(d)),zb=X(d.bE);if(zb>za)segs+='<div title="Nigh Zone" style="position:absolute;top:8px;height:11px;left:'+za+'%;width:'+(zb-za)+'%;border-radius:4px;background:#41EFF9;box-shadow:0 0 5px rgba(65,239,249,.8)"></div>';}
+   var a3=X(d.dS),b3=X(d.dE);if(b3>a3||(a3>0&&a3<100))segs+='<div onclick="openPv('+d.id+','+Math.max(0,curVid(d).i)+')" style="position:absolute;top:3px;height:21px;left:'+Math.min(a3,94)+'%;width:'+Math.max(6,b3-a3)+'%;min-width:20px;border-radius:5px;background:'+(NOW>d.dE?'#9CA3AF':DROPC)+';display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1">'+IC.ticket('#fff',10)+'</div>';
+   d.videos.forEach(function(v,i){var x=X(v.t);if(v.t>=W0&&v.t<W0+SPAN)segs+='<div style="position:absolute;top:-9px;left:calc('+x+'% - 8px);z-index:2;border:2px solid #fff;border-radius:5px;box-shadow:0 1px 3px rgba(0,0,0,.25)">'+thumb(d,i,14,18,{r:3})+'</div>';});
+   return '<div style="padding:16px 0 6px;border-bottom:1px solid #F3F4F6"><div style="display:flex;justify-content:space-between;align-items:center;margin:0 10px 8px;font-size:11px;font-weight:700"><span>'+d.title+'</span><span style="display:flex;gap:4px;align-items:center">'+(d.soldOut?'<span style="color:#15803D">Sold Out</span>':'')+'<span style="color:#7C3AED">▶ '+d.videos.length+'</span></span></div><div style="position:relative;height:26px;margin:0 6px">'+segs+'</div></div>';}).join('');
+ var colHl='<div style="position:absolute;top:0;bottom:0;left:calc(6px + (100% - 12px)/7*'+selI+');width:calc((100% - 12px)/7);background:rgba(14,78,245,0.06);pointer-events:none"></div>';
+ var nowX=NOW>=W0&&NOW<W0+SPAN?'<div style="position:absolute;top:0;bottom:0;left:calc(6px + (100% - 12px)*'+(X(NOW)/100)+');width:2px;background:#EF4444;z-index:3;pointer-events:none"></div>':'';
+ var day=S.day;var ev=[];DROPS.forEach(function(d){if(isDrop(d,day))ev.push([d.dS,'drop',d]);d.videos.forEach(function(v,i){if(same(v.t,day))ev.push([v.t,'vid',d,i]);});if(same(d.bS,day))ev.push([d.bS,'sale',d]);if(d.cs&&same(d.cs,day))ev.push([d.cs,'cs',d]);});ev.sort(function(a,b){return a[0]-b[0];});
+ var sum='<div style="padding:12px 16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">'+dshort(day)+'</div>'+(ev.length?ev.map(function(e){var d=e[2];var lab=e[1]==='drop'?'<b>Drop</b> · '+d.title:e[1]==='vid'?'Hype video goes live · '+d.videos[e[3]].label:e[1]==='sale'?'Tickets open · '+d.title:'Coming Soon starts · '+d.title;var c=e[1]==='drop'?DROPC:e[1]==='vid'?'#7C3AED':e[1]==='sale'?'#16A34A':COL.ComingSoon;
+   return '<div class="row" style="padding:7px 10px;margin-bottom:6px"><span style="font-size:11px;font-weight:700;color:#6B7280;width:54px;flex-shrink:0">'+t(e[0])+'</span>'+(e[1]==='vid'?thumb(d,e[3],20,26,{r:4}):'<span style="width:10px;height:10px;border-radius:3px;background:'+c+';flex-shrink:0"></span>')+'<span style="font-size:12px;color:#111827;flex:1">'+lab+(e[1]==='vid'&&e[3]>-1?'<br><span style="font-size:10px;color:#6B7280">'+d.title+'</span>':'')+'</span></div>';}).join(''):'<div class="empty">Nothing scheduled this day.</div>')+'</div>';
+ return hdrBlock()+'<div class="cal" style="padding-bottom:0">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w);}).join('')+'</div></div>'
+  +'<div class="scroll"><div style="position:relative;padding-top:2px">'+colHl+nowX+rows+'</div>'
+  +'<div class="legend" style="padding:10px 0;flex-wrap:wrap"><span><span style="width:16px;height:8px;border-radius:4px;background:repeating-linear-gradient(135deg,'+COL.ComingSoon+' 0 4px,#C4B5FD 4px 7px)"></span>Coming Soon</span><span><span style="width:16px;height:8px;border-radius:4px;background:'+COL.Live+'"></span>On sale</span><span><span style="width:14px;height:8px;border-radius:3px;background:#41EFF9"></span>Nigh Zone</span><span><span style="width:14px;height:12px;border-radius:3px;background:'+DROPC+'"></span>Drop</span><span><span style="width:10px;height:13px;border-radius:3px;background:'+GR[0]+'"></span>Hype video</span></div>'+sum+'</div>'+navBar()+pvOverlay();
+}
+// ── Nigh preview — what guests see ──
+function openPv(id,i){S.pv={id:id,i:i};render();}
+function pvOverlay(){
+ if(!S.pv)return '';var d=DROPS.find(function(x){return x.id===S.pv.id;});if(!d){S.pv=null;return '';}var i=S.pv.i;var v=d.videos[i];var at=v.t>NOW?v.t:NOW;var ph=phaseAt(d,at);var after=d.videos[i+1];
+ var chip=ph==='ComingSoon'?['COMING SOON',COL.ComingSoon,'Tickets open '+WD[d.bS.getDay()]+' '+t(d.bS)]:ph==='Live'?(d.soldOut?['SOLD OUT','#15803D','Join the waitlist']:['LIVE',COL.Live,(d.cap-d.res)+' spots left']):ph==='Paused'?['PAUSED',COL.Paused,'Back soon']:ph==='Scheduled'?['NOT VISIBLE YET','#6B7280','Starts '+md(vS(d))]:['ENDED','#6B7280',''];
+ var cta=ph==='ComingSoon'?'Notify me':ph==='Live'?(d.soldOut?'Sold Out':'Reserve · '+d.price):'—';
+ return '<div onclick="S.pv=null;render()" style="position:absolute;inset:0;background:rgba(10,10,20,0.78);z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px">'
+  +'<div onclick="event.stopPropagation()" style="width:270px">'
+  +'<div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:12px;margin-bottom:8px"><b>Preview in Nigh</b><span onclick="S.pv=null;render()" style="cursor:pointer;font-size:18px;opacity:.7">×</span></div>'
+  +'<div style="position:relative;height:440px;border-radius:22px;overflow:hidden;background:'+v.grad+';border:4px solid #111827">'
+   +'<div style="position:absolute;top:8px;left:8px;right:8px;display:flex;gap:3px">'+d.videos.map(function(x,k){return '<div style="flex:1;height:3px;border-radius:2px;background:'+(k<=i?'#fff':'rgba(255,255,255,0.3)')+'"></div>';}).join('')+'</div>'
+   +'<div style="position:absolute;top:18px;left:0;right:0;background:rgba(0,0,0,0.5);padding:7px 10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px;font-weight:800;color:#fff;letter-spacing:.05em">DROP</span><span style="width:7px;height:7px;border-radius:50%;background:'+chip[1]+'"></span><span style="font-size:10px;font-weight:800;color:#fff">'+chip[0]+'</span><span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.8)">'+chip[2]+'</span></div>'
+   +'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>'
+   +'<div style="position:absolute;left:0;right:0;bottom:0;padding:40px 12px 12px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.75));color:#fff"><div style="font-size:10px;opacity:.8;margin-bottom:2px">Centro Boulder · “'+v.label+'” · '+v.dur+'</div><div style="font-size:16px;font-weight:800">'+d.title+'</div><div style="font-size:11px;opacity:.85;margin:3px 0 9px">'+dropWhen(d)+' · '+d.price+'</div><div style="background:'+(ph==='ComingSoon'?'rgba(255,255,255,0.18)':d.soldOut?'rgba(255,255,255,0.18)':'#0E4EF5')+';text-align:center;font-size:13px;font-weight:700;padding:9px;border-radius:12px">'+cta+'</div></div>'
+  +'</div>'
+  +'<div style="color:rgba(255,255,255,0.8);font-size:11px;line-height:1.5;margin-top:10px;text-align:center">'+(v.t>NOW?'Guests will see this from <b>'+dshort(v.t)+' '+t(v.t)+'</b>':'Guests see this '+(curVid(d).i===i&&NOW<=d.bE?'<b>right now</b>':'(earlier video)'))+(after?' · next: “'+after.label+'” '+WD[after.t.getDay()]+' '+t(after.t):'')+'</div>'
+  +'<div style="display:flex;justify-content:center;gap:10px;margin-top:8px">'+(i>0?'<button onclick="openPv('+d.id+','+(i-1)+')" style="background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:12px;padding:6px 12px;border-radius:14px;cursor:pointer;font-family:inherit">‹ Earlier video</button>':'')+(after?'<button onclick="openPv('+d.id+','+(i+1)+')" style="background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:12px;padding:6px 12px;border-radius:14px;cursor:pointer;font-family:inherit">Next video ›</button>':'')+'</div>'
+  +'</div></div>';
+}
+NOTES.E={t:'E · Day schedule (calendar-style)',sub:'Works like a phone calendar. Drops that happen later but are broadcasting today sit in an “all day” row at the top. Drops happening today are timed blocks, side by side when there are several. A right-hand lane shows when hype videos go live, when Coming Soon starts and when tickets open. Every thumbnail opens the Nigh preview.',pros:['Handles 3+ drops a day naturally (side-by-side blocks)','Separates “broadcasting” (all day) from “happening” (timed) the same way calendars separate all-day events','Shows exactly when each hype video goes live'],cons:['Tall day view — more scrolling','Less room for big video thumbnails']};
+NOTES.F={t:'F · Drop story cards',sub:'Each drop is a card with its live video thumbnail, a three-step phase tracker (Coming Soon → On sale → Drop) and a filmstrip of hype videos marked Posted / Live now / Next / Scheduled, with “+ Add” for another video. One tap previews exactly what guests see in Nigh.',pros:['Best for managing hype videos','The phase tracker answers “where is this drop right now?”','Closest to the current card-based home'],cons:['Weaker week-at-a-glance view','Long list when many drops overlap']};
+NOTES.G={t:'G · Week phases planner',sub:'Each drop gets a row across the week: striped purple for Coming Soon, green for On sale, a navy block for the drop, and small video thumbnails pinned at the moment each hype video goes live. A red line marks now. The selected day is listed underneath in time order.',pros:['Clearest view of the whole lifecycle across days','Video pins show the hype cadence at a glance','Scales to many drops per week'],cons:['Small tap targets on a phone','Most different from today’s home screen']};
+var _render=render;
+render=function(){
+ var future=S.mode==='future';
+ var keys=['I','J','K','H','A','B','C','D','E','F','G'];
+ document.getElementById('opts').innerHTML='<div style="width:100%;display:flex;justify-content:center;gap:6px;margin-bottom:6px"><span style="font-size:12px;color:#6B7280;align-self:center">Sample data:</span>'
+  +[['now','Today’s rules · 1 drop/day · ≤48h'],['future','Future · 3+/day · Coming Soon · multiple videos']].map(function(m){return '<button class="opt'+(S.mode===m[0]?' on':'')+'" style="'+(S.mode===m[0]?'background:#111827;border-color:#111827':'')+'" onclick="setMode(\''+m[0]+'\')">'+m[1]+'</button>';}).join('')+'</div>'
+  +keys.map(function(k){return '<button class="opt'+(S.opt===k?' on':'')+'" onclick="S.opt=\''+k+'\';S.pv=null;'+(k==='J'?'if(S.mode!==\'future\')setMode(\'future\');':'')+'render()">'+NOTES[k].t+(['E','F','G','H','I','J','K'].indexOf(k)>-1?' <span style="font-size:10px;opacity:.75">· new</span>':'')+'</button>';}).join('');
+ var fn={A:optA,B:optB,C:optC,D:optD,E:optE,F:optF,G:optG,H:optH,I:optI,J:optJ,K:optK}[S.opt];
+ document.getElementById('phone').innerHTML=fn();
+ var n=NOTES[S.opt];
+ document.getElementById('notes').innerHTML='<h2>'+n.t+'</h2><div class="sub">'+n.sub+'</div><h3>Works well</h3><ul>'+n.pros.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul><h3>Watch out</h3><ul>'+n.cons.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'
+  +(['A','B','C','D'].indexOf(S.opt)>-1?'<h3>Note</h3><ul><li>Built before the Coming Soon / multiple-video ideas — shows the whole broadcast as one window.</li></ul>':((S.opt==='I'||S.opt==='J'||S.opt==='K')?pokePanel():'')+(S.opt==='H'?'<h3>Try</h3><ul><li>Sat Nov 7: drop-day cards (with the teal Check in guests button) above “Also broadcasting.”</li><li>Next week › Sat 14 and Sun 15: the two-day market reads “day 1 of 2” and “day 2 of 2.”</li><li>Switch sample data to Future for 3 drops on one day and Coming Soon labels.</li><li>Tap Schedule (top of the calendar) for the swim lanes.</li></ul>':'')+'<h3>Tip</h3><ul><li>Tap any video thumbnail or drop block to preview what guests see in Nigh. Use “Next video” to step through the hype sequence.</li><li>Switch to “Future” sample data to see 3 drops on Sat Nov 7, Coming Soon phases and several videos per drop.</li></ul>')
+  +'<h3>Sample drops ('+(future?'future':'today’s rules')+')</h3><ul>'+DROPS.map(function(d){return '<li style="font-size:12px">'+d.title+' — '+(d.cs?'Coming Soon '+md(d.cs)+', ':'')+'on sale '+md(d.bS)+'–'+md(d.bE)+', drop '+md(d.dS)+(same(d.dS,d.dE)?'':'–'+md(d.dE))+' · '+d.videos.length+' video'+(d.videos.length>1?'s':'')+'</li>';}).join('')+'</ul>';
+};
+
+
+// ══ OPTION H — current feed + date tiles + one plain label · Feed | Schedule toggle ══
+S.hView='feed';
+var CHECKIN='#0D9488';
+function calHdr(){var ws=weekDays();
+ var showTog=(S.opt==='H'||S.opt==='J'||S.opt==='K');
+ var feedIc='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="14" width="16" height="7" rx="2"/></svg>';
+ var laneIc='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="3" y1="6" x2="14" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="5" y1="18" x2="17" y2="18"/></svg>';
+ var tog=showTog?'<div style="display:inline-flex;background:#F3F4F6;border-radius:8px;padding:2px;margin-right:10px">'+[['feed',feedIc,'Feed'],['schedule',laneIc,'Schedule (swim lanes)']].map(function(v){var on=S.hView===v[0];return '<button title="'+v[2]+'" aria-label="'+v[2]+'" onclick="S.hView=\''+v[0]+'\';S.pv=null;render()" style="border:none;cursor:pointer;width:28px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:'+(on?'#fff':'transparent')+';color:'+(on?'#0E4EF5':'#9CA3AF')+';box-shadow:'+(on?'0 1px 2px rgba(0,0,0,.15)':'none')+'">'+v[1]+'</button>';}).join('')+'</div>':'';
+ var onToday=same(S.day,NOW)&&ws.some(function(w){return same(w,NOW);});
+ var todayBtn='<button '+(onToday?'disabled':'')+' onclick="goToday()" title="Go to today" style="width:20px;height:28px;flex-shrink:0;background:none;border:none;display:flex;align-items:center;color:'+(onToday?'#D1D5DB':'#0E4EF5')+';cursor:'+(onToday?'default':'pointer')+';padding:0;outline:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3 L20 3 Q21 3 21 4 L21 17 L18 21 L4 21 Q3 21 3 20 L3 4 Q3 3 4 3 Z"/><text x="12" y="15.5" text-anchor="middle" font-size="8.5" font-weight="700" stroke="none" fill="currentColor" font-family="-apple-system,BlinkMacSystemFont,sans-serif">'+NOW.getDate()+'</text></svg></button>';
+ return '<div class="calhdr"><button onclick="shiftWeek(-7)">‹</button><div style="flex:1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center"><div style="display:flex;justify-content:flex-end;margin-right:18px">'+tog.replace('margin-right:10px','')+'</div><span style="font-size:14px;font-weight:700;text-align:center">'+MO[ws[3].getMonth()]+' '+ws[3].getFullYear()+'</span><div style="display:flex;justify-content:flex-start;margin-left:18px">'+todayBtn+'</div></div><button onclick="shiftWeek(7)">›</button></div>';}
+function goToday(){S.day=d0(NOW);S.weekStart=addD(d0(NOW),-3);S.pv=null;render();}
+function dayBelowH(w){var sel=same(w,S.day);var n=DROPS.filter(function(d){return isDrop(d,w);}).length;
+ if(!n)return '<span style="height:12px"></span>';
+ return n>1?'<span style="min-width:14px;height:14px;border-radius:7px;background:'+(sel?'#fff':DROPC)+';color:'+(sel?DROPC:'#fff')+';font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 3px">'+n+'</span>':'<span style="width:7px;height:7px;border-radius:50%;background:'+(sel?'#fff':DROPC)+';margin:3px 0 2px"></span>';}
+function dayIdx(d,day){var a=Math.round((d0(day)-d0(d.dS))/864e5)+1,n=Math.round((d0(d.dE)-d0(d.dS))/864e5)+1;return {i:a,n:n};}
+function dateTile(d,day,isDropDay){
+ if(isDropDay){var x=dayIdx(d,day);var past=NOW>d.dE;var top=x.n>1?'DAY '+x.i+'/'+x.n:(same(day,NOW)?'TODAY':WD[day.getDay()].toUpperCase());
+  return '<div style="width:50px;flex-shrink:0;border-radius:10px;background:'+(past?'#9CA3AF':DROPC)+';color:#fff;text-align:center;padding:6px 0 7px"><div style="font-size:9px;font-weight:800;letter-spacing:.04em">'+top+'</div><div style="font-size:20px;font-weight:800;line-height:1.1">'+day.getDate()+'</div><div style="font-size:9px;opacity:.8">'+MO[day.getMonth()]+'</div></div>';}
+ return '<div style="width:50px;flex-shrink:0;border-radius:10px;background:#F3F4F6;border:1px solid #E5E7EB;color:#6B7280;text-align:center;padding:5px 0 6px"><div style="font-size:9px;font-weight:800;letter-spacing:.04em">'+WD[d.dS.getDay()].toUpperCase()+'</div><div style="font-size:20px;font-weight:800;line-height:1.1;color:#374151">'+d.dS.getDate()+'</div><div style="font-size:9px">'+MO[d.dS.getMonth()]+'</div></div>';}
+function roleLabel(d,day,isDropDay){
+ var arr=d.timing.indexOf('Arrival')===0;var win=arr?t(d.dS)+'–'+t(d.dE):t(d.dS);
+ if(isDropDay){var x=dayIdx(d,day);var past=NOW>d.dE;
+  if(past)return ['Drop · ended '+t(d.dE),'#6B7280'];
+  var when=same(day,NOW)?'today':WD[day.getDay()]+' '+md(day);
+  if(x.n>1){if(x.i===1)return ['Drop starts '+when+' · '+win+' · day 1 of '+x.n,DROPC];if(x.i===x.n)return ['Drop day '+x.i+' of '+x.n+' · ends '+t(d.dE),DROPC];return ['Drop day '+x.i+' of '+x.n+' · '+win,DROPC];}
+  return ['Drop '+when+' · '+win,DROPC];}
+ var ph=phaseAt(d,dayRef(day));var dw=WD[d.dS.getDay()]+' '+md(d.dS)+', '+t(d.dS);
+ if(ph==='ComingSoon')return ['Coming Soon · tickets '+WD[d.bS.getDay()]+' '+t(d.bS)+' · drop '+dw,'#6D28D9'];
+ if(ph==='Ended')return ['Broadcast ended · drop '+dw,'#6B7280'];
+ if(ph==='Scheduled'){var st=vS(d);return ['Broadcast starts '+(same(st,day)?(same(day,NOW)?'today ':'')+t(st):WD[st.getDay()]+' '+t(st))+' · drop '+dw,'#C2410C'];}
+ return ['Broadcasting · drop '+dw,'#15803D'];
+}
+function hDropCard(d,day){var lab=roleLabel(d,day,true);var c=curVid(d,dayRef(day));var past=NOW>d.dE;var isToday=same(day,NOW);
+ return '<div class="card" style="border:1.5px solid '+(past?'#E5E7EB':DROPC)+'">'
+  +'<div style="padding:8px 12px;background:'+(past?'#F9FAFB':'#EEF1F7')+';font-size:11px;font-weight:800;letter-spacing:.03em;color:'+lab[1]+';display:flex;align-items:center;gap:6px">'+IC.ticket(lab[1],12)+' '+lab[0].toUpperCase()+'</div>'
+  +'<div style="padding:12px;display:flex;gap:12px">'+dateTile(d,day,true)
+  +'<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700;line-height:1.25">'+d.title+'</div><div style="margin:6px 0 5px">'+phasePill(d,isToday?NOW:dayRef(day))+'</div><div style="font-size:12px;color:#6B7280">'+d.res+'/'+d.cap+' reserved · '+d.price+'</div></div>'
+  +(c.v?thumb(d,c.i,54,72):'')+'</div>'
+  +(isToday&&!past?'<div style="padding:0 12px 12px;display:flex;gap:8px"><button onclick="demo()" style="flex:1;background:'+CHECKIN+';border:none;color:#fff;font-size:13px;font-weight:700;padding:10px;border-radius:10px;cursor:pointer;font-family:inherit">Check in guests</button><button onclick="openPv('+d.id+','+Math.max(0,c.i)+')" style="background:#fff;border:1px solid #E5E7EB;color:#374151;font-size:12px;font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer;font-family:inherit">▶ Preview</button></div>':'')
+  +'</div>';}
+function hBcastCard(d,day){var lab=roleLabel(d,day,false);var c=curVid(d,dayRef(day));
+ return '<div class="card" style="border:1px dashed #D1D5DB;background:#FCFCFD"><div style="padding:10px 12px;display:flex;gap:10px;align-items:center">'+dateTile(d,day,false)
+  +'<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:800;letter-spacing:.03em;color:'+lab[1]+';display:flex;align-items:center;gap:5px;margin-bottom:3px">'+IC.bcast(lab[1],11)+' '+lab[0].toUpperCase()+'</div><div style="font-size:13px;font-weight:700;line-height:1.25">'+d.title+'</div><div style="margin-top:5px">'+phasePill(d,dayRef(day))+'</div></div>'
+  +(c.v?thumb(d,c.i,40,54):'')+'</div></div>';}
+function optH(){
+ if(S.hView==='schedule')return optG();
+ var ws=weekDays();var day=S.day;
+ var happening=DROPS.filter(function(d){return isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var also=DROPS.filter(function(d){return isB(d,day)&&!isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var body=(happening.length?happening.map(function(d){return hDropCard(d,day);}).join(''):'<div style="text-align:center;padding:18px 0 6px"><div style="font-size:13px;font-weight:700;color:#374151">No drops '+(same(day,NOW)?'today':'on '+dshort(day))+'</div><div style="font-size:12px;color:#9CA3AF;margin-top:3px">Days with a dot under the date have drops.</div></div>')
+  +(also.length?'<div style="display:flex;align-items:center;gap:8px;margin:16px 0 10px"><div style="flex:1;height:1px;background:#E5E7EB"></div><span style="font-size:10px;font-weight:700;letter-spacing:.05em;color:#9CA3AF;text-transform:uppercase">Also broadcasting · happens later</span><div style="flex:1;height:1px;background:#E5E7EB"></div></div>'+also.map(function(d){return hBcastCard(d,day);}).join(''):'');
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w,dayBelowH(w));}).join('')+'</div>'
+  +'<div class="legend"><span><span style="width:7px;height:7px;border-radius:50%;background:'+DROPC+'"></span>Drop that day</span><span><span style="min-width:14px;height:14px;border-radius:7px;background:'+DROPC+';color:#fff;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center">2</span>Several drops</span></div></div>'
+  +'<div class="scroll" style="padding:14px 16px">'+body+'</div>'+navBar()+pvOverlay();
+}
+NOTES.H={t:'H · Feed with date tiles + Schedule toggle',sub:'Today’s feed, with two simple signals on every card. A date tile shows the drop’s date: navy “TODAY” (or “DAY 2/2”) when the drop happens on the selected day, light gray with the future date when it’s only broadcasting. One plain label says it outright — “Drop today · 7 PM,” “Drop day 2 of 2 · ends 4 PM,” “Broadcasting · drop Mon Nov 9, 6 PM,” “Coming Soon · tickets Sat 6 PM.” Drops happening that day come first as full cards; broadcast-only drops sit under “Also broadcasting” as smaller dashed cards. The week strip only marks drop days. The Feed | Schedule switch flips to the swim-lane view (G) for the same week.',pros:['Smallest change to the current feed','Date tile + label answer “happening today or later?” without relying on color','Multi-day arrival windows read naturally (day 1 of 2, day 2 of 2)','Schedule view one tap away for the full timeline and videos'],cons:['Week strip no longer shows broadcast days — that lives in Schedule']};
+S.opt='H';
+
+// ══ OPTION I — current Nigh Host drop card, media area = current video + broadcast timeline ══
+var NLOGO='<svg width="9" height="13" viewBox="0 0 233 353" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M184.737 0H176.933C197.176 7.10759 208.437 24.8646 208.437 47.7962V182.012C216.073 173.248 232.966 144.265 232.966 126.988V48.2284C232.978 21.6349 211.331 0 184.737 0Z" fill="white"/><path d="M152.249 144.721L78.9999 50.4976H51.41V191.617H80.7168V99.7465L152.033 191.617H181.556V50.4976H152.249V144.721Z" fill="white"/><path d="M34.3494 234.166C26.9776 221.872 24.5404 205.436 24.5404 190.14V50.5456C24.5404 45.539 26.1132 40.8927 28.7785 37.0627C13.2667 43.3059 0 57.0168 0 73.4051V71.0999V181.7C0 196.659 6.67537 210.646 18.3453 220.023L34.3374 234.166" fill="white"/><path d="M164.099 0.348176C162.226 0.120061 160.317 0 158.372 0H48.2284C21.6349 0 0 21.6349 0 48.2284V55.2279C6.15911 34.0012 24.2643 24.5284 46.5595 24.5284H182.456C187.223 24.5284 191.665 25.9571 195.399 28.3944C189.552 14.6954 178.062 2.94149 164.099 0.348176Z" fill="white"/><path d="M33.9051 201.03C34.4694 215.569 37.1348 228.62 48.3965 243.735L57.377 254.565C74.4976 269.74 116.483 306.971 116.483 306.971L214.62 220.023C226.302 210.647 232.978 196.672 232.978 181.7V157.592C226.23 172.888 215.173 185.626 203.947 196.636C200.934 199.685 197.74 202.555 194.354 205.196L116.483 274.183L34.3974 201.462L33.9051 201.018V201.03Z" fill="white"/><path d="M116.495 328.198C89.6014 328.198 67.7983 333.673 67.7983 340.42C67.7983 347.167 89.6014 352.642 116.495 352.642C143.389 352.642 165.192 347.167 165.192 340.42C165.192 333.673 143.389 328.198 116.495 328.198Z" fill="white"/></svg>';
+var HI={globe:'<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>',twoPeople:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',personLock:'<circle cx="8" cy="5.5" r="4"/><path d="M1 20c0-5.5 3-8 7-8 3 0 5 1.5 6 3.5"/><rect x="14" y="15" width="9" height="7.5" rx="2"/><path d="M16.5 15v-2.5a2 2 0 014 0V15"/><circle cx="18.5" cy="18.5" r="1" fill="currentColor" stroke="none"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',map:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>',users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>',edit:'<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>',pause:'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>',play:'<polygon points="5 3 19 12 5 21 5 3"/>',qr:'<rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><path d="M14 14h2v2h-2zM20 14h2v2h-2zM14 20h2v2h-2zM20 20h2v2h-2zM17 17h2v2h-2z"/>'};
+function hic(n,s,c){return '<svg width="'+(s||16)+'" height="'+(s||16)+'" viewBox="0 0 24 24" stroke="'+(c||'currentColor')+'" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">'+HI[n]+'</svg>';}
+var AUD=['public','followers','guests'];
+function audInfo(d){var a=d.audience||AUD[d.id%3];return a==='public'?['globe','Public — anyone on Nigh']:a==='followers'?['twoPeople','Followers & shared link']:['personLock','Private — existing guests only'];}
+function dayWord(x){var n=Math.round((d0(x)-d0(NOW))/864e5);return n===0?'Today':n===1?'Tomorrow':n===-1?'Yesterday':WD[x.getDay()]+' '+md(x);}
+function tL(x){var h=x.getHours(),m=x.getMinutes();return (h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM');}
+function iWhen(d){var arr=d.timing.indexOf('Arrival')===0;var tt=arr?tL(d.dS)+' – '+tL(d.dE):tL(d.dS);if(!same(d.dS,d.dE))return dayWord(d.dS)+' – '+dayWord(d.dE)+' · '+tt;return dayWord(d.dS)+' · '+tt;}
+function dur(ms){var m=Math.max(0,Math.round(ms/6e4));var dd=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return dd?dd+'d '+h+'h':h?h+'h '+mm+'m':mm+'m';}
+function iRemain(d){var ph=bStateNow(d);if(ph==='Scheduled')return 'Broadcast starts in '+dur(vS(d)-NOW);if(ph==='ComingSoon')return 'Tickets open in '+dur(d.bS-NOW);if(ph==='Live'||ph==='Paused'){var ms=d.bE-NOW;if(ms<36e5)return 'Broadcast ends in <span class="bcd" data-end="'+d.bE.getTime()+'" style="color:#F87171;font-weight:700">'+mmss(ms)+'</span>';return 'Broadcast ends in <span style="color:#F87171;font-weight:700">'+dur(ms)+'</span>';}return 'Broadcast ended';}
+var ZONE_IC='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#41EFF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#41EFF9" stroke="none"/></svg>';
+function zS(d){return d.zone?new Date(Math.max(d.bS.getTime(),d.bE.getTime()-d.zone.hrs*36e5)):null;}
+function zRad(d){var left=(d.bE-NOW)/36e5;return zStepAt(left)||d.zone.start;}
+function iZone(d,bgc){if(!d.zone||NOW>d.bE)return '';var st=zS(d);var txt;
+ if(NOW<st)txt='Nigh Zone starts in <span style="color:#41EFF9;font-weight:700">'+dur(st-NOW)+'</span>';
+ else{var left=(d.bE-NOW)/36e5;var r=zRad(d);var nb=zNextAt(left);var nxt=d.bE.getTime()-nb*36e5;
+  txt='Nigh Zone: <span style="color:#41EFF9;font-weight:700">'+r+' mi</span> for <span class="bcd" data-end="'+nxt+'" data-rr="1" style="color:#41EFF9;font-weight:700">'+mmss(nxt-NOW.getTime())+'</span>';}
+ if(bgc===null)return txt;return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#fff;background:'+bgc+';border-radius:6px;padding:4px 9px">'+txt+'</span>';}
+function zOff(d){return d.zone&&NOW<=d.bE?34:0;}
+function iDropIn(d,bgc){var ms=d.dS-NOW;var txt;
+ if(ms>0)txt='Drop starts in '+(ms<36e5?'<span class="bcd" data-end="'+d.dS.getTime()+'" style="color:#fff;font-weight:700">'+mmss(ms)+'</span>':dur(ms));
+ else if(NOW<=d.dE)txt='Drop happening now · ends in '+(d.dE-NOW<36e5?'<span class="bcd" data-end="'+d.dE.getTime()+'" style="color:#fff;font-weight:700">'+mmss(d.dE-NOW)+'</span>':dur(d.dE-NOW));
+ else return '';
+ if(bgc===null)return txt;return '<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#fff;background:'+bgc+';border-radius:6px;padding:4px 9px">'+txt+'</span>';}
+function mmss(ms){ms=Math.max(0,ms);if(ms<6e4)return Math.ceil(ms/1e3)+'s';return Math.ceil(ms/6e4)+'m';}
+var T0=Date.now();
+setInterval(function(){var el=document.querySelectorAll('.bcd');if(!el.length)return;var now=NOW.getTime()+(Date.now()-T0);var rr=false;for(var i=0;i<el.length;i++){var left=+el[i].getAttribute('data-end')-now;el[i].textContent=mmss(left);if(left<=0&&el[i].getAttribute('data-rr'))rr=true;}if(rr){NOW=new Date(now);T0=Date.now();render();}},1000);
+function iStatus(d){var ph=bStateNow(d);var lab={Live:'BROADCASTING LIVE',Paused:'Broadcast Paused',ComingSoon:'Coming Soon',Scheduled:'Broadcast Scheduled',Ended:'Broadcast Ended'}[ph];return [lab,COL[ph]];}
+function iTimeline(d,noPins){
+ var s=new Date(Math.min(vS(d),NOW)),e=new Date(Math.max(d.bE,NOW));var span=e-s||1;var P=function(x){return Math.max(0,Math.min(100,(x-s)/span*100));};
+ var h='<div style="position:relative;height:30px">';
+ if(d.cs)h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(d.cs)+'%;width:'+(P(d.bS)-P(d.cs))+'%;border-radius:3px 0 0 3px;background:repeating-linear-gradient(135deg,#A78BFA 0 4px,#7C3AED 4px 7px)"></div>';
+ h+='<div style="position:absolute;z-index:2;top:18px;height:6px;left:'+P(d.bS)+'%;width:'+Math.max(1,P(d.bE)-P(d.bS))+'%;border-radius:'+(d.cs?'0 3px 3px 0':'3px')+';background:'+(NOW>d.bE?'rgba(255,255,255,0.45)':(d.status==='Paused'?'#60A5FA':'#22C55E'))+'"></div>';
+ if(d.zone){var zs=zS(d);h+='<div title="Nigh Zone" style="position:absolute;z-index:3;top:16px;height:10px;left:'+P(zs)+'%;width:'+Math.max(1.5,P(d.bE)-P(zs))+'%;border-radius:3px;background:'+(NOW>d.bE?'rgba(65,239,249,0.4)':'#41EFF9')+';box-shadow:0 0 6px rgba(65,239,249,0.7)"></div>';}
+ var dl=P(d.dS),dw=Math.max(5,P(d.dE)-dl);if(dl+dw>100)dl=100-dw;
+ var LG=NLOGO.replace(/fill="white"/g,'fill="#1B2A4A"').replace('width="9" height="13"','width="12" height="18"');
+
+
+ if(!noPins&&d.videos.length>1)d.videos.forEach(function(v,i){var x=P(v.t);h+='<div style="position:absolute;top:-8px;left:calc('+x+'% - 9px);border:1.5px solid #fff;border-radius:4px;z-index:2;box-shadow:0 1px 3px rgba(0,0,0,.4)">'+thumb(d,i,15,20,{r:3})+'</div>';});
+ if(NOW>=s&&NOW<=e)h+='<div style="position:absolute;top:8px;left:'+P(NOW)+'%;width:2px;height:22px;background:#F87171;z-index:3"></div>';
+ var lab=function(top,x,al){return '<div style="text-align:'+al+';line-height:1.3"><div style="font-size:8.5px;color:rgba(255,255,255,0.7)">'+top+'</div><div style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.95)">'+dayWord(x)+' - '+tL(x)+'</div></div>';};
+ var bs=vS(d),be=d.bE;
+ return h+'</div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:9px">'+lab(bs<=NOW?'Broadcast Started':'Broadcast Starts',bs,'left')+(d.cs?lab(d.bS<=NOW?'Tickets Opened':'Tickets Open',d.bS,'center'):'')+lab(be<=NOW?'Broadcast Ended':'Broadcast Ends',be,'right')+'</div>';
+}
+function iHeader(d){var st=iStatus(d);var au=audInfo(d);
+ return '<div style="position:absolute;top:0;left:0;right:0;height:34px;border-radius:12px 12px 0 0;background:rgba(0,0,0,0.58);backdrop-filter:blur(8px);padding:0 12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;z-index:4">'
+  +'<div style="display:flex;align-items:center;gap:4px">'+NLOGO+'<span style="font-size:11px;font-weight:700;color:#fff">DROP</span></div>'
+  +'<div style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:'+st[1]+'"></span><span style="font-size:11px;font-weight:700;color:#fff">'+st[0]+'</span></div>'
+  +'<div style="display:flex;justify-content:flex-end;align-items:center;gap:16px">'+(d.zone?'<button onclick="event.stopPropagation();openZone('+d.id+')" title="Nigh Zone" style="border:none;background:none;display:flex;cursor:pointer;padding:0">'+ZONE_IC+'</button>':'<button onclick="event.stopPropagation();openZoneOff('+d.id+')" title="Nigh Zone off" style="border:none;background:none;display:flex;cursor:pointer;padding:0">'+ZONE_OFF_IC+'</button>')+'<button onclick="event.stopPropagation();openAud('+d.id+')" title="'+au[1]+'" style="border:none;background:none;display:flex;color:rgba(255,255,255,0.9);cursor:pointer;padding:0">'+hic(au[0],16,'rgba(255,255,255,0.9)')+'</button></div></div>';}
+function soldChip(d){return d.soldOut&&bStateNow(d)==='Live'?'<span style="position:absolute;top:40px;right:10px;font-size:10px;font-weight:800;color:#fff;background:#15803D;border-radius:6px;padding:3px 8px;z-index:3">SOLD OUT</span>':'';}
+function iCard(d,day){
+ var st=iStatus(d);var ph=bStateNow(d);var c=curVid(d,NOW>=vS(d)?NOW:vS(d));var ci=Math.max(0,c.i);var v=d.videos[ci];var au=audInfo(d);
+ var ended=NOW>d.dE;var ciN=d.ci!=null?d.ci:(NOW>=d.dS?Math.round(d.res*(ended?0.8:0.4)):0);var ns=ended?Math.max(0,Math.round(d.res*0.1)):0;var resv=Math.max(0,d.res-ciN);
+ var border=ended?'#D1D5DB':st[1];
+ var zo=zOff(d);var K=S.opt==='K';var media='<div '+(K?'onclick="openPv('+d.id+','+ci+')" ':'')+'style="cursor:'+(K?'pointer':'default')+';height:'+(K?106+POKE_MAX*30:186+POKE_MAX*30)+'px;background:'+v.grad+';position:relative;border-radius:12px 12px 0 0;overflow:hidden">'
+  +iHeader(d)
+  +(K?'':'<div onclick="openPv('+d.id+','+ci+')" style="position:absolute;top:'+(46+POKE_MAX*30)+'px;left:0;right:0;bottom:80px;display:flex;align-items:center;justify-content:center;cursor:pointer"><div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.22);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff">'+hic('play',22,'#fff')+'</div></div>')
+
+  +'<div style="position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.6) 30%)">'+iTimeline(d,true)+'</div>'
+   +'<div style="position:absolute;top:42px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between;z-index:3"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;height:'+(POKE_MAX*30-4)+'px">'+pokesHTML(d,'rgba(0,0,0,0.45)')+'</div><button onclick="event.stopPropagation();toast(\'Share drop\')" aria-label="Share drop" style="position:relative;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.45);border:none;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0"><span style="position:absolute;inset:-4px;border-radius:50%"></span>'+hic('share',17,'#fff')+'</button></div>'
+  +'</div>';
+ if(S.opt==='J')media=jMedia(d);
+ var body='<div style="padding:10px 14px;height:166px;box-sizing:border-box;overflow:hidden"><div title="'+d.title.replace(/"/g,'&quot;')+'" style="font-size:16px;font-weight:700;color:#111827;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.title+'</div>'
+  +timeRow(d)
+  +(function(){var v=d.venue||'Centro Boulder, 950 Pearl St, Boulder, CO';var k=v.indexOf(',');var nm=k>0?v.slice(0,k):v,ad=k>0?v.slice(k+1).trim():'';return '<div style="display:flex;gap:5px;margin:2px 0 8px;height:34px"><span style="color:#6B7280;margin-top:1px">'+hic('map',13)+'</span><div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:500;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div><div style="font-size:12px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(ad||'&nbsp;')+'</div></div></div>';})()
+  +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:13px;font-weight:600;color:#111827">'+hic('users',14)+' '+d.res+' / '+d.cap+' <span style="font-weight:400;color:#6B7280;font-size:11px">spots</span></div>'+(d.res>=d.cap?'<span style="font-size:10px;font-weight:600;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:10px">SOLD OUT</span>':'<span style="font-size:11px;color:#6B7280">'+(d.cap-d.res)+' remaining</span>')+'</div>'
+  +'<div style="display:flex;gap:1px;margin-bottom:6px"><div style="height:6px;flex:'+(ciN||0.001)+';background:#0D9488;border-radius:3px 0 0 3px"></div><div style="height:6px;flex:'+(resv||0.001)+';background:#0284C7"></div><div style="height:6px;flex:'+((d.cap-d.res)||0.001)+';background:#E5E7EB;border-radius:0 3px 3px 0"></div></div>'
+  +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6B7280"><span><b style="color:#0284C7">'+resv+'</b> Reserved</span><span><b style="color:#0D9488">'+ciN+'</b> Checked In</span></div></div>';
+ var mid=ph==='Live'?['pause','Pause','#0E4EF5']:ph==='Paused'?['play','Resume','#22C55E']:['edit','Edit','#6B7280'];
+ var preLive=(ph==='Scheduled'||ph==='ComingSoon');
+ var foot='<div style="display:flex;border-top:1px solid #E5E7EB"><button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(preLive?'#D1D5DB':'#6B7280')+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:'+(preLive?'default':'pointer')+';font-family:inherit">'+hic('edit',16)+' Manage</button>'
+  +(ph==='Ended'?'':'<button onclick="demo()" style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+mid[2]+';display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid #E5E7EB;cursor:pointer;font-family:inherit">'+hic(mid[0],16)+' '+mid[1]+'</button>')
+  +'<button '+(preLive?'disabled title="Available once the broadcast is live"':'onclick="demo()"')+' style="flex:1;padding:12px;border:none;background:none;font-size:13px;font-weight:600;color:'+(preLive?'#D1D5DB':'#0D9488')+';display:flex;align-items:center;justify-content:center;gap:6px;cursor:'+(preLive?'default':'pointer')+';font-family:inherit">'+hic('qr',16)+' Check-In</button></div>';
+ if(S.opt==='K')body=kBody(d);
+ return '<div class="card" style="border:2px solid '+border+';border-radius:14px;margin-bottom:20px;overflow:hidden;transform:translateZ(0)">'+media+body+foot+'</div>';
+}
+function jMedia(d){
+ var s0=new Date(Math.min(vS(d),NOW)),e0=new Date(Math.max(d.dE,NOW));var span=e0-s0||1;var P=function(x){return Math.max(0,Math.min(100,(x-s0)/span*100));};
+ var cv=curVid(d).i;
+ var tiles=[0,1,2,3].map(function(k){var v=d.videos[k];
+  if(!v)return '';
+  var live=k===cv&&NOW<=d.dE;
+  return '<div style="border-radius:8px;'+(live?'outline:2px solid #22C55E;outline-offset:1px':'')+'">'+thumb(d,k,70,72).replace('width:70px','width:100%')+'</div>'
+   +'<div style="font-size:9px;font-weight:700;color:#fff;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+v.label+'</div>'+(function(){var en=d.videos[k+1]?d.videos[k+1].t:d.bE;var sd=function(x){return (x.getMonth()+1)+'/'+x.getDate()+' '+tL(x);};var ln='font-size:8px;line-height:1.35;white-space:nowrap;overflow:hidden;color:rgba(255,255,255,0.8)';return '<div style="'+ln+';margin-top:2px;'+(live?'color:#86EFAC':'')+'">S: '+sd(v.t)+'</div><div style="'+ln+'">E: '+sd(en)+'</div>';})();}).map(function(h){return '<div style="min-width:0">'+h+'</div>';}).join('');
+ var paths=[0,1,2,3].map(function(k){var v=d.videos[k];if(!v)return '';var x1=(k+0.5)*25,x2=1+P(v.t)*0.98;return '<path d="M'+x1+' 0 C'+x1+' 24,'+x2+' 18,'+x2+' 41" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" vector-effect="non-scaling-stroke"/><circle cx="'+x2+'" cy="41" r="0" />';}).join('');
+ return '<div style="background:linear-gradient(160deg,#111827,#1B2A4A 60%,#0E2A6B);position:relative;padding-top:34px;border-radius:12px 12px 0 0;overflow:hidden">'+iHeader(d)
+  +'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px"><div style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;height:'+(POKE_MAX*30-4)+'px">'+pokesHTML(d,'rgba(255,255,255,0.12)')+'</div><button onclick="event.stopPropagation();toast(\'Share drop\')" aria-label="Share drop" style="position:relative;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0"><span style="position:absolute;inset:-4px;border-radius:50%"></span>'+hic('share',17,'#fff')+'</button></div>'
+  +'<div style="height:8px"></div>'
+  +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 12px">'+tiles+'</div>'
+  +'<div style="padding:12px 12px 0"><div style="margin:0 4px">'+iTimeline(d,true)+'</div></div>'
+  +'<div style="height:10px"></div>'
+  +'</div>';
+}
+function openZone(id){var d=DROPS.find(function(x){return x.id===id;});var left=(d.bE-NOW)/36e5;S.zv={id:id,t:Math.max(0,Math.min(d.zone.hrs+1,left))};render();}
+function zvRad(d,h){if(h>d.zone.hrs)return null;return zStepAt(h)||d.zone.floor;}
+function fmtH(h){var m=Math.round(h*60);return Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m';}
+function zvBody(d,h){var z=d.zone;var r=zvRad(d,h);var PX=78/z.start;var C=150;
+ var grid='';for(var i=0;i<=300;i+=30)grid+='<line x1="'+i+'" y1="0" x2="'+i+'" y2="200" stroke="rgba(255,255,255,0.05)"/>';for(var j=0;j<=200;j+=30)grid+='<line x1="0" y1="'+j+'" x2="300" y2="'+j+'" stroke="rgba(255,255,255,0.05)"/>';
+ var map='<svg viewBox="0 0 300 200" style="width:100%;display:block;background:#0F172A;border-radius:12px">'+grid
+  +'<path d="M0 140 Q90 120 150 100 T300 60" stroke="rgba(255,255,255,0.12)" stroke-width="6" fill="none"/><path d="M60 0 L110 200" stroke="rgba(255,255,255,0.1)" stroke-width="5"/>'
+  +'<circle cx="'+C+'" cy="100" r="'+(z.start*PX)+'" fill="none" stroke="rgba(255,255,255,0.3)" stroke-dasharray="4 4"/>'
+  +'<text x="'+C+'" y="'+(100-z.start*PX-5)+'" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle" font-family="sans-serif">'+z.start+' mi (3h left)</text>'
+  +(r!=null?'<circle cx="'+C+'" cy="100" r="'+(r*PX)+'" fill="rgba(17,163,107,0.2)" stroke="#2BD58A" stroke-width="2"/>':'')
+  +'<circle cx="'+C+'" cy="100" r="'+(z.floor*PX)+'" fill="none" stroke="rgba(43,213,138,0.5)" stroke-dasharray="2 3"/>'
+  +NLOGO.replace('<svg width="9" height="13"','<svg x="'+(C-10)+'" y="70" width="20" height="30"')+'</svg>';
+ var ro=function(k,v,c){return '<div style="flex:1;background:rgba(255,255,255,0.06);border-radius:10px;padding:7px 8px"><div style="font-size:9px;color:rgba(255,255,255,0.55)">'+k+'</div><div style="font-size:14px;font-weight:800;color:'+(c||'#fff')+'">'+v+'</div></div>';};
+ return '<div style="display:flex;gap:6px;margin-bottom:8px">'+ro('Broadcast ends in',fmtH(h),'#F87171')+ro('Zone radius',r!=null?r+' mi':'Not active')+ro('Who can reserve',r!=null?'Inside zone':'Anyone',r!=null?'#2BD58A':'#fff')+'</div>'+map
+  +'<div style="text-align:center;margin:8px 0 2px"><span style="display:inline-block;font-size:11px;font-weight:700;border-radius:14px;padding:4px 11px;'+(r!=null?'background:rgba(43,213,138,0.15);color:#2BD58A':'background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7)')+'">'+(r!=null?'Zone active · only guests within '+r+' mi can reserve':'Open to all eligible guests · zone starts in '+fmtH(h-z.hrs))+'</span></div>';}
+function zvOverlay(){if(!S.zv)return '';var d=DROPS.find(function(x){return x.id===S.zv.id;});if(!d||!d.zone){S.zv=null;return '';}var z=d.zone;var h=S.zv.t;
+ return '<div onclick="S.zv=null;render()" style="position:absolute;inset:0;background:rgba(10,10,20,0.6);z-index:70;display:flex;align-items:flex-end">'
+  +'<div onclick="event.stopPropagation()" style="width:100%;background:#0C0C14;color:#fff;border-radius:20px 20px 0 0;padding:14px 16px 18px;max-height:92%;overflow-y:auto">'
+  +'<div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.25);margin:0 auto 10px"></div>'
+  +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="display:flex">'+ZONE_IC+'</span><span style="font-size:16px;font-weight:800">Nigh Zone</span><span style="margin-left:auto;font-size:18px;opacity:.6;cursor:pointer" onclick="S.zv=null;render()">×</span></div>'
+  +'<div style="font-size:12px;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:10px">'+d.title+' · In the last <b>'+z.hrs+' hours</b> of the broadcast, only people inside the zone can reserve, so guests have time to arrive. The zone steps down toward the venue as the broadcast end gets closer.</div>'
+  +'<div id="zvbody">'+zvBody(d,h)+'</div>'
+  +'<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.55);margin-bottom:2px"><span>'+(z.hrs+1)+'h left</span><span>zone activates →</span><span>broadcast ends</span></div>'
+  +'<input type="range" min="0" max="'+(z.hrs+1)+'" step="0.05" value="'+(z.hrs+1-h)+'" oninput="zvSlide('+d.id+',this.value)" style="width:100%;accent-color:#2BD58A">'
+  +'<div style="font-size:10px;color:rgba(255,255,255,0.45);text-align:center">Drag to preview how the zone shrinks</div></div>'
+  +'<div style="border-top:1px solid rgba(255,255,255,0.08);margin-top:12px;padding-top:10px;font-size:12px;color:rgba(255,255,255,0.75);line-height:1.8">'
+  +'<div style="display:flex;justify-content:space-between"><span>Active window</span><b style="color:#fff">Last '+z.hrs+' hrs of broadcast</b></div>'
+  +'<div style="display:flex;justify-content:space-between"><span>Zone starts</span><b style="color:#fff">'+dayWord(zS(d))+' - '+tL(zS(d))+'</b></div>'
+  +'<div style="display:flex;justify-content:space-between"><span>Radius by time left</span><b style="color:#fff">'+ZONE_STEPS.map(function(x){return (x[0]>=1?x[0]+'h':(x[0]*60)+'m')+' · '+x[1]+' mi';}).join('<br>')+'</b></div></div>'
+  +'<div style="font-size:11px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;line-height:1.5">Nigh Zone is on for every drop, using Nigh’s standard distances. Custom zones are coming later.</div>'
+  +'</div></div>';}
+function zvSlide(id,v){var d=DROPS.find(function(x){return x.id===id;});S.zv.t=d.zone.hrs+1-(+v);document.getElementById('zvbody').innerHTML=zvBody(d,S.zv.t);}
+var AUD_OPTS=[
+ ['public','globe','Public','Anyone on Nigh','Anyone on Nigh can discover this drop in their feed, on the map and through Niya, and anyone eligible can reserve.'],
+ ['followers','twoPeople','Followers & shared link','Your followers + anyone with the link','Shows in your followers’ feeds. Anyone you send the link to can also view and reserve. Hidden from everyone else.'],
+ ['link','twoPeople','Shared link only','Only people with the link','Not shown in any feed or on the map. Only people who open your link can view and reserve.'],
+ ['guests','personLock','Private — existing guests','People who’ve been your guests','Only people who have reserved one of your drops before can see and reserve. Hidden from everyone else.'],
+ ['groups','personLock','Private — specific groups','Guest groups you choose','Only people in the guest groups you pick can see and reserve.'],
+ ['password','lock','Password protected','Anyone with the password','Anyone can find it, but guests must enter your password to view details and reserve.']
+];
+HI.lock='<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>';
+function openAud(id){S.av=id;render();}
+function avOverlay(){if(!S.av)return '';var d=DROPS.find(function(x){return x.id===S.av;});if(!d){S.av=null;return '';}var cur=d.audience||AUD[d.id%3];var o=AUD_OPTS.find(function(x){return x[0]===cur;});
+ return '<div onclick="S.av=null;render()" style="position:absolute;inset:0;background:rgba(10,10,20,0.35);z-index:70;display:flex;align-items:center;justify-content:center;padding:24px">'
+  +'<div onclick="event.stopPropagation()" style="width:100%;max-width:300px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)">'
+  +'<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:36px;height:36px;border-radius:10px;background:#0E4EF5;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+hic(o[1],18,'#fff')+'</div>'
+  +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">'+o[2]+'</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">'+o[4]+'</div></div>'
+  +'<span onclick="S.av=null;render()" style="font-size:18px;color:#9CA3AF;cursor:pointer;line-height:1">×</span></div>'
+  +'</div></div>';}
+// ══ OPTION K — up to 5 time slots per drop; spots + price per slot (no overall spots bar) ══
+var SLOT_DEF={2:[[19,0,'$15',12,12],[19,30,'$15',12,12],[20,0,'$15',12,10],[20,30,'$12',12,6],[21,0,'$10',12,3]],
+ 14:[[19,0,'$15',12,12],[19,30,'$15',12,12],[20,0,'$15',12,10],[20,30,'$12',12,6],[21,0,'$10',12,3]],
+ 6:[[9,0,'$8',20,20],[10,0,'$8',20,14],[11,0,'$8',20,8],[12,0,'$6',20,4]],
+ 12:[[9,0,'$12',6,6],[9,30,'$12',5,3],[10,0,'$12',5,2]],
+ 3:[[18,0,'Free',20,9],[19,30,'Free',20,3]],15:[[18,0,'Free',20,9],[19,30,'Free',20,3]],
+ 4:[[19,0,'$85',6,4],[21,0,'$85',6,2]],16:[[19,0,'$85',6,4],[21,0,'$85',6,2]],
+ 13:[[11,0,'Free',10,10],[11,45,'Free',10,9],[12,30,'Free',10,8],[13,15,'Free',10,5],[14,0,'Free',10,2]]};
+function kSlots(d){if(d._slots)return d._slots;var def=SLOT_DEF[d.id];var base=d0(d.dS);
+ d._slots=def?def.map(function(x){return {t:new Date(base.getTime()+x[0]*36e5+x[1]*6e4),price:x[2],cap:x[3],res:x[4]};}):[{t:d.dS,price:d.price,cap:d.cap,res:d.res}];return d._slots;}
+function kBody(d){
+ var sl=kSlots(d);var tot=sl.reduce(function(a,x){return a+x.cap;},0),res=sl.reduce(function(a,x){return a+x.res;},0);
+ var v=d.venue||'Centro Boulder, 950 Pearl St, Boulder, CO';var k=v.indexOf(',');var nm=k>0?v.slice(0,k):v,ad=k>0?v.slice(k+1).trim():'';
+ var ciOf=function(x){return NOW>=x.t?Math.round(x.res*0.6):0;};var ciTot=sl.reduce(function(a,x){return a+ciOf(x);},0);
+ var G='display:grid;grid-template-columns:60px 1fr 1fr 62px 40px;align-items:center;gap:4px';
+ var head='<div style="'+G+';font-size:9px;font-weight:700;letter-spacing:.03em;color:#9CA3AF;text-transform:uppercase;padding:6px 0 4px;border-bottom:1px solid #E5E7EB"><span>Time</span><span style="text-align:center">Reserved</span><span style="text-align:center">Checked In</span><span style="text-align:right">Spots</span><span style="text-align:right">Price</span></div>';
+ var rows=sl.map(function(x,i){var full=x.res>=x.cap;var past=NOW>new Date(x.t.getTime()+30*6e4)&&NOW>d.dS;
+  return '<div style="'+G+';font-size:12px;padding:5px 0;border-bottom:1px solid #F3F4F6;'+(past?'opacity:.6;':'')+'"><span style="font-weight:600;color:#111827;white-space:nowrap">'+tL(x.t)+'</span><span style="text-align:center;font-weight:700;color:#0284C7">'+x.res+'</span><span style="text-align:center;font-weight:700;color:#0D9488">'+ciOf(x)+'</span><span style="text-align:right;white-space:nowrap">'+(full?'<span style="font-size:9px;font-weight:800;color:#92400E;background:#FEF3C7;padding:1px 5px;border-radius:6px">FULL</span> ':'')+'<b style="color:#111827">'+x.cap+'</b></span><span style="text-align:right;color:#374151">'+x.price+'</span></div>';}).join('');
+ var foot='<div style="'+G+';font-size:12px;padding:5px 0 2px"><span style="font-weight:700;color:#6B7280">Total</span><span style="text-align:center;font-weight:800;color:#0284C7">'+res+'</span><span style="text-align:center;font-weight:800;color:#0D9488">'+ciTot+'</span><span style="text-align:right;font-weight:800;color:#111827">'+tot+'</span><span></span></div>';
+ return '<div style="padding:8px 14px 6px;height:282px;box-sizing:border-box;overflow:hidden"><div style="font-size:16px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.title+'</div>'
+  +'<div style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:#374151;margin-top:2px">'+hic('clock',13)+' '+dayWord(d.dS)+' <span style="color:#9CA3AF;font-size:12px">· '+sl.length+' time slot'+(sl.length>1?'s':'')+'</span></div>'
+  +'<div style="display:flex;gap:5px;margin:3px 0 4px;height:32px"><span style="color:#6B7280;margin-top:1px">'+hic('map',13)+'</span><div style="font-size:12px;color:#374151;min-width:0;flex:1"><div style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+nm+'</div><div style="color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(ad||'&nbsp;')+'</div></div></div>'
+  +head+rows+foot+'</div>';
+}
+function optK(){return optI();}
+NOTES.K={t:'K · Time slots (up to 5)',sub:'Same card as I, sized to fit on one phone screen. The drop has up to 5 time slots, each on one row: time, price, reserved, checked in and spots (FULL when sold out), with a total row. The overall spots bar is gone. Tap the media area to preview. “Drop starts in” counts down to the first slot.',pros:['Handles seatings, classes and staggered entry','Price can differ by slot (e.g. later slots cheaper)','Sold-out slots are obvious at a glance'],cons:['Card gets taller with 5 slots','Check-in total is for the whole drop, not per slot']};
+
+// ── Overlay "poke" messages: ranked list, show top POKE_MAX. Add new ones to POKES; reorder to re-rank. Space is reserved for POKE_MAX so the card height never changes.
+var POKE_MAX=3;
+var POKES=[
+ {key:'broadcast',label:'Broadcast countdown',fn:function(d){return iRemain(d);}},
+ {key:'zone',label:'Nigh Zone',fn:function(d){return iZone(d,null);}},
+ {key:'drop',label:'Drop countdown',fn:function(d){return iDropIn(d,null);}},
+ {key:'spots',label:'Spots left (example)',fn:function(d){var l=d.cap-d.res;return (bStateNow(d)==='Live'&&l>0&&l<=Math.max(5,Math.round(d.cap*0.25)))?'Only <span style="color:#FBBF24;font-weight:700">'+l+' spots</span> left':'';}},
+ {key:'views',label:'Viewing now (example)',fn:function(d){return bStateNow(d)==='Live'?'<span style="font-weight:700">'+(12+d.id*7%40)+'</span> people viewing now':'';}}
+];
+function pokeList(d){var out=[];for(var i=0;i<POKES.length&&out.length<POKE_MAX;i++){var t=POKES[i].fn(d);if(t)out.push(t);}return out;}
+function pokesHTML(d,bgc){return pokeList(d).map(function(t){return '<span style="display:inline-block;max-width:255px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;font-weight:600;color:#fff;background:'+bgc+';border-radius:6px;padding:4px 9px">'+t+'</span>';}).join('');}
+function pokeMove(i,dir){var j=i+dir;if(j<0||j>=POKES.length)return;var t=POKES[i];POKES[i]=POKES[j];POKES[j]=t;render();}
+function pokeSetMax(n){POKE_MAX=n;render();}
+function pokePanel(){return '<h3>Overlay messages (ranked)</h3><div style="font-size:12px;color:#374151;margin-bottom:6px">Show top <select onchange="pokeSetMax(+this.value)" style="font:inherit;padding:2px 4px;border:1px solid #D1D5DB;border-radius:6px">'+[1,2,3,4].map(function(n){return '<option'+(n===POKE_MAX?' selected':'')+'>'+n+'</option>';}).join('')+'</select> · the card reserves space for this many so its height stays fixed.</div>'
+ +POKES.map(function(p,i){return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 8px;border:1px solid #E5E7EB;border-radius:8px;margin-bottom:4px;background:'+(i<POKE_MAX?'#F0F5FF':'#fff')+'"><b style="width:16px;color:#6B7280">'+(i+1)+'</b><span style="flex:1">'+p.label+'</span><button onclick="pokeMove('+i+',-1)" style="border:none;background:none;cursor:pointer">▲</button><button onclick="pokeMove('+i+',1)" style="border:none;background:none;cursor:pointer">▼</button></div>';}).join('')
+ +'<div style="font-size:11px;color:#6B7280;margin-top:4px">A message only shows when it applies (e.g. no Nigh Zone line after the broadcast ends), so the next-ranked one moves up.</div>';}
+
+var ZONE_OFF_IC='<svg width="16" height="16" viewBox="0 0 24 24" overflow="visible" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="#9CA3AF" stroke="none"/><line x1="1" y1="1" x2="23" y2="23" stroke="#9CA3AF" stroke-width="2.2"/></svg>';
+function openZoneOff(id){S.zoff=id;render();}
+function zoffOverlay(){if(!S.zoff)return '';var d=DROPS.find(function(x){return x.id===S.zoff;});if(!d){S.zoff=null;return '';}
+ return '<div onclick="S.zoff=null;render()" style="position:absolute;inset:0;background:rgba(10,10,20,0.35);z-index:70;display:flex;align-items:center;justify-content:center;padding:24px">'
+  +'<div onclick="event.stopPropagation()" style="width:100%;max-width:300px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)">'
+  +'<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:36px;height:36px;border-radius:10px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ZONE_OFF_IC.replace('width="16" height="16"','width="20" height="20"')+'</div>'
+  +'<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111827">Nigh Zone is off for this drop</div><div style="font-size:12px;color:#4B5563;line-height:1.5;margin-top:3px">Anyone who can see this drop can reserve until the broadcast ends, no matter how far away they are.</div></div>'
+  +'<span onclick="S.zoff=null;render()" style="font-size:18px;color:#9CA3AF;cursor:pointer;line-height:1">×</span></div></div></div>';}
+function optJ(){return optI();}
+function timeRow(d){
+ var arr=d.timing.indexOf('Arrival')===0;var multi=!same(d.dS,d.dE);
+ var when=multi?(MO[d.dS.getMonth()]+' '+d.dS.getDate()+'–'+(d.dE.getMonth()===d.dS.getMonth()?'':MO[d.dE.getMonth()]+' ')+d.dE.getDate()+' · '+tL(d.dS)+' – '+tL(d.dE)):(dayWord(d.dS)+' '+tL(d.dS)+(arr?' – '+tL(d.dE):''));
+ return '<div style="display:flex;align-items:center;gap:14px;height:20px;margin-bottom:2px;font-size:14px;font-weight:500;color:#374151"><span style="display:flex;align-items:center;gap:5px;min-width:0">'+hic('clock',13)+'<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+when+'</span></span><span style="flex-shrink:0">'+d.price+'</span></div>';
+}
+function optI(){
+ if(S.hView==='schedule'&&S.opt!=='I')return optG();
+ var ws=weekDays();var day=S.day;
+ var happening=DROPS.filter(function(d){return isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var also=DROPS.filter(function(d){return isB(d,day)&&!isDrop(d,day);}).sort(function(a,b){return a.dS-b.dS;});
+ var body=(happening.length?happening.map(function(d){return iCard(d,day);}).join(''):'<div style="text-align:center;padding:14px 0 4px"><div style="font-size:13px;font-weight:700;color:#374151">No drops '+(same(day,NOW)?'today':'on '+dshort(day))+'</div></div>')
+  +also.map(function(d){return iCard(d,day);}).join('');
+ return hdrBlock()+'<div class="cal">'+calHdr()+'<div class="week">'+ws.map(function(w){return dayBtn(w,dayBelowH(w));}).join('')+'</div></div>'
+  +'<div class="scroll" style="padding:14px 16px;background:#F9FAFB">'+body+'</div>'+navBar()+pvOverlay()+zvOverlay()+avOverlay()+zoffOverlay();
+}
+NOTES.I={t:'I · Current drop card + video timeline',sub:'Starts from today’s Nigh Host drop card. The media area now shows the video that’s playing, with a timeline across the bottom: Coming Soon (striped) → Broadcast (green) → Nigh Zone (cyan) → Drop, with a red “now” line. Video thumbnails and the per-video schedule live in J. The top row reads “Broadcast Live” (or Paused / Coming Soon / Scheduled / Ended) with the audience icon at the right edge. Time remaining moved to the lower left, across from Share. The time row says Today, Tomorrow or the date. Broadcast-only drops use the same card under “Also broadcasting.”',pros:['Smallest change to the real app card','Timeline and videos live where the media already is','“Today / Tomorrow / Mon Nov 9” makes the drop day obvious in the card','Tap the play button or any thumbnail to preview what guests see'],cons:['Small thumbnails when a drop has many videos','Same-size cards for broadcast-only drops make the feed longer']};
+
+NOTES.J={t:'J · Card with 4 videos across the timeline',sub:'Same card as I, but the media area shows the hype-video plan instead of one big video: the drop’s 4 hype videos in an even row, each with when it starts and ends playing (S: 11/7 6:00 PM · E: 11/7 8:00 PM), above the timeline (Coming Soon → Broadcast → Drop, red “now” line). The video playing now has a green outline. Videos are added and edited in Create / Edit, not here. Opening J switches to Future sample data. Tap any thumbnail to preview what guests see.',pros:['Whole hype sequence visible at once','Each video shows exactly when it starts and ends','Compact S / E times never wrap'],cons:['Loses the big “what’s playing” hero image','Thumbnails are small for judging the video itself (preview fixes that)']};
+S.opt='I';
+render();
+</script></body></html>
