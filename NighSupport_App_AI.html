@@ -7067,6 +7067,10 @@ function teamLabel(m){return m&&m.founder?'Founder':'Nigh Team';}
 
 // ── Case lifecycle migration: Open/In Progress → Escalated/Waiting on user; + AI handling ──
 const CASE_STATUSES=['AI handling','Escalated','Waiting on user','Resolved'];
+supportCases.push(
+  {id:'SC030',parentId:'SC003',linkType:'dependent',requester:'internal',source:'Agent',title:'Fix child-location permission for parent collections',category:'Technical',priority:'High',status:'Escalated',dueHrs:20,assignedTo:'NT004',opened:'Mar 9, 2026',resolved:null,notes:'Engineering fix: child host accounts can’t attach drops to the parent org’s collection. Required before SC003 can close.'},
+  {id:'SC031',parentId:'SC003',linkType:'independent',requester:'internal',source:'Agent',title:'Update help article: collections for multi-location hosts',category:'General',priority:'Low',status:'Waiting on user',assignedTo:'NT005',opened:'Mar 9, 2026',resolved:null,notes:'Docs follow-up. Nice to have; doesn’t block SC003.'}
+);
 (function(){
   const map={'Open':'Escalated','In Progress':'Waiting on user'};
   const dues=[30,12,-6,20,4,-2,26,9];
@@ -7198,7 +7202,7 @@ function rSupport(){
   <div class="card" style="overflow:hidden"><table class="tbl">
     <thead><tr><th>Case</th><th>Account</th><th>Source</th><th>Priority</th><th>Status</th><th>Reply due</th><th>Assigned</th></tr></thead>
     <tbody>${list.map(c=>{const a=caseAcct(c);const rep=nighTeam.find(m=>m.id===c.assignedTo);const due=caseDue(c);return `<tr style="cursor:pointer;opacity:${c.status==='Resolved'?0.55:1}" onclick="go('caseDetail',{caseId:'${c.id}'})">
-      <td style="max-width:290px"><div style="font-size:13px;font-weight:600;color:#1B2A4A">${c.title}${(c.involved||[]).length?` <span style="font-size:9px;font-weight:700;color:#C2410C;background:#FFF7ED;padding:1px 6px;border-radius:6px;vertical-align:middle">+${c.involved.length} PARTY</span>`:''}${c.mergedInto?` <span style="font-size:9px;font-weight:700;color:#6B7280;background:#F3F4F6;padding:1px 6px;border-radius:6px;vertical-align:middle">MERGED → ${c.mergedInto}</span>`:''}${c.urgentLive?` <span style="font-size:9px;font-weight:800;color:#fff;background:#DC2626;padding:1px 6px;border-radius:6px;vertical-align:middle">LIVE DROP</span>`:''}</div><div style="font-size:11px;color:#9CA3AF">${c.id} · ${c.category} · opened ${c.opened}</div></td>
+      <td style="max-width:290px"><div style="font-size:13px;font-weight:600;color:#1B2A4A">${c.parentId?`<span style="font-size:10px;font-weight:700;color:#0E4EF5;margin-right:4px">↳ ${c.parentId}</span>`:''}${c.title}${linkedKids(c).length?` <span style="font-size:9px;font-weight:700;color:#475569;background:#F1F5F9;padding:1px 6px;border-radius:6px;vertical-align:1px">${linkedKids(c).length} linked${openRequired(c).length?' · '+openRequired(c).length+' required open':''}</span>`:''}${(c.involved||[]).length?` <span style="font-size:9px;font-weight:700;color:#C2410C;background:#FFF7ED;padding:1px 6px;border-radius:6px;vertical-align:middle">+${c.involved.length} PARTY</span>`:''}${c.mergedInto?` <span style="font-size:9px;font-weight:700;color:#6B7280;background:#F3F4F6;padding:1px 6px;border-radius:6px;vertical-align:middle">MERGED → ${c.mergedInto}</span>`:''}${c.urgentLive?` <span style="font-size:9px;font-weight:800;color:#fff;background:#DC2626;padding:1px 6px;border-radius:6px;vertical-align:middle">LIVE DROP</span>`:''}</div><div style="font-size:11px;color:#9CA3AF">${c.id} · ${c.category} · opened ${c.opened}</div></td>
       <td><div style="font-size:13px;font-weight:600;color:#1B2A4A">${a.name}</div><div style="font-size:10px;font-weight:700;color:${a.type==='Host'?'#0D9488':a.type==='User'?'#0E4EF5':'#6B7280'}">${a.type}</div></td>
       <td style="font-size:12px;color:#374151">${c.source==='Agent'?'Agent':c.source}</td>
       <td>${chip(c.priority,casePriColor(c.priority))}</td>
@@ -7208,6 +7212,60 @@ function rSupport(){
   <div style="font-size:11px;color:#9CA3AF;margin-top:8px">${list.length} of ${supportCases.length} cases</div></div>`;
 }
 function filterSupport(){reRender();}
+
+
+// ══ LINKED CASES ══════════════════════════════════════════════════════════
+// A team member can split work out of a case into linked cases, each with its own owner.
+//   dependent  = "Required to close" — the main case can't be resolved until it is resolved
+//   independent = related follow-up — tracked and linked, but doesn't block the main case
+// Linked cases are internal work items (no customer thread); the customer only ever sees the main case.
+function linkedKids(c){return supportCases.filter(x=>x.parentId===c.id);}
+function openRequired(c){return linkedKids(c).filter(x=>x.linkType==='dependent'&&x.status!=='Resolved');}
+function lcTypeChip(x){return x.linkType==='dependent'?chip('Required to close',{bg:'#FEF2F2',fg:'#B91C1C'}):chip('Independent',{bg:'#F1F5F9',fg:'#475569'});}
+function linkedCardHTML(c){
+  const kids=linkedKids(c);const par=c.parentId?supportCases.find(x=>x.id===c.parentId):null;const req=openRequired(c);const f=S.lcForm===c.id;
+  const me=sessionUser();
+  let h=`<div class="card card-p">${v2lbl('Linked cases')}`;
+  if(par)h+=`<div style="font-size:12px;color:#374151;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;margin-bottom:10px">Part of <b style="cursor:pointer;color:#0E4EF5" onclick="go('caseDetail',{caseId:'${par.id}'})">${par.id}</b> · ${par.title}<div style="margin-top:4px">${lcTypeChip(c)} <span style="font-size:11px;color:#6B7280">${c.linkType==='dependent'?par.id+' can’t close until this is resolved':'Doesn’t block '+par.id}</span></div></div>`;
+  if(kids.length)h+=kids.map(x=>{const r=nighTeam.find(m=>m.id===x.assignedTo);return `<div style="padding:7px 0;border-bottom:1px solid #F3F4F6"><div style="display:flex;justify-content:space-between;gap:6px;align-items:center"><b style="font-size:12px;cursor:pointer;color:#0E4EF5" onclick="go('caseDetail',{caseId:'${x.id}'})">${x.id}</b>${chip(x.status,caseStatusColor(x.status))}</div><div style="font-size:12px;color:#111827;margin:2px 0 4px">${x.title}</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${lcTypeChip(x)}<span style="font-size:11px;color:#6B7280">${r?r.firstName:'Unassigned'}</span></div></div>`;}).join('');
+  else if(!par)h+=`<div style="font-size:12px;color:#9CA3AF;margin-bottom:6px">No linked cases. Split out work another team member owns.</div>`;
+  if(kids.length)h+=`<div style="font-size:11px;margin-top:8px;color:${req.length?'#B91C1C':'#065F46'};font-weight:600">${req.length?req.length+' required case'+(req.length>1?'s':'')+' still open — '+c.id+' can’t be resolved yet':'All required cases resolved'}</div>`;
+  if(c.status!=='Resolved'&&!c.parentId){
+    if(!f)h+=`<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:10px" onclick="S.lcForm='${c.id}';reRender()">+ Create linked case</button>`;
+    else h+=`<div style="margin-top:10px;border-top:1px solid #F1F5F9;padding-top:10px;display:flex;flex-direction:column;gap:8px">
+      <input class="input" id="lc-title" placeholder="What needs to be done?" style="font-size:12px"/>
+      <select class="select" id="lc-assign" style="font-size:12px" title="Assign to">${nighTeam.filter(m=>m.status!=='Inactive').map(m=>`<option value="${m.id}" ${m.id===me.id?'':''}>${m.name} · ${m.role}</option>`).join('')}</select>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#374151">
+        <label style="display:flex;gap:7px;align-items:flex-start;cursor:pointer"><input type="radio" name="lc-type" value="dependent" checked style="margin-top:2px"/><span><b>Required to close</b><br><span style="color:#6B7280">${c.id} can’t be resolved until this is resolved</span></span></label>
+        <label style="display:flex;gap:7px;align-items:flex-start;cursor:pointer"><input type="radio" name="lc-type" value="independent" style="margin-top:2px"/><span><b>Independent</b><br><span style="color:#6B7280">Linked for tracking; doesn’t block ${c.id}</span></span></label></div>
+      <select class="select" id="lc-pri" style="font-size:12px">${['High','Medium','Low','Urgent'].map(p=>`<option value="${p}">Priority: ${p}</option>`).join('')}</select>
+      <textarea class="input" id="lc-note" rows="2" placeholder="Note for the assignee (internal)" style="font-size:12px;font-family:inherit"></textarea>
+      <div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" style="flex:1" onclick="createLinkedCase('${c.id}')">Create &amp; assign</button><button class="btn btn-ghost btn-sm" onclick="S.lcForm=null;reRender()">Cancel</button></div></div>`;
+  }
+  return h+'</div>';
+}
+function createLinkedCase(pid){
+  const p=supportCases.find(x=>x.id===pid);const v=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
+  const title=v('lc-title');if(!title){const e=document.getElementById('lc-title');if(e){e.style.borderColor='#EF4444';e.focus();}return;}
+  const typ=(document.querySelector('input[name="lc-type"]:checked')||{}).value||'dependent';
+  const n=Math.max(...supportCases.map(x=>parseInt(String(x.id).replace(/\D/g,''))||0))+1;const id='SC'+String(n).padStart(3,'0');
+  const who=v('lc-assign');const pri=v('lc-pri')||'Medium';const note=v('lc-note');
+  const k={id,parentId:pid,linkType:typ,requester:'internal',source:'Agent',title,category:p.category,priority:pri,status:'Escalated',dueHrs:24,assignedTo:who,opened:'Nov 12, 2026',resolved:null,notes:note||('Linked from '+pid+': '+p.title),userId:undefined,orgId:undefined};
+  supportCases.push(k);
+  caseThread(k).push({from:'note',agentId:SESSION_USER_ID,text:(note||'Created from '+pid)+' · '+(typ==='dependent'?'required to close '+pid:'independent of '+pid),ts:'Just now'});
+  caseThread(p).push({from:'system',text:'Linked case '+id+' created · '+(typ==='dependent'?'required to close this case':'independent')+' · assigned to '+((nighTeam.find(m=>m.id===who)||{}).firstName||'—'),ts:'Just now'});
+  logTeam('Linked Case Created','Case '+id,'From '+pid+' · '+(typ==='dependent'?'required to close':'independent')+' · assigned to '+who,'info',"go('caseDetail',{caseId:'"+id+"'})");
+  S.lcForm=null;reRender();
+}
+const _setCaseStatusBase=setCaseStatus;
+setCaseStatus=function(id,s){const c=supportCases.find(x=>x.id===id);
+  if(s==='Resolved'&&c&&openRequired(c).length){S.lcBlock=id;reRender();return;}
+  _setCaseStatusBase(id,s);
+  if(c&&c.parentId){const p=supportCases.find(x=>x.id===c.parentId);if(p){const left=openRequired(p).length;
+    if(s==='Resolved')caseThread(p).push({from:'system',text:'Linked case '+id+' resolved'+(c.linkType==='dependent'?' · '+(left?left+' required still open':'all required cases resolved — ready to close'):''),ts:'Just now'});
+    if(s!=='Resolved'&&c.linkType==='dependent'&&p.status==='Resolved'){/* reopening a required case reopens nothing automatically; flag on parent */caseThread(p).push({from:'system',text:'Required linked case '+id+' was reopened',ts:'Just now'});}}}
+  S.lcBlock=null;
+};
 
 // ── CASE DETAIL — the conversation exactly as the user/host sees it ──
 function neoDraftFor(c){
@@ -8005,7 +8063,7 @@ function rCaseDetail(id){
   const actions=[];
   if(c.status==='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Take over from AI</button>`);
   if(!closed&&c.status!=='Waiting on user'&&c.status!=='AI handling')actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Waiting on user')">Mark waiting on ${a.type==='Host'?'host':'user'}</button>`);
-  if(!closed)actions.push(`<button class="btn btn-green btn-sm" onclick="setCaseStatus('${c.id}','Resolved')">Resolve case</button>`);
+  if(!closed){const _rq=openRequired(c);actions.push(_rq.length?`<button class="btn btn-green btn-sm" disabled title="${_rq.length} required linked case${_rq.length>1?'s':''} still open" style="opacity:.45;cursor:not-allowed">Resolve case</button>`:`<button class="btn btn-green btn-sm" onclick="setCaseStatus('${c.id}','Resolved')">Resolve case</button>`);}
   if(closed&&!c.mergedInto)actions.push(`<button class="btn btn-ghost btn-sm" onclick="setCaseStatus('${c.id}','Escalated')">Reopen case</button>`);
   if(c.assignedTo!==me.id)actions.push(`<button class="btn btn-ghost btn-sm" onclick="assignCaseToMe('${c.id}')">Assign to me</button>`);
   const draft=neoDraftFor(c);const showDraft=!closed&&primary&&!(S.neoGone&&S.neoGone[c.id]);
@@ -8025,7 +8083,8 @@ function rCaseDetail(id){
           <div style="font-size:18px;font-weight:700;color:#1B2A4A;margin:3px 0 8px">${c.title}</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${chip(c.mergedInto?'Merged into '+c.mergedInto:c.status,caseStatusColor(c.status))}${chip(c.priority,casePriColor(c.priority))}${c.urgentLive?chip('LIVE DROP',{bg:'#DC2626',fg:'#fff'}):''}
             ${due?`<span style="font-size:11px;font-weight:700;color:${due.col}">${due.txt}</span>`:''}
-            <span style="font-size:11px;color:#6B7280">Assigned: ${rep?rep.name:(c.status==='AI handling'?AI_NAMES.support:'Unassigned')}</span></div>
+            <span style="font-size:11px;color:#6B7280">Assigned: ${rep?rep.name:(c.status==='AI handling'?AI_NAMES.support:'Unassigned')}</span>${c.parentId?' '+lcTypeChip(c)+` <span style="font-size:11px;color:#0E4EF5;cursor:pointer;font-weight:600" onclick="go('caseDetail',{caseId:'${c.parentId}'})">↳ ${c.parentId}</span>`:''}</div>
+          ${(!closed&&openRequired(c).length)?`<div style="margin-top:8px;font-size:12px;color:#B91C1C;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:7px 10px">${S.lcBlock===c.id?'Can’t resolve yet — ':''}${openRequired(c).length} required linked case${openRequired(c).length>1?'s':''} still open: ${openRequired(c).map(x=>x.id).join(', ')}</div>`:''}
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">${actions.join('')}</div>
       </div>
@@ -8064,6 +8123,7 @@ function rCaseDetail(id){
       <div style="font-size:10px;color:#9CA3AF;margin-top:6px">Sent as written, edited or discarded — all tracked.</div>`:''}
     </div>
     ${aiHandoffHTML(c)}
+    ${linkedCardHTML(c)}
     ${partiesCardHTML(c)}
     ${dupCardHTML(c)}
     <div class="card card-p">
